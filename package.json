@@ -1,7 +1,7 @@
 {
   "name": "tslint-sonarts",
   "version": "0.0.1",
-  "description": "TSLint rules based on SonarTS",
+  "description": "SonarTS rules for TSLint",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc -p .",
