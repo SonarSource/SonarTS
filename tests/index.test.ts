@@ -1,5 +1,5 @@
-import '../src';
+import "../src";
 
-it('works', () => {
+it("works", () => {
   expect(true).toBe(true);
-})
+});

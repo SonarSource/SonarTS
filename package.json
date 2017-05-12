@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc -p .",
+    "lint": "tslint -c tslint.json '{src,tests}/**/*.ts'",
     "test": "jest"
   },
   "repository": {
@@ -29,6 +30,7 @@
     "@types/jest": "^19.2.3",
     "@types/node": "^7.0.18",
     "jest": "^20.0.1",
-    "ts-jest": "^20.0.3"
+    "ts-jest": "^20.0.3",
+    "tslint": "^5.2.0"
   }
 }
