@@ -2,8 +2,8 @@
 
 ## Testing
 
-The awesome [http://facebook.github.io/jest/](jest) test runner is used. There is just a 
-[https://github.com/SonarSource/SonarTS/blob/master/jest.config.js](little configuration) required 
+The awesome [jest](http://facebook.github.io/jest/) test runner is used. There is just a 
+[little configuration](https://github.com/SonarSource/SonarTS/blob/master/jest.config.js) required 
 to enable TypeScript support.
 
 To run tests:
