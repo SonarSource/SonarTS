@@ -1,0 +1,34 @@
+{
+  "name": "tslint-sonarts",
+  "version": "0.0.1",
+  "description": "SonarTS rules for TSLint",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SonarSource/SonarTS.git"
+  },
+  "keywords": [
+    "sonarts",
+    "sonarqube",
+    "typescript",
+    "tslint"
+  ],
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/SonarSource/SonarTS/issues"
+  },
+  "homepage": "https://github.com/SonarSource/SonarTS",
+  "dependencies": {
+    "typescript": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^19.2.3",
+    "@types/node": "^7.0.18",
+    "jest": "^20.0.1",
+    "ts-jest": "^20.0.3"
+  }
+}
