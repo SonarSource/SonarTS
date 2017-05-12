@@ -4,6 +4,7 @@
   "description": "TSLint rules based on SonarTS",
   "main": "lib/index.js",
   "scripts": {
+    "build": "tsc -p .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/SonarSource/SonarTS/issues"
   },
-  "homepage": "https://github.com/SonarSource/SonarTS"
+  "homepage": "https://github.com/SonarSource/SonarTS",
+  "dependencies": {
+    "typescript": "^2.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^7.0.18"
+  }
 }
