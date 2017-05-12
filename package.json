@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc -p .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,9 @@
     "typescript": "^2.3.2"
   },
   "devDependencies": {
-    "@types/node": "^7.0.18"
+    "@types/jest": "^19.2.3",
+    "@types/node": "^7.0.18",
+    "jest": "^20.0.1",
+    "ts-jest": "^20.0.3"
   }
 }
