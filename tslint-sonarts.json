@@ -1,0 +1,6 @@
+{
+  "rulesDirectory": "./lib/rules",
+  "rules": {
+    "no-identical-expressions": true
+  }
+}
