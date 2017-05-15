@@ -23,27 +23,27 @@ import * as tslint from "tslint";
 import { parseErrorsFromMarkup } from "tslint/lib/test/parse";
 import * as ts from "typescript";
 
-export interface IPositionInFile {
+export interface PositionInFile {
   line: number;
   col: number;
 }
 
-export interface ILintError {
-  startPos: IPositionInFile;
-  endPos: IPositionInFile;
+export interface LintError {
+  startPos: PositionInFile;
+  endPos: PositionInFile;
   message: string;
 }
 
-export interface IRuleRunResult {
-  actualErrors: ILintError[];
-  expectedErrors: ILintError[];
+export interface RuleRunResult {
+  actualErrors: LintError[];
+  expectedErrors: LintError[];
 }
 
 /**
  * Run rule againts a lint file
  * Use from the test: runRule(Rule, __filename) if lint file name matches the test file name
  */
-export default function runRule(Rule: any, testFileName: string): IRuleRunResult {
+export default function runRule(Rule: any, testFileName: string): RuleRunResult {
   const options: tslint.IOptions = {
     disabledIntervals: [],
     ruleArguments: [],
