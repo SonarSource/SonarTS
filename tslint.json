@@ -10,7 +10,8 @@
         "no-console": [false],
         "no-bitwise": false,
         "arrow-parens": [false],
-        "max-classes-per-file": [false]
+        "max-classes-per-file": [false],
+        "object-literal-sort-keys": false
     },
     "rulesDirectory": []
 }
