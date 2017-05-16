@@ -12,5 +12,5 @@
         "arrow-parens": [false],
         "max-classes-per-file": [false]
     },
-    "rulesDirectory": ["lib/rules"]
+    "rulesDirectory": []
 }
