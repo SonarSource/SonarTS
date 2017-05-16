@@ -19,11 +19,12 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
+import { SonarRuleMetaData } from "../sonarRule";
 
 // https://jira.sonarsource.com/browse/RSPEC-1764
 
 export class Rule extends tslint.Rules.AbstractRule {
-  public static metadata: tslint.IRuleMetadata = {
+  public static metadata: SonarRuleMetaData = {
     ruleName: "no-identical-expressions",
     description: "Identical expressions should not be used on both sides of a binary operator",
     rationale: tslint.Utils.dedent`
@@ -35,6 +36,7 @@ export class Rule extends tslint.Rules.AbstractRule {
       This rule ignores *, +, and =.`,
     optionsDescription: "",
     options: null,
+    rspecKey: "RSPEC-1764",
     type: "functionality",
     typescriptOnly: false,
   };
