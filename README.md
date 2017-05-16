@@ -22,6 +22,7 @@ The ruling test is a special integration test which launches the analysis of a l
 ```
 
 To run unit tests in watch mode:
+
 ```
 yarn test -- --watch
 ```

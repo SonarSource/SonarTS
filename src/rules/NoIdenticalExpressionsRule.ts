@@ -51,6 +51,14 @@ export class Rule extends tslint.Rules.AbstractRule {
 }
 
 class Walker extends tslint.RuleWalker {
+
+  private static EQUALITY_OPERATOR_TOKEN_KINDS = new Set([
+    ts.SyntaxKind.EqualsEqualsToken, // ==
+    ts.SyntaxKind.EqualsEqualsEqualsToken, // ===
+    ts.SyntaxKind.ExclamationEqualsToken, // !=
+    ts.SyntaxKind.ExclamationEqualsEqualsToken, // !==
+  ]);
+
   // consider only binary expressions with these operators
   private static ALLOWED_OPERATOR_TOKEN_KINDS = new Set([
     ts.SyntaxKind.AmpersandAmpersandToken, // &&
@@ -95,7 +103,12 @@ class Walker extends tslint.RuleWalker {
   }
 
   private hasAllowedOperator(node: ts.BinaryExpression) {
-    return Walker.ALLOWED_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind);
+    return Walker.ALLOWED_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) ||
+      (Walker.EQUALITY_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) && !this.hasIdentifierOperands(node));
+  }
+
+  private hasIdentifierOperands(node: ts.BinaryExpression) {
+    return node.left.kind === ts.SyntaxKind.Identifier;
   }
 
   private isOneOntoOneShifting(node: ts.BinaryExpression) {

@@ -8,7 +8,7 @@
 //^^^^^^^^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator "&&"}}
 
   a == b || a == b 
-//^^^^^^^^^^^^^^^^  {{Correct one of the identical sub-expressions on both sides of operator "||"}}
+//^^^^^^^^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator "||"}}
 
   a > a;
 //^^^^^ {{Correct one of the identical sub-expressions on both sides of operator ">"}}
@@ -31,14 +31,19 @@
   a << a;
 //^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator "<<"}}
 
-  obj.foo() < obj.foo();
-//^^^^^^^^^^^^^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator "<"}}
+  obj.foo() == obj.foo();
+//^^^^^^^^^^^^^^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator "=="}}
 
-  foo(() => doSomething()) > foo(() => doSomething());
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator ">"}}
+  foo(() => doSomething()) === foo(() => doSomething());
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator "==="}}
 
-  null >= null;
-//^^^^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator ">="}}
+  (a == b) == (a == b);
+//^^^^^^^^^^^^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator "=="}}
+
+function f() {
+  if (+a !== +a);
+//    ^^^^^^^^^ {{Correct one of the identical sub-expressions on both sides of operator "!=="}}
+}
 
 /**
  * OK
@@ -74,10 +79,6 @@ a == b || a == c
 5 - x;
 
 x != y();
-
-function f() {
-  if (+a !== +a);
-}
 
 foo(), foo();
 
