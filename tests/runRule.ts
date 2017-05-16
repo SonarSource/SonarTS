@@ -82,7 +82,10 @@ function parseErrorsFromMarkup(source: string): LintError[] {
       const startColumn = line.indexOf("^");
       const endColumn = line.lastIndexOf("^") + 1;
       const message = line.match(/\{\{(.+)\}\}/)[1];
-      const errorLine = lineNum - 1;
+
+      // "- 1" because comment with error description is placed on the next line after error.
+      const errorLine = lineNumberedFromOne(lineNum - 1);
+
       errors.push({
         endPos: { col: endColumn, line: errorLine },
         message,
@@ -99,9 +102,13 @@ function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
     const startPosition = failure.getStartPosition().getLineAndCharacter();
     const endPosition = failure.getEndPosition().getLineAndCharacter();
     return {
-      endPos: { col: endPosition.character, line: endPosition.line },
+      endPos: { col: endPosition.character, line: lineNumberedFromOne(endPosition.line) },
       message: failure.getFailure(),
-      startPos: { col: startPosition.character, line: startPosition.line },
+      startPos: { col: startPosition.character, line: lineNumberedFromOne(startPosition.line) },
     };
   });
+}
+
+function lineNumberedFromOne(lineNumberedFromZero: number) {
+  return lineNumberedFromZero + 1;
 }
