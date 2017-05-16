@@ -3,7 +3,7 @@ node_js:
   - "7"
 
 script:
-  - yarn test && yarn lint
+  - yarn build && yarn test && yarn lint
 
 cache: yarn
 
