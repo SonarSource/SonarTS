@@ -53,8 +53,9 @@ export function runRule(Rule: any, lintFileName: string): RuleRunResult {
 export function runRuleOnRuling(Rule: any): string[] {
   const snapshot = [];
   const sourcesPath = path.join(__dirname, "../typescript-test-sources/src") + "/**/*.ts";
-  console.log(sourcesPath);
-  glob.sync(sourcesPath).forEach((sourceFileName: string) => {
+  const files = glob.sync(sourcesPath);
+  files.sort();
+  files.forEach((sourceFileName: string) => {
     const actualErrors = runRuleOnFile(Rule, sourceFileName);
     if (actualErrors.length > 0) {
       const file = getFileNameForSnapshot(sourceFileName);
