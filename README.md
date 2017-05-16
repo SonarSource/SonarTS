@@ -11,6 +11,11 @@ To run tests:
 yarn test
 ```
 
+To run ruling:
+```
+yarn ruling
+```
+
 To run tests in watch mode:
 ```
 yarn test -- --watch

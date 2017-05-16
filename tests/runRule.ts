@@ -18,6 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as fs from "fs";
+import * as glob from "glob";
 import * as path from "path";
 import * as tslint from "tslint";
 import * as ts from "typescript";
@@ -42,7 +43,29 @@ export interface RuleRunResult {
  * Run rule againts a lint file
  * Use from the test: runRule(Rule, __filename) if lint file name matches the test file name
  */
-export default function runRule(Rule: any, testFileName: string): RuleRunResult {
+export function runRule(Rule: any, lintFileName: string): RuleRunResult {
+  const source = fs.readFileSync(lintFileName, "utf-8");
+  const actualErrors = runRuleOnFile(Rule, lintFileName);
+  const expectedErrors = parseErrorsFromMarkup(source);
+  return { actualErrors, expectedErrors };
+}
+
+export function runRuleOnRuling(Rule: any): string[] {
+  const snapshot = [];
+  const sourcesPath = path.join(__dirname, "../typescript-test-sources/src") + "/**/*.ts";
+  console.log(sourcesPath);
+  glob.sync(sourcesPath).forEach((sourceFileName: string) => {
+    const actualErrors = runRuleOnFile(Rule, sourceFileName);
+    if (actualErrors.length > 0) {
+      const file = getFileNameForSnapshot(sourceFileName);
+      const lines = actualErrors.map((error) => error.startPos.line).join();
+      snapshot.push(`${file}: ${lines}`);
+    }
+  });
+  return snapshot;
+}
+
+function runRuleOnFile(Rule: any, file: string) {
   const options: tslint.IOptions = {
     disabledIntervals: [],
     ruleArguments: [],
@@ -51,34 +74,26 @@ export default function runRule(Rule: any, testFileName: string): RuleRunResult 
   };
 
   const rule = new Rule(options);
-  const lintFileName = getLintFileName(testFileName);
-  const source = fs.readFileSync(lintFileName, "utf-8");
+  const source = fs.readFileSync(file, "utf-8");
 
   let failures: tslint.RuleFailure[];
 
   if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
-    const program = ts.createProgram([lintFileName], ts.getDefaultCompilerOptions());
-    failures = rule.applyWithProgram(program.getSourceFile(lintFileName), program);
+    const program = ts.createProgram([file], ts.getDefaultCompilerOptions());
+    failures = rule.applyWithProgram(program.getSourceFile(file), program);
 
   } else {
-    failures = rule.apply(tslint.getSourceFile(lintFileName, source));
+    failures = rule.apply(tslint.getSourceFile(file, source));
   }
 
-  const actualErrors = mapToLintErrors(failures);
-  const expectedErrors = parseErrorsFromMarkup(source);
-  return { actualErrors, expectedErrors };
-}
-
-function getLintFileName(testFileName: string) {
-  const baseName = path.basename(testFileName, ".test.ts");
-  return path.join(__dirname, `./rules/${baseName}/${baseName}.lint.ts`);
+  return mapToLintErrors(failures);
 }
 
 function parseErrorsFromMarkup(source: string): LintError[] {
   const errors = [];
 
   source.split("\n").forEach((line, lineNum) => {
-    if (line.indexOf("^") !== -1) {
+    if (/\^.*{{/.test(line)) {
       const startColumn = line.indexOf("^");
       const endColumn = line.lastIndexOf("^") + 1;
       const message = line.match(/\{\{(.+)\}\}/)[1];
@@ -111,4 +126,10 @@ function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
 
 function lineNumberedFromOne(lineNumberedFromZero: number) {
   return lineNumberedFromZero + 1;
+}
+
+function getFileNameForSnapshot(path: string) {
+  const marker = "/typescript-test-sources/";
+  const pos = path.indexOf(marker);
+  return path.substr(pos + marker.length);
 }
