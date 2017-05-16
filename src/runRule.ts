@@ -20,7 +20,6 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as tslint from "tslint";
-import { parseErrorsFromMarkup } from "tslint/lib/test/parse";
 import * as ts from "typescript";
 
 export interface PositionInFile {
@@ -50,31 +49,52 @@ export default function runRule(Rule: any, testFileName: string): RuleRunResult 
     ruleName: "",
     ruleSeverity: "error",
   };
+
   const rule = new Rule(options);
   const lintFileName = getLintFileName(testFileName);
-  const { source, sourceWithFailures } = getSources(lintFileName);
-  const sourceFile = tslint.getSourceFile(testFileName, source);
-  const failures = rule.apply(sourceFile);
+  const source = fs.readFileSync(lintFileName, "utf-8");
+
+  let failures: tslint.RuleFailure[];
+
+  if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
+    const program = ts.createProgram([lintFileName], ts.getDefaultCompilerOptions());
+    failures = rule.applyWithProgram(program.getSourceFile(lintFileName), program);
+
+  } else {
+    failures = rule.apply(tslint.getSourceFile(lintFileName, source));
+  }
+
   const actualErrors = mapToLintErrors(failures);
-  const expectedErrors = parseErrorsFromMarkup(sourceWithFailures);
+  const expectedErrors = parseErrorsFromMarkup(source);
   return { actualErrors, expectedErrors };
 }
 
 function getLintFileName(testFileName: string) {
   const baseName = path.basename(testFileName, ".test.ts");
-  return path.join(__dirname, `./rules/${baseName}.lint`);
+  return path.join(__dirname, `./rules/${baseName}/${baseName}.lint.ts`);
 }
 
-function getSources(fileName: string) {
-  const sourceWithFailures = fs.readFileSync(fileName, "utf-8");
-  const source = sourceWithFailures
-    .split("\n")
-    .filter((line) => line.indexOf("~") === -1)
-    .join("\n");
-  return { source, sourceWithFailures };
+function parseErrorsFromMarkup(source: string): LintError[] {
+  const errors = [];
+
+  source.split("\n").forEach((line, lineNum) => {
+    if (line.indexOf("^") !== -1) {
+      const startColumn = line.indexOf("^");
+      const endColumn = line.lastIndexOf("^") + 1;
+      const message = line.match(/\{\{(.+)\}\}/)[1];
+      const errorLine = lineNum - 1;
+      errors.push({
+        endPos: { col: endColumn, line: errorLine },
+        message,
+        startPos: { col: startColumn, line: errorLine },
+      });
+    }
+  });
+
+  return errors;
 }
 
-function mapToLintErrors(failures: tslint.RuleFailure[]) {
+function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
   return failures.map((failure) => {
     const startPosition = failure.getStartPosition().getLineAndCharacter();
     const endPosition = failure.getEndPosition().getLineAndCharacter();
