@@ -3,5 +3,5 @@ module.exports = {
   transform: {
     '^.+\\.ts$': '<rootDir>/node_modules/ts-jest/preprocessor.js'
   },
-  testMatch: ['<rootDir>/tests/*']
+  testMatch: ['<rootDir>/tests/**/*.test.ts']
 };
