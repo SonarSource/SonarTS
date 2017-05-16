@@ -5,7 +5,12 @@
     ],
     "jsRules": {},
     "rules": {
-        "interface-name": [true, "never-prefix"]
+        "interface-name": [true, "never-prefix"],
+        "member-ordering": [false],
+        "no-console": [false],
+        "no-bitwise": false,
+        "arrow-parens": [false],
+        "max-classes-per-file": [false]
     },
-    "rulesDirectory": []
+    "rulesDirectory": ["lib/rules"]
 }
