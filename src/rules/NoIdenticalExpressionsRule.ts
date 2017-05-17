@@ -60,7 +60,7 @@ class Walker extends tslint.RuleWalker {
   ]);
 
   // consider only binary expressions with these operators
-  private static ALLOWED_OPERATOR_TOKEN_KINDS = new Set([
+  private static RELEVANT_OPERATOR_TOKEN_KINDS = new Set([
     ts.SyntaxKind.AmpersandAmpersandToken, // &&
     ts.SyntaxKind.BarBarToken, // ||
 
@@ -88,7 +88,7 @@ class Walker extends tslint.RuleWalker {
 
   public visitBinaryExpression(node: ts.BinaryExpression) {
     if (
-      this.hasAllowedOperator(node) &&
+      this.hasRelevantOperator(node) &&
       !this.isOneOntoOneShifting(node) &&
       this.areEquivalent(node.left, node.right)
     ) {
@@ -102,8 +102,8 @@ class Walker extends tslint.RuleWalker {
     super.visitBinaryExpression(node);
   }
 
-  private hasAllowedOperator(node: ts.BinaryExpression) {
-    return Walker.ALLOWED_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) ||
+  private hasRelevantOperator(node: ts.BinaryExpression) {
+    return Walker.RELEVANT_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) ||
       (Walker.EQUALITY_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) && !this.hasIdentifierOperands(node));
   }
 
