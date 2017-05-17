@@ -12,7 +12,30 @@
             "stopOnEntry": false,
             "args": [
                 "--runInBand",
-                "--no-cache"
+                "--no-cache",
+                "-t='^((?!ruling).)*$'"
+            ],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        {
+            "name": "Debug Ruling",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/jest-cli/bin/jest.js",
+            "stopOnEntry": false,
+            "args": [
+                "--runInBand",
+                "--no-cache",
+                "-t=ruling"
+                //,"--testMatch=**/NoIgnoredReturnRule.test.ts"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": null,
