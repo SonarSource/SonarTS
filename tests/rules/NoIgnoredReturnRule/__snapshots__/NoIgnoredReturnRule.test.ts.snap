@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ruling 1`] = `
+Array [
+  "src/angular/packages/platform-server/integrationtest/e2e/util.ts: 16",
+  "src/angular/packages/examples/_common/e2e_util.ts: 17",
+  "src/angular/packages/language-service/test/test_utils.ts: 266",
+  "src/vscode/extensions/typescript/src/utils/projectStatus.ts: 201",
+  "src/vscode/src/vs/workbench/api/node/extHostTerminalService.ts: 164",
+]
+`;
