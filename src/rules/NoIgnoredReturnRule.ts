@@ -40,7 +40,8 @@ class Walker extends Lint.ProgramAwareRuleWalker {
             "filter",
             "findIndex",
             "keys",
-            "map",
+            // exclude "map" as it's often used in place of "forEach"
+            // "map",
             "values",
             "find",
             "reduce",
@@ -218,15 +219,18 @@ class Walker extends Lint.ProgramAwareRuleWalker {
             return typeAsString;
         }
 
-        const name = baseType.getSymbol().getName();
-        switch (name) {
-            case "Array":
-            case "Date":
-            case "Math":
-            case "RegExp":
-                return name.toLowerCase();
-            default:
-                return null;
+        if (type.getSymbol()) {
+            const name = type.getSymbol().getName();
+            switch (name) {
+                case "Array":
+                case "Date":
+                case "Math":
+                case "RegExp":
+                    return name.toLowerCase();
+            }
         }
+
+        return null;
+
     }
 }

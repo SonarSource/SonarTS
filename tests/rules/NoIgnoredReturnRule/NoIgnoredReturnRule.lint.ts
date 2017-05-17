@@ -19,6 +19,8 @@ function methodsOnArray(arr1: any[]) {
 
   arr1.join(",");
 //^^^^^^^^^^^^^^    {{The return value of "join" must be used.}}
+
+  arr.map(function(x){ }); // OK, ignore map
 }
 
 function methodsOnString() {
@@ -62,4 +64,8 @@ function noSupportForUserTypes() {
   }
 
   (new A()).methodWithoutSideEffect(); // OK
+}
+
+function unknownType(x: any) {
+  x.foo();
 }
