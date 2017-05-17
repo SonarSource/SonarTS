@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc -p .",
     "lint": "tslint -c tslint.json '{src,tests}/**/*.ts'",
-    "test": "jest"
+    "test": "jest -t='^((?!ruling).)*$'",
+    "ruling": "jest -t ruling",
+    "test-all": "jest"
   },
   "repository": {
     "type": "git",
@@ -27,8 +29,10 @@
     "typescript": "^2.3.2"
   },
   "devDependencies": {
+    "@types/glob": "^5.0.30",
     "@types/jest": "^19.2.3",
     "@types/node": "^7.0.18",
+    "glob": "^7.1.1",
     "jest": "^20.0.1",
     "ts-jest": "^20.0.3",
     "tslint": "^5.2.0"

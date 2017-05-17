@@ -1,0 +1,3 @@
+[submodule "typescript-test-sources"]
+	path = typescript-test-sources
+	url = https://github.com/SonarSource/typescript-test-sources

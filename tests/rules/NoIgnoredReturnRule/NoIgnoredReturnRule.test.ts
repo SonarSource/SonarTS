@@ -1,5 +1,5 @@
 import { Rule } from "../../../src/rules/NoIgnoredReturnRule";
-import runRule from "../../runRule";
+import { runRule } from "../../runRule";
 
 it("test", () => {
   const result = runRule(Rule, __filename);
