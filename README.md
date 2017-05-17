@@ -6,22 +6,27 @@ The awesome [jest](http://facebook.github.io/jest/) test runner is used. There i
 [little configuration](https://github.com/SonarSource/SonarTS/blob/master/jest.config.js) required 
 to enable TypeScript support.
 
-To run tests:
+To run unit tests:
 ```
 yarn test
 ```
 
-To run ruling:
+To run ruling tests:
 ```
 yarn ruling
 ```
+The ruling test is a special integration test which launches the analysis of a large code base, and then compares those results to the set of expected issues (stored as snapshot files). To have this code base locally:
+```
+ git submodule init
+ git submodule update
+```
 
-To run tests in watch mode:
+To run unit tests in watch mode:
 ```
 yarn test -- --watch
 ```
 
-And finally to run tests with coverage:
+And finally to run unit tests with coverage:
 ```
 yarn test -- --coverage
 ```
