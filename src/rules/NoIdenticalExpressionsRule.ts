@@ -61,10 +61,6 @@ class Walker extends tslint.RuleWalker {
 
   // consider only binary expressions with these operators
   private static ALLOWED_OPERATOR_TOKEN_KINDS = new Set([
-    ts.SyntaxKind.EqualsEqualsToken, // ==
-    ts.SyntaxKind.EqualsEqualsEqualsToken, // ===
-    ts.SyntaxKind.ExclamationEqualsToken, // !=
-    ts.SyntaxKind.ExclamationEqualsEqualsToken, // !==
     ts.SyntaxKind.AmpersandAmpersandToken, // &&
     ts.SyntaxKind.BarBarToken, // ||
 

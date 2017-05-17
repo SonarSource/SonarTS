@@ -52,6 +52,14 @@ function f() {
 
 if (1 << 1) {}
 
+a == a;
+
+a != a;
+
+a === a;
+
+a !== a;
+
 a == b;
 
 a != b;
@@ -72,13 +80,10 @@ a == b || a == c
 
 x != y();
 
-<<<<<<< 3624ffb0d37161e8618bfacf3f48446d03efd69e
-=======
 function f() {
   if (+a !== +b);
 }
 
->>>>>>> Improve no-identical-expression by considering equality operators
 foo(), foo();
 
 if (Foo instanceof Foo) {
