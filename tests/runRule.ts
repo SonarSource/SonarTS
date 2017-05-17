@@ -23,6 +23,13 @@ import * as path from "path";
 import * as tslint from "tslint";
 import * as ts from "typescript";
 
+const RULE_OPTIONS: tslint.IOptions = {
+  disabledIntervals: [],
+  ruleArguments: [],
+  ruleName: "",
+  ruleSeverity: "error",
+};
+
 export interface PositionInFile {
   line: number;
   col: number;
@@ -53,29 +60,17 @@ export function runRule(Rule: any, testFileName: string): RuleRunResult {
 
 export function runRuleOnRuling(Rule: any): string[] {
   const snapshot = [];
-  const sourcesPath = path.join(__dirname, "../typescript-test-sources/src") + "/**/*.ts";
-  const files = glob.sync(sourcesPath);
-  files.sort();
-  files.forEach((sourceFileName: string) => {
-    const actualErrors = runRuleOnFile(Rule, sourceFileName);
-    if (actualErrors.length > 0) {
-      const file = getFileNameForSnapshot(sourceFileName);
-      const lines = actualErrors.map((error) => error.startPos.line).join();
-      snapshot.push(`${file}: ${lines}`);
-    }
-  });
+  const tsconfigPaths = path.join(__dirname, "../typescript-test-sources/src") + "/**/tsconfig.json";
+  const tsconfigFiles = glob.sync(tsconfigPaths);
+
+  tsconfigFiles.sort();
+  tsconfigFiles.forEach((tsconfigFileName: string) => runRuleOnProject(Rule, tsconfigFileName, snapshot));
   return snapshot;
 }
 
-function runRuleOnFile(Rule: any, file: string) {
-  const options: tslint.IOptions = {
-    disabledIntervals: [],
-    ruleArguments: [],
-    ruleName: "",
-    ruleSeverity: "error",
-  };
-
-  const rule = new Rule(options);
+// used for unit test
+function runRuleOnFile(Rule: any, file: string): LintError[] {
+  const rule = new Rule(RULE_OPTIONS);
   const source = fs.readFileSync(file, "utf-8");
 
   let failures: tslint.RuleFailure[];
@@ -86,6 +81,36 @@ function runRuleOnFile(Rule: any, file: string) {
 
   } else {
     failures = rule.apply(tslint.getSourceFile(file, source));
+  }
+
+  return mapToLintErrors(failures);
+}
+
+// used for ruling test
+function runRuleOnProject(Rule: any, tsconfigFileName: string, snapshot: string[]): void {
+  const program = tslint.Linter.createProgram(tsconfigFileName);
+  program.getSourceFiles().forEach((sourceFile) => {
+    if (!sourceFile.isDeclarationFile) {
+      const actualErrors = runRuleOnProjectFile(Rule, sourceFile, program);
+      if (actualErrors.length > 0) {
+        const file = getFileNameForSnapshot(sourceFile.fileName);
+        const lines = actualErrors.map((error) => error.startPos.line).join();
+        snapshot.push(`${file}: ${lines}`);
+      }
+    }
+  });
+}
+
+// used for ruling test
+function runRuleOnProjectFile(Rule: any, sourceFile: ts.SourceFile, program: ts.Program) {
+  const rule = new Rule(RULE_OPTIONS);
+  let failures: tslint.RuleFailure[];
+
+  if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
+    failures = rule.applyWithProgram(sourceFile, program);
+
+  } else {
+    failures = rule.apply(sourceFile);
   }
 
   return mapToLintErrors(failures);
