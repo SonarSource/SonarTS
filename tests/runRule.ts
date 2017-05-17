@@ -43,7 +43,8 @@ export interface RuleRunResult {
  * Run rule againts a lint file
  * Use from the test: runRule(Rule, __filename) if lint file name matches the test file name
  */
-export function runRule(Rule: any, lintFileName: string): RuleRunResult {
+export function runRule(Rule: any, testFileName: string): RuleRunResult {
+  const lintFileName = getLintFileName(testFileName);
   const source = fs.readFileSync(lintFileName, "utf-8");
   const actualErrors = runRuleOnFile(Rule, lintFileName);
   const expectedErrors = parseErrorsFromMarkup(source);
@@ -111,6 +112,11 @@ function parseErrorsFromMarkup(source: string): LintError[] {
   });
 
   return errors;
+}
+
+function getLintFileName(testFileName: string) {
+  const baseName = path.basename(testFileName, ".test.ts");
+  return path.join(__dirname, `./rules/${baseName}/${baseName}.lint.ts`);
 }
 
 function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
