@@ -202,7 +202,9 @@ class Walker extends Lint.ProgramAwareRuleWalker {
             const object = propertyAccess.expression;
             const objectType = this.getTypeChecker().getTypeAtLocation(object);
 
-            if (this.methodWithNoSideEffect(objectType, methodName)) {
+            if (this.methodWithNoSideEffect(objectType, methodName)
+                && !this.isReplaceWithCallBack(methodName, node.arguments)) {
+
                 this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Walker.message(methodName)));
             }
         }
@@ -239,5 +241,15 @@ class Walker extends Lint.ProgramAwareRuleWalker {
 
         return null;
 
+    }
+
+    private isReplaceWithCallBack(methodName: string, callArguments: ts.NodeArray<ts.Expression>): boolean {
+        if (methodName === "replace" && callArguments.length > 1) {
+            const secondArgumentKind = callArguments[1].kind;
+            return secondArgumentKind === ts.SyntaxKind.ArrowFunction
+            || secondArgumentKind === ts.SyntaxKind.FunctionExpression;
+        }
+
+        return false;
     }
 }

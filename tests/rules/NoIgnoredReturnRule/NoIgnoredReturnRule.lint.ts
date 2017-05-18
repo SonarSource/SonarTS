@@ -35,6 +35,13 @@ function methodsOnString() {
 
   "abc".concat("bcd");
 //^^^^^^^^^^^^^^^^^^^    {{The return value of "concat" must be used.}}
+
+  "abc".replace(/ab/, "d");
+//^^^^^^^^^^^^^^^^^^^^^^^^    {{The return value of "replace" must be used.}}
+
+  // "replace" with callback is OK
+  "abc".replace(/ab/, () => "");
+  "abc".replace(/ab/, function() {return ""});
 }
 
 function methodsOnNumbers() {
