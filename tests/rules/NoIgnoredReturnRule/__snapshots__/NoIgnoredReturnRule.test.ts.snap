@@ -5,7 +5,6 @@ Array [
   "src/TypeScript/src/server/client.ts: 481,483",
   "src/angular/packages/platform-server/integrationtest/e2e/util.ts: 16",
   "src/angular/packages/examples/_common/e2e_util.ts: 17",
-  "src/angular/packages/language-service/test/test_utils.ts: 266",
   "src/vscode/build/lib/reporter.ts: 45",
   "src/vscode/build/lib/i18n.ts: 442,970,971",
   "src/vscode/extensions/typescript/src/utils/projectStatus.ts: 201",
