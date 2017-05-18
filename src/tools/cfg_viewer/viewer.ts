@@ -1,7 +1,7 @@
 import * as ts from "typescript";
 import {Network} from "vis";
-import {ControlFlowGraph} from "../../cfg/cfg";
-import {toVisData} from "./transformer";
+import {CfgBlock, ControlFlowGraph} from "../../cfg/cfg";
+import toVisData from "./transformer";
 
 class Viewer {
 
@@ -13,10 +13,21 @@ class Viewer {
 
   public show(source: string) {
     const sourceFile = ts.createSourceFile("cfg.ts", source, ts.ScriptTarget.ES2015);
-    const cfg = new ControlFlowGraph(sourceFile);
-    const graph = new Network(this.container, toVisData(cfg), {height: "500px", width: "1000px"});
-  }
 
+    const graph = ControlFlowGraph.fromSource(sourceFile.statements);
+
+    const visGraph = new Network(this.container, toVisData(graph),
+      {height: "500px", width: "1000px", nodes: {shape: "box"}},
+    );
+  }
+}
+
+let blockCounter = 0;
+function block(...elements: string[]): CfgBlock {
+  const block = new CfgBlock(blockCounter);
+  blockCounter++;
+  elements.forEach(e => block.addElement({getText() { return e; }} as any));
+  return block;
 }
 
 const container = document.getElementById("cfg-container");
