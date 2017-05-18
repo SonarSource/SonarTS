@@ -1,10 +1,47 @@
 import * as ts from "typescript";
 
-export class CFG {
-  private source: ts.SourceFile;
+class CfgBuilder {
 
-  constructor(source: ts.SourceFile) {
-    this.source = source;
+  private currentBlock: CfgBlock;
+
+}
+
+export class ControlFlowGraph {
+  private blocks: CfgBlock[] = [];
+  private startBlock: CfgBlock;
+  private endBlock: CfgBlock;
+
+  public addBlock(block: CfgBlock) {
+    this.blocks.push(block);
   }
 
+  public getBlocks(): CfgBlock[] {
+    return this.blocks;
+  }
+}
+
+export class CfgBlock {
+  public id: number;
+  private elements: ts.Node[] = [];
+  private successors: CfgBlock[] = [];
+
+  constructor(id: number) {
+    this.id = id;
+  }
+
+  public addElement(element: ts.Expression): void {
+    this.elements.push(element);
+  }
+
+  public getElements(): ts.Node[] {
+    return this.elements;
+  }
+
+  public addSuccessor(successor: CfgBlock): void {
+    this.successors.push(successor);
+  }
+
+  public getSuccessors(): CfgBlock[] {
+    return this.successors;
+  }
 }

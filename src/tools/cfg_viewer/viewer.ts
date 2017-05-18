@@ -1,5 +1,6 @@
+import * as ts from "typescript";
 import {Network} from "vis";
-import {CFG} from "../../cfg/cfg";
+import {ControlFlowGraph} from "../../cfg/cfg";
 import {toVisData} from "./transformer";
 
 class Viewer {
@@ -11,11 +12,20 @@ class Viewer {
   }
 
   public show(source: string) {
-    const graph = new Network(this.container, toVisData(), {});
+    const sourceFile = ts.createSourceFile("cfg.ts", source, ts.ScriptTarget.ES2015);
+    const cfg = new ControlFlowGraph(sourceFile);
+    const graph = new Network(this.container, toVisData(cfg), {height: "500px", width: "1000px"});
   }
 
 }
 
-const container = document.getElementById('cfg-container');
+const container = document.getElementById("cfg-container");
 const viewer = new Viewer(container);
-viewer.show("if(a) { b = 3; } else { b = 1; }");
+const button = document.getElementById("refresh-btn");
+if (button) {
+  button.onclick = (event) => {
+    const sourceCode = document.getElementById("source-code") as HTMLTextAreaElement;
+    // tslint:disable-next-line:curly
+    if (sourceCode) viewer.show(sourceCode.value);
+  };
+}
