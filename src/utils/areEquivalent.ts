@@ -25,6 +25,7 @@ const COMPARED_BY_TEXT = new Set([
   ts.SyntaxKind.StringLiteral,
   ts.SyntaxKind.RegularExpressionLiteral,
   ts.SyntaxKind.Identifier,
+  ts.SyntaxKind.NoSubstitutionTemplateLiteral,
   ts.SyntaxKind.TemplateHead,
   ts.SyntaxKind.TemplateMiddle,
   ts.SyntaxKind.TemplateTail,
