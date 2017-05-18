@@ -26,6 +26,15 @@ export class Rule extends Lint.Rules.TypedRule {
 }
 
 class Walker extends Lint.ProgramAwareRuleWalker {
+
+    private static message(methodName: string) {
+        if (methodName === "map") {
+            return `Consider using "forEach" instead of "map" as its return value is not being used here.`;
+        } else {
+            return `The return value of "${methodName}" must be used.`;
+        }
+    }
+
     private METHODS_WITHOUT_SIDE_EFFECTS: { [index: string]: Set<string> } = {
         array: new Set([
             "concat",
@@ -40,8 +49,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
             "filter",
             "findIndex",
             "keys",
-            // exclude "map" as it's often used in place of "forEach"
-            // "map",
+            "map",
             "values",
             "find",
             "reduce",
@@ -195,8 +203,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
             const objectType = this.getTypeChecker().getTypeAtLocation(object);
 
             if (this.methodWithNoSideEffect(objectType, methodName)) {
-                const msg = `The return value of "${methodName}" must be used.`;
-                this.addFailure(this.createFailure(node.getStart(), node.getWidth(), msg));
+                this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Walker.message(methodName)));
             }
         }
 

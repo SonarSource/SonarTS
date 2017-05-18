@@ -20,7 +20,8 @@ function methodsOnArray(arr1: any[]) {
   arr1.join(",");
 //^^^^^^^^^^^^^^    {{The return value of "join" must be used.}}
 
-  arr.map(function(x){ }); // OK, ignore map
+  arr.map(function(x){ });
+//^^^^^^^^^^^^^^^^^^^^^^^    {{Consider using "forEach" instead of "map" as its return value is not being used here.}}
 }
 
 function methodsOnString() {
