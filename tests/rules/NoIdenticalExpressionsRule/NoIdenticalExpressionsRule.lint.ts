@@ -116,4 +116,6 @@ function okWhenDifferentOperands() {
   window[`${prefix}CancelAnimationFrame`] || window[`${prefix}CancelRequestAnimationFrame`];
 
   `${key}CancelAnimationFrame` in window || `${key}CancelRequestAnimationFrame` in window;
+
+  first(`const`) || first(`var`)
 }

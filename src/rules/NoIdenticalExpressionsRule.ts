@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import areEquivalent from "../utils/areEquivalent";
 
 // https://jira.sonarsource.com/browse/RSPEC-1764
 
@@ -75,22 +76,11 @@ class Walker extends tslint.RuleWalker {
     ts.SyntaxKind.GreaterThanEqualsToken, // >=
   ]);
 
-  // compare literals and identifiers by actual text
-  private static COMPARED_BY_TEXT = new Set([
-    ts.SyntaxKind.NumericLiteral,
-    ts.SyntaxKind.StringLiteral,
-    ts.SyntaxKind.RegularExpressionLiteral,
-    ts.SyntaxKind.Identifier,
-    ts.SyntaxKind.TemplateHead,
-    ts.SyntaxKind.TemplateMiddle,
-    ts.SyntaxKind.TemplateTail,
-  ]);
-
   public visitBinaryExpression(node: ts.BinaryExpression) {
     if (
       this.hasRelevantOperator(node) &&
       !this.isOneOntoOneShifting(node) &&
-      this.areEquivalent(node.left, node.right)
+      areEquivalent(node.left, node.right)
     ) {
       this.addFailure(this.createFailure(
         node.getStart(),
@@ -117,31 +107,5 @@ class Walker extends tslint.RuleWalker {
       node.left.kind === ts.SyntaxKind.NumericLiteral &&
       node.left.getText() === "1"
     );
-  }
-
-  private areEquivalent(left: ts.Node, right: ts.Node) {
-    if (left.kind !== right.kind) {
-      return false;
-    }
-
-    const childCount = left.getChildCount();
-
-    if (childCount !== right.getChildCount()) {
-      return false;
-    }
-
-    if (childCount === 0 && Walker.COMPARED_BY_TEXT.has(left.kind)) {
-      return left.getText() === right.getText();
-    }
-
-    for (let i = 0; i < childCount; i++) {
-      const leftChild = left.getChildAt(i);
-      const rightChild = right.getChildAt(i);
-      if (!this.areEquivalent(leftChild, rightChild)) {
-        return false;
-      }
-    }
-
-    return true;
   }
 }
