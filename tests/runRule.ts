@@ -50,22 +50,12 @@ export interface RuleRunResult {
  * Run rule againts a lint file
  * Use from the test: runRule(Rule, __filename) if lint file name matches the test file name
  */
-export function runRule(Rule: any, testFileName: string): RuleRunResult {
+export default function runRule(Rule: any, testFileName: string): RuleRunResult {
   const lintFileName = getLintFileName(testFileName);
   const source = fs.readFileSync(lintFileName, "utf-8");
   const actualErrors = runRuleOnFile(Rule, lintFileName);
   const expectedErrors = parseErrorsFromMarkup(source);
   return { actualErrors, expectedErrors };
-}
-
-export function runRuleOnRuling(Rule: any): string[] {
-  const snapshot = [];
-  const tsconfigPaths = path.join(__dirname, "../typescript-test-sources/src") + "/**/tsconfig.json";
-  const tsconfigFiles = glob.sync(tsconfigPaths);
-
-  tsconfigFiles.sort();
-  tsconfigFiles.forEach((tsconfigFileName: string) => runRuleOnProject(Rule, tsconfigFileName, snapshot));
-  return snapshot;
 }
 
 // used for unit test
@@ -81,36 +71,6 @@ function runRuleOnFile(Rule: any, file: string): LintError[] {
 
   } else {
     failures = rule.apply(tslint.getSourceFile(file, source));
-  }
-
-  return mapToLintErrors(failures);
-}
-
-// used for ruling test
-function runRuleOnProject(Rule: any, tsconfigFileName: string, snapshot: string[]): void {
-  const program = tslint.Linter.createProgram(tsconfigFileName);
-  program.getSourceFiles().forEach((sourceFile) => {
-    if (!sourceFile.isDeclarationFile) {
-      const actualErrors = runRuleOnProjectFile(Rule, sourceFile, program);
-      if (actualErrors.length > 0) {
-        const file = getFileNameForSnapshot(sourceFile.fileName);
-        const lines = actualErrors.map((error) => error.startPos.line).join();
-        snapshot.push(`${file}: ${lines}`);
-      }
-    }
-  });
-}
-
-// used for ruling test
-function runRuleOnProjectFile(Rule: any, sourceFile: ts.SourceFile, program: ts.Program) {
-  const rule = new Rule(RULE_OPTIONS);
-  let failures: tslint.RuleFailure[];
-
-  if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
-    failures = rule.applyWithProgram(sourceFile, program);
-
-  } else {
-    failures = rule.apply(sourceFile);
   }
 
   return mapToLintErrors(failures);
@@ -158,10 +118,4 @@ function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
 
 function lineNumberedFromOne(lineNumberedFromZero: number) {
   return lineNumberedFromZero + 1;
-}
-
-function getFileNameForSnapshot(path: string) {
-  const marker = "/typescript-test-sources/";
-  const pos = path.indexOf(marker);
-  return path.substr(pos + marker.length);
 }

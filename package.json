@@ -6,9 +6,8 @@
   "scripts": {
     "build": "tsc -p .",
     "lint": "tslint -c tslint.json '{src,tests}/**/*.ts'",
-    "test": "jest -t='^((?!ruling).)*$'",
-    "ruling": "jest -t ruling",
-    "test-all": "jest",
+    "test": "jest",
+    "ruling": "ts-node tests/ruling/index.ts",
     "license-check": "license-check"
   },
   "repository": {
@@ -29,11 +28,16 @@
   "devDependencies": {
     "@types/glob": "^5.0.30",
     "@types/jest": "^19.2.3",
+    "@types/lodash": "^4.14.64",
+    "@types/minimist": "^1.2.0",
     "@types/node": "^7.0.18",
     "glob": "^7.1.1",
     "jest": "^20.0.1",
     "license-check": "^1.1.5",
+    "lodash": "^4.17.4",
+    "minimist": "^1.2.0",
     "ts-jest": "^20.0.3",
+    "ts-node": "^3.0.4",
     "tslint": "^5.2.0",
     "typescript": "^2.3.2"
   },

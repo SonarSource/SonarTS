@@ -1,0 +1,4 @@
+src/angular/packages/compiler-cli/src/codegen.ts: 47
+src/vscode/src/vs/editor/browser/view/viewPart.ts: 47
+src/vscode/src/vs/editor/contrib/comment/common/lineCommentCommand.ts: 122
+src/vscode/src/vs/editor/contrib/dnd/common/dragAndDropCommand.ts: 85
