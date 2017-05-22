@@ -18,13 +18,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { Rule } from "../../../src/rules/NoIdenticalExpressionsRule";
-import { runRule, runRuleOnRuling } from "../../runRule";
+import runRule from "../../runRule";
 
 it("raises error", () => {
   const { actualErrors, expectedErrors } = runRule(Rule, __filename);
   expect(actualErrors).toEqual(expectedErrors);
-});
-
-it("ruling", () => {
-  expect(runRuleOnRuling(Rule)).toMatchSnapshot();
 });
