@@ -20,11 +20,11 @@
 import { Rule } from "../../../src/rules/NoIgnoredReturnRule";
 import { runRule, runRuleOnRuling } from "../../runRule";
 
-it("test", () => {
-  const result = runRule(Rule, __filename);
-  expect(result.actualErrors).toEqual(result.expectedErrors);
+it("unit test", () => {
+  const { actualErrors, expectedErrors } = runRule(Rule, __filename);
+  expect(actualErrors).toEqual(expectedErrors);
 });
 
-it("ruling", () => {
+it("ruling test", () => {
   expect(runRuleOnRuling(Rule)).toMatchSnapshot();
 });

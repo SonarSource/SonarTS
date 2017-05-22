@@ -237,6 +237,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
             const methods = this.METHODS_WITHOUT_SIDE_EFFECTS[typeAsString];
             return methods && methods.has(methodName);
         }
+
         return false;
     }
 
@@ -259,7 +260,6 @@ class Walker extends Lint.ProgramAwareRuleWalker {
         }
 
         return null;
-
     }
 
     private isReplaceWithCallBack(methodName: string, callArguments: ts.NodeArray<ts.Expression>): boolean {

@@ -55,6 +55,7 @@ export function runRule(Rule: any, testFileName: string): RuleRunResult {
   const source = fs.readFileSync(lintFileName, "utf-8");
   const actualErrors = runRuleOnFile(Rule, lintFileName);
   const expectedErrors = parseErrorsFromMarkup(source);
+
   return { actualErrors, expectedErrors };
 }
 
@@ -65,6 +66,7 @@ export function runRuleOnRuling(Rule: any): string[] {
 
   tsconfigFiles.sort();
   tsconfigFiles.forEach((tsconfigFileName: string) => runRuleOnProject(Rule, tsconfigFileName, snapshot));
+
   return snapshot;
 }
 
@@ -163,5 +165,6 @@ function lineNumberedFromOne(lineNumberedFromZero: number) {
 function getFileNameForSnapshot(path: string) {
   const marker = "/typescript-test-sources/";
   const pos = path.indexOf(marker);
+
   return path.substr(pos + marker.length);
 }
