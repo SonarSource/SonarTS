@@ -32,29 +32,29 @@ const COMPARED_BY_TEXT = new Set([
 ]);
 
 export default function areEquivalent(
-  left: ts.Node | ts.Node[],
-  right: ts.Node | ts.Node[],
+  first: ts.Node | ts.Node[],
+  second: ts.Node | ts.Node[],
 ): boolean {
-  if (isNode(left) && isNode(right)) {
-    if (left.kind !== right.kind) {
+  if (isNode(first) && isNode(second)) {
+    if (first.kind !== second.kind) {
       return false;
     }
 
-    const childCount = left.getChildCount();
+    const childCount = first.getChildCount();
 
-    if (childCount !== right.getChildCount()) {
+    if (childCount !== second.getChildCount()) {
       return false;
     }
 
-    if (childCount === 0 && COMPARED_BY_TEXT.has(left.kind)) {
-      return left.getText() === right.getText();
+    if (childCount === 0 && COMPARED_BY_TEXT.has(first.kind)) {
+      return first.getText() === second.getText();
     }
 
-    return areEquivalent(left.getChildren(), right.getChildren());
-  } else if (isNodeArray(left) && isNodeArray(right)) {
+    return areEquivalent(first.getChildren(), second.getChildren());
+  } else if (isNodeArray(first) && isNodeArray(second)) {
     return (
-      left.length === right.length &&
-      left.every((leftNode, index) => areEquivalent(leftNode, right[index]))
+      first.length === second.length &&
+      first.every((leftNode, index) => areEquivalent(leftNode, second[index]))
     );
   } else {
     return false;
