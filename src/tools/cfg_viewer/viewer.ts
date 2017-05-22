@@ -12,7 +12,7 @@ class Viewer {
   }
 
   public show(source: string) {
-    const sourceFile = ts.createSourceFile("cfg.ts", source, ts.ScriptTarget.ES2015);
+    const sourceFile = ts.createSourceFile("cfg.ts", source, ts.ScriptTarget.ES2015, true);
 
     const graph = ControlFlowGraph.fromSource(sourceFile.statements);
 
@@ -20,14 +20,6 @@ class Viewer {
       {height: "500px", width: "1000px", nodes: {shape: "box"}},
     );
   }
-}
-
-let blockCounter = 0;
-function block(...elements: string[]): CfgBlock {
-  const block = new CfgBlock(blockCounter);
-  blockCounter++;
-  elements.forEach(e => block.addElement({getText() { return e; }} as any));
-  return block;
 }
 
 const container = document.getElementById("cfg-container");

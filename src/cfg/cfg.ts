@@ -3,12 +3,11 @@ import * as ts from "typescript";
 class CfgBuilder {
 
   private currentBlock: CfgBlock;
-  private blocks: CfgBlock[] = [];
   private blockCounter = 0;
 
   public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
     const endBlock = this.createBlock();
-    this.blocks.push(endBlock);
+    statements.forEach(s => s.forEachChild(c => endBlock.addElement(c as ts.Expression)));
     const graph = new ControlFlowGraph();
     graph.addBlock(endBlock);
     return graph;
@@ -53,8 +52,8 @@ export class CfgBlock {
     this.elements.push(element);
   }
 
-  public getElements(): ts.Node[] {
-    return this.elements;
+  public getElements(): string[] {
+    return this.elements.map((element) => element.getText());
   }
 
   public addSuccessor(successor: CfgBlock): void {
