@@ -1,26 +1,39 @@
 import * as ts from "typescript";
 
+const { SyntaxKind } = ts;
+
 class CfgBuilder {
 
   private blockCounter = 0;
 
   public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
     const endBlock = this.createBlock();
-    statements.forEach(s => {
-      s.forEachChild(c => {
-        switch (c.kind) {
-          case ts.SyntaxKind.CallExpression: {
-            const callExpression = c as ts.CallExpression;
-            endBlock.addElement(callExpression.expression);
-          }
-          default:
-            endBlock.addElement(c as ts.Expression);
-        }
-      });
+    statements.forEach(statement => {
+      switch (statement.kind) {
+        case SyntaxKind.ExpressionStatement:
+          this.buildExpression(endBlock, (statement as ts.ExpressionStatement).expression);
+          break;
+        default:
+          console.log("Unknown statement:", SyntaxKind[statement.kind]);
+      }
     });
     const graph = new ControlFlowGraph();
     graph.addBlock(endBlock);
     return graph;
+  }
+
+  private buildExpression(block: CfgBlock, expression: ts.Expression) {
+    switch (expression.kind) {
+      case SyntaxKind.CallExpression:
+        this.buildExpression(block, (expression as ts.CallExpression).expression);
+        block.addElement(expression);
+        break;
+      case SyntaxKind.Identifier:
+        block.addElement(expression);
+        break;
+      default:
+        console.log("Unknown expression:", SyntaxKind[expression.kind]);
+    }
   }
 
   private createBlock(): CfgBlock {
