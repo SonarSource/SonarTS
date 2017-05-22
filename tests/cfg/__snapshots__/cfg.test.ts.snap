@@ -6,10 +6,19 @@ a
 a()"
 `;
 
-exports[`should build a block with call expression with a parameter 1`] = `
+exports[`should build a block with call expression with parameters 1`] = `
 "0
 a
+b
 a(b)"
+`;
+
+exports[`should build a block with call expression with parameters 2`] = `
+"0
+a
+b
+c
+a(b, c)"
 `;
 
 exports[`should build a single element block 1`] = `

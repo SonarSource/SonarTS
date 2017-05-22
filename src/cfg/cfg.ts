@@ -24,10 +24,13 @@ class CfgBuilder {
 
   private buildExpression(block: CfgBlock, expression: ts.Expression) {
     switch (expression.kind) {
-      case SyntaxKind.CallExpression:
-        this.buildExpression(block, (expression as ts.CallExpression).expression);
+      case SyntaxKind.CallExpression: {
+        const callExpression = expression as ts.CallExpression;
+        this.buildExpression(block, callExpression.expression);
+        callExpression.arguments.forEach(arg => this.buildExpression(block, arg));
         block.addElement(expression);
         break;
+      }
       case SyntaxKind.Identifier:
         block.addElement(expression);
         break;
