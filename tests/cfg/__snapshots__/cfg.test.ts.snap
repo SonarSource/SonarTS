@@ -1,19 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`should build a block with call expression 1`] = `
+exports[`call expression 1`] = `
 "0
 a
 a()"
 `;
 
-exports[`should build a block with call expression with parameters 1`] = `
+exports[`call expression with parameters 1`] = `
 "0
 a
 b
 a(b)"
 `;
 
-exports[`should build a block with call expression with parameters 2`] = `
+exports[`call expression with parameters 2`] = `
 "0
 a
 b
@@ -21,12 +21,52 @@ c
 a(b, c)"
 `;
 
-exports[`should build a single element block 1`] = `
-"0
-a"
+exports[`conditional expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0-1",
+      "to": 1,
+    },
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0-2",
+      "to": 2,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+a
+a ? b : c",
+      "physics": false,
+    },
+    Object {
+      "id": 1,
+      "label": "1
+b",
+      "physics": false,
+    },
+    Object {
+      "id": 2,
+      "label": "2
+c",
+      "physics": false,
+    },
+  ],
+}
 `;
 
-exports[`should build an empty block 1`] = `
+exports[`empty block 1`] = `
 "0
 "
+`;
+
+exports[`identifier expression 1`] = `
+"0
+a"
 `;

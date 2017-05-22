@@ -1,3 +1,4 @@
+import { flatten } from "lodash";
 import * as ts from "typescript";
 
 const { SyntaxKind } = ts;
@@ -18,7 +19,7 @@ class CfgBuilder {
       }
     });
     const graph = new ControlFlowGraph();
-    graph.addBlock(endBlock);
+    graph.addStart(endBlock);
     return graph;
   }
 
@@ -30,6 +31,12 @@ class CfgBuilder {
         callExpression.arguments.forEach(arg => this.buildExpression(block, arg));
         block.addElement(expression);
         break;
+      }
+      case SyntaxKind.ConditionalExpression: {
+        const conditionalExpression = expression as ts.ConditionalExpression;
+        this.buildExpression(block, conditionalExpression.condition);
+        this.createSuccessorBlock(block, conditionalExpression.whenTrue);
+        this.createSuccessorBlock(block, conditionalExpression.whenFalse);
       }
       case SyntaxKind.Identifier:
         block.addElement(expression);
@@ -45,23 +52,36 @@ class CfgBuilder {
     return block;
   }
 
+  private createSuccessorBlock(predecessor: CfgBlock, expression: ts.Expression) {
+    const successor = this.createBlock();
+    this.buildExpression(successor, expression);
+    predecessor.addSuccessor(successor);
+    return successor;
+  }
+
 }
 
 export class ControlFlowGraph {
-  private blocks: CfgBlock[] = [];
-  private startBlock: CfgBlock;
-  private endBlock: CfgBlock;
+  private start: CfgBlock;
 
   public static fromSource(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
     return new CfgBuilder().build(statements);
   }
 
-  public addBlock(block: CfgBlock) {
-    this.blocks.push(block);
+  public addStart(start: CfgBlock) {
+    this.start = start;
   }
 
   public getBlocks(): CfgBlock[] {
-    return this.blocks;
+    return [this.start, ...this.takeChildren(this.start)];
+  }
+
+  private takeChildren(block: CfgBlock): CfgBlock[] {
+    const successors = block.getSuccessors();
+    return [
+      ...successors,
+      ...flatten(successors.map(successor => this.takeChildren(successor))),
+    ];
   }
 }
 
