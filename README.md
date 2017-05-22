@@ -1,5 +1,17 @@
 # SonarTS [![Build Status](https://travis-ci.org/SonarSource/SonarTS.svg?branch=master)](https://travis-ci.org/SonarSource/SonarTS)
 
+## Rules
+
+* All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
+* Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
+* Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
+* Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`])
+
+[`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
+[`no-identical-conditions`]: ./docs/rules/no-identical-conditions.md
+[`no-identical-expressions`]: ./docs/rules/no-identical-expressions.md
+[`no-ignored-return`]: ./docs/rules/no-ignored-return.md
+
 ## Testing
 
 The awesome [jest](http://facebook.github.io/jest/) test runner is used. There is just a 
