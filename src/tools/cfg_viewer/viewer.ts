@@ -1,6 +1,6 @@
 import * as ts from "typescript";
-import {Network} from "vis";
-import {CfgBlock, ControlFlowGraph} from "../../cfg/cfg";
+import { Network } from "vis";
+import { CfgBlock, ControlFlowGraph } from "../../cfg/cfg";
 import toVisData from "./transformer";
 
 class Viewer {
@@ -17,7 +17,7 @@ class Viewer {
     const graph = ControlFlowGraph.fromSource(sourceFile.statements);
 
     const visGraph = new Network(this.container, toVisData(graph),
-      {height: "500px", width: "1000px", nodes: {shape: "box"}},
+      { height: "500px", width: "1000px", nodes: { shape: "box" } },
     );
   }
 }
