@@ -1,21 +1,25 @@
 import * as tslint from "tslint";
 import { ControlFlowGraph } from "../../src/cfg/cfg";
-import toVis from "../../src/tools/cfg_viewer/transformer";
+import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
 
 it("should build an empty block", () => {
-  expect(buildVisFromSource("")).toMatchSnapshot();
+  expect(takeSingleLabel(buildVisFromSource(""))).toMatchSnapshot();
 });
 
 it("should build a single element block", () => {
-  expect(buildVisFromSource("a;")).toMatchSnapshot();
+  expect(takeSingleLabel(buildVisFromSource("a;"))).toMatchSnapshot();
 });
 
 it("should build a block with call expression", () => {
-  expect(buildVisFromSource("a();")).toMatchSnapshot();
+  expect(takeSingleLabel(buildVisFromSource("a();"))).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {
   const sourceFile = tslint.getSourceFile("", source);
   const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
   return toVis(cfg);
+}
+
+function takeSingleLabel(data: VisData) {
+  return data.nodes.get(0).label;
 }

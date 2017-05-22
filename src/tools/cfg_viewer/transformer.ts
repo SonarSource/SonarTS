@@ -2,7 +2,12 @@ import * as ts from "typescript";
 import { DataSet } from "vis";
 import { CfgBlock, ControlFlowGraph } from "../../cfg/cfg";
 
-export default function toVisData(cfg: ControlFlowGraph) {
+export interface VisData {
+  nodes: DataSet<any>;
+  edges?: DataSet<any>;
+}
+
+export default function toVisData(cfg: ControlFlowGraph): VisData {
   const viewerNodes: any[] = [];
   const viewerEdges: any[] = [];
 
