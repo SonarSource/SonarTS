@@ -8,7 +8,8 @@
     "lint": "tslint -c tslint.json '{src,tests}/**/*.ts'",
     "test": "jest -t='^((?!ruling).)*$'",
     "ruling": "jest -t ruling",
-    "test-all": "jest"
+    "test-all": "jest",
+    "license-check": "license-check"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   },
   "homepage": "https://github.com/SonarSource/SonarTS",
   "dependencies": {
+    "license-check": "^1.1.5",
     "typescript": "^2.3.2"
   },
   "devDependencies": {
@@ -36,5 +38,16 @@
     "jest": "^20.0.1",
     "ts-jest": "^20.0.3",
     "tslint": "^5.2.0"
+  },
+  "license-check-config": {
+    "src": [
+      "src/**/*.ts",
+      "tests/**/*.test.ts",
+      "!./node_modules/**/*"
+    ],
+    "path": "HEADER",
+    "blocking": false,
+    "logInfo": false,
+    "logError": true
   }
 }

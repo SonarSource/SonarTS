@@ -3,7 +3,10 @@ node_js:
   - "7"
 
 script:
-  - yarn build && yarn test-all && yarn lint
+  - yarn build
+  - yarn test-all
+  - yarn lint
+  - yarn license-check
 
 cache: yarn
 
