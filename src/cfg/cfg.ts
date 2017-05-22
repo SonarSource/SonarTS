@@ -2,12 +2,22 @@ import * as ts from "typescript";
 
 class CfgBuilder {
 
-  private currentBlock: CfgBlock;
   private blockCounter = 0;
 
   public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
     const endBlock = this.createBlock();
-    statements.forEach(s => s.forEachChild(c => endBlock.addElement(c as ts.Expression)));
+    statements.forEach(s => {
+      s.forEachChild(c => {
+        switch (c.kind) {
+          case ts.SyntaxKind.CallExpression: {
+            const callExpression = c as ts.CallExpression;
+            endBlock.addElement(callExpression.expression);
+          }
+          default:
+            endBlock.addElement(c as ts.Expression);
+        }
+      });
+    });
     const graph = new ControlFlowGraph();
     graph.addBlock(endBlock);
     return graph;

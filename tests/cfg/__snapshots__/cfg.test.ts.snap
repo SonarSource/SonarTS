@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`should build a block with call expression 1`] = `
+Object {
+  "nodes": DataSet {
+    "_data": Object {
+      "0": Object {
+        "id": 0,
+        "label": "0
+a
+a()",
+        "physics": false,
+      },
+    },
+    "_fieldId": "id",
+    "_options": Object {},
+    "_subscribers": Object {},
+    "_type": Object {},
+    "length": 1,
+  },
+}
+`;
+
 exports[`should build a single element block 1`] = `
 Object {
   "nodes": DataSet {

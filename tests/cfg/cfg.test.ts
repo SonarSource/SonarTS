@@ -3,13 +3,19 @@ import { ControlFlowGraph } from "../../src/cfg/cfg";
 import toVis from "../../src/tools/cfg_viewer/transformer";
 
 it("should build an empty block", () => {
-  const sourceFile = tslint.getSourceFile("xxx.ts", "");
-  const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
-  expect(toVis(cfg)).toMatchSnapshot();
+  expect(buildVisFromSource("")).toMatchSnapshot();
 });
 
 it("should build a single element block", () => {
-  const sourceFile = tslint.getSourceFile("xxx.ts", "a;");
-  const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
-  expect(toVis(cfg)).toMatchSnapshot();
+  expect(buildVisFromSource("a;")).toMatchSnapshot();
 });
+
+it("should build a block with call expression", () => {
+  expect(buildVisFromSource("a();")).toMatchSnapshot();
+});
+
+function buildVisFromSource(source: string) {
+  const sourceFile = tslint.getSourceFile("", source);
+  const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
+  return toVis(cfg);
+}
