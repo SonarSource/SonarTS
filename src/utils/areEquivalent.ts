@@ -31,28 +31,40 @@ const COMPARED_BY_TEXT = new Set([
   ts.SyntaxKind.TemplateTail,
 ]);
 
-export default function areEquivalent(left: ts.Node, right: ts.Node) {
-  if (left.kind !== right.kind) {
-    return false;
-  }
-
-  const childCount = left.getChildCount();
-
-  if (childCount !== right.getChildCount()) {
-    return false;
-  }
-
-  if (childCount === 0 && COMPARED_BY_TEXT.has(left.kind)) {
-    return left.getText() === right.getText();
-  }
-
-  for (let i = 0; i < childCount; i++) {
-    const leftChild = left.getChildAt(i);
-    const rightChild = right.getChildAt(i);
-    if (!areEquivalent(leftChild, rightChild)) {
+export default function areEquivalent(
+  first: ts.Node | ts.Node[],
+  second: ts.Node | ts.Node[],
+): boolean {
+  if (isNode(first) && isNode(second)) {
+    if (first.kind !== second.kind) {
       return false;
     }
-  }
 
-  return true;
+    const childCount = first.getChildCount();
+
+    if (childCount !== second.getChildCount()) {
+      return false;
+    }
+
+    if (childCount === 0 && COMPARED_BY_TEXT.has(first.kind)) {
+      return first.getText() === second.getText();
+    }
+
+    return areEquivalent(first.getChildren(), second.getChildren());
+  } else if (isNodeArray(first) && isNodeArray(second)) {
+    return (
+      first.length === second.length &&
+      first.every((leftNode, index) => areEquivalent(leftNode, second[index]))
+    );
+  } else {
+    return false;
+  }
+}
+
+function isNode(node: ts.Node | ts.Node[]): node is ts.Node {
+  return (node as ts.Node).kind != null;
+}
+
+function isNodeArray(node: ts.Node | ts.Node[]): node is ts.Node[] {
+  return (node as ts.Node).kind == null;
 }
