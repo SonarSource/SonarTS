@@ -36,7 +36,6 @@ const button = document.getElementById("refresh-btn");
 if (button) {
   button.onclick = (event) => {
     const sourceCode = document.getElementById("source-code") as HTMLTextAreaElement;
-    // tslint:disable-next-line:curly
     if (sourceCode) viewer.show(sourceCode.value);
   };
 }

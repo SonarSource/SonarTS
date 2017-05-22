@@ -11,7 +11,8 @@
         "no-bitwise": false,
         "arrow-parens": [false],
         "max-classes-per-file": [false],
-        "object-literal-sort-keys": false
+        "object-literal-sort-keys": false,
+        "curly": false
     },
     "rulesDirectory": []
 }
