@@ -26,18 +26,16 @@
     "url": "https://github.com/SonarSource/SonarTS/issues"
   },
   "homepage": "https://github.com/SonarSource/SonarTS",
-  "dependencies": {
-    "license-check": "^1.1.5",
-    "typescript": "^2.3.2"
-  },
   "devDependencies": {
     "@types/glob": "^5.0.30",
     "@types/jest": "^19.2.3",
     "@types/node": "^7.0.18",
     "glob": "^7.1.1",
     "jest": "^20.0.1",
+    "license-check": "^1.1.5",
     "ts-jest": "^20.0.3",
-    "tslint": "^5.2.0"
+    "tslint": "^5.2.0",
+    "typescript": "^2.3.2"
   },
   "license-check-config": {
     "src": [
