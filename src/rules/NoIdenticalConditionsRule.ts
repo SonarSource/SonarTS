@@ -78,11 +78,13 @@ class Walker extends tslint.RuleWalker {
     const clauses = node.caseBlock.clauses.filter(this.isCase) as ts.CaseClause[];
 
     for (let i = 0; i < clauses.length; i++) {
-      for (let j = i + 1; j < clauses.length; j++) {
-        if (areEquivalent(clauses[i].expression, clauses[j].expression)) {
-          const { line } = this.getSourceFile()
-            .getLineAndCharacterOfPosition(clauses[i].expression.getStart());
-          this.addFailureAtNode(clauses[j].expression, Rule.formatMessage("case", line + 1));
+      if (!this.isFallThrough(clauses[i])) {
+        for (let j = i + 1; j < clauses.length; j++) {
+          if (areEquivalent(clauses[i].expression, clauses[j].expression)) {
+            const { line } = this.getSourceFile()
+              .getLineAndCharacterOfPosition(clauses[i].expression.getStart());
+            this.addFailureAtNode(clauses[j].expression, Rule.formatMessage("case", line + 1));
+          }
         }
       }
     }
@@ -96,5 +98,11 @@ class Walker extends tslint.RuleWalker {
 
   private isCase(clause: ts.CaseOrDefaultClause): clause is ts.CaseClause {
     return clause.kind === ts.SyntaxKind.CaseClause;
+  }
+
+  private isFallThrough(clause: ts.CaseClause): boolean {
+    // try to guess if there is a case fall-trought by checking the empty body
+    // a proper implentation requires a data flow analysis
+    return clause.statements.length === 0;
   }
 }
