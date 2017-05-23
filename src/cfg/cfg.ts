@@ -38,7 +38,7 @@ class CfgBuilder {
           next = this.buildExpression(next, (statement as ts.ExpressionStatement).expression);
           break;
         default:
-          console.log("Unknown statement:", SyntaxKind[statement.kind]);
+          throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
       }
     });
 
@@ -65,8 +65,9 @@ class CfgBuilder {
       }
       case SyntaxKind.BinaryExpression: {
         const binaryExpression = expression as ts.BinaryExpression;
+        const newCurrent = this.addElementToBlock(expression, current);
         if (binaryExpression.operatorToken.kind === SyntaxKind.EqualsToken) {
-          const right = this.buildExpression(current, binaryExpression.right);
+          const right = this.buildExpression(newCurrent, binaryExpression.right);
           return this.buildExpression(right, binaryExpression.left);
         }
       }

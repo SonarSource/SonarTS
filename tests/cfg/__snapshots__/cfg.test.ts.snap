@@ -16,7 +16,78 @@ Object {
       "label": "0
 START
 x
-'something'",
+'something'
+x = 'something'",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`assignment of conditional expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 3,
+      "id": "3-2",
+      "to": 2,
+    },
+    Object {
+      "arrows": "to",
+      "from": 3,
+      "id": "3-1",
+      "to": 1,
+    },
+    Object {
+      "arrows": "to",
+      "from": 2,
+      "id": "2-0",
+      "to": 0,
+    },
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0--1",
+      "to": -1,
+    },
+    Object {
+      "arrows": "to",
+      "from": 1,
+      "id": "1-0",
+      "to": 0,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+a = b ? c : d",
+      "physics": false,
+    },
+    Object {
+      "id": 1,
+      "label": "1
+d",
+      "physics": false,
+    },
+    Object {
+      "id": 2,
+      "label": "2
+c",
+      "physics": false,
+    },
+    Object {
+      "id": 3,
+      "label": "3
+START
+a
+b",
       "physics": false,
     },
     Object {

@@ -25,11 +25,15 @@ it("call expression with parameters", () => {
 });
 
 it("assignment", () => {
-  expect(takeData(buildVisFromSource("x = 'something';"))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource("x = 'something'"))).toMatchSnapshot();
 });
 
 it("conditional expression", () => {
   expect(takeData(buildVisFromSource("a ? b : c"))).toMatchSnapshot();
+});
+
+it("assignment of conditional expression", () => {
+  expect(takeData(buildVisFromSource("a = b ? c : d"))).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {
