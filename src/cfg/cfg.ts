@@ -59,22 +59,19 @@ class CfgBuilder {
       }
       case SyntaxKind.ConditionalExpression: {
         const conditionalExpression = expression as ts.ConditionalExpression;
-
-        const whenFalse = this.buildExpression(
-          this.createPredecessorBlock(current),
-          conditionalExpression.whenFalse,
-        );
-
-        const whenTrue = this.buildExpression(
-          this.createPredecessorBlock(current),
-          conditionalExpression.whenTrue,
-        );
-
-        return this.buildExpression(
-          this.createBranchingBlock(whenTrue, whenFalse),
-          conditionalExpression.condition,
-        );
+        const whenFalse = this.buildExpression(this.createPredecessorBlock(current), conditionalExpression.whenFalse);
+        const whenTrue = this.buildExpression(this.createPredecessorBlock(current), conditionalExpression.whenTrue);
+        return this.buildExpression(this.createBranchingBlock(whenTrue, whenFalse), conditionalExpression.condition);
       }
+      case SyntaxKind.BinaryExpression: {
+        const binaryExpression = expression as ts.BinaryExpression;
+        if (binaryExpression.operatorToken.kind === SyntaxKind.EqualsToken) {
+          const right = this.buildExpression(current, binaryExpression.right);
+          return this.buildExpression(right, binaryExpression.left);
+        }
+      }
+      case SyntaxKind.NumericLiteral:
+      case SyntaxKind.StringLiteral:
       case SyntaxKind.Identifier:
         return this.addElementToBlock(expression, current);
       default:
@@ -126,16 +123,17 @@ export class ControlFlowGraph {
   }
 
   public getBlocks(): CfgBlock[] {
-    return uniqBy([this.start, ...this.takeChildren(this.start)], block => block.id);
+    const graphBlocks: CfgBlock[] = [];
+    collectBlocks(this.start);
+    return graphBlocks;
+
+    function collectBlocks(block: CfgBlock) {
+      if (graphBlocks.includes(block)) return;
+      graphBlocks.push(block);
+      block.getSuccessors().forEach(successor => collectBlocks(successor));
+    }
   }
 
-  private takeChildren(block: CfgBlock): CfgBlock[] {
-    const successors = block.getSuccessors();
-    return [
-      ...successors,
-      ...flatten(successors.map(successor => this.takeChildren(successor))),
-    ];
-  }
 }
 
 export class CfgBlock {

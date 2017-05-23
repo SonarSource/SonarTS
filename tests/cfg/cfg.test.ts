@@ -6,6 +6,11 @@ it("empty block", () => {
   expect(takeData(buildVisFromSource(""))).toMatchSnapshot();
 });
 
+it("literals", () => {
+  expect(takeData(buildVisFromSource("'literal'"))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource("1"))).toMatchSnapshot();
+});
+
 it("identifier expression", () => {
   expect(takeData(buildVisFromSource("a;"))).toMatchSnapshot();
 });
@@ -17,6 +22,10 @@ it("call expression", () => {
 it("call expression with parameters", () => {
   expect(takeData(buildVisFromSource("a(b);"))).toMatchSnapshot();
   expect(takeData(buildVisFromSource("a(b, c);"))).toMatchSnapshot();
+});
+
+it("assignment", () => {
+  expect(takeData(buildVisFromSource("x = 'something';"))).toMatchSnapshot();
 });
 
 it("conditional expression", () => {

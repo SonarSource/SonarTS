@@ -1,5 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`assignment 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0--1",
+      "to": -1,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+START
+x
+'something'",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`call expression 1`] = `
 Object {
   "edges": Array [
@@ -173,6 +201,60 @@ Object {
       "label": "0
 START
 a",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`literals 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0--1",
+      "to": -1,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+START
+'literal'",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`literals 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0--1",
+      "to": -1,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+START
+1",
       "physics": false,
     },
     Object {

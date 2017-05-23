@@ -4,7 +4,7 @@ import {DataSet} from "vis";
 import * as cfg from "../../../src/cfg/cfg";
 import toVis from "../../../src/tools/cfg_viewer/transformer";
 
-let graph;
+let graph: cfg.ControlFlowGraph;
 let blockCounter;
 
 beforeEach(() => {
@@ -13,24 +13,18 @@ beforeEach(() => {
 });
 
 it("should create single block with one element", () => {
-  graph.addBlock(block("foo"));
+  graph.addStart(block("foo"));
   expect(toVis(graph)).toEqual({nodes: new DataSet([visNode(0, "foo")])});
 });
 
 it("should create multi-element block", () => {
-  graph.addBlock(block("a", "b"));
+  graph.addStart(block("a", "b"));
   expect(toVis(graph)).toEqual({nodes: new DataSet([visNode(0, "a", "b")])});
-});
-
-it("should create multi-block", () => {
-  graph.addBlock(block("a"));
-  graph.addBlock(block("b"));
-  expect(toVis(graph)).toEqual({nodes: new DataSet([visNode(0, "a"), visNode(1, "b")])});
 });
 
 it("should create edge to the same block", () => {
   const a = block("a");
-  graph.addBlock(a);
+  graph.addStart(a);
   a.addSuccessor(a);
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([visNode(0, "a")]),
@@ -42,9 +36,7 @@ it("should create branch", () => {
   const condition = block("condition");
   const trueBlock = block("true");
   const falseBlock = block("false");
-  graph.addBlock(condition);
-  graph.addBlock(trueBlock);
-  graph.addBlock(falseBlock);
+  graph.addStart(condition);
   condition.addSuccessor(trueBlock);
   condition.addSuccessor(falseBlock);
 
@@ -67,9 +59,7 @@ it("should create a loop between nodes", () => {
   const body = block("body");
   const end = block("end");
 
-  graph.addBlock(condition);
-  graph.addBlock(body);
-  graph.addBlock(end);
+  graph.addStart(condition);
   condition.addSuccessor(body);
   condition.addSuccessor(end);
   body.addSuccessor(condition);
@@ -91,7 +81,7 @@ it("should create a loop between nodes", () => {
 function block(...elements: string[]): cfg.CfgBlock {
   const block = new cfg.CfgBlock(blockCounter);
   blockCounter++;
-  elements.forEach(e => block.addElement({getText() { return e; }} as any));
+  [...elements].reverse().forEach(e => block.addElement({getText() { return e; }} as any));
   return block;
 }
 
