@@ -12,7 +12,7 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
   const viewerEdges: any[] = [];
 
   cfg.getBlocks().forEach((block) => {
-    viewerNodes.push({ id: block.id, label: blockToLabel(block), physics: false });
+    viewerNodes.push({ id: block.id, label: block.getLabel(), physics: false });
 
     block.getSuccessors().forEach((successorBlock) => {
       viewerEdges.push({ id: block.id + "-" + successorBlock.id, from: block.id, to: successorBlock.id, arrows: "to" });
@@ -24,8 +24,4 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
   } else {
     return { nodes: new DataSet(viewerNodes) };
   }
-}
-
-function blockToLabel(cfgBlock: CfgBlock): string {
-  return cfgBlock.id + "\n" + cfgBlock.getElements().join("\n");
 }

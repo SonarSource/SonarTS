@@ -1,24 +1,90 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`call expression 1`] = `
-"0
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0--1",
+      "to": -1,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+START
 a
-a()"
+a()",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
 `;
 
 exports[`call expression with parameters 1`] = `
-"0
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0--1",
+      "to": -1,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+START
 a
 b
-a(b)"
+a(b)",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
 `;
 
 exports[`call expression with parameters 2`] = `
-"0
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0--1",
+      "to": -1,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+START
 a
 b
 c
-a(b, c)"
+a(b, c)",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
 `;
 
 exports[`conditional expression 1`] = `
@@ -26,23 +92,34 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0-1",
+      "from": 2,
+      "id": "2-1",
       "to": 1,
     },
     Object {
       "arrows": "to",
+      "from": 2,
+      "id": "2-0",
+      "to": 0,
+    },
+    Object {
+      "arrows": "to",
+      "from": 1,
+      "id": "1--1",
+      "to": -1,
+    },
+    Object {
+      "arrows": "to",
       "from": 0,
-      "id": "0-2",
-      "to": 2,
+      "id": "0--1",
+      "to": -1,
     },
   ],
   "nodes": Array [
     Object {
       "id": 0,
       "label": "0
-a
-a ? b : c",
+c",
       "physics": false,
     },
     Object {
@@ -54,7 +131,13 @@ b",
     Object {
       "id": 2,
       "label": "2
-c",
+START
+a",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
       "physics": false,
     },
   ],
@@ -62,11 +145,41 @@ c",
 `;
 
 exports[`empty block 1`] = `
-"0
-"
+Object {
+  "edges": null,
+  "nodes": Array [
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
 `;
 
 exports[`identifier expression 1`] = `
-"0
-a"
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 0,
+      "id": "0--1",
+      "to": -1,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "0
+START
+a",
+      "physics": false,
+    },
+    Object {
+      "id": -1,
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
 `;

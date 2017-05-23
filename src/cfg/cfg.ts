@@ -1,48 +1,84 @@
-import { flatten } from "lodash";
+import { flatten, uniqBy } from "lodash";
 import * as ts from "typescript";
 
 const { SyntaxKind } = ts;
 
+// create end
+// create current
+// throwTargets.push(end)?
+// build:
+//   - reverse list of statements
+//   -
+// ...
+// start = current block
+// removeEmptyBlocks?
+// add end
+
 class CfgBuilder {
 
   private blockCounter = 0;
+  private end = new CfgEndBlock();
 
   public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
-    const endBlock = this.createBlock();
+    const reversedStatements = [...statements].reverse();
+    const start = this.buildStatements(this.end, reversedStatements);
+
+    const graph = new ControlFlowGraph();
+    graph.addStart(start);
+    start.addElement(({ getText() { return "START"; } } as ts.Expression));
+    return graph;
+  }
+
+  private buildStatements(current: CfgBlock, statements: ts.Statement[]): CfgBlock {
+    let next = current;
+
     statements.forEach(statement => {
       switch (statement.kind) {
         case SyntaxKind.ExpressionStatement:
-          this.buildExpression(endBlock, (statement as ts.ExpressionStatement).expression);
+          next = this.buildExpression(next, (statement as ts.ExpressionStatement).expression);
           break;
         default:
           console.log("Unknown statement:", SyntaxKind[statement.kind]);
       }
     });
-    const graph = new ControlFlowGraph();
-    graph.addStart(endBlock);
-    return graph;
+
+    return next;
   }
 
-  private buildExpression(block: CfgBlock, expression: ts.Expression) {
+  private buildExpression(current: CfgBlock, expression: ts.Expression): CfgBlock {
     switch (expression.kind) {
       case SyntaxKind.CallExpression: {
         const callExpression = expression as ts.CallExpression;
-        this.buildExpression(block, callExpression.expression);
-        callExpression.arguments.forEach(arg => this.buildExpression(block, arg));
-        block.addElement(expression);
-        break;
+        let newCurrent = this.addElementToBlock(expression, current);
+        [...callExpression.arguments].reverse().forEach(arg => {
+          newCurrent = this.buildExpression(newCurrent, arg);
+        });
+        newCurrent = this.buildExpression(newCurrent, callExpression.expression);
+
+        return newCurrent;
       }
       case SyntaxKind.ConditionalExpression: {
         const conditionalExpression = expression as ts.ConditionalExpression;
-        this.buildExpression(block, conditionalExpression.condition);
-        this.createSuccessorBlock(block, conditionalExpression.whenTrue);
-        this.createSuccessorBlock(block, conditionalExpression.whenFalse);
+
+        const whenFalse = this.buildExpression(
+          this.createPredecessorBlock(current),
+          conditionalExpression.whenFalse,
+        );
+
+        const whenTrue = this.buildExpression(
+          this.createPredecessorBlock(current),
+          conditionalExpression.whenTrue,
+        );
+
+        return this.buildExpression(
+          this.createBranchingBlock(whenTrue, whenFalse),
+          conditionalExpression.condition,
+        );
       }
       case SyntaxKind.Identifier:
-        block.addElement(expression);
-        break;
+        return this.addElementToBlock(expression, current);
       default:
-        console.log("Unknown expression:", SyntaxKind[expression.kind]);
+        throw new Error("Unknown expression: " + SyntaxKind[expression.kind]);
     }
   }
 
@@ -52,11 +88,28 @@ class CfgBuilder {
     return block;
   }
 
-  private createSuccessorBlock(predecessor: CfgBlock, expression: ts.Expression) {
-    const successor = this.createBlock();
-    this.buildExpression(successor, expression);
+  private createPredecessorBlock(successor: CfgBlock) {
+    const predecessor = this.createBlock();
     predecessor.addSuccessor(successor);
-    return successor;
+    return predecessor;
+  }
+
+  private createBranchingBlock(whenTrue: CfgBlock, whenFalse: CfgBlock) {
+    const branching = this.createBlock();
+    branching.addSuccessor(whenTrue);
+    branching.addSuccessor(whenFalse);
+    return branching;
+  }
+
+  private addElementToBlock(element: ts.Expression, block: CfgBlock) {
+    if (block instanceof CfgEndBlock) {
+      const next = this.createPredecessorBlock(block);
+      next.addElement(element);
+      return next;
+    } else {
+      block.addElement(element);
+      return block;
+    }
   }
 
 }
@@ -73,7 +126,7 @@ export class ControlFlowGraph {
   }
 
   public getBlocks(): CfgBlock[] {
-    return [this.start, ...this.takeChildren(this.start)];
+    return uniqBy([this.start, ...this.takeChildren(this.start)], block => block.id);
   }
 
   private takeChildren(block: CfgBlock): CfgBlock[] {
@@ -94,8 +147,9 @@ export class CfgBlock {
     this.id = id;
   }
 
-  public addElement(element: ts.Expression): void {
-    this.elements.push(element);
+  public addElement(element: ts.Expression): CfgBlock {
+    this.elements.unshift(element);
+    return this;
   }
 
   public getElements(): string[] {
@@ -108,5 +162,19 @@ export class CfgBlock {
 
   public getSuccessors(): CfgBlock[] {
     return this.successors;
+  }
+
+  public getLabel(): string {
+    return this.id + "\n" + this.getElements().join("\n");
+  }
+}
+
+export class CfgEndBlock extends CfgBlock {
+  constructor() {
+    super(-1);
+  }
+
+  public getLabel(): string {
+    return "END";
   }
 }

@@ -3,20 +3,20 @@ import { ControlFlowGraph } from "../../src/cfg/cfg";
 import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
 
 it("empty block", () => {
-  expect(takeSingleLabel(buildVisFromSource(""))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource(""))).toMatchSnapshot();
 });
 
 it("identifier expression", () => {
-  expect(takeSingleLabel(buildVisFromSource("a;"))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource("a;"))).toMatchSnapshot();
 });
 
 it("call expression", () => {
-  expect(takeSingleLabel(buildVisFromSource("a();"))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource("a();"))).toMatchSnapshot();
 });
 
 it("call expression with parameters", () => {
-  expect(takeSingleLabel(buildVisFromSource("a(b);"))).toMatchSnapshot();
-  expect(takeSingleLabel(buildVisFromSource("a(b, c);"))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource("a(b);"))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource("a(b, c);"))).toMatchSnapshot();
 });
 
 it("conditional expression", () => {
@@ -36,6 +36,6 @@ function takeSingleLabel(data: VisData) {
 function takeData(data: VisData) {
   return {
     nodes: data.nodes.get(),
-    edges: data.edges.get(),
+    edges: data.edges ? data.edges.get() : null,
   };
 }
