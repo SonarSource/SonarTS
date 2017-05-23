@@ -40,6 +40,21 @@ class CfgBuilder {
         case SyntaxKind.ExpressionStatement:
           next = this.buildExpression(next, (statement as ts.ExpressionStatement).expression);
           break;
+        case SyntaxKind.IfStatement: {
+          const ifStatement = statement as ts.IfStatement;
+          let whenFalse;
+          if (ifStatement.elseStatement) {
+            whenFalse = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.elseStatement]);
+          }
+          const whenTrue = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.thenStatement]);
+          next = this.buildExpression(this.createBranchingBlock(whenTrue, whenFalse), ifStatement.expression);
+          break;
+        }
+        case SyntaxKind.Block: {
+          const block = statement as ts.Block;
+          next = this.buildStatements(next, block.statements);
+          break;
+        }
         default:
           throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
       }
@@ -95,10 +110,12 @@ class CfgBuilder {
     return predecessor;
   }
 
-  private createBranchingBlock(whenTrue: CfgBlock, whenFalse: CfgBlock) {
+  private createBranchingBlock(whenTrue: CfgBlock, whenFalse?: CfgBlock) {
     const branching = this.createBlock();
     branching.addSuccessor(whenTrue);
-    branching.addSuccessor(whenFalse);
+    if (whenFalse) {
+      branching.addSuccessor(whenFalse);
+    }
     return branching;
   }
 

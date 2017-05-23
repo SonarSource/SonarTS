@@ -36,6 +36,12 @@ it("assignment of conditional expression", () => {
   expect(takeData(buildVisFromSource("a = b ? c : d"))).toMatchSnapshot();
 });
 
+it("if statement", () => {
+  expect(takeData(buildVisFromSource("if (a) b"))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource("if (a) { b }"))).toMatchSnapshot();
+  expect(takeData(buildVisFromSource("if (a) { b } else { c }"))).toMatchSnapshot();
+});
+
 function buildVisFromSource(source: string) {
   const sourceFile = tslint.getSourceFile("", source);
   const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
