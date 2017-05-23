@@ -1,6 +1,6 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import {DataSet} from "vis";
+import { DataSet } from "vis";
 import * as cfg from "../../../src/cfg/cfg";
 import toVis from "../../../src/tools/cfg_viewer/transformer";
 
@@ -14,12 +14,12 @@ beforeEach(() => {
 
 it("should create single block with one element", () => {
   graph.addStart(block("foo"));
-  expect(toVis(graph)).toEqual({nodes: new DataSet([visNode(0, "foo")])});
+  expect(toVis(graph)).toEqual({ nodes: new DataSet([visNode("1", "foo")]) });
 });
 
 it("should create multi-element block", () => {
   graph.addStart(block("a", "b"));
-  expect(toVis(graph)).toEqual({nodes: new DataSet([visNode(0, "a", "b")])});
+  expect(toVis(graph)).toEqual({ nodes: new DataSet([visNode("1", "a", "b")]) });
 });
 
 it("should create edge to the same block", () => {
@@ -27,8 +27,8 @@ it("should create edge to the same block", () => {
   graph.addStart(a);
   a.addSuccessor(a);
   expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visNode(0, "a")]),
-    edges: new DataSet([{id: "0-0", from: 0, to: 0, arrows: "to"}]),
+    nodes: new DataSet([visNode("1", "a")]),
+    edges: new DataSet([{ id: "1-1", from: "1", to: "1", arrows: "to" }]),
   });
 });
 
@@ -42,14 +42,14 @@ it("should create branch", () => {
 
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([
-      visNode(0, "condition"),
-      visNode(1, "true"),
-      visNode(2, "false"),
+      visNode("1", "condition"),
+      visNode("1,1", "true"),
+      visNode("1,2", "false"),
     ]),
 
     edges: new DataSet([
-      {id: "0-1", from: 0, to: 1, arrows: "to"},
-      {id: "0-2", from: 0, to: 2, arrows: "to"},
+      { id: "1-1,1", from: "1", to: "1,1", arrows: "to" },
+      { id: "1-1,2", from: "1", to: "1,2", arrows: "to" },
     ]),
   });
 });
@@ -66,25 +66,24 @@ it("should create a loop between nodes", () => {
 
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([
-      visNode(0, "condition"),
-      visNode(1, "body"),
-      visNode(2, "end"),
+      visNode("1", "condition"),
+      visNode("1,1", "body"),
+      visNode("1,2", "end"),
     ]),
     edges: new DataSet([
-      {id: "0-1", from: 0, to: 1, arrows: "to"},
-      {id: "0-2", from: 0, to: 2, arrows: "to"},
-      {id: "1-0", from: 1, to: 0, arrows: "to"},
+      { id: "1-1,1", from: "1", to: "1,1", arrows: "to" },
+      { id: "1-1,2", from: "1", to: "1,2", arrows: "to" },
+      { id: "1,1-1", from: "1,1", to: "1", arrows: "to" },
     ]),
   });
 });
 
 function block(...elements: string[]): cfg.CfgBlock {
-  const block = new cfg.CfgBlock(blockCounter);
-  blockCounter++;
-  [...elements].reverse().forEach(e => block.addElement({getText() { return e; }} as any));
+  const block = new cfg.CfgBlock();
+  [...elements].reverse().forEach(e => block.addElement({ getText() { return e; } } as any));
   return block;
 }
 
-function visNode(id: number, ...elements: string[]) {
-  return {id, label: [id.toString()].concat(elements).join("\n"), physics: false};
+function visNode(id: string, ...elements: string[]) {
+  return { id, label: [id].concat(elements).join("\n"), physics: false };
 }

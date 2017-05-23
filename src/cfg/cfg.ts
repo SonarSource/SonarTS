@@ -21,10 +21,13 @@ class CfgBuilder {
 
   public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
     const reversedStatements = [...statements].reverse();
-    const start = this.buildStatements(this.end, reversedStatements);
+    const current = this.createBlock();
+    current.addSuccessor(this.end);
+    const start = this.buildStatements(current, reversedStatements);
 
     const graph = new ControlFlowGraph();
     graph.addStart(start);
+    graph.finalize();
     start.addElement(({ getText() { return "START"; } } as ts.Expression));
     return graph;
   }
@@ -48,8 +51,9 @@ class CfgBuilder {
   private buildExpression(current: CfgBlock, expression: ts.Expression): CfgBlock {
     switch (expression.kind) {
       case SyntaxKind.CallExpression: {
+        current.addElement(expression);
         const callExpression = expression as ts.CallExpression;
-        let newCurrent = this.addElementToBlock(expression, current);
+        let newCurrent = current;
         [...callExpression.arguments].reverse().forEach(arg => {
           newCurrent = this.buildExpression(newCurrent, arg);
         });
@@ -65,25 +69,24 @@ class CfgBuilder {
       }
       case SyntaxKind.BinaryExpression: {
         const binaryExpression = expression as ts.BinaryExpression;
-        const newCurrent = this.addElementToBlock(expression, current);
+        current.addElement(expression);
         if (binaryExpression.operatorToken.kind === SyntaxKind.EqualsToken) {
-          const right = this.buildExpression(newCurrent, binaryExpression.right);
+          const right = this.buildExpression(current, binaryExpression.right);
           return this.buildExpression(right, binaryExpression.left);
         }
       }
       case SyntaxKind.NumericLiteral:
       case SyntaxKind.StringLiteral:
       case SyntaxKind.Identifier:
-        return this.addElementToBlock(expression, current);
+        current.addElement(expression);
+        return current;
       default:
         throw new Error("Unknown expression: " + SyntaxKind[expression.kind]);
     }
   }
 
   private createBlock(): CfgBlock {
-    const block = new CfgBlock(this.blockCounter);
-    this.blockCounter++;
-    return block;
+    return new CfgBlock();
   }
 
   private createPredecessorBlock(successor: CfgBlock) {
@@ -97,17 +100,6 @@ class CfgBuilder {
     branching.addSuccessor(whenTrue);
     branching.addSuccessor(whenFalse);
     return branching;
-  }
-
-  private addElementToBlock(element: ts.Expression, block: CfgBlock) {
-    if (block instanceof CfgEndBlock) {
-      const next = this.createPredecessorBlock(block);
-      next.addElement(element);
-      return next;
-    } else {
-      block.addElement(element);
-      return block;
-    }
   }
 
 }
@@ -125,25 +117,52 @@ export class ControlFlowGraph {
 
   public getBlocks(): CfgBlock[] {
     const graphBlocks: CfgBlock[] = [];
-    collectBlocks(this.start);
+    collectBlocks(this.start, "1");
     return graphBlocks;
 
-    function collectBlocks(block: CfgBlock) {
+    function collectBlocks(block: CfgBlock, baseId: string) {
       if (graphBlocks.includes(block)) return;
+      block.id = baseId;
       graphBlocks.push(block);
-      block.getSuccessors().forEach(successor => collectBlocks(successor));
+      block.getSuccessors().forEach((successor, i) => collectBlocks(successor, baseId + "," + (i + 1)));
     }
+  }
+
+  public finalize() {
+    this.makeBidirectional();
+    const end = this.findEnd();
+    collapseEmpty(end);
+
+    function collapseEmpty(block: CfgBlock) {
+      if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
+        const successor = block.getSuccessors()[0];
+        block.getPredecessors().forEach(predecessor => predecessor.replaceSuccessor(block, successor));
+        successor.dropPredecessor(block);
+      }
+      block.getPredecessors().forEach(collapseEmpty);
+    }
+  }
+
+  private makeBidirectional() {
+    this.getBlocks().forEach(block => {
+      block.getSuccessors().forEach(successor => successor.addPredecessor(block));
+    });
+  }
+
+  private findEnd(): CfgEndBlock {
+    return this.getBlocks().find(block => block.getSuccessors().length === 0) as CfgEndBlock;
   }
 
 }
 
 export class CfgBlock {
-  public id: number;
+  public id: string;
   private elements: ts.Node[] = [];
   private successors: CfgBlock[] = [];
+  private predecessors: CfgBlock[] = [];
 
-  constructor(id: number) {
-    this.id = id;
+  constructor() {
+    this.id = "";
   }
 
   public addElement(element: ts.Expression): CfgBlock {
@@ -159,8 +178,26 @@ export class CfgBlock {
     this.successors.push(successor);
   }
 
+  public addPredecessor(predecessor: CfgBlock): void {
+    this.predecessors.push(predecessor);
+  }
+
   public getSuccessors(): CfgBlock[] {
     return this.successors;
+  }
+
+  public getPredecessors(): CfgBlock[] {
+    return this.predecessors;
+  }
+
+  public replaceSuccessor(what: CfgBlock, withWhat: CfgBlock): void {
+    const index = this.successors.indexOf(what);
+    this.successors[index] = withWhat;
+  }
+
+  public dropPredecessor(block: CfgBlock): void {
+    const index = this.predecessors.indexOf(block);
+    this.predecessors.splice(index, 1);
   }
 
   public getLabel(): string {
@@ -170,7 +207,7 @@ export class CfgBlock {
 
 export class CfgEndBlock extends CfgBlock {
   constructor() {
-    super(-1);
+    super();
   }
 
   public getLabel(): string {

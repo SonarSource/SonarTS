@@ -5,15 +5,15 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
+      "id": "1",
+      "label": "1
 START
 x
 'something'
@@ -21,7 +21,7 @@ x = 'something'",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
       "label": "END",
       "physics": false,
     },
@@ -34,65 +34,65 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 3,
-      "id": "3-2",
-      "to": 2,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
     Object {
       "arrows": "to",
-      "from": 3,
-      "id": "3-1",
-      "to": 1,
+      "from": "1",
+      "id": "1-1,2",
+      "to": "1,2",
     },
     Object {
       "arrows": "to",
-      "from": 2,
-      "id": "2-0",
-      "to": 0,
+      "from": "1,1",
+      "id": "1,1-1,1,1",
+      "to": "1,1,1",
     },
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1,1,1",
+      "id": "1,1,1-1,1,1,1",
+      "to": "1,1,1,1",
     },
     Object {
       "arrows": "to",
-      "from": 1,
-      "id": "1-0",
-      "to": 0,
+      "from": "1,2",
+      "id": "1,2-1,1,1",
+      "to": "1,1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
-a = b ? c : d",
-      "physics": false,
-    },
-    Object {
-      "id": 1,
+      "id": "1",
       "label": "1
-d",
-      "physics": false,
-    },
-    Object {
-      "id": 2,
-      "label": "2
-c",
-      "physics": false,
-    },
-    Object {
-      "id": 3,
-      "label": "3
 START
 a
 b",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
+      "label": "1,1
+c",
+      "physics": false,
+    },
+    Object {
+      "id": "1,1,1",
+      "label": "1,1,1
+a = b ? c : d",
+      "physics": false,
+    },
+    Object {
+      "id": "1,1,1,1",
       "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1,2",
+      "label": "1,2
+d",
       "physics": false,
     },
   ],
@@ -104,22 +104,22 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
+      "id": "1",
+      "label": "1
 START
 a
 a()",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
       "label": "END",
       "physics": false,
     },
@@ -132,15 +132,15 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
+      "id": "1",
+      "label": "1
 START
 a
 b
@@ -148,7 +148,7 @@ a(b)",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
       "label": "END",
       "physics": false,
     },
@@ -161,15 +161,15 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
+      "id": "1",
+      "label": "1
 START
 a
 b
@@ -178,7 +178,7 @@ a(b, c)",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
       "label": "END",
       "physics": false,
     },
@@ -191,52 +191,52 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 2,
-      "id": "2-1",
-      "to": 1,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
     Object {
       "arrows": "to",
-      "from": 2,
-      "id": "2-0",
-      "to": 0,
+      "from": "1",
+      "id": "1-1,2",
+      "to": "1,2",
     },
     Object {
       "arrows": "to",
-      "from": 1,
-      "id": "1--1",
-      "to": -1,
+      "from": "1,1",
+      "id": "1,1-1,1,1",
+      "to": "1,1,1",
     },
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1,2",
+      "id": "1,2-1,1,1",
+      "to": "1,1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
-c",
-      "physics": false,
-    },
-    Object {
-      "id": 1,
+      "id": "1",
       "label": "1
-b",
-      "physics": false,
-    },
-    Object {
-      "id": 2,
-      "label": "2
 START
 a",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
+      "label": "1,1
+b",
+      "physics": false,
+    },
+    Object {
+      "id": "1,1,1",
       "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1,2",
+      "label": "1,2
+c",
       "physics": false,
     },
   ],
@@ -245,10 +245,23 @@ a",
 
 exports[`empty block 1`] = `
 Object {
-  "edges": null,
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
+    },
+  ],
   "nodes": Array [
     Object {
-      "id": -1,
+      "id": "1",
+      "label": "1
+START",
+      "physics": false,
+    },
+    Object {
+      "id": "1,1",
       "label": "END",
       "physics": false,
     },
@@ -261,21 +274,21 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
+      "id": "1",
+      "label": "1
 START
 a",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
       "label": "END",
       "physics": false,
     },
@@ -288,21 +301,21 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
+      "id": "1",
+      "label": "1
 START
 'literal'",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
       "label": "END",
       "physics": false,
     },
@@ -315,21 +328,21 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": 0,
-      "id": "0--1",
-      "to": -1,
+      "from": "1",
+      "id": "1-1,1",
+      "to": "1,1",
     },
   ],
   "nodes": Array [
     Object {
-      "id": 0,
-      "label": "0
+      "id": "1",
+      "label": "1
 START
 1",
       "physics": false,
     },
     Object {
-      "id": -1,
+      "id": "1,1",
       "label": "END",
       "physics": false,
     },
