@@ -50,6 +50,8 @@ class CfgBuilder {
           let whenFalse;
           if (ifStatement.elseStatement) {
             whenFalse = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.elseStatement]);
+          } else {
+            whenFalse = next;
           }
           const whenTrue = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.thenStatement]);
           next = this.buildExpression(
@@ -91,6 +93,15 @@ class CfgBuilder {
           );
           loopBottom.addSuccessor(loopStart);
           next = loopStart;
+          break;
+        }
+        case SyntaxKind.ReturnStatement: {
+          const returnStatement = statement as ts.ReturnStatement;
+          if (returnStatement.expression) {
+            next = this.buildExpression(this.createPredecessorBlock(this.end), returnStatement.expression);
+          } else {
+            next = this.createPredecessorBlock(this.end);
+          }
           break;
         }
         default:

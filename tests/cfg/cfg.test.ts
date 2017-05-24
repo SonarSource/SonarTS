@@ -38,7 +38,7 @@ it("assignment of conditional expression", () => {
 
 it("if statement", () => {
   expect(buildVisFromSource("if (a) b")).toMatchSnapshot();
-  expect(buildVisFromSource("if (a) { b }")).toMatchSnapshot();
+  expect(buildVisFromSource("if (a) { b } c")).toMatchSnapshot();
   expect(buildVisFromSource("if (a) { b } else { c }")).toMatchSnapshot();
 });
 
@@ -60,6 +60,10 @@ it("infinite for loop", () => {
 
 it("while loop", () => {
   expect(buildVisFromSource("while(true) {a;}")).toMatchSnapshot();
+});
+
+it("return", () => {
+  expect(buildVisFromSource("if(a) {return true;} b;")).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {
