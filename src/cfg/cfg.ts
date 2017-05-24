@@ -47,7 +47,10 @@ class CfgBuilder {
             whenFalse = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.elseStatement]);
           }
           const whenTrue = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.thenStatement]);
-          next = this.buildExpression(new CfgBranchingBlock(whenTrue, whenFalse), ifStatement.expression);
+          next = this.buildExpression(
+            new CfgBranchingBlock("if (" + ifStatement.expression.getText() + ")", whenTrue, whenFalse),
+            ifStatement.expression,
+          );
           break;
         }
         case SyntaxKind.Block: {
@@ -80,7 +83,9 @@ class CfgBuilder {
         const conditionalExpression = expression as ts.ConditionalExpression;
         const whenFalse = this.buildExpression(this.createPredecessorBlock(current), conditionalExpression.whenFalse);
         const whenTrue = this.buildExpression(this.createPredecessorBlock(current), conditionalExpression.whenTrue);
-        return this.buildExpression(new CfgBranchingBlock(whenTrue, whenFalse), conditionalExpression.condition);
+        return this.buildExpression(
+          new CfgBranchingBlock(expression.getText(), whenTrue, whenFalse), conditionalExpression.condition,
+        );
       }
       case SyntaxKind.BinaryExpression: {
         const binaryExpression = expression as ts.BinaryExpression;
@@ -219,11 +224,13 @@ export class CfgEndBlock extends CfgBlock {
 }
 
 export class CfgBranchingBlock extends CfgBlock {
+  private branchingLabel: string;
   private trueSuccessor: CfgBlock;
   private falseSuccessor?: CfgBlock;
 
-  constructor(trueSuccessor: CfgBlock, falseSuccessor?: CfgBlock) {
+  constructor(branchingLabel: string, trueSuccessor: CfgBlock, falseSuccessor?: CfgBlock) {
     super();
+    this.branchingLabel = branchingLabel;
     this.trueSuccessor = trueSuccessor;
     this.falseSuccessor = falseSuccessor;
     this.falseSuccessor = falseSuccessor;
@@ -239,5 +246,9 @@ export class CfgBranchingBlock extends CfgBlock {
 
   public getFalseSuccessor(): CfgBlock|undefined {
     return this.falseSuccessor;
+  }
+
+  public getLabel(): string {
+    return super.getLabel() + "\n" + "<" +  this.branchingLabel + ">";
   }
 }

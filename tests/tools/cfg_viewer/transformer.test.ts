@@ -40,7 +40,7 @@ it("should create branch", () => {
 
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([
-      visNode("1", "condition"),
+      visBranchingNode("1", "condition"),
       visNode("1,1", "true"),
       visNode("1,2", "false"),
     ]),
@@ -62,7 +62,7 @@ it("should create a loop between nodes", () => {
 
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([
-      visNode("1", "condition"),
+      visBranchingNode("1", "condition"),
       visNode("1,1", "body"),
       visNode("1,2", "end"),
     ]),
@@ -79,7 +79,7 @@ function branchingBlock(
     falseSuccessor: cfg.CfgBlock,
     ...elements: string[],
   ): cfg.CfgBranchingBlock {
-  const block = new cfg.CfgBranchingBlock(trueSuccessor, falseSuccessor);
+  const block = new cfg.CfgBranchingBlock("branching", trueSuccessor, falseSuccessor);
   addElements(block, ...elements);
   return block;
 }
@@ -96,4 +96,8 @@ function addElements(block: cfg.CfgBlock, ... elements: string[]) {
 
 function visNode(id: string, ...elements: string[]) {
   return { id, label: [id].concat(elements).join("\n"), physics: false };
+}
+
+function visBranchingNode(id: string, ...elements: string[]) {
+  return { id, label: [id].concat(elements).concat(["<branching>"]).join("\n"), physics: false };
 }
