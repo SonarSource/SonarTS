@@ -60,23 +60,36 @@ class CfgBuilder {
         }
         case SyntaxKind.ForStatement: {
           const forLoop = statement as ts.ForStatement;
-          const loopEnd = new CfgBlock();
-          let lastLoopStatementBlock = loopEnd;
+          const loopBottom = new CfgBlock();
+          let lastLoopStatementBlock = loopBottom;
           if (forLoop.incrementor) {
             lastLoopStatementBlock = this.buildExpression(lastLoopStatementBlock, forLoop.incrementor);
           }
           const firstLoopStatementBlock = this.buildStatements(lastLoopStatementBlock, [forLoop.statement]);
-          let loopBlock: CfgBlock;
+          let loopRoot: CfgBlock;
           if (forLoop.condition) {
-            loopBlock = new CfgBranchingBlock(this.forLoopLabel(forLoop), firstLoopStatementBlock, next);
+            loopRoot = this.buildExpression(
+              new CfgBranchingBlock(this.forLoopLabel(forLoop), firstLoopStatementBlock, next), forLoop.condition);
           } else {
-            loopBlock = this.createPredecessorBlock(firstLoopStatementBlock);
+            loopRoot = this.createPredecessorBlock(firstLoopStatementBlock);
           }
-          let loopStart = loopBlock;
+          let loopStart = loopRoot;
           if (forLoop.initializer) {
-            loopStart = this.buildExpression(this.createPredecessorBlock(loopBlock), forLoop.initializer);
+            loopStart = this.buildExpression(this.createPredecessorBlock(loopRoot), forLoop.initializer);
           }
-          loopEnd.addSuccessor(loopBlock);
+          loopBottom.addSuccessor(loopRoot);
+          next = loopStart;
+          break;
+        }
+        case SyntaxKind.WhileStatement: {
+          const whileLoop = statement as ts.WhileStatement;
+          const loopBottom = new CfgBlock();
+          const firstLoopStatementBlock = this.buildStatements(loopBottom, [whileLoop.statement]);
+          const loopStart = this.buildExpression(
+            new CfgBranchingBlock("while(" + whileLoop.expression.getText() + ")", firstLoopStatementBlock, next),
+            whileLoop.expression,
+          );
+          loopBottom.addSuccessor(loopStart);
           next = loopStart;
           break;
         }
@@ -88,7 +101,7 @@ class CfgBuilder {
     return next;
   }
 
-  private buildExpression(current: CfgBlock, expression: ts.Node): CfgBlock {
+  private buildExpression(current: CfgBlock, expression: ts.Expression | ts.VariableDeclarationList): CfgBlock {
     switch (expression.kind) {
       case SyntaxKind.CallExpression: {
         current.addElement(expression);
@@ -117,6 +130,8 @@ class CfgBuilder {
           return this.buildExpression(right, binaryExpression.left);
         }
       }
+      case SyntaxKind.TrueKeyword:
+      case SyntaxKind.FalseKeyword:
       case SyntaxKind.NumericLiteral:
       case SyntaxKind.StringLiteral:
       case SyntaxKind.Identifier:

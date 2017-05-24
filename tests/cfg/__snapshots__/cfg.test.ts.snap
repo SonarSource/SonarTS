@@ -261,8 +261,10 @@ x=0",
     Object {
       "id": "1.1",
       "label": "1.1
-
-<for(x=0;x<10;x=1)>",
+x
+true
+x=true
+<for(x=0;x=true;x=1)>",
       "physics": false,
     },
     Object {
@@ -398,6 +400,7 @@ Object {
       "id": "1",
       "label": "1
 START
+x
 <for(;x;)>",
       "physics": false,
     },
@@ -665,6 +668,54 @@ START
     },
     Object {
       "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`while loop 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.2",
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": "1.1-1",
+      "to": "1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+true
+<while(true)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "1.1
+a",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
       "label": "END",
       "physics": false,
     },

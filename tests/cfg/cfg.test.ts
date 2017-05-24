@@ -51,11 +51,15 @@ it("for loop", () => {
 });
 
 it("complete for loop", () => {
-  expect(buildVisFromSource("for(x=0;x<10;x=1) {a;}")).toMatchSnapshot();
+  expect(buildVisFromSource("for(x=0;x=true;x=1) {a;}")).toMatchSnapshot();
 });
 
 it("infinite for loop", () => {
   expect(buildVisFromSource("for(;;) {a;}")).toMatchSnapshot();
+});
+
+it("while loop", () => {
+  expect(buildVisFromSource("while(true) {a;}")).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {
