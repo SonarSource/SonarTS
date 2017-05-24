@@ -47,7 +47,7 @@ class CfgBuilder {
             whenFalse = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.elseStatement]);
           }
           const whenTrue = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.thenStatement]);
-          next = this.buildExpression(this.createBranchingBlock(whenTrue, whenFalse), ifStatement.expression);
+          next = this.buildExpression(new CfgBranchingBlock(whenTrue, whenFalse), ifStatement.expression);
           break;
         }
         case SyntaxKind.Block: {
@@ -80,7 +80,7 @@ class CfgBuilder {
         const conditionalExpression = expression as ts.ConditionalExpression;
         const whenFalse = this.buildExpression(this.createPredecessorBlock(current), conditionalExpression.whenFalse);
         const whenTrue = this.buildExpression(this.createPredecessorBlock(current), conditionalExpression.whenTrue);
-        return this.buildExpression(this.createBranchingBlock(whenTrue, whenFalse), conditionalExpression.condition);
+        return this.buildExpression(new CfgBranchingBlock(whenTrue, whenFalse), conditionalExpression.condition);
       }
       case SyntaxKind.BinaryExpression: {
         const binaryExpression = expression as ts.BinaryExpression;
@@ -105,20 +105,10 @@ class CfgBuilder {
   }
 
   private createPredecessorBlock(successor: CfgBlock) {
-    const predecessor = this.createBlock();
+    const predecessor = new CfgBlock();
     predecessor.addSuccessor(successor);
     return predecessor;
   }
-
-  private createBranchingBlock(whenTrue: CfgBlock, whenFalse?: CfgBlock) {
-    const branching = this.createBlock();
-    branching.addSuccessor(whenTrue);
-    if (whenFalse) {
-      branching.addSuccessor(whenFalse);
-    }
-    return branching;
-  }
-
 }
 
 export class ControlFlowGraph {
@@ -223,11 +213,31 @@ export class CfgBlock {
 }
 
 export class CfgEndBlock extends CfgBlock {
-  constructor() {
-    super();
-  }
-
   public getLabel(): string {
     return "END";
+  }
+}
+
+export class CfgBranchingBlock extends CfgBlock {
+  private trueSuccessor: CfgBlock;
+  private falseSuccessor?: CfgBlock;
+
+  constructor(trueSuccessor: CfgBlock, falseSuccessor?: CfgBlock) {
+    super();
+    this.trueSuccessor = trueSuccessor;
+    this.falseSuccessor = falseSuccessor;
+    this.falseSuccessor = falseSuccessor;
+    this.addSuccessor(trueSuccessor);
+    if (falseSuccessor) {
+      this.addSuccessor(falseSuccessor);
+    }
+  }
+
+  public getTrueSuccessor(): CfgBlock {
+    return this.trueSuccessor;
+  }
+
+  public getFalseSuccessor(): CfgBlock|undefined {
+    return this.falseSuccessor;
   }
 }
