@@ -3,49 +3,57 @@ import { ControlFlowGraph } from "../../src/cfg/cfg";
 import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
 
 it("empty block", () => {
-  expect(takeData(buildVisFromSource(""))).toMatchSnapshot();
+  expect(buildVisFromSource("")).toMatchSnapshot();
 });
 
 it("literals", () => {
-  expect(takeData(buildVisFromSource("'literal'"))).toMatchSnapshot();
-  expect(takeData(buildVisFromSource("1"))).toMatchSnapshot();
+  expect(buildVisFromSource("'literal'")).toMatchSnapshot();
+  expect(buildVisFromSource("1")).toMatchSnapshot();
 });
 
 it("identifier expression", () => {
-  expect(takeData(buildVisFromSource("a;"))).toMatchSnapshot();
+  expect(buildVisFromSource("a;")).toMatchSnapshot();
 });
 
 it("call expression", () => {
-  expect(takeData(buildVisFromSource("a();"))).toMatchSnapshot();
+  expect(buildVisFromSource("a();")).toMatchSnapshot();
 });
 
 it("call expression with parameters", () => {
-  expect(takeData(buildVisFromSource("a(b);"))).toMatchSnapshot();
-  expect(takeData(buildVisFromSource("a(b, c);"))).toMatchSnapshot();
+  expect(buildVisFromSource("a(b);")).toMatchSnapshot();
+  expect(buildVisFromSource("a(b, c);")).toMatchSnapshot();
 });
 
 it("assignment", () => {
-  expect(takeData(buildVisFromSource("x = 'something'"))).toMatchSnapshot();
+  expect(buildVisFromSource("x = 'something'")).toMatchSnapshot();
 });
 
 it("conditional expression", () => {
-  expect(takeData(buildVisFromSource("a ? b : c"))).toMatchSnapshot();
+  expect(buildVisFromSource("a ? b : c")).toMatchSnapshot();
 });
 
 it("assignment of conditional expression", () => {
-  expect(takeData(buildVisFromSource("a = b ? c : d"))).toMatchSnapshot();
+  expect(buildVisFromSource("a = b ? c : d")).toMatchSnapshot();
+});
+
+it("for loop", () => {
+  expect(buildVisFromSource("for(;x;) {a;}")).toMatchSnapshot();
+});
+
+it("infinite for loop", () => {
+  expect(buildVisFromSource("for(;;) {a;}")).toMatchSnapshot();
 });
 
 it("if statement", () => {
-  expect(takeData(buildVisFromSource("if (a) b"))).toMatchSnapshot();
-  expect(takeData(buildVisFromSource("if (a) { b }"))).toMatchSnapshot();
-  expect(takeData(buildVisFromSource("if (a) { b } else { c }"))).toMatchSnapshot();
+  expect(buildVisFromSource("if (a) b")).toMatchSnapshot();
+  expect(buildVisFromSource("if (a) { b }")).toMatchSnapshot();
+  expect(buildVisFromSource("if (a) { b } else { c }")).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {
   const sourceFile = tslint.getSourceFile("", source);
   const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
-  return toVis(cfg);
+  return takeData(toVis(cfg));
 }
 
 function takeSingleLabel(data: VisData) {

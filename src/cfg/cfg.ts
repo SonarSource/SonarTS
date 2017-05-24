@@ -37,6 +37,11 @@ class CfgBuilder {
 
     statements.forEach(statement => {
       switch (statement.kind) {
+        case SyntaxKind.Block: {
+          const block = statement as ts.Block;
+          next = this.buildStatements(next, block.statements);
+          break;
+        }
         case SyntaxKind.ExpressionStatement:
           next = this.buildExpression(next, (statement as ts.ExpressionStatement).expression);
           break;
@@ -53,9 +58,18 @@ class CfgBuilder {
           );
           break;
         }
-        case SyntaxKind.Block: {
-          const block = statement as ts.Block;
-          next = this.buildStatements(next, block.statements);
+        case SyntaxKind.ForStatement: {
+          const forLoop = statement as ts.ForStatement;
+          const lastLoopStatementBlock = new CfgBlock();
+          const firstLoopStatementBlock = this.buildStatements(lastLoopStatementBlock, [forLoop.statement]);
+          let loopBlock: CfgBlock;
+          if (forLoop.condition) {
+            loopBlock = new CfgBranchingBlock(this.forLoopLabel(forLoop), firstLoopStatementBlock, next);
+          } else {
+            loopBlock = this.createPredecessorBlock(firstLoopStatementBlock);
+          }
+          lastLoopStatementBlock.addSuccessor(loopBlock);
+          next = loopBlock;
           break;
         }
         default:
@@ -114,6 +128,19 @@ class CfgBuilder {
     predecessor.addSuccessor(successor);
     return predecessor;
   }
+
+  private forLoopLabel(forLoop: ts.ForStatement) {
+    return "for(" +
+      textOrEmpty(forLoop.initializer) +
+      "\;" + textOrEmpty(forLoop.condition) +
+      "\;" + textOrEmpty(forLoop.incrementor) +
+      ")";
+
+    function textOrEmpty(node?: ts.Node): string {
+      if (node) return node.getText();
+      return "";
+    }
+  }
 }
 
 export class ControlFlowGraph {
@@ -136,21 +163,29 @@ export class ControlFlowGraph {
       if (graphBlocks.includes(block)) return;
       block.id = baseId;
       graphBlocks.push(block);
-      block.getSuccessors().forEach((successor, i) => collectBlocks(successor, baseId + "," + (i + 1)));
+      block.getSuccessors().forEach((successor, i) => collectBlocks(successor, baseId + "\." + (i + 1)));
     }
   }
 
   public finalize() {
     this.makeBidirectional();
+    const visited: CfgBlock[] = [];
     const end = this.findEnd();
-    collapseEmpty(end);
+    if (end) {
+      collapseEmpty(end);
+    } else {
+      // We are in a loop, so we collapse arbitrarily from the start node
+      collapseEmpty(this.start);
+    }
 
     function collapseEmpty(block: CfgBlock) {
+      if (visited.includes(block)) return;
       if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
         const successor = block.getSuccessors()[0];
         block.getPredecessors().forEach(predecessor => predecessor.replaceSuccessor(block, successor));
         successor.dropPredecessor(block);
       }
+      visited.push(block);
       block.getPredecessors().forEach(collapseEmpty);
     }
   }
@@ -161,7 +196,7 @@ export class ControlFlowGraph {
     });
   }
 
-  private findEnd(): CfgEndBlock {
+  private findEnd(): CfgEndBlock | undefined {
     return this.getBlocks().find(block => block.getSuccessors().length === 0) as CfgEndBlock;
   }
 
@@ -244,11 +279,11 @@ export class CfgBranchingBlock extends CfgBlock {
     return this.trueSuccessor;
   }
 
-  public getFalseSuccessor(): CfgBlock|undefined {
+  public getFalseSuccessor(): CfgBlock | undefined {
     return this.falseSuccessor;
   }
 
   public getLabel(): string {
-    return super.getLabel() + "\n" + "<" +  this.branchingLabel + ">";
+    return super.getLabel() + "\n" + "<" + this.branchingLabel + ">";
   }
 }

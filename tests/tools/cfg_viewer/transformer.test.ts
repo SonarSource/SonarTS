@@ -41,13 +41,13 @@ it("should create branch", () => {
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([
       visBranchingNode("1", "condition"),
-      visNode("1,1", "true"),
-      visNode("1,2", "false"),
+      visNode("1.1", "true"),
+      visNode("1.2", "false"),
     ]),
 
     edges: new DataSet([
-      { id: "1-1,1", from: "1", to: "1,1", arrows: "to", label: "true" },
-      { id: "1-1,2", from: "1", to: "1,2", arrows: "to", label: "false" },
+      { id: "1-1.1", from: "1", to: "1.1", arrows: "to", label: "true" },
+      { id: "1-1.2", from: "1", to: "1.2", arrows: "to", label: "false" },
     ]),
   });
 });
@@ -63,13 +63,13 @@ it("should create a loop between nodes", () => {
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([
       visBranchingNode("1", "condition"),
-      visNode("1,1", "body"),
-      visNode("1,2", "end"),
+      visNode("1.1", "body"),
+      visNode("1.2", "end"),
     ]),
     edges: new DataSet([
-      { id: "1-1,1", from: "1", to: "1,1", arrows: "to", label: "true" },
-      { id: "1-1,2", from: "1", to: "1,2", arrows: "to", label: "false" },
-      { id: "1,1-1", from: "1,1", to: "1", arrows: "to" },
+      { id: "1-1.1", from: "1", to: "1.1", arrows: "to", label: "true" },
+      { id: "1-1.2", from: "1", to: "1.2", arrows: "to", label: "false" },
+      { id: "1.1-1", from: "1.1", to: "1", arrows: "to" },
     ]),
   });
 });
