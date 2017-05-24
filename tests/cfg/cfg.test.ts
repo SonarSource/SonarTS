@@ -2,7 +2,7 @@ import * as tslint from "tslint";
 import { ControlFlowGraph } from "../../src/cfg/cfg";
 import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
 
-it("empty block", () => {
+it("empty file", () => {
   expect(buildVisFromSource("")).toMatchSnapshot();
 });
 
@@ -48,6 +48,10 @@ it("if statement", () => {
   expect(buildVisFromSource("if (a) b")).toMatchSnapshot();
   expect(buildVisFromSource("if (a) { b }")).toMatchSnapshot();
   expect(buildVisFromSource("if (a) { b } else { c }")).toMatchSnapshot();
+});
+
+it("block", () => {
+  expect(buildVisFromSource("{a;b;c;}")).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {

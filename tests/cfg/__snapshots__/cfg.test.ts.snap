@@ -102,6 +102,35 @@ d",
 }
 `;
 
+exports[`block 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+a
+b
+c",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`call expression 1`] = `
 Object {
   "edges": Array [
@@ -249,7 +278,7 @@ c",
 }
 `;
 
-exports[`empty block 1`] = `
+exports[`empty file 1`] = `
 Object {
   "edges": Array [
     Object {

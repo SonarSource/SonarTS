@@ -20,10 +20,9 @@ class CfgBuilder {
   private end = new CfgEndBlock();
 
   public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
-    const reversedStatements = [...statements].reverse();
     const current = this.createBlock();
     current.addSuccessor(this.end);
-    const start = this.buildStatements(current, reversedStatements);
+    const start = this.buildStatements(current, statements);
 
     const graph = new ControlFlowGraph();
     graph.addStart(start);
@@ -32,8 +31,9 @@ class CfgBuilder {
     return graph;
   }
 
-  private buildStatements(current: CfgBlock, statements: ts.Statement[]): CfgBlock {
+  private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
     let next = current;
+    const statements = [...topDownStatements].reverse();
 
     statements.forEach(statement => {
       switch (statement.kind) {
