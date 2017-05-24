@@ -3,11 +3,13 @@
 ## Rules
 
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
+* Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`])
 
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
+[`no-empty-destructuring`]: ./docs/rules/no-empty-destructuring.md
 [`no-identical-conditions`]: ./docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./docs/rules/no-identical-expressions.md
 [`no-ignored-return`]: ./docs/rules/no-ignored-return.md
