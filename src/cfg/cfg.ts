@@ -60,7 +60,11 @@ class CfgBuilder {
         }
         case SyntaxKind.ForStatement: {
           const forLoop = statement as ts.ForStatement;
-          const lastLoopStatementBlock = new CfgBlock();
+          const loopEnd = new CfgBlock();
+          let lastLoopStatementBlock = loopEnd;
+          if (forLoop.incrementor) {
+            lastLoopStatementBlock = this.buildExpression(lastLoopStatementBlock, forLoop.incrementor);
+          }
           const firstLoopStatementBlock = this.buildStatements(lastLoopStatementBlock, [forLoop.statement]);
           let loopBlock: CfgBlock;
           if (forLoop.condition) {
@@ -68,8 +72,12 @@ class CfgBuilder {
           } else {
             loopBlock = this.createPredecessorBlock(firstLoopStatementBlock);
           }
-          lastLoopStatementBlock.addSuccessor(loopBlock);
-          next = loopBlock;
+          let loopStart = loopBlock;
+          if (forLoop.initializer) {
+            loopStart = this.buildExpression(this.createPredecessorBlock(loopBlock), forLoop.initializer);
+          }
+          loopEnd.addSuccessor(loopBlock);
+          next = loopStart;
           break;
         }
         default:
@@ -80,7 +88,7 @@ class CfgBuilder {
     return next;
   }
 
-  private buildExpression(current: CfgBlock, expression: ts.Expression): CfgBlock {
+  private buildExpression(current: CfgBlock, expression: ts.Node): CfgBlock {
     switch (expression.kind) {
       case SyntaxKind.CallExpression: {
         current.addElement(expression);
@@ -212,7 +220,7 @@ export class CfgBlock {
     this.id = "";
   }
 
-  public addElement(element: ts.Expression): CfgBlock {
+  public addElement(element: ts.Node): CfgBlock {
     this.elements.unshift(element);
     return this;
   }

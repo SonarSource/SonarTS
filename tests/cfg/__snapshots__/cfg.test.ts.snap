@@ -218,6 +218,71 @@ a(b, c)",
 }
 `;
 
+exports[`complete for loop 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": "1.1-1.1.1",
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": "1.1-1.1.2",
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": "1.1.1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+x
+0
+x=0",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "1.1
+
+<for(x=0;x<10;x=1)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "1.1.1
+a
+x
+1
+x=1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`conditional expression 1`] = `
 Object {
   "edges": Array [

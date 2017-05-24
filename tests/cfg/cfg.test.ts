@@ -36,14 +36,6 @@ it("assignment of conditional expression", () => {
   expect(buildVisFromSource("a = b ? c : d")).toMatchSnapshot();
 });
 
-it("for loop", () => {
-  expect(buildVisFromSource("for(;x;) {a;}")).toMatchSnapshot();
-});
-
-it("infinite for loop", () => {
-  expect(buildVisFromSource("for(;;) {a;}")).toMatchSnapshot();
-});
-
 it("if statement", () => {
   expect(buildVisFromSource("if (a) b")).toMatchSnapshot();
   expect(buildVisFromSource("if (a) { b }")).toMatchSnapshot();
@@ -52,6 +44,18 @@ it("if statement", () => {
 
 it("block", () => {
   expect(buildVisFromSource("{a;b;c;}")).toMatchSnapshot();
+});
+
+it("for loop", () => {
+  expect(buildVisFromSource("for(;x;) {a;}")).toMatchSnapshot();
+});
+
+it("complete for loop", () => {
+  expect(buildVisFromSource("for(x=0;x<10;x=1) {a;}")).toMatchSnapshot();
+});
+
+it("infinite for loop", () => {
+  expect(buildVisFromSource("for(;;) {a;}")).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {
