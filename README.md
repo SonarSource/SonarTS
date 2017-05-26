@@ -7,12 +7,14 @@
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`])
+* Variables should be declared before they are used ([`no-variable-usage-before-declaration`])
 
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
 [`no-identical-conditions`]: ./docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./docs/rules/no-identical-expressions.md
 [`no-ignored-return`]: ./docs/rules/no-ignored-return.md
 [`no-use-of-empty-return-value`]: ./docs/rules/no-use-of-empty-return-value.md
+[`no-variable-usage-before-declaration`]: ./docs/rules/no-variable-usage-before-declaration.md
 
 ## Testing
 
