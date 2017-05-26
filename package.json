@@ -44,11 +44,12 @@
   "license-check-config": {
     "src": [
       "src/**/*.ts",
-      "tests/**/*.test.ts",
+      "tests/rules/**/*.test.ts",
+      "tests/ruling/**/*.ts",
       "!./node_modules/**/*"
     ],
     "path": "HEADER",
-    "blocking": false,
+    "blocking": true,
     "logInfo": false,
     "logError": true
   }
