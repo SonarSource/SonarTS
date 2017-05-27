@@ -31,19 +31,19 @@ class CfgBuilder {
     return graph;
   }
 
-  private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
-    let next = current;
+  private buildStatements(currentBlock: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
+    let current = currentBlock;
     const statements = [...topDownStatements].reverse();
 
     statements.forEach(statement => {
       switch (statement.kind) {
         case SyntaxKind.Block: {
           const block = statement as ts.Block;
-          next = this.buildStatements(next, block.statements);
+          current = this.buildStatements(current, block.statements);
           break;
         }
         case SyntaxKind.ExpressionStatement:
-          next = this.buildExpression(next, (statement as ts.ExpressionStatement).expression);
+          current = this.buildExpression(current, (statement as ts.ExpressionStatement).expression);
           break;
         case SyntaxKind.IfStatement: {
           const ifStatement = statement as ts.IfStatement;
@@ -51,10 +51,10 @@ class CfgBuilder {
           if (ifStatement.elseStatement) {
             whenFalse = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.elseStatement]);
           } else {
-            whenFalse = next;
+            whenFalse = current;
           }
           const whenTrue = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.thenStatement]);
-          next = this.buildExpression(
+          current = this.buildExpression(
             new CfgBranchingBlock("if (" + ifStatement.expression.getText() + ")", whenTrue, whenFalse),
             ifStatement.expression,
           );
@@ -71,7 +71,7 @@ class CfgBuilder {
           let loopRoot: CfgBlock;
           if (forLoop.condition) {
             loopRoot = this.buildExpression(
-              new CfgBranchingBlock(this.forLoopLabel(forLoop), firstLoopStatementBlock, next), forLoop.condition);
+              new CfgBranchingBlock(this.forLoopLabel(forLoop), firstLoopStatementBlock, current), forLoop.condition);
           } else {
             loopRoot = this.createPredecessorBlock(firstLoopStatementBlock);
           }
@@ -80,7 +80,7 @@ class CfgBuilder {
             loopStart = this.buildExpression(this.createPredecessorBlock(loopRoot), forLoop.initializer);
           }
           loopBottom.addSuccessor(loopRoot);
-          next = loopStart;
+          current = loopStart;
           break;
         }
         case SyntaxKind.WhileStatement: {
@@ -88,19 +88,29 @@ class CfgBuilder {
           const loopBottom = new CfgBlock();
           const firstLoopStatementBlock = this.buildStatements(loopBottom, [whileLoop.statement]);
           const loopStart = this.buildExpression(
-            new CfgBranchingBlock("while(" + whileLoop.expression.getText() + ")", firstLoopStatementBlock, next),
+            new CfgBranchingBlock("while(" + whileLoop.expression.getText() + ")", firstLoopStatementBlock, current),
             whileLoop.expression,
           );
           loopBottom.addSuccessor(loopStart);
-          next = loopStart;
+          current = loopStart;
+          break;
+        }
+        case SyntaxKind.DoStatement: {
+          const doWhileLoop = statement as ts.DoStatement;
+          const doBlockEnd = new CfgBlock();
+          const doBlockStart = this.buildStatements(doBlockEnd, [doWhileLoop.statement]);
+          const whileBlockEnd = new CfgBranchingBlock("while(" + doWhileLoop.expression.getText() + ")", doBlockStart, current);
+          const whileStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
+          doBlockEnd.addSuccessor(whileStartBlock);
+          current = doBlockStart;
           break;
         }
         case SyntaxKind.ReturnStatement: {
           const returnStatement = statement as ts.ReturnStatement;
           if (returnStatement.expression) {
-            next = this.buildExpression(this.createPredecessorBlock(this.end), returnStatement.expression);
+            current = this.buildExpression(this.createPredecessorBlock(this.end), returnStatement.expression);
           } else {
-            next = this.createPredecessorBlock(this.end);
+            current = this.createPredecessorBlock(this.end);
           }
           break;
         }
@@ -109,7 +119,7 @@ class CfgBuilder {
       }
     });
 
-    return next;
+    return current;
   }
 
   private buildExpression(current: CfgBlock, expression: ts.Expression | ts.VariableDeclarationList): CfgBlock {
