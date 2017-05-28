@@ -66,6 +66,10 @@ it("do while loop", () => {
   expect(buildVisFromSource("do {a;} while (true);")).toMatchSnapshot();
 });
 
+it("switch", () => {
+  expect(buildVisFromSource("switch(k) { case 1: 'one'; case 2: 'two'; }")).toMatchSnapshot();
+});
+
 it("return", () => {
   expect(buildVisFromSource("if(a) {return true;} b;")).toMatchSnapshot();
 });

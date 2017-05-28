@@ -105,6 +105,18 @@ class CfgBuilder {
           current = doBlockStart;
           break;
         }
+        case SyntaxKind.SwitchStatement: {
+          const switchStatement = statement as ts.SwitchStatement;
+          const clauses = [...switchStatement.caseBlock.clauses].reverse();
+          const clausesBlocks = clauses.map(clause => {
+            current = this.buildStatements(this.createPredecessorBlock(current), clause.statements);
+            return current;
+          });
+          const switchEndBlock = new CfgBlock();
+          clausesBlocks.forEach(clauseBlock => switchEndBlock.addSuccessor(clauseBlock));
+          current = this.buildExpression(switchEndBlock, switchStatement.expression);
+          break;
+        }
         case SyntaxKind.ReturnStatement: {
           const returnStatement = statement as ts.ReturnStatement;
           if (returnStatement.expression) {
