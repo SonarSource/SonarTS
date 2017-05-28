@@ -75,7 +75,11 @@ it("switch with default", () => {
 });
 
 it("return", () => {
-  expect(buildVisFromSource("if(a) {return true;} b;")).toMatchSnapshot();
+  expect(buildVisFromSource("if(a) { return true; } b;")).toMatchSnapshot();
+});
+
+it("&&", () => {
+  expect(buildVisFromSource("if(a && b) { c; } d;")).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {

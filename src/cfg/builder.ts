@@ -148,10 +148,7 @@ export class CfgBuilder {
       case SyntaxKind.BinaryExpression: {
         const binaryExpression = expression as ts.BinaryExpression;
         current.addElement(expression);
-        if (binaryExpression.operatorToken.kind === SyntaxKind.EqualsToken) {
-          const right = this.buildExpression(current, binaryExpression.right);
-          return this.buildExpression(right, binaryExpression.left);
-        }
+        return this.buildBinaryExpression(current, binaryExpression);
       }
       case SyntaxKind.TrueKeyword:
       case SyntaxKind.FalseKeyword:
@@ -162,6 +159,26 @@ export class CfgBuilder {
         return current;
       default:
         throw new Error("Unknown expression: " + SyntaxKind[expression.kind]);
+    }
+  }
+
+  private buildBinaryExpression(current: CfgBlock, expression: ts.BinaryExpression): CfgBlock {
+    switch (expression.operatorToken.kind) {
+      case SyntaxKind.EqualsToken: {
+        const right = this.buildExpression(current, expression.right);
+        return this.buildExpression(right, expression.left);
+      }
+      case SyntaxKind.AmpersandAmpersandToken: {
+        const whenTrue = this.buildExpression(this.createPredecessorBlock(current), expression.right);
+        let whenFalse = current;
+        if(current instanceof CfgBranchingBlock) {
+          whenFalse = current.getFalseSuccessor();
+        }
+        const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
+        return this.buildExpression(branching, expression.left);
+      }
+      default:
+        throw new Error("Unknown binary token: " + SyntaxKind[expression.operatorToken.kind]);
     }
   }
 
