@@ -70,6 +70,10 @@ it("switch", () => {
   expect(buildVisFromSource("switch(k) { case 1: 'one'; case 2: 'two'; }")).toMatchSnapshot();
 });
 
+it("switch with default", () => {
+  expect(buildVisFromSource("switch(k) { case 1: 'one'; default: 'def'; }")).toMatchSnapshot();
+});
+
 it("return", () => {
   expect(buildVisFromSource("if(a) {return true;} b;")).toMatchSnapshot();
 });
