@@ -83,7 +83,8 @@ export class CfgBlock {
   }
 
   public addSuccessor(successor: CfgBlock): void {
-    if(this.successors.includes(successor)) throw new Error("CfgBlock " + this.getLabel() + " already contains " + successor.getLabel());
+    if (this.successors.includes(successor))
+      throw new Error("CfgBlock " + this.getLabel() + " already contains " + successor.getLabel());
     this.successors.push(successor);
   }
 
@@ -129,7 +130,6 @@ export class CfgBranchingBlock extends CfgBlock {
     super();
     this.branchingLabel = branchingLabel;
     this.trueSuccessor = trueSuccessor;
-    this.falseSuccessor = falseSuccessor;
     this.falseSuccessor = falseSuccessor;
     this.addSuccessor(trueSuccessor);
     this.addSuccessor(falseSuccessor);

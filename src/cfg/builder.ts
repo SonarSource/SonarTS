@@ -1,6 +1,6 @@
 import { flatten, uniqBy } from "lodash";
 import * as ts from "typescript";
-import { ControlFlowGraph, CfgBlock, CfgEndBlock, CfgBranchingBlock } from "./cfg";
+import { CfgBlock, CfgBranchingBlock, CfgEndBlock, ControlFlowGraph } from "./cfg";
 
 const { SyntaxKind } = ts;
 
@@ -53,17 +53,17 @@ export class CfgBuilder {
         case SyntaxKind.ForStatement: {
           const forLoop = statement as ts.ForStatement;
           const loopBottom = new CfgBlock();
-          let lastLoopStatementBlock = loopBottom;
+          let lastBlockInLoopStatement = loopBottom;
           if (forLoop.incrementor) {
-            lastLoopStatementBlock = this.buildExpression(lastLoopStatementBlock, forLoop.incrementor);
+            lastBlockInLoopStatement = this.buildExpression(lastBlockInLoopStatement, forLoop.incrementor);
           }
-          const firstLoopStatementBlock = this.buildStatements(lastLoopStatementBlock, [forLoop.statement]);
+          const firstBlockInLoopStatement = this.buildStatements(lastBlockInLoopStatement, [forLoop.statement]);
           let loopRoot: CfgBlock;
           if (forLoop.condition) {
             loopRoot = this.buildExpression(
-              new CfgBranchingBlock(this.forLoopLabel(forLoop), firstLoopStatementBlock, current), forLoop.condition);
+              new CfgBranchingBlock(this.forLoopLabel(forLoop), firstBlockInLoopStatement, current), forLoop.condition);
           } else {
-            loopRoot = this.createPredecessorBlock(firstLoopStatementBlock);
+            loopRoot = this.createPredecessorBlock(firstBlockInLoopStatement);
           }
           let loopStart = loopRoot;
           if (forLoop.initializer) {
@@ -89,7 +89,11 @@ export class CfgBuilder {
           const doWhileLoop = statement as ts.DoStatement;
           const doBlockEnd = new CfgBlock();
           const doBlockStart = this.buildStatements(doBlockEnd, [doWhileLoop.statement]);
-          const whileBlockEnd = new CfgBranchingBlock("while(" + doWhileLoop.expression.getText() + ")", doBlockStart, current);
+          const whileBlockEnd = new CfgBranchingBlock(
+            "while(" + doWhileLoop.expression.getText() + ")",
+            doBlockStart,
+            current,
+          );
           const whileStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
           doBlockEnd.addSuccessor(whileStartBlock);
           current = doBlockStart;
@@ -169,9 +173,9 @@ export class CfgBuilder {
         return this.buildExpression(right, expression.left);
       }
       case SyntaxKind.AmpersandAmpersandToken: {
-        const whenTrue = this.buildExpression(this.createPredecessorBlock(current), expression.right);
+        const whenTrue = this.buildExpression(current, expression.right);
         let whenFalse = current;
-        if(current instanceof CfgBranchingBlock) {
+        if (current instanceof CfgBranchingBlock) {
           whenFalse = current.getFalseSuccessor();
         }
         const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
