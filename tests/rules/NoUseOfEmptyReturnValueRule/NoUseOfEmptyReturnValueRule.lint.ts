@@ -1,6 +1,6 @@
 // tslint:disable
 
-let foo, condition, x, z, doSomething, doSomethingElse, boolVar;
+let foo, condition, x, z, doSomething, doSomethingElse, boolVar, arr;
 
 function main() {
   function noReturn(a?: any) {
@@ -20,6 +20,9 @@ function main() {
 //        ^^^^^^^^           {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
 
   foo(noReturn());
+//    ^^^^^^^^               {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
+
+  arr[noReturn()];
 //    ^^^^^^^^               {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
 
 
@@ -43,8 +46,6 @@ function main() {
   let arrowImplicitReturn = (a) => a*2;
   z = arrowImplicitReturn(1); // OK
 
-
-
   let funcExpr = function() {
     if (condition) {
       return;
@@ -58,17 +59,15 @@ function main() {
   foo(funcExpr());
 //    ^^^^^^^^               {{Remove this use of the output from "funcExpr"; "funcExpr" doesn't return anything.}}
 
-
-
-  function returnsValue() {
+  function sometimesReturnsValue() {
     if (condition) {
       return 42;
     }
   }
 
   // OK
-  let w = returnsValue();
-  returnsValue();
+  let w = sometimesReturnsValue();
+  sometimesReturnsValue();
 
 
   x = (function(){}());
@@ -81,6 +80,6 @@ function main() {
 
   throw noReturn(); // OK with throw
 
-  let arrowFunc3 = () => (noReturn(), true) // ok for comma expression when noReturn is on the left
+  let arrowFunc3 = () => (noReturn(), true) // OK for comma expression when noReturn is on the left
 
 }
