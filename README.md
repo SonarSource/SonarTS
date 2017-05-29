@@ -6,11 +6,13 @@
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`])
+* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`])
 
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
 [`no-identical-conditions`]: ./docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./docs/rules/no-identical-expressions.md
 [`no-ignored-return`]: ./docs/rules/no-ignored-return.md
+[`no-use-of-empty-return-value`]: ./docs/rules/no-use-of-empty-return-value.md
 
 ## Testing
 
