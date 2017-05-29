@@ -9,6 +9,7 @@
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`])
+* Variables should not be self-assigned ([`no-self-assignment`])
 
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
 [`no-empty-destructuring`]: ./docs/rules/no-empty-destructuring.md
@@ -17,6 +18,7 @@
 [`no-ignored-return`]: ./docs/rules/no-ignored-return.md
 [`no-use-of-empty-return-value`]: ./docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./docs/rules/no-variable-usage-before-declaration.md
+[`no-self-assignment`]: ./docs/rules/no-self-assignment.md
 
 ## Testing
 

@@ -17,10 +17,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { Rule } from "../../../src/rules/NoEmptyDestructuringRule";
+import { Rule } from "../../../src/rules/NoSelfAssignmentRule";
 import runRule from "../../runRule";
 
-it("raises error", () => {
-  const { actualErrors, expectedErrors } = runRule(Rule, __filename);
-  expect(actualErrors).toEqual(expectedErrors);
+it("test", () => {
+  const result = runRule(Rule, __filename);
+  expect(result.actualErrors).toEqual(result.expectedErrors);
 });
