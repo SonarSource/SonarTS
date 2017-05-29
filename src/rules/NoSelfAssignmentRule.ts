@@ -51,7 +51,7 @@ class Walker extends tslint.RuleWalker {
   public visitBinaryExpression(expression: ts.BinaryExpression) {
     if (
       this.isAssignment(expression) &&
-      this.isIndentifier(expression.left) &&
+      this.isIdentifier(expression.left) &&
       expression.left.getText() === expression.right.getText()
     ) {
       this.addFailureAtNode(expression, Rule.formatMessage());
@@ -64,7 +64,7 @@ class Walker extends tslint.RuleWalker {
     return expression.operatorToken.kind === ts.SyntaxKind.EqualsToken;
   }
 
-  private isIndentifier(expression: ts.Expression) {
+  private isIdentifier(expression: ts.Expression) {
     return expression.kind === ts.SyntaxKind.Identifier;
   }
 }
