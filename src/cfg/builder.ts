@@ -181,6 +181,15 @@ export class CfgBuilder {
         const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
         return this.buildExpression(branching, expression.left);
       }
+      case SyntaxKind.ExclamationEqualsEqualsToken:
+      case SyntaxKind.EqualsEqualsEqualsToken:
+      case SyntaxKind.ExclamationEqualsToken:
+      case SyntaxKind.EqualsEqualsToken:
+      case SyntaxKind.GreaterThanEqualsToken:
+      case SyntaxKind.GreaterThanToken:
+      case SyntaxKind.LessThanEqualsToken:
+      case SyntaxKind.LessThanToken:
+        return this.buildExpression(this.buildExpression(current, expression.right), expression.left);
       default:
         throw new Error("Unknown binary token: " + SyntaxKind[expression.operatorToken.kind]);
     }

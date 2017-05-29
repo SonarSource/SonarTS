@@ -13,41 +13,35 @@ Object {
     Object {
       "arrows": "to",
       "from": "1",
-      "id": "1-1.1.1.1.1",
+      "id": "1-1.1.1.1",
       "label": "false",
-      "to": "1.1.1.1.1",
+      "to": "1.1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.1",
       "id": "1.1-1.1.1",
+      "label": "true",
       "to": "1.1.1",
     },
     Object {
       "arrows": "to",
-      "from": "1.1.1",
-      "id": "1.1.1-1.1.1.1",
-      "label": "true",
+      "from": "1.1",
+      "id": "1.1-1.1.1.1",
+      "label": "false",
       "to": "1.1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.1.1",
-      "id": "1.1.1-1.1.1.1.1",
-      "label": "false",
-      "to": "1.1.1.1.1",
+      "id": "1.1.1-1.1.1.1",
+      "to": "1.1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.1.1.1",
       "id": "1.1.1.1-1.1.1.1.1",
       "to": "1.1.1.1.1",
-    },
-    Object {
-      "arrows": "to",
-      "from": "1.1.1.1.1",
-      "id": "1.1.1.1.1-1.1.1.1.1.1",
-      "to": "1.1.1.1.1.1",
     },
   ],
   "nodes": Array [
@@ -62,30 +56,25 @@ a
     Object {
       "id": "1.1",
       "label": "1.1
-b",
-      "physics": false,
-    },
-    Object {
-      "id": "1.1.1",
-      "label": "1.1.1
+b
 a && b
 <if (a && b)>",
       "physics": false,
     },
     Object {
-      "id": "1.1.1.1",
-      "label": "1.1.1.1
+      "id": "1.1.1",
+      "label": "1.1.1
 c",
       "physics": false,
     },
     Object {
-      "id": "1.1.1.1.1",
-      "label": "1.1.1.1.1
+      "id": "1.1.1.1",
+      "label": "1.1.1.1
 d",
       "physics": false,
     },
     Object {
-      "id": "1.1.1.1.1.1",
+      "id": "1.1.1.1.1",
       "label": "END",
       "physics": false,
     },
@@ -896,6 +885,254 @@ true",
       "id": "1.2",
       "label": "1.2
 b",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+r
+a
+b
+a < b
+r = a < b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+r
+a
+b
+a <= b
+r = a <= b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+r
+a
+b
+a > b
+r = a > b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 4`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+r
+a
+b
+a >= b
+r = a >= b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 5`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+r
+a
+b
+a == b
+r = a == b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 6`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+r
+a
+b
+a === b
+r = a === b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 7`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+r
+a
+b
+a != b
+r = a != b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 8`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+r
+a
+b
+a !== b
+r = a !== b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
       "physics": false,
     },
   ],

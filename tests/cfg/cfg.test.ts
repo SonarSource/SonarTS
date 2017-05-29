@@ -82,6 +82,17 @@ it("&&", () => {
   expect(buildVisFromSource("if(a && b) { c; } d;")).toMatchSnapshot();
 });
 
+it("simple binary operators", () => {
+  expect(buildVisFromSource("r = a < b;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a <= b;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a > b;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a >= b;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a == b;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a === b;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a != b;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a !== b;")).toMatchSnapshot();
+});
+
 function buildVisFromSource(source: string) {
   const sourceFile = tslint.getSourceFile("", source);
   const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
