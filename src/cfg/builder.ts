@@ -200,7 +200,7 @@ export class CfgBuilder {
       case SyntaxKind.AmpersandAmpersandToken: {
         let whenFalse = current;
         let whenTrue = current;
-        if (current instanceof CfgBranchingBlock) {
+        if (current instanceof CfgBranchingBlock && current.getElements().length === 0) {
           whenFalse = current.getFalseSuccessor();
         } else {
           whenTrue = this.createPredecessorBlock(current);
