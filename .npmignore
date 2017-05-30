@@ -1,0 +1,17 @@
+.sonarlint/
+.vscode/
+coverage/
+docs/
+src/
+tests/
+typescript-test-sources/
+
+.gitignore
+.gitmodules
+.npmignore
+.travis.yml
+HEADER
+jest.config.js
+tsconfig.json
+tslint.json
+yarn.lock
