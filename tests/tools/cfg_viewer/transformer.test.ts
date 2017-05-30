@@ -13,36 +13,38 @@ beforeEach(() => {
 });
 
 it("should create single block with one element", () => {
-  graph.addStart(block("foo"));
-  expect(toVis(graph)).toEqual({ nodes: new DataSet([visNode("1", "foo")]) });
+  const block = createBlock("foo");
+  graph.addStart(block);
+  expect(toVis(graph)).toEqual({ nodes: new DataSet([visNode("1", block)]) });
 });
 
 it("should create multi-element block", () => {
-  graph.addStart(block("a", "b"));
-  expect(toVis(graph)).toEqual({ nodes: new DataSet([visNode("1", "a", "b")]) });
+  const block = createBlock("a", "b");
+  graph.addStart(block);
+  expect(toVis(graph)).toEqual({ nodes: new DataSet([visNode("1", block)]) });
 });
 
 it("should create edge to the same block", () => {
-  const a = block("a");
+  const a = createBlock("a");
   graph.addStart(a);
   a.addSuccessor(a);
   expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visNode("1", "a")]),
+    nodes: new DataSet([visNode("1", a)]),
     edges: new DataSet([{ id: "1-1", from: "1", to: "1", arrows: "to" }]),
   });
 });
 
 it("should create branch", () => {
-  const trueBlock = block("true");
-  const falseBlock = block("false");
+  const trueBlock = createBlock("true");
+  const falseBlock = createBlock("false");
   const condition = branchingBlock(trueBlock, falseBlock, "condition");
   graph.addStart(condition);
 
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([
-      visBranchingNode("1", "condition"),
-      visNode("1.1", "true"),
-      visNode("1.2", "false"),
+      visBranchingNode("1", condition),
+      visNode("1.1", trueBlock),
+      visNode("1.2", falseBlock),
     ]),
 
     edges: new DataSet([
@@ -53,8 +55,8 @@ it("should create branch", () => {
 });
 
 it("should create a loop between nodes", () => {
-  const body = block("body");
-  const end = block("end");
+  const body = createBlock("body");
+  const end = createBlock("end");
   const condition = branchingBlock(body, end, "condition");
 
   graph.addStart(condition);
@@ -62,9 +64,9 @@ it("should create a loop between nodes", () => {
 
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([
-      visBranchingNode("1", "condition"),
-      visNode("1.1", "body"),
-      visNode("1.2", "end"),
+      visBranchingNode("1", condition),
+      visNode("1.1", body),
+      visNode("1.2", end),
     ]),
     edges: new DataSet([
       { id: "1-1.1", from: "1", to: "1.1", arrows: "to", label: "true" },
@@ -84,7 +86,7 @@ function branchingBlock(
   return block;
 }
 
-function block(...elements: string[]): cfg.CfgBlock {
+function createBlock(...elements: string[]): cfg.CfgBlock {
   const block = new cfg.CfgBlock();
   addElements(block, ...elements);
   return block;
@@ -94,10 +96,10 @@ function addElements(block: cfg.CfgBlock, ... elements: string[]) {
   [...elements].reverse().forEach(e => block.addElement({ getText() { return e; } } as any));
 }
 
-function visNode(id: string, ...elements: string[]) {
-  return { id, label: [id].concat(elements).join("\n"), physics: false };
+function visNode(id: string, block: cfg.CfgBlock) {
+  return { id, label: block.getLabel(), physics: false };
 }
 
-function visBranchingNode(id: string, ...elements: string[]) {
-  return { id, label: [id].concat(elements).concat(["<branching>"]).join("\n"), physics: false };
+function visBranchingNode(id: string, block: cfg.CfgBlock) {
+  return { id, label: block.getLabel(), physics: false };
 }

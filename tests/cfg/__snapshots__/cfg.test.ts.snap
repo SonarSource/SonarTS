@@ -47,30 +47,26 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 <a>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-b
+      "label": "b
 a && b
 <if (a && b)>",
       "physics": false,
     },
     Object {
       "id": "1.1.1",
-      "label": "1.1.1
-c",
+      "label": "c",
       "physics": false,
     },
     Object {
       "id": "1.1.1.1",
-      "label": "1.1.1.1
-d",
+      "label": "d",
       "physics": false,
     },
     Object {
@@ -95,8 +91,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 x
 'something'
 x = 'something'",
@@ -150,8 +145,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 b
 <b ? c : d>",
@@ -159,14 +153,12 @@ b
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-c",
+      "label": "c",
       "physics": false,
     },
     Object {
       "id": "1.1.1",
-      "label": "1.1.1
-a = b ? c : d",
+      "label": "a = b ? c : d",
       "physics": false,
     },
     Object {
@@ -176,8 +168,7 @@ a = b ? c : d",
     },
     Object {
       "id": "1.2",
-      "label": "1.2
-d",
+      "label": "d",
       "physics": false,
     },
   ],
@@ -197,8 +188,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 b
 c",
@@ -226,8 +216,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 a()",
       "physics": false,
@@ -254,8 +243,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 b
 a(b)",
@@ -283,8 +271,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 b
 c
@@ -333,8 +320,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 x
 0
 x=0",
@@ -342,8 +328,7 @@ x=0",
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-x
+      "label": "x
 true
 x=true
 <for(x=0;x=true;x=1)>",
@@ -351,8 +336,7 @@ x=true
     },
     Object {
       "id": "1.1.1",
-      "label": "1.1.1
-a
+      "label": "a
 x
 1
 x=1",
@@ -400,16 +384,14 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 <a ? b : c>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-b",
+      "label": "b",
       "physics": false,
     },
     Object {
@@ -419,8 +401,7 @@ b",
     },
     Object {
       "id": "1.2",
-      "label": "1.2
-c",
+      "label": "c",
       "physics": false,
     },
   ],
@@ -454,15 +435,13 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-true
+      "label": "true
 <while(true)>",
       "physics": false,
     },
@@ -488,8 +467,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START",
+      "label": "START",
       "physics": false,
     },
     Object {
@@ -528,16 +506,14 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 x
 <for(;x;)>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-a",
+      "label": "a",
       "physics": false,
     },
     Object {
@@ -562,8 +538,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a",
       "physics": false,
     },
@@ -603,16 +578,14 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 <if (a)>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-b",
+      "label": "b",
       "physics": false,
     },
     Object {
@@ -657,22 +630,19 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 <if (a)>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-b",
+      "label": "b",
       "physics": false,
     },
     Object {
       "id": "1.1.1",
-      "label": "1.1.1
-c",
+      "label": "c",
       "physics": false,
     },
     Object {
@@ -717,16 +687,14 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 <if (a)>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-b",
+      "label": "b",
       "physics": false,
     },
     Object {
@@ -736,8 +704,7 @@ b",
     },
     Object {
       "id": "1.2",
-      "label": "1.2
-c",
+      "label": "c",
       "physics": false,
     },
   ],
@@ -763,14 +730,12 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START",
+      "label": "START",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-a",
+      "label": "a",
       "physics": false,
     },
     Object {
@@ -795,8 +760,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 'literal'",
       "physics": false,
     },
@@ -822,8 +786,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 1",
       "physics": false,
     },
@@ -869,16 +832,14 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 <if (a)>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-true",
+      "label": "true",
       "physics": false,
     },
     Object {
@@ -888,8 +849,7 @@ true",
     },
     Object {
       "id": "1.2",
-      "label": "1.2
-b",
+      "label": "b",
       "physics": false,
     },
   ],
@@ -943,16 +903,14 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 a
 <if (a)>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-b",
+      "label": "b",
       "physics": false,
     },
     Object {
@@ -962,15 +920,13 @@ b",
     },
     Object {
       "id": "1.2",
-      "label": "1.2
-c
+      "label": "c
 <if (c)>",
       "physics": false,
     },
     Object {
       "id": "1.2.1",
-      "label": "1.2.1
-d",
+      "label": "d",
       "physics": false,
     },
   ],
@@ -990,8 +946,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 r
 a
 b
@@ -1021,8 +976,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 r
 a
 b
@@ -1052,8 +1006,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 r
 a
 b
@@ -1083,8 +1036,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 r
 a
 b
@@ -1114,8 +1066,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 r
 a
 b
@@ -1145,8 +1096,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 r
 a
 b
@@ -1176,8 +1126,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 r
 a
 b
@@ -1207,8 +1156,7 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 r
 a
 b
@@ -1256,15 +1204,13 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 k",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-'two'",
+      "label": "'two'",
       "physics": false,
     },
     Object {
@@ -1274,8 +1220,7 @@ k",
     },
     Object {
       "id": "1.2",
-      "label": "1.2
-'one'",
+      "label": "'one'",
       "physics": false,
     },
   ],
@@ -1313,15 +1258,13 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 k",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-'def'",
+      "label": "'def'",
       "physics": false,
     },
     Object {
@@ -1331,8 +1274,7 @@ k",
     },
     Object {
       "id": "1.2",
-      "label": "1.2
-'one'",
+      "label": "'one'",
       "physics": false,
     },
   ],
@@ -1366,16 +1308,14 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "1
-START
+      "label": "START
 true
 <while(true)>",
       "physics": false,
     },
     Object {
       "id": "1.1",
-      "label": "1.1
-a",
+      "label": "a",
       "physics": false,
     },
     Object {
