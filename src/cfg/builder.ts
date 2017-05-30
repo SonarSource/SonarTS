@@ -120,6 +120,36 @@ export class CfgBuilder {
           }
           break;
         }
+
+        case SyntaxKind.ContinueStatement:
+        case SyntaxKind.BreakStatement:
+        case SyntaxKind.WithStatement:
+        case SyntaxKind.LabeledStatement:
+        case SyntaxKind.ThrowStatement:
+        case SyntaxKind.TryStatement:
+        case SyntaxKind.NotEmittedStatement:
+          throw new Error("Statement out of current CFG implementation scope " + + SyntaxKind[statement.kind]);
+
+        case SyntaxKind.EmptyStatement:
+        case SyntaxKind.DebuggerStatement:
+        case SyntaxKind.VariableStatement:
+        case SyntaxKind.ForInStatement:
+        case SyntaxKind.ForOfStatement:
+        case SyntaxKind.ImportDeclaration:
+        case SyntaxKind.ModuleBlock:
+        case SyntaxKind.MissingDeclaration:
+        case SyntaxKind.FunctionDeclaration:
+        case SyntaxKind.ClassDeclaration:
+        case SyntaxKind.InterfaceDeclaration:
+        case SyntaxKind.TypeAliasDeclaration:
+        case SyntaxKind.EnumDeclaration:
+        case SyntaxKind.ModuleDeclaration:
+        case SyntaxKind.ImportEqualsDeclaration:
+        case SyntaxKind.NamespaceExportDeclaration:
+        case SyntaxKind.ExportDeclaration:
+        case SyntaxKind.ExportAssignment:
+          throw new Error("Not yet implemented statement: " + SyntaxKind[statement.kind]);
+
         default:
           throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
       }
