@@ -1,6 +1,6 @@
 import { flatten, uniqBy } from "lodash";
 import * as ts from "typescript";
-import { CfgBlock, CfgBranchingBlock, CfgEndBlock, ControlFlowGraph } from "./cfg";
+import { CfgBlock, CfgBranchingBlock, CfgEndBlock, ControlFlowGraph, CfgGenericBlock } from "./cfg";
 
 const { SyntaxKind } = ts;
 
@@ -51,7 +51,7 @@ export class CfgBuilder {
         case SyntaxKind.ForStatement: {
           const forLoop = statement as ts.ForStatement;
           const loopBottom = this.createBlock();
-          let lastBlockInLoopStatement = loopBottom;
+          let lastBlockInLoopStatement: CfgBlock = loopBottom;
           if (forLoop.incrementor) {
             lastBlockInLoopStatement = this.buildExpression(lastBlockInLoopStatement, forLoop.incrementor);
           }
@@ -226,8 +226,8 @@ export class CfgBuilder {
     return block;
   }
 
-  private createBlock(): CfgBlock {
-    const block = new CfgBlock();
+  private createBlock(): CfgGenericBlock {
+    const block = new CfgGenericBlock();
     this.blocks.push(block);
     return block;
   }

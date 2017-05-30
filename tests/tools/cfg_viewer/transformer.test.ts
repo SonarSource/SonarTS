@@ -86,8 +86,8 @@ function branchingBlock(
   return block;
 }
 
-function createBlock(...elements: string[]): cfg.CfgBlock {
-  const block = new cfg.CfgBlock();
+function createBlock(...elements: string[]): cfg.CfgGenericBlock {
+  const block = new cfg.CfgGenericBlock();
   addElements(block, ...elements);
   return block;
 }

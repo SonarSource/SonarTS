@@ -51,20 +51,32 @@ export class ControlFlowGraph {
 
     function collapseEmpty(block: CfgBlock) {
       if (visited.includes(block)) return;
+      visited.push(block);
       if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
         const successor = block.getSuccessors()[0];
-        block.getPredecessors().forEach(predecessor => predecessor.replaceSuccessor(block, successor));
         blocks.splice(blocks.indexOf(block), 1);
+        if (block instanceof CfgBlockWithPredecessors) {
+          block.predecessors.forEach(predecessor => predecessor.replaceSuccessor(block, successor));
+        }
       }
-      visited.push(block);
-      block.getPredecessors().forEach(collapseEmpty);
+      if (block instanceof CfgBlockWithPredecessors) {
+        block.predecessors.forEach(collapseEmpty);
+      }
     }
   }
 
   private makeBidirectional() {
-    this.getBlocks().forEach(block => block.dropAllPredecessors());
     this.getBlocks().forEach(block => {
-      block.getSuccessors().forEach(successor => successor.addPredecessor(block));
+      if (block instanceof CfgBlockWithPredecessors) {
+        block.predecessors = [];
+      }
+    });
+    this.getBlocks().forEach(block => {
+      block.getSuccessors().forEach(successor => {
+        if (successor instanceof CfgBlockWithPredecessors) {
+          successor.predecessors.push(block);
+        }
+      });
     });
   }
 
@@ -74,39 +86,52 @@ export class ControlFlowGraph {
 
 }
 
-export class CfgBlock {
-  public id: string;
+export interface CfgBlock {
+  id: string;
+
+  addElement(element: ts.Node): void;
+
+  getElements(): string[];
+
+  getSuccessors(): CfgBlock[];
+
+  replaceSuccessor(what: CfgBlock, withWhat: CfgBlock): void;
+
+  getLabel(): string;
+}
+
+export abstract class CfgBlockWithPredecessors {
+  public id: string = "";
+  public predecessors: CfgBlock[] = [];
+}
+
+export abstract class CfgBlockWithElements extends CfgBlockWithPredecessors {
   private elements: ts.Node[] = [];
-  private successors: CfgBlock[] = [];
-  private predecessors: CfgBlock[] = [];
 
-  constructor() {
-    this.id = "";
-  }
-
-  public addElement(element: ts.Node): CfgBlock {
+  public addElement(element: ts.Node) {
     this.elements.unshift(element);
-    return this;
   }
 
   public getElements(): string[] {
     return this.elements.map((element) => element.getText());
   }
 
+  public getLabel(): string {
+    return this.getElements().join("\n");
+  }
+
+}
+
+export class CfgGenericBlock extends CfgBlockWithElements implements CfgBlock {
+
+  private successors: CfgBlock[] = [];
+
   public addSuccessor(successor: CfgBlock): void {
     this.successors.push(successor);
   }
 
-  public addPredecessor(predecessor: CfgBlock): void {
-    this.predecessors.push(predecessor);
-  }
-
   public getSuccessors(): CfgBlock[] {
     return this.successors;
-  }
-
-  public getPredecessors(): CfgBlock[] {
-    return this.predecessors;
   }
 
   public replaceSuccessor(what: CfgBlock, withWhat: CfgBlock): void {
@@ -114,22 +139,36 @@ export class CfgBlock {
     this.successors[index] = withWhat;
   }
 
-  public dropAllPredecessors(): void {
-    this.predecessors = [];
-  }
-
-  public getLabel(): string {
-    return this.getElements().join("\n");
-  }
 }
 
-export class CfgEndBlock extends CfgBlock {
+export class CfgEndBlock extends CfgBlockWithPredecessors implements CfgBlock {
+
+  public addElement(element: ts.Node): CfgBlock {
+    return this;
+  }
+
+  public getElements(): string[] {
+    return [];
+  }
+
+  public addSuccessor(successor: CfgBlock): void {
+    return;
+  }
+
+  public getSuccessors(): CfgBlock[] {
+    return [];
+  }
+
+  public replaceSuccessor(what: CfgBlock, withWhat: CfgBlock): void {
+    return;
+  }
+
   public getLabel(): string {
     return "END";
   }
 }
 
-export class CfgBranchingBlock extends CfgBlock {
+export class CfgBranchingBlock extends CfgBlockWithElements implements CfgBlock {
   private branchingLabel: string;
   private trueSuccessor: CfgBlock;
   private falseSuccessor: CfgBlock;
@@ -139,8 +178,6 @@ export class CfgBranchingBlock extends CfgBlock {
     this.branchingLabel = branchingLabel;
     this.trueSuccessor = trueSuccessor;
     this.falseSuccessor = falseSuccessor;
-    this.addSuccessor(trueSuccessor);
-    this.addSuccessor(falseSuccessor);
   }
 
   public getTrueSuccessor(): CfgBlock {
@@ -152,7 +189,6 @@ export class CfgBranchingBlock extends CfgBlock {
   }
 
   public replaceSuccessor(what: CfgBlock, withWhat: CfgBlock): void {
-    super.replaceSuccessor(what, withWhat);
     if (this.trueSuccessor === what) {
       this.trueSuccessor = withWhat;
     }
@@ -163,5 +199,9 @@ export class CfgBranchingBlock extends CfgBlock {
 
   public getLabel(): string {
     return super.getLabel() + "\n" + "<" + this.branchingLabel + ">";
+  }
+
+  public getSuccessors(): CfgBlock[] {
+    return [this.trueSuccessor, this.falseSuccessor];
   }
 }
