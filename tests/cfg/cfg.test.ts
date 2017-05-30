@@ -80,6 +80,12 @@ it("return", () => {
 
 it("&&", () => {
   expect(buildVisFromSource("if(a && b) { c; } d;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a && b;")).toMatchSnapshot();
+});
+
+it("parenthesized", () => {
+  expect(buildVisFromSource("r = a < (b && c)")).toMatchSnapshot();
+  expect(buildVisFromSource("if(a < (b && c)) { d; } e;")).toMatchSnapshot();
 });
 
 it("simple binary operators", () => {

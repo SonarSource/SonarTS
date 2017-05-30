@@ -179,8 +179,15 @@ export class CfgBuilder {
       }
       case SyntaxKind.BinaryExpression: {
         const binaryExpression = expression as ts.BinaryExpression;
-        current.addElement(expression);
         return this.buildBinaryExpression(current, binaryExpression);
+      }
+      case SyntaxKind.ParenthesizedExpression: {
+        const parenthesizedExpression = expression as ts.ParenthesizedExpression;
+        if (current.getElements().length === 0) {
+          return this.buildExpression(current, parenthesizedExpression.expression);
+        } else {
+          return this.buildExpression(this.createPredecessorBlock(current), parenthesizedExpression.expression);
+        }
       }
       case SyntaxKind.TrueKeyword:
       case SyntaxKind.FalseKeyword:
@@ -197,11 +204,14 @@ export class CfgBuilder {
   private buildBinaryExpression(current: CfgBlock, expression: ts.BinaryExpression): CfgBlock {
     switch (expression.operatorToken.kind) {
       case SyntaxKind.AmpersandAmpersandToken: {
-        const whenTrue = this.buildExpression(current, expression.right);
         let whenFalse = current;
+        let whenTrue = current;
         if (current instanceof CfgBranchingBlock) {
           whenFalse = current.getFalseSuccessor();
+        } else {
+          whenTrue = this.createPredecessorBlock(current);
         }
+        whenTrue = this.buildExpression(whenTrue, expression.right);
         const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
         return this.buildExpression(branching, expression.left);
       }
@@ -214,6 +224,7 @@ export class CfgBuilder {
       case SyntaxKind.LessThanEqualsToken:
       case SyntaxKind.LessThanToken:
       case SyntaxKind.EqualsToken:
+        current.addElement(expression);
         return this.buildExpression(this.buildExpression(current, expression.right), expression.left);
       default:
         throw new Error("Unknown binary token: " + SyntaxKind[expression.operatorToken.kind]);
