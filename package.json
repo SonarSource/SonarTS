@@ -4,6 +4,7 @@
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
   "scripts": {
+    "prepublish": "tsc -p .",
     "build": "tsc -p .",
     "lint": "tslint -c tslint.json '{src,tests}/**/*.ts'",
     "test": "jest",
