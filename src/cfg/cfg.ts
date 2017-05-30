@@ -119,7 +119,7 @@ export class CfgBlock {
   }
 
   public getLabel(): string {
-    return this.id + "\n" + this.getElements().join("\n");
+    return this.getElements().join("\n");
   }
 }
 
