@@ -896,6 +896,87 @@ b",
 }
 `;
 
+exports[`should not forget successors of branching nodes 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.1",
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": "1-1.2",
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": "1.1-1.1.1",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": "1.2-1.2.1",
+      "label": "true",
+      "to": "1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": "1.2-1.1.1",
+      "label": "false",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2.1",
+      "id": "1.2.1-1.1.1",
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "1
+START
+a
+<if (a)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "1.1
+b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "1.2
+c
+<if (c)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2.1",
+      "label": "1.2.1
+d",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`simple binary operators 1`] = `
 Object {
   "edges": Array [

@@ -47,13 +47,13 @@ export class ControlFlowGraph {
       // We are in a loop, so we collapse arbitrarily from the start node
       collapseEmpty(this.start);
     }
+    this.makeBidirectional();
 
     function collapseEmpty(block: CfgBlock) {
       if (visited.includes(block)) return;
       if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
         const successor = block.getSuccessors()[0];
         block.getPredecessors().forEach(predecessor => predecessor.replaceSuccessor(block, successor));
-        successor.dropPredecessor(block);
         blocks.splice(blocks.indexOf(block), 1);
       }
       visited.push(block);
@@ -62,6 +62,7 @@ export class ControlFlowGraph {
   }
 
   private makeBidirectional() {
+    this.getBlocks().forEach(block => block.dropAllPredecessors());
     this.getBlocks().forEach(block => {
       block.getSuccessors().forEach(successor => successor.addPredecessor(block));
     });
@@ -93,8 +94,6 @@ export class CfgBlock {
   }
 
   public addSuccessor(successor: CfgBlock): void {
-    if (this.successors.includes(successor))
-      throw new Error("CfgBlock " + this.getLabel() + " already contains " + successor.getLabel());
     this.successors.push(successor);
   }
 
@@ -115,9 +114,8 @@ export class CfgBlock {
     this.successors[index] = withWhat;
   }
 
-  public dropPredecessor(block: CfgBlock): void {
-    const index = this.predecessors.indexOf(block);
-    this.predecessors.splice(index, 1);
+  public dropAllPredecessors(): void {
+    this.predecessors = [];
   }
 
   public getLabel(): string {
@@ -151,6 +149,16 @@ export class CfgBranchingBlock extends CfgBlock {
 
   public getFalseSuccessor(): CfgBlock {
     return this.falseSuccessor;
+  }
+
+  public replaceSuccessor(what: CfgBlock, withWhat: CfgBlock): void {
+    super.replaceSuccessor(what, withWhat);
+    if (this.trueSuccessor === what) {
+      this.trueSuccessor = withWhat;
+    }
+    if (this.falseSuccessor === what) {
+      this.falseSuccessor = withWhat;
+    }
   }
 
   public getLabel(): string {

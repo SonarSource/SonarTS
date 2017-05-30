@@ -93,6 +93,10 @@ it("simple binary operators", () => {
   expect(buildVisFromSource("r = a !== b;")).toMatchSnapshot();
 });
 
+it("should not forget successors of branching nodes", () => {
+  expect(buildVisFromSource("if (a) { b } else if (c) { d }")).toMatchSnapshot();
+});
+
 function buildVisFromSource(source: string) {
   const sourceFile = tslint.getSourceFile("", source);
   const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
