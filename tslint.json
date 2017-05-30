@@ -12,7 +12,8 @@
         "arrow-parens": [false],
         "max-classes-per-file": [false],
         "object-literal-sort-keys": false,
-        "curly": false
+        "curly": false,
+        "max-line-length": [true, 160]
     },
     "rulesDirectory": []
 }

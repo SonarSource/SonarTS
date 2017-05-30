@@ -220,9 +220,7 @@ export class CfgBuilder {
     }
   }
 
-  private createBranchingBlock(
-      branchingLabel: string, trueSuccessor: CfgBlock, falseSuccessor: CfgBlock,
-    ): CfgBranchingBlock {
+  private createBranchingBlock(branchingLabel: string, trueSuccessor: CfgBlock, falseSuccessor: CfgBlock): CfgBranchingBlock {
     const block = new CfgBranchingBlock(branchingLabel, trueSuccessor, falseSuccessor);
     this.blocks.push(block);
     return block;
