@@ -1,6 +1,6 @@
 import { flatten, uniqBy } from "lodash";
 import * as ts from "typescript";
-import { CfgBlock, CfgBranchingBlock, CfgEndBlock, ControlFlowGraph, CfgGenericBlock } from "./cfg";
+import { CfgBlock, CfgBranchingBlock, CfgEndBlock, CfgGenericBlock, ControlFlowGraph } from "./cfg";
 
 const { SyntaxKind } = ts;
 

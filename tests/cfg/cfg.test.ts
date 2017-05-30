@@ -63,7 +63,7 @@ it("while loop", () => {
 });
 
 it("do while loop", () => {
-  expect(buildVisFromSource("do {a;} while (true);")).toMatchSnapshot();
+  expect(buildVisFromSource("do {a;} while (true)")).toMatchSnapshot();
 });
 
 it("switch", () => {

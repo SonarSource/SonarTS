@@ -10,6 +10,7 @@ export interface VisData {
 export default function toVisData(cfg: ControlFlowGraph): VisData {
   const viewerNodes: any[] = [];
   const viewerEdges: any[] = [];
+  let edgeCounter = 0;
 
   cfg.getBlocks().forEach((block) => {
     viewerNodes.push({ id: block.id, label: block.getLabel(), physics: false });
@@ -30,12 +31,12 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
   } else {
     return { nodes: new DataSet(viewerNodes) };
   }
-}
 
-function createEdge(start: CfgBlock, end: CfgBlock, label?: string) {
-  if (label) {
-    return { id: start.id + "-" + end.id, from: start.id, to: end.id, arrows: "to", label };
-  } else {
-    return { id: start.id + "-" + end.id, from: start.id, to: end.id, arrows: "to"};
+  function createEdge(start: CfgBlock, end: CfgBlock, label?: string) {
+    if (label) {
+      return { id: edgeCounter++, from: start.id, to: end.id, arrows: "to", label };
+    } else {
+      return { id: edgeCounter++, from: start.id, to: end.id, arrows: "to"};
+    }
   }
 }

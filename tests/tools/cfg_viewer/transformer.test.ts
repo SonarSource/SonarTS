@@ -30,7 +30,7 @@ it("should create edge to the same block", () => {
   a.addSuccessor(a);
   expect(toVis(graph)).toEqual({
     nodes: new DataSet([visNode("1", a)]),
-    edges: new DataSet([{ id: "1-1", from: "1", to: "1", arrows: "to" }]),
+    edges: new DataSet([{ id: 0, from: "1", to: "1", arrows: "to" }]),
   });
 });
 
@@ -48,8 +48,8 @@ it("should create branch", () => {
     ]),
 
     edges: new DataSet([
-      { id: "1-1.1", from: "1", to: "1.1", arrows: "to", label: "true" },
-      { id: "1-1.2", from: "1", to: "1.2", arrows: "to", label: "false" },
+      { id: 0, from: "1", to: "1.1", arrows: "to", label: "true" },
+      { id: 1, from: "1", to: "1.2", arrows: "to", label: "false" },
     ]),
   });
 });
@@ -69,9 +69,28 @@ it("should create a loop between nodes", () => {
       visNode("1.2", end),
     ]),
     edges: new DataSet([
-      { id: "1-1.1", from: "1", to: "1.1", arrows: "to", label: "true" },
-      { id: "1-1.2", from: "1", to: "1.2", arrows: "to", label: "false" },
-      { id: "1.1-1", from: "1.1", to: "1", arrows: "to" },
+      { id: 0, from: "1", to: "1.1", arrows: "to", label: "true" },
+      { id: 1, from: "1", to: "1.2", arrows: "to", label: "false" },
+      { id: 2, from: "1.1", to: "1", arrows: "to" },
+    ]),
+  });
+});
+
+it("should create unique edge ids", () => {
+  const a = createBlock("a");
+  const b = createBlock("a");
+  a.addSuccessor(b);
+  a.addSuccessor(b);
+  graph.addStart(a);
+
+  expect(toVis(graph)).toEqual({
+    nodes: new DataSet([
+      visNode("1", a),
+      visNode("1.1", b),
+    ]),
+    edges: new DataSet([
+      { id: 0, from: "1", to: "1.1", arrows: "to"},
+      { id: 1, from: "1", to: "1.1", arrows: "to"},
     ]),
   });
 });
