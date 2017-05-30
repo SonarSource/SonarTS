@@ -35,11 +35,9 @@ export class CfgBuilder {
           break;
         case SyntaxKind.IfStatement: {
           const ifStatement = statement as ts.IfStatement;
-          let whenFalse;
+          let whenFalse = current;
           if (ifStatement.elseStatement) {
             whenFalse = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.elseStatement]);
-          } else {
-            whenFalse = current;
           }
           const whenTrue = this.buildStatements(this.createPredecessorBlock(current), [ifStatement.thenStatement]);
           current = this.buildExpression(
@@ -183,11 +181,7 @@ export class CfgBuilder {
       }
       case SyntaxKind.ParenthesizedExpression: {
         const parenthesizedExpression = expression as ts.ParenthesizedExpression;
-        if (current.getElements().length === 0) {
-          return this.buildExpression(current, parenthesizedExpression.expression);
-        } else {
-          return this.buildExpression(this.createPredecessorBlock(current), parenthesizedExpression.expression);
-        }
+        return this.buildExpression(current, parenthesizedExpression.expression);
       }
       case SyntaxKind.TrueKeyword:
       case SyntaxKind.FalseKeyword:
