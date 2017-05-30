@@ -21,17 +21,15 @@ export class CfgBuilder {
     return graph;
   }
 
-  private buildStatements(currentBlock: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
-    let current = currentBlock;
+  private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
     const statements = [...topDownStatements].reverse();
 
     statements.forEach(statement => {
       switch (statement.kind) {
-        case SyntaxKind.Block: {
+        case SyntaxKind.Block:
           const block = statement as ts.Block;
           current = this.buildStatements(current, block.statements);
           break;
-        }
         case SyntaxKind.ExpressionStatement:
           current = this.buildExpression(current, (statement as ts.ExpressionStatement).expression);
           break;
@@ -163,13 +161,13 @@ export class CfgBuilder {
       case SyntaxKind.CallExpression: {
         current.addElement(expression);
         const callExpression = expression as ts.CallExpression;
-        let newCurrent = current;
-        [...callExpression.arguments].reverse().forEach(arg => {
-          newCurrent = this.buildExpression(newCurrent, arg);
-        });
-        newCurrent = this.buildExpression(newCurrent, callExpression.expression);
 
-        return newCurrent;
+        [...callExpression.arguments].reverse().forEach(arg => {
+          current = this.buildExpression(current, arg);
+        });
+        current = this.buildExpression(current, callExpression.expression);
+
+        return current;
       }
       case SyntaxKind.ConditionalExpression: {
         const conditionalExpression = expression as ts.ConditionalExpression;
@@ -198,10 +196,6 @@ export class CfgBuilder {
 
   private buildBinaryExpression(current: CfgBlock, expression: ts.BinaryExpression): CfgBlock {
     switch (expression.operatorToken.kind) {
-      case SyntaxKind.EqualsToken: {
-        const right = this.buildExpression(current, expression.right);
-        return this.buildExpression(right, expression.left);
-      }
       case SyntaxKind.AmpersandAmpersandToken: {
         const whenTrue = this.buildExpression(current, expression.right);
         let whenFalse = current;
@@ -219,6 +213,7 @@ export class CfgBuilder {
       case SyntaxKind.GreaterThanToken:
       case SyntaxKind.LessThanEqualsToken:
       case SyntaxKind.LessThanToken:
+      case SyntaxKind.EqualsToken:
         return this.buildExpression(this.buildExpression(current, expression.right), expression.left);
       default:
         throw new Error("Unknown binary token: " + SyntaxKind[expression.operatorToken.kind]);
