@@ -14,11 +14,17 @@ class Viewer {
   public show(source: string) {
     const sourceFile = ts.createSourceFile("cfg.ts", source, ts.ScriptTarget.ES2015, true);
 
-    const graph = ControlFlowGraph.fromSource(sourceFile.statements);
+    try {
+      const graph = ControlFlowGraph.fromSource(sourceFile.statements);
 
-    const visGraph = new Network(this.container, toVisData(graph),
-      { height: "500px", width: "1000px", nodes: { shape: "box" } },
-    );
+      const visGraph = new Network(this.container, toVisData(graph),
+        { height: "500px", width: "1000px", nodes: { shape: "box" } },
+      );
+
+    } catch (e) {
+      alert(e);
+    }
+
   }
 }
 
