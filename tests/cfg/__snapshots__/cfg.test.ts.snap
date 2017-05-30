@@ -756,8 +756,8 @@ Object {
     Object {
       "arrows": "to",
       "from": "1.1",
-      "id": "1.1-1.1",
-      "to": "1.1",
+      "id": "1.1-1",
+      "to": "1",
     },
   ],
   "nodes": Array [
@@ -771,6 +771,11 @@ START",
       "id": "1.1",
       "label": "1.1
 a",
+      "physics": false,
+    },
+    Object {
+      "id": "dead 0",
+      "label": "END",
       "physics": false,
     },
   ],

@@ -6,6 +6,11 @@ const { SyntaxKind } = ts;
 
 export class ControlFlowGraph {
   private start: CfgBlock;
+  private blocks: CfgBlock[];
+
+  constructor(blocks: CfgBlock[] = []) {
+    this.blocks = blocks;
+  }
 
   public static fromSource(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
     return new CfgBuilder().build(statements);
@@ -14,7 +19,10 @@ export class ControlFlowGraph {
   public getBlocks(): CfgBlock[] {
     const graphBlocks: CfgBlock[] = [];
     collectBlocks(this.start, "1");
-    return graphBlocks;
+    return graphBlocks.concat(
+      this.blocks.filter(block => !graphBlocks.includes(block))
+      .map((block, idx) => { block.id = "dead " + idx; return block; }),
+    );
 
     function collectBlocks(block: CfgBlock, baseId: string) {
       if (graphBlocks.includes(block)) return;
@@ -29,6 +37,7 @@ export class ControlFlowGraph {
   }
 
   public finalize() {
+    const blocks = this.blocks;
     this.makeBidirectional();
     const visited: CfgBlock[] = [];
     const end = this.findEnd();
@@ -45,6 +54,7 @@ export class ControlFlowGraph {
         const successor = block.getSuccessors()[0];
         block.getPredecessors().forEach(predecessor => predecessor.replaceSuccessor(block, successor));
         successor.dropPredecessor(block);
+        blocks.splice(blocks.indexOf(block), 1);
       }
       visited.push(block);
       block.getPredecessors().forEach(collapseEmpty);
