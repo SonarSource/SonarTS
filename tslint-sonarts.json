@@ -1,6 +1,13 @@
 {
   "rulesDirectory": "./lib/rules",
   "rules": {
-    "no-identical-expressions": true
+    "no-all-duplicated-branches": true,
+    "no-empty-destructuring": true,
+    "no-use-of-empty-return-value": true,
+    "no-identical-conditions": true,
+    "no-identical-expressions": true,
+    "no-ignored-return": true,
+    "no-self-assignment": true,
+    "no-variable-usage-before-declaration": true
   }
 }
