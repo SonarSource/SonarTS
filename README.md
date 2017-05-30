@@ -1,4 +1,7 @@
 # SonarTS [![Build Status](https://travis-ci.org/SonarSource/SonarTS.svg?branch=master)](https://travis-ci.org/SonarSource/SonarTS)
+SonarSource's code analyzer for TypeScript.
+
+Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 
 ## Rules
 
@@ -20,7 +23,28 @@
 [`no-variable-usage-before-declaration`]: ./docs/rules/no-variable-usage-before-declaration.md
 [`no-self-assignment`]: ./docs/rules/no-self-assignment.md
 
-## Testing
+## Installation
+* If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).
+* Install `tslint-sonarts`
+```sh
+npm install tslint-sonarts      # install in your project
+npm install tslint-sonarts -g   # or install globally
+```
+
+* Add `tslint-sonarts` to your `tslint.json` `extends` property:
+```javascript
+{
+  "extends": ["tslint:recommended", "tslint-sonarts"]
+}
+```
+* Some of the rules in SonarTS require type information. So in order to provide as much value as possible run TSLint with **type-checker**, for example:
+```
+tslint --type-check --project tsconfig.json -c tslint.json 'src/**/*.ts'
+```
+
+## Contribution
+
+### Testing
 
 The awesome [jest](http://facebook.github.io/jest/) test runner is used. There is just a 
 [little configuration](https://github.com/SonarSource/SonarTS/blob/master/jest.config.js) required 
@@ -43,7 +67,7 @@ yarn test -- --coverage
 When you run tests with coverage, the `coverage/` directory will be created at the root. You can
 open the web version of the coverage report `coverage/lcov-report/index.html` to see which lines are covered by tests.
 
-## Ruling
+### Ruling
 
 The ruling test is a special integration test which launches the analysis of a large code base, 
 and then compares those results to the set of expected issues (stored as snapshot files). 
