@@ -1,5 +1,5 @@
 import * as ts from "typescript";
-import { CfgGenericBlock, CfgBlockWithPredecessors, CfgBlock } from "../../src/cfg/cfg";
+import { CfgBlock, CfgBlockWithPredecessors, CfgGenericBlock } from "../../src/cfg/cfg";
 
 it("should create simple label", () => {
   const block = new CfgGenericBlock();
