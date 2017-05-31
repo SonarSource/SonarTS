@@ -66,12 +66,14 @@ it("do while loop", () => {
   expect(buildVisFromSource("do {a;} while (true)")).toMatchSnapshot();
 });
 
-it("switch", () => {
-  expect(buildVisFromSource("switch(k) { case 1: 'one'; case 2: 'two'; }")).toMatchSnapshot();
+it("switch without break and defaults", () => {
+  expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: if (a1) foo; else bar; case 2: a2; }")).toMatchSnapshot();
 });
 
 it("switch with default", () => {
-  expect(buildVisFromSource("switch(k) { case 1: 'one'; default: 'def'; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; default: myDefault; }")).toMatchSnapshot();
 });
 
 it("return", () => {

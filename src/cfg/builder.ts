@@ -114,18 +114,9 @@ export class CfgBuilder {
           current = doBlockStart;
           break;
         }
-        case SyntaxKind.SwitchStatement: {
-          const switchStatement = statement as ts.SwitchStatement;
-          const clauses = [...switchStatement.caseBlock.clauses].reverse();
-          const clausesBlocks = clauses.map(clause => {
-            current = this.buildStatements(this.createPredecessorBlock(current), clause.statements);
-            return current;
-          });
-          const switchEndBlock = this.createBlock();
-          clausesBlocks.forEach(clauseBlock => switchEndBlock.addSuccessor(clauseBlock));
-          current = this.buildExpression(switchEndBlock, switchStatement.expression);
+        case SyntaxKind.SwitchStatement:
+          current = this.buildSwitch(current, statement as ts.SwitchStatement);
           break;
-        }
         case SyntaxKind.ReturnStatement: {
           const returnStatement = statement as ts.ReturnStatement;
           if (returnStatement.expression) {
@@ -174,6 +165,40 @@ export class CfgBuilder {
           throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
       }
     });
+
+    return current;
+  }
+
+  private buildSwitch(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
+    let nextCaseBlock: CfgBlock = current;
+    let nextStatementBlock = current;
+
+    switchStatement.caseBlock.clauses.forEach(caseClause => {
+      if (caseClause.kind === ts.SyntaxKind.DefaultClause) {
+        current = this.buildStatements(this.createPredecessorBlock(nextStatementBlock), caseClause.statements);
+        if (caseClause.statements.length > 0) {
+          nextStatementBlock = current;
+        }
+        nextCaseBlock = this.createBlock();
+        (nextCaseBlock as CfgGenericBlock).addSuccessor(current);
+      }
+    });
+
+    switchStatement.caseBlock.clauses.reverse().forEach(switchCase => {
+      if (switchCase.kind === ts.SyntaxKind.CaseClause) {
+        current = this.createPredecessorBlock(nextStatementBlock);
+        current = this.buildStatements(current, switchCase.statements);
+        if (switchCase.statements.length > 0) {
+          nextStatementBlock = current;
+        }
+
+        current = this.createBranchingBlock("case " + switchCase.expression.getText(), nextStatementBlock, nextCaseBlock);
+        current = this.buildExpression(current, switchCase.expression);
+        nextCaseBlock = current;
+      }
+    });
+
+    current = this.buildExpression(current, switchStatement.expression);
 
     return current;
   }
