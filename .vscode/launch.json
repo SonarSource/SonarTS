@@ -46,6 +46,12 @@
             "env": {
                 "NODE_ENV": "development"
             }
+        },
+        {
+            "name": "Launch CFG Viewer",
+            "type": "chrome",
+            "request": "launch",
+            "url": "${workspaceRoot}/lib/tools/cfg_viewer/index.html"
         }
     ]
 }

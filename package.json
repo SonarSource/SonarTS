@@ -5,7 +5,8 @@
   "main": "tslint-sonarts.json",
   "scripts": {
     "prepublish": "tsc -p .",
-    "build": "tsc -p .",
+    "build": "tsc -p . && yarn build-cfg && webpack",
+    "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer/",
     "lint": "tslint -c tslint.json '{src,tests}/**/*.ts'",
     "test": "jest",
     "ruling": "ts-node tests/ruling/index.ts",
@@ -36,15 +37,21 @@
     "@types/lodash": "^4.14.64",
     "@types/minimist": "^1.2.0",
     "@types/node": "^7.0.18",
+    "@types/vis": "^4.18.2",
+    "awesome-typescript-loader": "^3.1.3",
     "glob": "^7.1.1",
     "jest": "^20.0.1",
     "license-check": "^1.1.5",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
+    "source-map-support": "^0.4.15",
     "ts-jest": "^20.0.3",
     "ts-node": "^3.0.4",
     "tslint": "^5.1.0",
-    "typescript": "^2.3.2"
+    "typescript": "^2.3.2",
+    "vis": "^4.19.1",
+    "webpack": "^2.5.1",
+    "webpack-dev-server": "^2.4.5"
   },
   "license-check-config": {
     "src": [
