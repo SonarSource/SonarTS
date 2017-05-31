@@ -13,8 +13,3 @@ it("should create multi-line label", () => {
   block.addElement({ getText() { return "b"; } } as ts.Node);
   expect(block.getLabel()).toBe("b\na");
 });
-
-it("PIPPO", () => {
-  const bl: CfgBlock = new CfgGenericBlock();
-  expect(bl instanceof CfgBlockWithPredecessors).toBeTruthy();
-});
