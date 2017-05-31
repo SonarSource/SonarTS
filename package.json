@@ -56,9 +56,9 @@
   "license-check-config": {
     "src": [
       "src/**/*.ts",
-      "tests/rules/**/*.test.ts",
-      "tests/ruling/**/*.ts",
-      "!./node_modules/**/*"
+      "tests/**/*.ts",
+      "!tests/**/*.lint.ts",
+      "!node_modules/**/*"
     ],
     "path": "HEADER",
     "blocking": true,
