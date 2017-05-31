@@ -114,6 +114,25 @@ it("should not forget successors of branching nodes", () => {
   expect(buildVisFromSource("if (a) { b } else if (c) { d }")).toMatchSnapshot();
 });
 
+it("empty statement", () => {
+  expect(buildVisFromSource(";")).toMatchSnapshot();
+  expect(buildVisFromSource(";a;;")).toMatchSnapshot();
+});
+
+it("declarations", () => {
+  expect(buildVisFromSource("debugger;")).toMatchSnapshot();
+  expect(buildVisFromSource("import {a, b} from 'foo';")).toMatchSnapshot();
+  expect(buildVisFromSource("foo(); class A{}")).toMatchSnapshot();
+  expect(buildVisFromSource("function foo(){}\nfoo();")).toMatchSnapshot();
+});
+
+it("variable statement", () => {
+  expect(buildVisFromSource("var x = a < b, y = foo(), z;")).toMatchSnapshot();
+  expect(buildVisFromSource("let a:number;")).toMatchSnapshot();
+  expect(buildVisFromSource("const {a, b: c, d = foo()} = bar();")).toMatchSnapshot();
+  expect(buildVisFromSource("let [a, b,, c = foo()] = bar;")).toMatchSnapshot();
+});
+
 function buildVisFromSource(source: string) {
   const sourceFile = tslint.getSourceFile("", source);
   const cfg = ControlFlowGraph.fromSource(sourceFile.statements);

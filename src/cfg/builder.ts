@@ -82,7 +82,7 @@ export class CfgBuilder {
           }
           let loopStart = loopRoot;
           if (forLoop.initializer) {
-            loopStart = this.buildExpression(this.createPredecessorBlock(loopRoot), forLoop.initializer);
+            loopStart = this.buildForInitializer(this.createPredecessorBlock(loopRoot), forLoop.initializer);
           }
           loopBottom.addSuccessor(loopRoot);
           current = loopStart;
@@ -135,6 +135,31 @@ export class CfgBuilder {
           }
           break;
         }
+        case SyntaxKind.EmptyStatement:
+          break;
+        // Just add declaration statement as element to the current cfg block. Do not enter inside.
+        case SyntaxKind.DebuggerStatement:
+        case SyntaxKind.ImportDeclaration:
+        case SyntaxKind.MissingDeclaration:
+        case SyntaxKind.ClassDeclaration:
+        case SyntaxKind.FunctionDeclaration:
+        case SyntaxKind.EnumDeclaration:
+        case SyntaxKind.ModuleDeclaration:
+        case SyntaxKind.NamespaceExportDeclaration:
+        case SyntaxKind.ImportEqualsDeclaration:
+        case SyntaxKind.ExportDeclaration:
+        case SyntaxKind.ExportAssignment:
+        case SyntaxKind.TypeAliasDeclaration:
+        case SyntaxKind.InterfaceDeclaration:
+        case SyntaxKind.ModuleBlock:
+          current.addElement(statement);
+          break;
+        case SyntaxKind.VariableStatement:
+          current = this.buildVariableDeclarationList(current, (statement as ts.VariableStatement).declarationList);
+          break;
+        case SyntaxKind.ForInStatement:
+        case SyntaxKind.ForOfStatement:
+          throw new Error("Not yet implemented statement: " + SyntaxKind[statement.kind]);
 
         case SyntaxKind.ContinueStatement:
         case SyntaxKind.BreakStatement:
@@ -145,26 +170,6 @@ export class CfgBuilder {
         case SyntaxKind.NotEmittedStatement:
           throw new Error("Statement out of current CFG implementation scope " + + SyntaxKind[statement.kind]);
 
-        case SyntaxKind.EmptyStatement:
-        case SyntaxKind.DebuggerStatement:
-        case SyntaxKind.VariableStatement:
-        case SyntaxKind.ForInStatement:
-        case SyntaxKind.ForOfStatement:
-        case SyntaxKind.ImportDeclaration:
-        case SyntaxKind.ModuleBlock:
-        case SyntaxKind.MissingDeclaration:
-        case SyntaxKind.FunctionDeclaration:
-        case SyntaxKind.ClassDeclaration:
-        case SyntaxKind.InterfaceDeclaration:
-        case SyntaxKind.TypeAliasDeclaration:
-        case SyntaxKind.EnumDeclaration:
-        case SyntaxKind.ModuleDeclaration:
-        case SyntaxKind.ImportEqualsDeclaration:
-        case SyntaxKind.NamespaceExportDeclaration:
-        case SyntaxKind.ExportDeclaration:
-        case SyntaxKind.ExportAssignment:
-          throw new Error("Not yet implemented statement: " + SyntaxKind[statement.kind]);
-
         default:
           throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
       }
@@ -173,7 +178,58 @@ export class CfgBuilder {
     return current;
   }
 
-  private buildExpression(current: CfgBlock, expression: ts.Expression | ts.VariableDeclarationList): CfgBlock {
+  private buildForInitializer(current: CfgBlock, forInitializer: ts.Expression | ts.VariableDeclarationList): CfgBlock {
+    return forInitializer.kind === ts.SyntaxKind.VariableDeclarationList
+      ? this.buildVariableDeclarationList(current, forInitializer as ts.VariableDeclarationList)
+      : this.buildExpression(current, forInitializer);
+  }
+
+  private buildVariableDeclarationList(current: CfgBlock, variableDeclarations: ts.VariableDeclarationList): CfgBlock {
+    variableDeclarations.declarations.reverse().forEach((variableDeclaration) => {
+      current = this.buildBindingName(current, variableDeclaration.name);
+      if (variableDeclaration.initializer) {
+        current = this.buildExpression(current, variableDeclaration.initializer);
+      }
+    });
+
+    return current;
+  }
+
+  private buildBindingName(current: CfgBlock, bindingName: ts.BindingName): CfgBlock {
+    const buildElements = (elements: ts.NodeArray<ts.BindingElement | ts.OmittedExpression>) => {
+      elements
+        .reverse()
+        .forEach(element => (current = this.buildBindingElement(current, element)));
+    };
+
+    switch (bindingName.kind) {
+      case ts.SyntaxKind.Identifier:
+        current = this.buildExpression(current, bindingName);
+        break;
+      case ts.SyntaxKind.ObjectBindingPattern:
+        const objectBindingPattern = bindingName as ts.ObjectBindingPattern;
+        buildElements(objectBindingPattern.elements);
+        break;
+      case ts.SyntaxKind.ArrayBindingPattern:
+        const arrayBindingPattern = bindingName as ts.ArrayBindingPattern;
+        buildElements(arrayBindingPattern.elements);
+        break;
+    }
+    return current;
+  }
+
+  private buildBindingElement(current: CfgBlock, bindingElement: ts.BindingElement | ts.OmittedExpression): CfgBlock {
+    if (bindingElement.kind !== ts.SyntaxKind.OmittedExpression) {
+      current = this.buildBindingName(current, bindingElement.name);
+
+      if (bindingElement.initializer) {
+        current = this.buildExpression(current, bindingElement.initializer);
+      }
+    }
+    return current;
+  }
+
+  private buildExpression(current: CfgBlock, expression: ts.Expression): CfgBlock {
     switch (expression.kind) {
       case SyntaxKind.CallExpression: {
         current.addElement(expression);
