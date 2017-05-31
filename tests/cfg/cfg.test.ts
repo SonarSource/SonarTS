@@ -6,7 +6,7 @@ it("empty file", () => {
   expect(buildVisFromSource("")).toMatchSnapshot();
 });
 
-it("literals", () => {
+it("simple literals", () => {
   expect(buildVisFromSource("'literal'")).toMatchSnapshot();
   expect(buildVisFromSource("1")).toMatchSnapshot();
 });
@@ -133,6 +133,14 @@ it("variable statement", () => {
   expect(buildVisFromSource("let a:number;")).toMatchSnapshot();
   expect(buildVisFromSource("const {a, b: c, d = foo()} = bar();")).toMatchSnapshot();
   expect(buildVisFromSource("let [a, b,, c = foo()] = bar;")).toMatchSnapshot();
+});
+
+it("keywords", () => {
+  expect(buildVisFromSource("super(); this; null;")).toMatchSnapshot();
+});
+
+it("object literal", () => {
+  expect(buildVisFromSource("obj = { foo() {}, b : c ? 1 : 2, get d() {}, [x ? 'big':'small'] : 3}")).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {

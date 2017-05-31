@@ -1337,7 +1337,7 @@ Object {
 }
 `;
 
-exports[`literals 1`] = `
+exports[`keywords 1`] = `
 Object {
   "edges": Array [
     Object {
@@ -1351,7 +1351,10 @@ Object {
     Object {
       "id": "1",
       "label": "START
-'literal'",
+super
+super()
+this
+null",
       "physics": false,
     },
     Object {
@@ -1363,26 +1366,115 @@ Object {
 }
 `;
 
-exports[`literals 2`] = `
+exports[`object literal 1`] = `
 Object {
   "edges": Array [
     Object {
       "arrows": "to",
       "from": "1",
       "id": 0,
+      "label": "true",
       "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 1,
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.1",
+      "id": 6,
+      "to": "1.1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 7,
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 8,
+      "to": "1.1.1",
     },
   ],
   "nodes": Array [
     Object {
       "id": "1",
       "label": "START
-1",
+obj
+foo
+b
+c
+<c ? 1 : 2>",
       "physics": false,
     },
     Object {
       "id": "1.1",
+      "label": "1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "d
+x
+<x ? 'big':'small'>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "'big'",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "3
+obj = { foo() {}, b : c ? 1 : 2, get d() {}, [x ? 'big':'small'] : 3}",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1.1",
       "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "'small'",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "2",
       "physics": false,
     },
   ],
@@ -1912,7 +2004,7 @@ r = a !== b",
 }
 `;
 
-exports[`switch without break and defaults 1`] = `
+exports[`simple literals 1`] = `
 Object {
   "edges": Array [
     Object {
@@ -1921,10 +2013,153 @@ Object {
       "id": 0,
       "to": "1.1",
     },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+'literal'",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple literals 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`switch with default 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "label": "true",
+      "to": "1.1",
+    },
     Object {
       "arrows": "to",
       "from": "1",
       "id": 1,
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 5,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 6,
+      "label": "false",
+      "to": "1.1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+a
+1
+<case 1>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "a1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "a2",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "myDefault",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "2
+<case 2>",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`switch without break and defaults 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 1,
+      "label": "false",
       "to": "1.2",
     },
     Object {
@@ -1943,12 +2178,14 @@ Object {
       "arrows": "to",
       "from": "1.2",
       "id": 4,
+      "label": "true",
       "to": "1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.2",
       "id": 5,
+      "label": "false",
       "to": "1.1.1.1",
     },
   ],
@@ -1957,7 +2194,8 @@ Object {
       "id": "1",
       "label": "START
 a
-1",
+1
+<case 1>",
       "physics": false,
     },
     Object {
@@ -1977,7 +2215,8 @@ a
     },
     Object {
       "id": "1.2",
-      "label": "2",
+      "label": "2
+<case 2>",
       "physics": false,
     },
   ],
@@ -1991,12 +2230,14 @@ Object {
       "arrows": "to",
       "from": "1",
       "id": 0,
+      "label": "true",
       "to": "1.1",
     },
     Object {
       "arrows": "to",
       "from": "1",
       "id": 1,
+      "label": "false",
       "to": "1.2",
     },
     Object {
@@ -2009,12 +2250,14 @@ Object {
       "arrows": "to",
       "from": "1.2",
       "id": 3,
+      "label": "true",
       "to": "1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.2",
       "id": 4,
+      "label": "false",
       "to": "1.1.1",
     },
   ],
@@ -2023,7 +2266,8 @@ Object {
       "id": "1",
       "label": "START
 a
-1",
+1
+<case 1>",
       "physics": false,
     },
     Object {
@@ -2038,7 +2282,8 @@ a
     },
     Object {
       "id": "1.2",
-      "label": "2",
+      "label": "2
+<case 2>",
       "physics": false,
     },
   ],
@@ -2052,12 +2297,14 @@ Object {
       "arrows": "to",
       "from": "1",
       "id": 0,
+      "label": "true",
       "to": "1.1",
     },
     Object {
       "arrows": "to",
       "from": "1",
       "id": 1,
+      "label": "false",
       "to": "1.2",
     },
     Object {
@@ -2096,12 +2343,14 @@ Object {
       "arrows": "to",
       "from": "1.2",
       "id": 7,
+      "label": "true",
       "to": "1.1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.2",
       "id": 8,
+      "label": "false",
       "to": "1.1.1.1.1",
     },
   ],
@@ -2110,7 +2359,8 @@ Object {
       "id": "1",
       "label": "START
 a
-1",
+1
+<case 1>",
       "physics": false,
     },
     Object {
@@ -2141,7 +2391,8 @@ a
     },
     Object {
       "id": "1.2",
-      "label": "2",
+      "label": "2
+<case 2>",
       "physics": false,
     },
   ],

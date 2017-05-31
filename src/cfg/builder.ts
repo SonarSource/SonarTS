@@ -283,20 +283,23 @@ export class CfgBuilder {
         const parenthesizedExpression = expression as ts.ParenthesizedExpression;
         return this.buildExpression(current, parenthesizedExpression.expression);
       }
+      case SyntaxKind.ObjectLiteralExpression: {
+        return this.buildObjectLiteralExpression(current, expression as ts.ObjectLiteralExpression);
+      }
       case SyntaxKind.TrueKeyword:
       case SyntaxKind.FalseKeyword:
       case SyntaxKind.NumericLiteral:
       case SyntaxKind.StringLiteral:
+      case SyntaxKind.SuperKeyword:
+      case SyntaxKind.ThisKeyword:
+      case SyntaxKind.NullKeyword:
       case SyntaxKind.Identifier:
         current.addElement(expression);
         return current;
       case SyntaxKind.OmittedExpression:
-      case SyntaxKind.ThisKeyword:
-      case SyntaxKind.NullKeyword:
-      case SyntaxKind.ObjectLiteralExpression:
       case SyntaxKind.ArrayLiteralExpression:
+      case SyntaxKind.JsxAttributes:
       case SyntaxKind.TemplateExpression:
-      case SyntaxKind.SuperKeyword:
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.ArrowFunction:
       case SyntaxKind.ClassExpression:
@@ -362,6 +365,33 @@ export class CfgBuilder {
       default:
         throw new Error("Unknown binary token: " + SyntaxKind[expression.operatorToken.kind]);
     }
+  }
+
+  private buildObjectLiteralExpression(current: CfgBlock, objectLiteral: ts.ObjectLiteralExpression): CfgBlock {
+    objectLiteral.properties.reverse().forEach(property => {
+      let right: CfgBlock = current;
+      switch (property.kind) {
+        case SyntaxKind.PropertyAssignment:
+          right = this.buildExpression(current, (property as ts.PropertyAssignment).initializer);
+          break;
+        case SyntaxKind.SpreadAssignment:
+          right = this.buildExpression(current, (property as ts.SpreadAssignment).expression);
+          break;
+      }
+      if (property.name) {
+        switch (property.name.kind) {
+          case SyntaxKind.ComputedPropertyName:
+            current = this.buildExpression(right, (property.name as ts.ComputedPropertyName).expression);
+            break;
+          case SyntaxKind.NumericLiteral:
+          case SyntaxKind.StringLiteral:
+          case SyntaxKind.Identifier:
+            current = this.buildExpression(right, (property.name as ts.Expression));
+            break;
+        }
+      }
+    });
+    return current;
   }
 
   private createBranchingBlock(branchingLabel: string, trueSuccessor: CfgBlock, falseSuccessor: CfgBlock): CfgBranchingBlock {
