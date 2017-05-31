@@ -168,7 +168,7 @@ export class CfgBuilder {
         case SyntaxKind.ThrowStatement:
         case SyntaxKind.TryStatement:
         case SyntaxKind.NotEmittedStatement:
-          throw new Error("Statement out of current CFG implementation scope " + + SyntaxKind[statement.kind]);
+          throw new Error("Statement out of current CFG implementation scope " + SyntaxKind[statement.kind]);
 
         default:
           throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
@@ -265,6 +265,33 @@ export class CfgBuilder {
       case SyntaxKind.Identifier:
         current.addElement(expression);
         return current;
+      case SyntaxKind.OmittedExpression:
+      case SyntaxKind.ThisKeyword:
+      case SyntaxKind.NullKeyword:
+      case SyntaxKind.ObjectLiteralExpression:
+      case SyntaxKind.ArrayLiteralExpression:
+      case SyntaxKind.TemplateExpression:
+      case SyntaxKind.SuperKeyword:
+      case SyntaxKind.FunctionExpression:
+      case SyntaxKind.ArrowFunction:
+      case SyntaxKind.ClassExpression:
+      case SyntaxKind.PropertyAccessExpression:
+      case SyntaxKind.ElementAccessExpression:
+      case SyntaxKind.NewExpression:
+      case SyntaxKind.TaggedTemplateExpression:
+      case SyntaxKind.TypeAssertionExpression:
+      case SyntaxKind.DeleteExpression:
+      case SyntaxKind.TypeOfExpression:
+      case SyntaxKind.VoidExpression:
+      case SyntaxKind.AwaitExpression:
+      case SyntaxKind.PrefixUnaryExpression:
+      case SyntaxKind.PostfixUnaryExpression:
+      case SyntaxKind.ExpressionWithTypeArguments:
+      case SyntaxKind.AsExpression:
+      case SyntaxKind.NonNullExpression:
+        throw new Error("Not yet implemented expression: " + SyntaxKind[expression.kind]);
+      case SyntaxKind.YieldExpression:
+        throw new Error("Expression out of current CFG implementation scope " + SyntaxKind[expression.kind]);
       default:
         throw new Error("Unknown expression: " + SyntaxKind[expression.kind]);
     }
