@@ -88,6 +88,17 @@ it("parenthesized", () => {
   expect(buildVisFromSource("if(a < (b && c)) { d; } e;")).toMatchSnapshot();
 });
 
+it("||", () => {
+  expect(buildVisFromSource("r = a || b")).toMatchSnapshot();
+  expect(buildVisFromSource("if(a || b) { c; }")).toMatchSnapshot();
+});
+
+it("complex conditional", () => {
+  expect(buildVisFromSource("r = (a || b) && c;")).toMatchSnapshot();
+  expect(buildVisFromSource("if((a || b) && c) { d; }")).toMatchSnapshot();
+  expect(buildVisFromSource("if((a && (b || (c)))) { d; }")).toMatchSnapshot();
+});
+
 it("simple binary operators", () => {
   expect(buildVisFromSource("r = a < b;")).toMatchSnapshot();
   expect(buildVisFromSource("r = a <= b;")).toMatchSnapshot();

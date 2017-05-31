@@ -209,6 +209,18 @@ export class CfgBuilder {
         const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
         return this.buildExpression(branching, expression.left);
       }
+      case SyntaxKind.BarBarToken: {
+        let whenFalse = current;
+        let whenTrue = current;
+        if (current instanceof CfgBranchingBlock && current.getElements().length === 0) {
+          whenTrue = current.getTrueSuccessor();
+        } else {
+          whenFalse = this.createPredecessorBlock(current);
+        }
+        whenFalse = this.buildExpression(whenFalse, expression.right);
+        const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
+        return this.buildExpression(branching, expression.left);
+      }
       case SyntaxKind.ExclamationEqualsEqualsToken:
       case SyntaxKind.EqualsEqualsEqualsToken:
       case SyntaxKind.ExclamationEqualsToken:
