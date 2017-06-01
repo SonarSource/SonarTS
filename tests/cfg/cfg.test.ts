@@ -74,6 +74,9 @@ it("switch without break and defaults", () => {
 
 it("switch with default", () => {
   expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; default: myDefault; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { default: myDefault; case 1: a1; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: a1; default: myDefault; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: a1; default:; case 2: a2; }")).toMatchSnapshot();
 });
 
 it("return", () => {

@@ -169,38 +169,34 @@ export class CfgBuilder {
     return current;
   }
 
+  // Oh developer of the future
+  // read this, and despair
   private buildSwitch(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
-    let nextCaseBlock: CfgBlock = current;
-    let nextStatementBlock = current;
+    const afterSwitchBlock = current;
+    let defaultBlockEnd: CfgGenericBlock | undefined;
+    let defaultBlock: CfgBlock | undefined;
 
     switchStatement.caseBlock.clauses.forEach(caseClause => {
       if (caseClause.kind === ts.SyntaxKind.DefaultClause) {
-        current = this.buildStatements(this.createPredecessorBlock(nextStatementBlock), caseClause.statements);
-        if (caseClause.statements.length > 0) {
-          nextStatementBlock = current;
-        }
-        nextCaseBlock = this.createBlock();
-        (nextCaseBlock as CfgGenericBlock).addSuccessor(current);
+        defaultBlockEnd = this.createBlock();
+        defaultBlock = this.buildStatements(defaultBlockEnd, caseClause.statements);
       }
     });
-
-    switchStatement.caseBlock.clauses.reverse().forEach(switchCase => {
-      if (switchCase.kind === ts.SyntaxKind.CaseClause) {
-        current = this.createPredecessorBlock(nextStatementBlock);
-        current = this.buildStatements(current, switchCase.statements);
-        if (switchCase.statements.length > 0) {
-          nextStatementBlock = current;
-        }
-
-        current = this.createBranchingBlock("case " + switchCase.expression.getText(), nextStatementBlock, nextCaseBlock);
-        current = this.buildExpression(current, switchCase.expression);
-        nextCaseBlock = current;
+    let currentClauseStatementsStart: CfgBlock = afterSwitchBlock;
+    let nextBlock = defaultBlock ? defaultBlock : afterSwitchBlock;
+    switchStatement.caseBlock.clauses.reverse().forEach(caseClause => {
+      if (caseClause.kind === ts.SyntaxKind.CaseClause) {
+        currentClauseStatementsStart = this.buildStatements(this.createPredecessorBlock(currentClauseStatementsStart), caseClause.statements);
+        const currentClauseExpressionEnd = this.createBranchingBlock(caseClause.expression.getText(),
+          currentClauseStatementsStart, nextBlock);
+        const currentClauseExpressionStart = this.buildExpression(currentClauseExpressionEnd, caseClause.expression);
+        nextBlock = currentClauseExpressionStart;
+      } else {
+          (defaultBlockEnd as CfgGenericBlock).addSuccessor(currentClauseStatementsStart);
+          currentClauseStatementsStart = defaultBlock as CfgBlock;
       }
     });
-
-    current = this.buildExpression(current, switchStatement.expression);
-
-    return current;
+    return this.buildExpression(nextBlock, switchStatement.expression);
   }
 
   private buildForInitializer(current: CfgBlock, forInitializer: ts.Expression | ts.VariableDeclarationList): CfgBlock {
