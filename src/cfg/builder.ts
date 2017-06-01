@@ -82,7 +82,7 @@ export class CfgBuilder {
           }
           let loopStart = loopRoot;
           if (forLoop.initializer) {
-            loopStart = this.buildExpression(this.createPredecessorBlock(loopRoot), forLoop.initializer);
+            loopStart = this.buildForInitializer(this.createPredecessorBlock(loopRoot), forLoop.initializer);
           }
           loopBottom.addSuccessor(loopRoot);
           current = loopStart;
@@ -114,18 +114,9 @@ export class CfgBuilder {
           current = doBlockStart;
           break;
         }
-        case SyntaxKind.SwitchStatement: {
-          const switchStatement = statement as ts.SwitchStatement;
-          const clauses = [...switchStatement.caseBlock.clauses].reverse();
-          const clausesBlocks = clauses.map(clause => {
-            current = this.buildStatements(this.createPredecessorBlock(current), clause.statements);
-            return current;
-          });
-          const switchEndBlock = this.createBlock();
-          clausesBlocks.forEach(clauseBlock => switchEndBlock.addSuccessor(clauseBlock));
-          current = this.buildExpression(switchEndBlock, switchStatement.expression);
+        case SyntaxKind.SwitchStatement:
+          current = this.buildSwitch(current, statement as ts.SwitchStatement);
           break;
-        }
         case SyntaxKind.ReturnStatement: {
           const returnStatement = statement as ts.ReturnStatement;
           if (returnStatement.expression) {
@@ -135,6 +126,31 @@ export class CfgBuilder {
           }
           break;
         }
+        case SyntaxKind.EmptyStatement:
+          break;
+        // Just add declaration statement as element to the current cfg block. Do not enter inside.
+        case SyntaxKind.DebuggerStatement:
+        case SyntaxKind.ImportDeclaration:
+        case SyntaxKind.MissingDeclaration:
+        case SyntaxKind.ClassDeclaration:
+        case SyntaxKind.FunctionDeclaration:
+        case SyntaxKind.EnumDeclaration:
+        case SyntaxKind.ModuleDeclaration:
+        case SyntaxKind.NamespaceExportDeclaration:
+        case SyntaxKind.ImportEqualsDeclaration:
+        case SyntaxKind.ExportDeclaration:
+        case SyntaxKind.ExportAssignment:
+        case SyntaxKind.TypeAliasDeclaration:
+        case SyntaxKind.InterfaceDeclaration:
+        case SyntaxKind.ModuleBlock:
+          current.addElement(statement);
+          break;
+        case SyntaxKind.VariableStatement:
+          current = this.buildVariableDeclarationList(current, (statement as ts.VariableStatement).declarationList);
+          break;
+        case SyntaxKind.ForInStatement:
+        case SyntaxKind.ForOfStatement:
+          throw new Error("Not yet implemented statement: " + SyntaxKind[statement.kind]);
 
         case SyntaxKind.ContinueStatement:
         case SyntaxKind.BreakStatement:
@@ -143,27 +159,7 @@ export class CfgBuilder {
         case SyntaxKind.ThrowStatement:
         case SyntaxKind.TryStatement:
         case SyntaxKind.NotEmittedStatement:
-          throw new Error("Statement out of current CFG implementation scope " + + SyntaxKind[statement.kind]);
-
-        case SyntaxKind.EmptyStatement:
-        case SyntaxKind.DebuggerStatement:
-        case SyntaxKind.VariableStatement:
-        case SyntaxKind.ForInStatement:
-        case SyntaxKind.ForOfStatement:
-        case SyntaxKind.ImportDeclaration:
-        case SyntaxKind.ModuleBlock:
-        case SyntaxKind.MissingDeclaration:
-        case SyntaxKind.FunctionDeclaration:
-        case SyntaxKind.ClassDeclaration:
-        case SyntaxKind.InterfaceDeclaration:
-        case SyntaxKind.TypeAliasDeclaration:
-        case SyntaxKind.EnumDeclaration:
-        case SyntaxKind.ModuleDeclaration:
-        case SyntaxKind.ImportEqualsDeclaration:
-        case SyntaxKind.NamespaceExportDeclaration:
-        case SyntaxKind.ExportDeclaration:
-        case SyntaxKind.ExportAssignment:
-          throw new Error("Not yet implemented statement: " + SyntaxKind[statement.kind]);
+          throw new Error("Statement out of current CFG implementation scope " + SyntaxKind[statement.kind]);
 
         default:
           throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
@@ -173,7 +169,86 @@ export class CfgBuilder {
     return current;
   }
 
-  private buildExpression(current: CfgBlock, expression: ts.Expression | ts.VariableDeclarationList): CfgBlock {
+  private buildSwitch(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
+    const afterSwitchBlock = current;
+    let defaultBlockEnd: CfgGenericBlock | undefined;
+    let defaultBlock: CfgBlock | undefined;
+
+    switchStatement.caseBlock.clauses.forEach(caseClause => {
+      if (caseClause.kind === ts.SyntaxKind.DefaultClause) {
+        defaultBlockEnd = this.createBlock();
+        defaultBlock = this.buildStatements(defaultBlockEnd, caseClause.statements);
+      }
+    });
+    let currentClauseStatementsStart: CfgBlock = afterSwitchBlock;
+    let nextBlock = defaultBlock ? defaultBlock : afterSwitchBlock;
+    switchStatement.caseBlock.clauses.reverse().forEach(caseClause => {
+      if (caseClause.kind === ts.SyntaxKind.CaseClause) {
+        currentClauseStatementsStart = this.buildStatements(this.createPredecessorBlock(currentClauseStatementsStart), caseClause.statements);
+        const currentClauseExpressionEnd = this.createBranchingBlock(caseClause.expression.getText(),
+          currentClauseStatementsStart, nextBlock);
+        const currentClauseExpressionStart = this.buildExpression(currentClauseExpressionEnd, caseClause.expression);
+        nextBlock = currentClauseExpressionStart;
+      } else {
+          (defaultBlockEnd as CfgGenericBlock).addSuccessor(currentClauseStatementsStart);
+          currentClauseStatementsStart = defaultBlock as CfgBlock;
+      }
+    });
+    return this.buildExpression(nextBlock, switchStatement.expression);
+  }
+
+  private buildForInitializer(current: CfgBlock, forInitializer: ts.Expression | ts.VariableDeclarationList): CfgBlock {
+    return forInitializer.kind === ts.SyntaxKind.VariableDeclarationList
+      ? this.buildVariableDeclarationList(current, forInitializer as ts.VariableDeclarationList)
+      : this.buildExpression(current, forInitializer);
+  }
+
+  private buildVariableDeclarationList(current: CfgBlock, variableDeclarations: ts.VariableDeclarationList): CfgBlock {
+    variableDeclarations.declarations.reverse().forEach((variableDeclaration) => {
+      current = this.buildBindingName(current, variableDeclaration.name);
+      if (variableDeclaration.initializer) {
+        current = this.buildExpression(current, variableDeclaration.initializer);
+      }
+    });
+
+    return current;
+  }
+
+  private buildBindingName(current: CfgBlock, bindingName: ts.BindingName): CfgBlock {
+    const buildElements = (elements: ts.NodeArray<ts.BindingElement | ts.OmittedExpression>) => {
+      elements
+        .reverse()
+        .forEach(element => (current = this.buildBindingElement(current, element)));
+    };
+
+    switch (bindingName.kind) {
+      case ts.SyntaxKind.Identifier:
+        current = this.buildExpression(current, bindingName);
+        break;
+      case ts.SyntaxKind.ObjectBindingPattern:
+        const objectBindingPattern = bindingName as ts.ObjectBindingPattern;
+        buildElements(objectBindingPattern.elements);
+        break;
+      case ts.SyntaxKind.ArrayBindingPattern:
+        const arrayBindingPattern = bindingName as ts.ArrayBindingPattern;
+        buildElements(arrayBindingPattern.elements);
+        break;
+    }
+    return current;
+  }
+
+  private buildBindingElement(current: CfgBlock, bindingElement: ts.BindingElement | ts.OmittedExpression): CfgBlock {
+    if (bindingElement.kind !== ts.SyntaxKind.OmittedExpression) {
+      current = this.buildBindingName(current, bindingElement.name);
+
+      if (bindingElement.initializer) {
+        current = this.buildExpression(current, bindingElement.initializer);
+      }
+    }
+    return current;
+  }
+
+  private buildExpression(current: CfgBlock, expression: ts.Expression): CfgBlock {
     switch (expression.kind) {
       case SyntaxKind.CallExpression: {
         current.addElement(expression);
@@ -202,13 +277,47 @@ export class CfgBuilder {
         const parenthesizedExpression = expression as ts.ParenthesizedExpression;
         return this.buildExpression(current, parenthesizedExpression.expression);
       }
+      case SyntaxKind.ObjectLiteralExpression: {
+        return this.buildObjectLiteralExpression(current, expression as ts.ObjectLiteralExpression);
+      }
       case SyntaxKind.TrueKeyword:
       case SyntaxKind.FalseKeyword:
       case SyntaxKind.NumericLiteral:
       case SyntaxKind.StringLiteral:
+      case SyntaxKind.SuperKeyword:
+      case SyntaxKind.ThisKeyword:
+      case SyntaxKind.NullKeyword:
       case SyntaxKind.Identifier:
         current.addElement(expression);
         return current;
+      case SyntaxKind.OmittedExpression:
+      case SyntaxKind.ArrayLiteralExpression:
+      case SyntaxKind.JsxElement:
+      case SyntaxKind.JsxExpression:
+      case SyntaxKind.TemplateExpression:
+      case SyntaxKind.FunctionExpression:
+      case SyntaxKind.ArrowFunction:
+      case SyntaxKind.ClassExpression:
+      case SyntaxKind.PropertyAccessExpression:
+      case SyntaxKind.ElementAccessExpression:
+      case SyntaxKind.NewExpression:
+      case SyntaxKind.TaggedTemplateExpression:
+      case SyntaxKind.TypeAssertionExpression:
+      case SyntaxKind.DeleteExpression:
+      case SyntaxKind.TypeOfExpression:
+      case SyntaxKind.VoidExpression:
+      case SyntaxKind.AwaitExpression:
+      case SyntaxKind.PrefixUnaryExpression:
+      case SyntaxKind.PostfixUnaryExpression:
+      case SyntaxKind.AsExpression:
+      case SyntaxKind.NonNullExpression:
+      case SyntaxKind.RegularExpressionLiteral:
+      case SyntaxKind.NoSubstitutionTemplateLiteral:
+      case SyntaxKind.SpreadElement:
+      case SyntaxKind.MetaProperty:
+        throw new Error("Not yet implemented expression: " + SyntaxKind[expression.kind]);
+      case SyntaxKind.YieldExpression:
+        throw new Error("Expression out of current CFG implementation scope " + SyntaxKind[expression.kind]);
       default:
         throw new Error("Unknown expression: " + SyntaxKind[expression.kind]);
     }
@@ -254,6 +363,40 @@ export class CfgBuilder {
       default:
         throw new Error("Unknown binary token: " + SyntaxKind[expression.operatorToken.kind]);
     }
+  }
+
+  private buildObjectLiteralExpression(current: CfgBlock, objectLiteral: ts.ObjectLiteralExpression): CfgBlock {
+    current.addElement(objectLiteral);
+    objectLiteral.properties.reverse().forEach(property => {
+      switch (property.kind) {
+        case SyntaxKind.PropertyAssignment:
+          current = this.buildExpression(current, property.initializer);
+          break;
+        case SyntaxKind.ShorthandPropertyAssignment:
+          if (property.objectAssignmentInitializer) {
+            current = this.buildExpression(current, property.objectAssignmentInitializer);
+          }
+          break;
+        case SyntaxKind.SpreadAssignment:
+          current = this.buildExpression(current, property.expression);
+          break;
+      }
+      if (property.name) {
+        switch (property.name.kind) {
+          case SyntaxKind.ComputedPropertyName:
+            current = this.buildExpression(current, property.name.expression);
+            break;
+          case SyntaxKind.NumericLiteral:
+          case SyntaxKind.StringLiteral:
+          case SyntaxKind.Identifier:
+            if (property.kind === SyntaxKind.ShorthandPropertyAssignment) {
+              current = this.buildExpression(current, property.name);
+            }
+            break;
+        }
+      }
+    });
+    return current;
   }
 
   private createBranchingBlock(branchingLabel: string, trueSuccessor: CfgBlock, falseSuccessor: CfgBlock): CfgBranchingBlock {

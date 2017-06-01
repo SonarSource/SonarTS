@@ -25,7 +25,7 @@ it("empty file", () => {
   expect(buildVisFromSource("")).toMatchSnapshot();
 });
 
-it("literals", () => {
+it("simple literals", () => {
   expect(buildVisFromSource("'literal'")).toMatchSnapshot();
   expect(buildVisFromSource("1")).toMatchSnapshot();
 });
@@ -85,12 +85,17 @@ it("do while loop", () => {
   expect(buildVisFromSource("do {a;} while (true)")).toMatchSnapshot();
 });
 
-it("switch", () => {
-  expect(buildVisFromSource("switch(k) { case 1: 'one'; case 2: 'two'; }")).toMatchSnapshot();
+it("switch without break and defaults", () => {
+  expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: if (a1) foo; else bar; case 2: a2; }")).toMatchSnapshot();
 });
 
 it("switch with default", () => {
-  expect(buildVisFromSource("switch(k) { case 1: 'one'; default: 'def'; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; default: myDefault; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { default: myDefault; case 1: a1; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: a1; default: myDefault; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: a1; default:; case 2: a2; }")).toMatchSnapshot();
 });
 
 it("return", () => {
@@ -131,6 +136,50 @@ it("simple binary operators", () => {
 
 it("should not forget successors of branching nodes", () => {
   expect(buildVisFromSource("if (a) { b } else if (c) { d }")).toMatchSnapshot();
+});
+
+it("empty statement", () => {
+  expect(buildVisFromSource(";")).toMatchSnapshot();
+  expect(buildVisFromSource(";a;;")).toMatchSnapshot();
+});
+
+it("declarations", () => {
+  expect(buildVisFromSource("debugger;")).toMatchSnapshot();
+  expect(buildVisFromSource("import {a, b} from 'foo';")).toMatchSnapshot();
+  expect(buildVisFromSource("foo(); class A{}")).toMatchSnapshot();
+  expect(buildVisFromSource("function foo(){}\nfoo();")).toMatchSnapshot();
+});
+
+it("variable statement", () => {
+  expect(buildVisFromSource("var x = a < b, y = foo(), z;")).toMatchSnapshot();
+  expect(buildVisFromSource("let a:number;")).toMatchSnapshot();
+  expect(buildVisFromSource("const {a, b: c, d = foo()} = bar();")).toMatchSnapshot();
+  expect(buildVisFromSource("let [a, b,, c = foo()] = bar;")).toMatchSnapshot();
+});
+
+it("keywords", () => {
+  expect(buildVisFromSource("super(); this; null;")).toMatchSnapshot();
+});
+
+it("object literal", () => {
+  expect(buildVisFromSource(`obj = {
+    foo() {},
+    b : c ? 1 : 2,
+    get d() {},
+    [x ? 'big':'small'] : 3,
+    a
+  }`)).toMatchSnapshot();
+});
+
+it("object destructuring assignment", () => {
+  // "locVarName2 = 42" will appear in CFG while it should not, due to syntax tree representation limit
+  expect(buildVisFromSource(`({
+    a,
+    b = 42,
+    propName1: locVarName1,
+    propName2: (locVarName),
+    propName3: locVarName2 = 42
+  } = obj);`)).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {
