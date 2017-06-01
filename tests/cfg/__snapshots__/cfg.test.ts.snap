@@ -1366,6 +1366,54 @@ null",
 }
 `;
 
+exports[`object destructuring assignment 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+a
+b
+42
+locVarName1
+locVarName
+locVarName2
+42
+locVarName2 = 42
+{
+    a,
+    b = 42,
+    propName1: locVarName1,
+    propName2: (locVarName),
+    propName3: locVarName2 = 42
+  }
+obj
+{
+    a,
+    b = 42,
+    propName1: locVarName1,
+    propName2: (locVarName),
+    propName3: locVarName2 = 42
+  } = obj",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`object literal 1`] = `
 Object {
   "edges": Array [
@@ -1433,8 +1481,6 @@ Object {
       "id": "1",
       "label": "START
 obj
-foo
-b
 c
 <c ? 1 : 2>",
       "physics": false,
@@ -1446,8 +1492,7 @@ c
     },
     Object {
       "id": "1.1.1",
-      "label": "d
-x
+      "label": "x
 <x ? 'big':'small'>",
       "physics": false,
     },
@@ -1459,7 +1504,21 @@ x
     Object {
       "id": "1.1.1.1.1",
       "label": "3
-obj = { foo() {}, b : c ? 1 : 2, get d() {}, [x ? 'big':'small'] : 3}",
+a
+{
+    foo() {},
+    b : c ? 1 : 2,
+    get d() {},
+    [x ? 'big':'small'] : 3,
+    a
+  }
+obj = {
+    foo() {},
+    b : c ? 1 : 2,
+    get d() {},
+    [x ? 'big':'small'] : 3,
+    a
+  }",
       "physics": false,
     },
     Object {

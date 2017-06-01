@@ -169,8 +169,6 @@ export class CfgBuilder {
     return current;
   }
 
-  // Oh developer of the future
-  // read this, and despair
   private buildSwitch(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
     const afterSwitchBlock = current;
     let defaultBlockEnd: CfgGenericBlock | undefined;
@@ -294,7 +292,8 @@ export class CfgBuilder {
         return current;
       case SyntaxKind.OmittedExpression:
       case SyntaxKind.ArrayLiteralExpression:
-      case SyntaxKind.JsxAttributes:
+      case SyntaxKind.JsxElement:
+      case SyntaxKind.JsxExpression:
       case SyntaxKind.TemplateExpression:
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.ArrowFunction:
@@ -310,9 +309,12 @@ export class CfgBuilder {
       case SyntaxKind.AwaitExpression:
       case SyntaxKind.PrefixUnaryExpression:
       case SyntaxKind.PostfixUnaryExpression:
-      case SyntaxKind.ExpressionWithTypeArguments:
       case SyntaxKind.AsExpression:
       case SyntaxKind.NonNullExpression:
+      case SyntaxKind.RegularExpressionLiteral:
+      case SyntaxKind.NoSubstitutionTemplateLiteral:
+      case SyntaxKind.SpreadElement:
+      case SyntaxKind.MetaProperty:
         throw new Error("Not yet implemented expression: " + SyntaxKind[expression.kind]);
       case SyntaxKind.YieldExpression:
         throw new Error("Expression out of current CFG implementation scope " + SyntaxKind[expression.kind]);
@@ -364,25 +366,32 @@ export class CfgBuilder {
   }
 
   private buildObjectLiteralExpression(current: CfgBlock, objectLiteral: ts.ObjectLiteralExpression): CfgBlock {
+    current.addElement(objectLiteral);
     objectLiteral.properties.reverse().forEach(property => {
-      let right: CfgBlock = current;
       switch (property.kind) {
         case SyntaxKind.PropertyAssignment:
-          right = this.buildExpression(current, (property as ts.PropertyAssignment).initializer);
+          current = this.buildExpression(current, property.initializer);
+          break;
+        case SyntaxKind.ShorthandPropertyAssignment:
+          if (property.objectAssignmentInitializer) {
+            current = this.buildExpression(current, property.objectAssignmentInitializer);
+          }
           break;
         case SyntaxKind.SpreadAssignment:
-          right = this.buildExpression(current, (property as ts.SpreadAssignment).expression);
+          current = this.buildExpression(current, property.expression);
           break;
       }
       if (property.name) {
         switch (property.name.kind) {
           case SyntaxKind.ComputedPropertyName:
-            current = this.buildExpression(right, (property.name as ts.ComputedPropertyName).expression);
+            current = this.buildExpression(current, property.name.expression);
             break;
           case SyntaxKind.NumericLiteral:
           case SyntaxKind.StringLiteral:
           case SyntaxKind.Identifier:
-            current = this.buildExpression(right, (property.name as ts.Expression));
+            if (property.kind === SyntaxKind.ShorthandPropertyAssignment) {
+              current = this.buildExpression(current, property.name);
+            }
             break;
         }
       }
