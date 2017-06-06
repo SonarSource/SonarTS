@@ -4,8 +4,9 @@
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
   "scripts": {
+    "clear": "rm -rf lib/*",
     "prepublish": "tsc -p .",
-    "build": "tsc -p . && yarn build-cfg && webpack",
+    "build": "yarn clear && tsc -p . && yarn build-cfg && webpack",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer/",
     "lint": "tslint -c tslint.json '{src,tests}/**/*.ts'",
     "test": "jest",
