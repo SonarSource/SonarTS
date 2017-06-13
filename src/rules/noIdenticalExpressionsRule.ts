@@ -52,7 +52,6 @@ export class Rule extends tslint.Rules.AbstractRule {
 }
 
 class Walker extends tslint.RuleWalker {
-
   private static EQUALITY_OPERATOR_TOKEN_KINDS = new Set([
     ts.SyntaxKind.EqualsEqualsToken, // ==
     ts.SyntaxKind.EqualsEqualsEqualsToken, // ===
@@ -77,24 +76,20 @@ class Walker extends tslint.RuleWalker {
   ]);
 
   public visitBinaryExpression(node: ts.BinaryExpression) {
-    if (
-      this.hasRelevantOperator(node) &&
-      !this.isOneOntoOneShifting(node) &&
-      areEquivalent(node.left, node.right)
-    ) {
-      this.addFailure(this.createFailure(
-        node.getStart(),
-        node.getWidth(),
-        Rule.formatMessage(node.operatorToken.getText()),
-      ));
+    if (this.hasRelevantOperator(node) && !this.isOneOntoOneShifting(node) && areEquivalent(node.left, node.right)) {
+      this.addFailure(
+        this.createFailure(node.getStart(), node.getWidth(), Rule.formatMessage(node.operatorToken.getText())),
+      );
     }
 
     super.visitBinaryExpression(node);
   }
 
   private hasRelevantOperator(node: ts.BinaryExpression) {
-    return Walker.RELEVANT_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) ||
-      (Walker.EQUALITY_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) && !this.hasIdentifierOperands(node));
+    return (
+      Walker.RELEVANT_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) ||
+      (Walker.EQUALITY_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) && !this.hasIdentifierOperands(node))
+    );
   }
 
   private hasIdentifierOperands(node: ts.BinaryExpression) {

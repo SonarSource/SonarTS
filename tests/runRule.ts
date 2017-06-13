@@ -68,7 +68,6 @@ function runRuleOnFile(Rule: any, file: string): LintError[] {
   if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
     const program = ts.createProgram([file], ts.getDefaultCompilerOptions());
     failures = rule.applyWithProgram(program.getSourceFile(file), program);
-
   } else {
     failures = rule.apply(tslint.getSourceFile(file, source));
   }
@@ -105,7 +104,7 @@ function getLintFileName(testFileName: string) {
 }
 
 function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
-  return failures.map((failure) => {
+  return failures.map(failure => {
     const startPosition = failure.getStartPosition().getLineAndCharacter();
     const endPosition = failure.getEndPosition().getLineAndCharacter();
     return {

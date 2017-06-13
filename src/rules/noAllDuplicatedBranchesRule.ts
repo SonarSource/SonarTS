@@ -40,10 +40,8 @@ export class Rule extends tslint.Rules.AbstractRule {
     typescriptOnly: false,
   };
 
-  public static MESSAGE =
-  "Remove this conditional structure or edit its code blocks so that they're not all the same.";
-  public static MESSAGE_CONDITIONAL_EXPRESSION =
-  "This conditional operation returns the same value whether the condition is \"true\" or \"false\".";
+  public static MESSAGE = "Remove this conditional structure or edit its code blocks so that they're not all the same.";
+  public static MESSAGE_CONDITIONAL_EXPRESSION = 'This conditional operation returns the same value whether the condition is "true" or "false".';
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
@@ -78,10 +76,7 @@ class Walker extends tslint.RuleWalker {
     const branches = [node.whenTrue, node.whenFalse];
 
     if (this.allDuplicated(branches)) {
-      this.addFailure(this.createFailure(
-        node.getStart(),
-        node.getWidth(), Rule.MESSAGE_CONDITIONAL_EXPRESSION,
-      ));
+      this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.MESSAGE_CONDITIONAL_EXPRESSION));
     }
 
     super.visitConditionalExpression(node);
@@ -129,10 +124,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private allDuplicated(branches: Branch[]) {
-    return (
-      branches.length > 1 &&
-      branches.slice(1).every((branch, index) => areEquivalent(branches[index], branch))
-    );
+    return branches.length > 1 && branches.slice(1).every((branch, index) => areEquivalent(branches[index], branch));
   }
 
   private isIfStatement(node: ts.Statement): node is ts.IfStatement {

@@ -80,8 +80,7 @@ class Walker extends tslint.RuleWalker {
     for (let i = 0; i < clauses.length; i++) {
       for (let j = i + 1; j < clauses.length; j++) {
         if (areEquivalent(clauses[i].expression, clauses[j].expression)) {
-          const { line } = this.getSourceFile()
-            .getLineAndCharacterOfPosition(clauses[i].expression.getStart());
+          const { line } = this.getSourceFile().getLineAndCharacterOfPosition(clauses[i].expression.getStart());
           this.addFailureAtNode(clauses[j].expression, Rule.formatMessage("case", line + 1));
         }
       }

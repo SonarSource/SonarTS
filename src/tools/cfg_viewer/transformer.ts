@@ -31,7 +31,7 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
   const viewerEdges: any[] = [];
   let edgeCounter = 0;
 
-  cfg.getBlocks().forEach((block) => {
+  cfg.getBlocks().forEach(block => {
     viewerNodes.push({ id: block.id, label: block.getLabel(), physics: false });
 
     if (block instanceof CfgBranchingBlock) {
@@ -39,7 +39,7 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
       const falseSuccessor = block.getFalseSuccessor();
       if (falseSuccessor) viewerEdges.push(createEdge(block, falseSuccessor, "false"));
     } else {
-      block.getSuccessors().forEach((successorBlock) => {
+      block.getSuccessors().forEach(successorBlock => {
         viewerEdges.push(createEdge(block, successorBlock));
       });
     }
@@ -55,7 +55,7 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
     if (label) {
       return { id: edgeCounter++, from: start.id, to: end.id, arrows: "to", label };
     } else {
-      return { id: edgeCounter++, from: start.id, to: end.id, arrows: "to"};
+      return { id: edgeCounter++, from: start.id, to: end.id, arrows: "to" };
     }
   }
 }

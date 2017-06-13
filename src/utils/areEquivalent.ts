@@ -31,10 +31,7 @@ const COMPARED_BY_TEXT = new Set([
   ts.SyntaxKind.TemplateTail,
 ]);
 
-export default function areEquivalent(
-  first: ts.Node | ts.Node[],
-  second: ts.Node | ts.Node[],
-): boolean {
+export default function areEquivalent(first: ts.Node | ts.Node[], second: ts.Node | ts.Node[]): boolean {
   if (isNode(first) && isNode(second)) {
     if (first.kind !== second.kind) {
       return false;
@@ -52,10 +49,7 @@ export default function areEquivalent(
 
     return areEquivalent(first.getChildren(), second.getChildren());
   } else if (isNodeArray(first) && isNodeArray(second)) {
-    return (
-      first.length === second.length &&
-      first.every((leftNode, index) => areEquivalent(leftNode, second[index]))
-    );
+    return first.length === second.length && first.every((leftNode, index) => areEquivalent(leftNode, second[index]));
   } else {
     return false;
   }

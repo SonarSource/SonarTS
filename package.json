@@ -11,7 +11,8 @@
     "lint": "tslint --type-check --project tsconfig.json -c tslint.json '{src, tests}/**/*.ts'",
     "test": "jest",
     "ruling": "ts-node tests/ruling/index.ts",
-    "license-check": "license-check"
+    "license-check": "license-check",
+    "format": "prettier --write --print-width 120 --trailing-comma all '{src,tests}/**/!(*.lint).ts'"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "license-check": "^1.1.5",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
+    "prettier": "1.4.4",
     "source-map-support": "^0.4.15",
     "ts-jest": "^20.0.3",
     "ts-node": "^3.0.4",
