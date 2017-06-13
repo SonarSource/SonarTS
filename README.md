@@ -5,6 +5,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 
 ## Rules
 
+* Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`])
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
@@ -15,6 +16,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * Variables should not be self-assigned ([`no-self-assignment`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 
+[`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
 [`no-empty-destructuring`]: ./docs/rules/no-empty-destructuring.md
 [`no-identical-conditions`]: ./docs/rules/no-identical-conditions.md
@@ -94,7 +96,7 @@ To run the ruling test:
 yarn ruling
 yarn ruling -- --rule <RuleFileName> # to run ruling for a single rule
 yarn ruling -- --update # to update the snapshots
-yarn ruling -- --rule <RuleFileName> -- update # it is possible to combine both options
+yarn ruling -- --rule <RuleFileName> --update # it is possible to combine both options
 ```
 
 ### Tools we use
