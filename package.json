@@ -8,7 +8,7 @@
     "prepublish": "yarn build",
     "build": "yarn clear && tsc -p . && yarn build-cfg && webpack",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer/",
-    "lint": "tslint -c tslint.json '{src,tests}/**/*.ts'",
+    "lint": "tslint --type-check --project tsconfig.json -c tslint.json '{src, tests}/**/*.ts'",
     "test": "jest",
     "ruling": "ts-node tests/ruling/index.ts",
     "license-check": "license-check"
@@ -49,6 +49,7 @@
     "ts-jest": "^20.0.3",
     "ts-node": "^3.0.4",
     "tslint": "^5.1.0",
+    "tslint-sonarts": "^0.1.2",
     "typescript": "^2.3.2",
     "vis": "^4.19.1",
     "webpack": "^2.5.1",

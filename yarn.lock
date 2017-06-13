@@ -3693,6 +3693,10 @@ tslib@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.7.1.tgz#bc8004164691923a79fe8378bbeb3da2017538ec"
 
+tslint-sonarts@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/tslint-sonarts/-/tslint-sonarts-0.1.2.tgz#845576565cf20a707e4b4fa829e31e8942013a98"
+
 tslint@^5.1.0:
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.4.2.tgz#609b6640cc0424f4a395a9adf68c375563c549c7"
