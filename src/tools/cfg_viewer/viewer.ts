@@ -33,7 +33,7 @@ class Viewer {
     const sourceFile = parseString(source);
 
     try {
-      const graph = ControlFlowGraph.fromSource(sourceFile.statements);
+      const graph = ControlFlowGraph.fromStatements(sourceFile.statements);
 
       // tslint:disable-next-line:no-unused-expression
       new Network(this.container, toVisData(graph), {

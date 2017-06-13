@@ -10,6 +10,7 @@
     "no-ignored-return": true,
     "no-self-assignment": true,
     "no-variable-usage-before-declaration": true,
-    "no-misspelled-operator": true
+    "no-misspelled-operator": true,
+    "no-inconsistent-return": true
   }
 }
