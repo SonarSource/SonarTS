@@ -44,6 +44,16 @@ tslint --type-check --project tsconfig.json -c tslint.json 'src/**/*.ts'
 
 ## Contribution
 
+### Create New Rule
+
+* Create file for rule implementation in `src/rules`. File name should start with lower case and have suffix `Rule`
+* Create test folder in `test/rules` with the name of the rule file
+* In this folder create files `<rule file name>.test.ts` and `<rule file name>.lint.ts`
+* Run [Ruling](#ruling) test
+* Add rule key to `tslint-sonarts.json`
+* In folder `docs/rules` create rule documentation file `<rule key>.md`
+* In `README.md` add reference to the documentation file.
+
 ### Testing
 
 The awesome [jest](http://facebook.github.io/jest/) test runner is used. There is just a 
@@ -67,7 +77,7 @@ yarn test -- --coverage
 When you run tests with coverage, the `coverage/` directory will be created at the root. You can
 open the web version of the coverage report `coverage/lcov-report/index.html` to see which lines are covered by tests.
 
-### Ruling
+### <a name="ruling"></a>Ruling
 
 The ruling test is a special integration test which launches the analysis of a large code base, 
 and then compares those results to the set of expected issues (stored as snapshot files). 
