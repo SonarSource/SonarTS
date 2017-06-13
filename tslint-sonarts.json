@@ -8,6 +8,7 @@
     "no-identical-expressions": true,
     "no-ignored-return": true,
     "no-self-assignment": true,
-    "no-variable-usage-before-declaration": true
+    "no-variable-usage-before-declaration": true,
+    "no-misspelled-operator": true
   }
 }
