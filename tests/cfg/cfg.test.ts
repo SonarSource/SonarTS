@@ -189,7 +189,7 @@ it("object destructuring assignment", () => {
 
 function buildVisFromSource(source: string) {
   const sourceFile = parseString(source);
-  const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
+  const cfg = ControlFlowGraph.fromStatements(sourceFile.statements);
   return takeData(toVis(cfg));
 }
 

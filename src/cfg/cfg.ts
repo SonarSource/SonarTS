@@ -28,7 +28,7 @@ export class ControlFlowGraph {
     this.blocks = blocks;
   }
 
-  public static fromSource(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
+  public static fromStatements(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
     return new CfgBuilder().build(statements);
   }
 
