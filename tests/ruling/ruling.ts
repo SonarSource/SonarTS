@@ -35,8 +35,7 @@ export function getRules(rule?: string): tslint.Rules.AbstractRule[] {
   if (rule) {
     return [require(path.join(dir, rule) as any).Rule];
   } else {
-    return lodash.sortBy(fs.readdirSync(dir))
-      .map(file => (require(path.join(dir, file) as any).Rule));
+    return lodash.sortBy(fs.readdirSync(dir)).map(file => require(path.join(dir, file) as any).Rule);
   }
 }
 
@@ -57,12 +56,7 @@ export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: stri
         const rule = initRule(Rule);
         const errorLines = runRuleOnProjectFile(rule, file, program);
         const ruleName = (Rule as any).metadata.ruleName;
-        results = addErrorsToResults(
-          results,
-          ruleName,
-          getFileNameForSnapshot(file.fileName),
-          errorLines,
-        );
+        results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);
       });
     });
   });
@@ -145,7 +139,6 @@ function runRuleOnProjectFile(rule: any, sourceFile: ts.SourceFile, program: ts.
 
   if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
     failures = rule.applyWithProgram(sourceFile, program);
-
   } else {
     failures = rule.apply(sourceFile);
   }
@@ -153,12 +146,7 @@ function runRuleOnProjectFile(rule: any, sourceFile: ts.SourceFile, program: ts.
   return failures.map(failure => failure.getStartPosition().getLineAndCharacter().line + 1);
 }
 
-function addErrorsToResults(
-  results: Results,
-  ruleName: string,
-  fileName: string,
-  errorLines: number[],
-): Results {
+function addErrorsToResults(results: Results, ruleName: string, fileName: string, errorLines: number[]): Results {
   if (errorLines.length > 0) {
     const nextResults = { ...results };
 
@@ -170,10 +158,7 @@ function addErrorsToResults(
       nextResults[ruleName][fileName] = [];
     }
 
-    nextResults[ruleName][fileName] = [
-      ...nextResults[ruleName][fileName],
-      ...errorLines,
-    ];
+    nextResults[ruleName][fileName] = [...nextResults[ruleName][fileName], ...errorLines];
 
     return nextResults;
   } else {

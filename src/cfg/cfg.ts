@@ -39,15 +39,17 @@ export class ControlFlowGraph {
     const graphBlocks: CfgBlock[] = [];
     collectBlocks(this.start, "1");
     return graphBlocks.concat(
-      this.blocks.filter(block => !graphBlocks.includes(block))
-      .map((block, idx) => { block.id = "dead " + idx; return block; }),
+      this.blocks.filter(block => !graphBlocks.includes(block)).map((block, idx) => {
+        block.id = "dead " + idx;
+        return block;
+      }),
     );
 
     function collectBlocks(block: CfgBlock, baseId: string) {
       if (graphBlocks.includes(block)) return;
       block.id = baseId;
       graphBlocks.push(block);
-      block.getSuccessors().forEach((successor, i) => collectBlocks(successor, baseId + "\." + (i + 1)));
+      block.getSuccessors().forEach((successor, i) => collectBlocks(successor, baseId + "." + (i + 1)));
     }
   }
 
@@ -102,7 +104,6 @@ export class ControlFlowGraph {
   private findEnd(): CfgEndBlock | undefined {
     return this.getBlocks().find(block => block.getSuccessors().length === 0) as CfgEndBlock;
   }
-
 }
 
 export interface CfgBlock {
@@ -132,17 +133,15 @@ export abstract class CfgBlockWithElements extends CfgBlockWithPredecessors {
   }
 
   public getElements(): string[] {
-    return this.elements.map((element) => element.getText());
+    return this.elements.map(element => element.getText());
   }
 
   public getLabel(): string {
     return this.getElements().join("\n");
   }
-
 }
 
 export class CfgGenericBlock extends CfgBlockWithElements implements CfgBlock {
-
   private successors: CfgBlock[] = [];
 
   public addSuccessor(successor: CfgBlock): void {
@@ -157,11 +156,9 @@ export class CfgGenericBlock extends CfgBlockWithElements implements CfgBlock {
     const index = this.successors.indexOf(what);
     this.successors[index] = withWhat;
   }
-
 }
 
 export class CfgEndBlock extends CfgBlockWithPredecessors implements CfgBlock {
-
   public addElement(element: ts.Node): CfgBlock {
     return this;
   }

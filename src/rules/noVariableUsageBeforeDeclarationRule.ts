@@ -72,10 +72,7 @@ function walk(program: ts.Program) {
 /*
  * Return the top most declaration for each symbol
  */
-function collectDeclarations(
-  sourceFile: ts.SourceFile,
-  program: ts.Program,
-): Map<ts.Symbol, ts.VariableDeclaration> {
+function collectDeclarations(sourceFile: ts.SourceFile, program: ts.Program): Map<ts.Symbol, ts.VariableDeclaration> {
   const results = new Map();
   visitNode(sourceFile);
   return results;
@@ -105,10 +102,7 @@ function collectDeclarations(
 /*
  * Return the top most usage for each symbol
  */
-function collectUsages(
-  sourceFile: ts.SourceFile,
-  program: ts.Program,
-): Map<ts.Symbol, ts.Identifier> {
+function collectUsages(sourceFile: ts.SourceFile, program: ts.Program): Map<ts.Symbol, ts.Identifier> {
   const results = new Map();
   visitNode(sourceFile);
   return results;
@@ -140,7 +134,7 @@ function isVariableDeclarationList(node: ts.Node): node is ts.VariableDeclaratio
 }
 
 function isVar(node: ts.VariableDeclarationList): boolean {
-  return ((node.flags & ts.NodeFlags.Let) === 0) && ((node.flags & ts.NodeFlags.Const) === 0);
+  return (node.flags & ts.NodeFlags.Let) === 0 && (node.flags & ts.NodeFlags.Const) === 0;
 }
 
 function getLine(node: ts.Node, sourceFile: ts.SourceFile): number {

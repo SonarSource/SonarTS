@@ -162,24 +162,28 @@ it("keywords", () => {
 });
 
 it("object literal", () => {
-  expect(buildVisFromSource(`obj = {
+  expect(
+    buildVisFromSource(`obj = {
     foo() {},
     b : c ? 1 : 2,
     get d() {},
     [x ? 'big':'small'] : 3,
     a
-  }`)).toMatchSnapshot();
+  }`),
+  ).toMatchSnapshot();
 });
 
 it("object destructuring assignment", () => {
   // "locVarName2 = 42" will appear in CFG while it should not, due to syntax tree representation limit
-  expect(buildVisFromSource(`({
+  expect(
+    buildVisFromSource(`({
     a,
     b = 42,
     propName1: locVarName1,
     propName2: (locVarName),
     propName3: locVarName2 = 42
-  } = obj);`)).toMatchSnapshot();
+  } = obj);`),
+  ).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string) {
