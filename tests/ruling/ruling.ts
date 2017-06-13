@@ -183,7 +183,7 @@ function readSnapshots(rules: string[]): Results {
 
   rules.forEach(rule => {
     results[rule] = {};
-    const content = fs.readFileSync(path.join(snapshotsDir, rule), "utf-8").split("\n");
+    const content = readSnapshotFile(snapshotsDir, rule);
     content.forEach(line => {
       const colonIndex = line.indexOf(":");
       if (colonIndex !== -1) {
@@ -195,4 +195,13 @@ function readSnapshots(rules: string[]): Results {
   });
 
   return results;
+}
+
+function readSnapshotFile(snapshotsDir: string, ruleName: string) {
+  const rulePath = path.join(snapshotsDir, ruleName);
+  if (fs.existsSync(rulePath)) {
+    return fs.readFileSync(rulePath, "utf-8").split("\n");
+  } else {
+    return [];
+  }
 }
