@@ -13,6 +13,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`])
 * Variables should not be self-assigned ([`no-self-assignment`])
+* Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
 [`no-empty-destructuring`]: ./docs/rules/no-empty-destructuring.md
@@ -22,6 +23,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 [`no-use-of-empty-return-value`]: ./docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./docs/rules/no-variable-usage-before-declaration.md
 [`no-self-assignment`]: ./docs/rules/no-self-assignment.md
+[`no-misspelled-operator`]: ./docs/rules/no-misspelled-operator.md
 
 ## Installation
 * If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).
