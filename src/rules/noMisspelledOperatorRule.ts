@@ -20,7 +20,6 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import areEquivalent from "../utils/areEquivalent";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -43,7 +42,6 @@ export class Rule extends tslint.Rules.AbstractRule {
 }
 
 class Walker extends tslint.RuleWalker {
-
   private static readonly COMPOUND_ASSIGNMENT_OPERATORS = new Map()
     .set(ts.SyntaxKind.PlusToken, "+=")
     .set(ts.SyntaxKind.MinusToken, "-=")
@@ -87,5 +85,4 @@ class Walker extends tslint.RuleWalker {
       Rule.formatMessage(this.suggestOperator(unaryOperator)),
     );
   }
-
 }
