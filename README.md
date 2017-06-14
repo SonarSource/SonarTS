@@ -94,3 +94,8 @@ yarn ruling -- --rule <RuleFileName> # to run ruling for a single rule
 yarn ruling -- --update # to update the snapshots
 yarn ruling -- --rule <RuleFileName> -- update # it is possible to combine both options
 ```
+
+### Tools we use
+* Visual Studio Code
+* TSLint (and its extension for VSCode)
+* Prettier (and its extension for VSCode)
