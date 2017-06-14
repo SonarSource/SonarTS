@@ -20,6 +20,7 @@
 import * as ts from "typescript";
 import { Network } from "vis";
 import { ControlFlowGraph } from "../../cfg/cfg";
+import { parseString } from "../../utils/parser";
 import toVisData from "./transformer";
 
 class Viewer {
@@ -30,7 +31,7 @@ class Viewer {
   }
 
   public show(source: string) {
-    const sourceFile = ts.createSourceFile("cfg.ts", source, ts.ScriptTarget.ES2015, true);
+    const sourceFile = parseString(source);
 
     try {
       const graph = ControlFlowGraph.fromSource(sourceFile.statements);
