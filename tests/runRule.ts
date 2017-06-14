@@ -22,6 +22,7 @@ import * as glob from "glob";
 import * as path from "path";
 import * as tslint from "tslint";
 import * as ts from "typescript";
+import { parseFile, parseString } from "../src/utils/parser";
 
 const RULE_OPTIONS: tslint.IOptions = {
   disabledIntervals: [],
@@ -66,10 +67,10 @@ function runRuleOnFile(Rule: any, file: string): LintError[] {
   let failures: tslint.RuleFailure[];
 
   if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
-    const program = ts.createProgram([file], ts.getDefaultCompilerOptions());
-    failures = rule.applyWithProgram(program.getSourceFile(file), program);
+    const result = parseFile(file);
+    failures = rule.applyWithProgram(result.sourceFile, result.program);
   } else {
-    failures = rule.apply(tslint.getSourceFile(file, source));
+    failures = rule.apply(parseString(source));
   }
 
   return mapToLintErrors(failures);
