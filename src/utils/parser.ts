@@ -27,8 +27,8 @@ import * as ts from "typescript";
  */
 const TARGET = ts.ScriptTarget.ES2017;
 
-export function parseString(source: string): ts.SourceFile {
-  return ts.createSourceFile("filename.ts", source, TARGET, true, ts.ScriptKind.TSX);
+export function parseString(source: string, scriptKind: ts.ScriptKind = ts.ScriptKind.TSX): ts.SourceFile {
+  return ts.createSourceFile("filename.ts", source, TARGET, true, scriptKind);
 }
 
 /**
@@ -36,7 +36,6 @@ export function parseString(source: string): ts.SourceFile {
  */
 export function parseFile(filename: string): { sourceFile: ts.SourceFile; program: ts.Program } {
   const compilerOptions = ts.getDefaultCompilerOptions();
-  compilerOptions.jsx = ts.JsxEmit.React;
   compilerOptions.target = TARGET;
   const program = ts.createProgram([filename], compilerOptions);
 

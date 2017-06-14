@@ -18,6 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as tslint from "tslint";
+import * as ts from "typescript";
 import { ControlFlowGraph } from "../../src/cfg/cfg";
 import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
 import { parseString } from "../../src/utils/parser";
@@ -26,9 +27,12 @@ it("empty file", () => {
   expect(buildVisFromSource("")).toMatchSnapshot();
 });
 
+// ---- EXPRESSIONS
+
 it("simple literals", () => {
   expect(buildVisFromSource("'literal'")).toMatchSnapshot();
   expect(buildVisFromSource("1")).toMatchSnapshot();
+  expect(buildVisFromSource("/ab+c/")).toMatchSnapshot();
 });
 
 it("identifier expression", () => {
@@ -56,51 +60,84 @@ it("assignment of conditional expression", () => {
   expect(buildVisFromSource("a = b ? c : d")).toMatchSnapshot();
 });
 
-it("if statement", () => {
-  expect(buildVisFromSource("if (a) b")).toMatchSnapshot();
-  expect(buildVisFromSource("if (a) { b } c")).toMatchSnapshot();
-  expect(buildVisFromSource("if (a) { b } else { c }")).toMatchSnapshot();
+it("array literal", () => {
+  expect(buildVisFromSource("x = [1, 2, foo(), , 3];")).toMatchSnapshot();
 });
 
-it("block", () => {
-  expect(buildVisFromSource("{a;b;c;}")).toMatchSnapshot();
+it("template expression (string literal)", () => {
+  expect(buildVisFromSource("x = `foo${foobar1()}bar${foobar2()}`;")).toMatchSnapshot();
 });
 
-it("for loop", () => {
-  expect(buildVisFromSource("for(;x;) {a;}")).toMatchSnapshot();
+it("declaration expressions", () => {
+  expect(buildVisFromSource("x = function() {foo ();}")).toMatchSnapshot();
+  expect(buildVisFromSource("x = (a, b) => {foo();};")).toMatchSnapshot();
+  expect(buildVisFromSource("x = class A { foo(){ y } };")).toMatchSnapshot();
 });
 
-it("complete for loop", () => {
-  expect(buildVisFromSource("for(x=0;x=true;x=1) {a;}")).toMatchSnapshot();
+it("property access", () => {
+  expect(buildVisFromSource("x = a.b;")).toMatchSnapshot();
+  expect(buildVisFromSource("foo(x ? 1 : 2).bar();")).toMatchSnapshot();
 });
 
-it("infinite for loop", () => {
-  expect(buildVisFromSource("for(;;) {a;}")).toMatchSnapshot();
+it("element access", () => {
+  // empty element access, possible theoretically based on ElementAccessExpression tree interface
+  expect(buildVisFromSource("x = a[];")).toMatchSnapshot();
+  expect(buildVisFromSource("x = a[b];")).toMatchSnapshot();
+  expect(buildVisFromSource("foo(x ? 1 : 2)[y ? 3 : 4];")).toMatchSnapshot();
 });
 
-it("while loop", () => {
-  expect(buildVisFromSource("while(true) {a;}")).toMatchSnapshot();
+it("new expression", () => {
+  expect(buildVisFromSource("x = new A;")).toMatchSnapshot();
+  expect(buildVisFromSource("x = new A(1, 2);")).toMatchSnapshot();
 });
 
-it("do while loop", () => {
-  expect(buildVisFromSource("do {a;} while (true)")).toMatchSnapshot();
+it("tagged template", () => {
+  expect(buildVisFromSource("foo`abc ${bar(1, 2)}`")).toMatchSnapshot();
+  expect(buildVisFromSource("foo(1, 2)`abc`")).toMatchSnapshot();
 });
 
-it("switch without break and defaults", () => {
-  expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; }")).toMatchSnapshot();
-  expect(buildVisFromSource("switch(a) { case 1: case 2: a2; }")).toMatchSnapshot();
-  expect(buildVisFromSource("switch(a) { case 1: if (a1) foo; else bar; case 2: a2; }")).toMatchSnapshot();
+it("type assertion expression", () => {
+  expect(buildVisFromSource("<number>a.foo", ts.ScriptKind.TS)).toMatchSnapshot();
+  expect(buildVisFromSource("<foo.bar>a.b", ts.ScriptKind.TS)).toMatchSnapshot();
 });
 
-it("switch with default", () => {
-  expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; default: myDefault; }")).toMatchSnapshot();
-  expect(buildVisFromSource("switch(a) { default: myDefault; case 1: a1; case 2: a2; }")).toMatchSnapshot();
-  expect(buildVisFromSource("switch(a) { case 1: a1; default: myDefault; case 2: a2; }")).toMatchSnapshot();
-  expect(buildVisFromSource("switch(a) { case 1: a1; default:; case 2: a2; }")).toMatchSnapshot();
+it("delete/typeof/void/await expressions", () => {
+  expect(buildVisFromSource("delete a[42]")).toMatchSnapshot();
+  expect(buildVisFromSource("typeof foo(1, 2)")).toMatchSnapshot();
+  expect(buildVisFromSource("void foo")).toMatchSnapshot();
+  expect(buildVisFromSource("await foo(1, 2)")).toMatchSnapshot();
 });
 
-it("return", () => {
-  expect(buildVisFromSource("if(a) { return true; } b;")).toMatchSnapshot();
+it("prefix unary expression", () => {
+  expect(buildVisFromSource("--x")).toMatchSnapshot();
+  expect(buildVisFromSource("x = +y")).toMatchSnapshot();
+});
+
+it("postfix unary expression", () => {
+  expect(buildVisFromSource("x++")).toMatchSnapshot();
+  expect(buildVisFromSource("x = y--")).toMatchSnapshot();
+});
+
+it("'as' expression", () => {
+  expect(buildVisFromSource("foo(1, 2) as a.b")).toMatchSnapshot();
+});
+
+it("non-null expression", () => {
+  expect(buildVisFromSource("foo!")).toMatchSnapshot();
+  expect(buildVisFromSource("foo!.bar")).toMatchSnapshot();
+});
+
+it("spread element", () => {
+  expect(buildVisFromSource("foo(a, ...b)")).toMatchSnapshot();
+});
+
+it("metaproperty", () => {
+  expect(buildVisFromSource("new.target")).toMatchSnapshot();
+});
+
+it("yield expression", () => {
+  expect(buildVisFromSource("yield;")).toMatchSnapshot();
+  expect(buildVisFromSource("yield 42;")).toMatchSnapshot();
 });
 
 it("&&", () => {
@@ -133,29 +170,9 @@ it("simple binary operators", () => {
   expect(buildVisFromSource("r = a === b;")).toMatchSnapshot();
   expect(buildVisFromSource("r = a != b;")).toMatchSnapshot();
   expect(buildVisFromSource("r = a !== b;")).toMatchSnapshot();
-});
-
-it("should not forget successors of branching nodes", () => {
-  expect(buildVisFromSource("if (a) { b } else if (c) { d }")).toMatchSnapshot();
-});
-
-it("empty statement", () => {
-  expect(buildVisFromSource(";")).toMatchSnapshot();
-  expect(buildVisFromSource(";a;;")).toMatchSnapshot();
-});
-
-it("declarations", () => {
-  expect(buildVisFromSource("debugger;")).toMatchSnapshot();
-  expect(buildVisFromSource("import {a, b} from 'foo';")).toMatchSnapshot();
-  expect(buildVisFromSource("foo(); class A{}")).toMatchSnapshot();
-  expect(buildVisFromSource("function foo(){}\nfoo();")).toMatchSnapshot();
-});
-
-it("variable statement", () => {
-  expect(buildVisFromSource("var x = a < b, y = foo(), z;")).toMatchSnapshot();
-  expect(buildVisFromSource("let a:number;")).toMatchSnapshot();
-  expect(buildVisFromSource("const {a, b: c, d = foo()} = bar();")).toMatchSnapshot();
-  expect(buildVisFromSource("let [a, b,, c = foo()] = bar;")).toMatchSnapshot();
+  expect(buildVisFromSource("r = a , b;")).toMatchSnapshot();
+  expect(buildVisFromSource("r -= b;")).toMatchSnapshot();
+  expect(buildVisFromSource("a + b * c - d")).toMatchSnapshot();
 });
 
 it("keywords", () => {
@@ -187,8 +204,113 @@ it("object destructuring assignment", () => {
   ).toMatchSnapshot();
 });
 
-function buildVisFromSource(source: string) {
-  const sourceFile = parseString(source);
+it("jsx tag names", () => {
+  expect(buildVisFromSource("<a/>")).toMatchSnapshot();
+  expect(buildVisFromSource("<this/>")).toMatchSnapshot();
+  expect(buildVisFromSource("<A/>")).toMatchSnapshot();
+  expect(buildVisFromSource("<A.b.c/>")).toMatchSnapshot();
+
+  expect(buildVisFromSource("<a></a>")).toMatchSnapshot();
+  expect(buildVisFromSource("<A></A>")).toMatchSnapshot();
+  expect(buildVisFromSource("<A.b></A.b>")).toMatchSnapshot();
+});
+
+it("jsx attributes", () => {
+  expect(buildVisFromSource('<a foo="value"/>')).toMatchSnapshot();
+  expect(buildVisFromSource("<a {... foo(x ? 1 : 2)}/>")).toMatchSnapshot();
+  expect(buildVisFromSource("<a {...x} {...y}/>")).toMatchSnapshot();
+  expect(buildVisFromSource("<a b={foo}/>")).toMatchSnapshot();
+  expect(buildVisFromSource("<a attr/>")).toMatchSnapshot();
+});
+
+it("jsx children", () => {
+  expect(buildVisFromSource("<div>hello</div>")).toMatchSnapshot();
+  expect(buildVisFromSource("<div>hello {name}</div>")).toMatchSnapshot();
+  expect(buildVisFromSource("<div>hello <p {...attr1}></p><a {...attr2}/></div>")).toMatchSnapshot();
+});
+
+// ---- STATEMENTS
+
+it("if statement", () => {
+  expect(buildVisFromSource("if (a) b")).toMatchSnapshot();
+  expect(buildVisFromSource("if (a) { b } c")).toMatchSnapshot();
+  expect(buildVisFromSource("if (a) { b } else { c }")).toMatchSnapshot();
+});
+
+it("block", () => {
+  expect(buildVisFromSource("{a;b;c;}")).toMatchSnapshot();
+});
+
+it("for loop", () => {
+  expect(buildVisFromSource("for(;x;) {a;}")).toMatchSnapshot();
+});
+
+it("complete for loop", () => {
+  expect(buildVisFromSource("for(x=0;x=true;x=1) {a;}")).toMatchSnapshot();
+});
+
+it("infinite for loop", () => {
+  expect(buildVisFromSource("for(;;) {a;}")).toMatchSnapshot();
+});
+
+it("while loop", () => {
+  expect(buildVisFromSource("while(true) {a;}")).toMatchSnapshot();
+});
+
+it("do while loop", () => {
+  expect(buildVisFromSource("do {a;} while (true)")).toMatchSnapshot();
+});
+
+it("for in loop", () => {
+  expect(buildVisFromSource("for(let prop in obj) {prop;}")).toMatchSnapshot();
+});
+
+it("for of loop", () => {
+  expect(buildVisFromSource("for(let x of arr) {x.do();}")).toMatchSnapshot();
+});
+
+it("switch without break and defaults", () => {
+  expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: if (a1) foo; else bar; case 2: a2; }")).toMatchSnapshot();
+});
+
+it("switch with default", () => {
+  expect(buildVisFromSource("switch(a) { case 1: a1; case 2: a2; default: myDefault; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { default: myDefault; case 1: a1; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: a1; default: myDefault; case 2: a2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("switch(a) { case 1: a1; default:; case 2: a2; }")).toMatchSnapshot();
+});
+
+it("return", () => {
+  expect(buildVisFromSource("if(a) { return true; } b;")).toMatchSnapshot();
+});
+
+it("should not forget successors of branching nodes", () => {
+  expect(buildVisFromSource("if (a) { b } else if (c) { d }")).toMatchSnapshot();
+});
+
+it("empty statement", () => {
+  expect(buildVisFromSource(";")).toMatchSnapshot();
+  expect(buildVisFromSource(";a;;")).toMatchSnapshot();
+});
+
+it("declarations", () => {
+  expect(buildVisFromSource("debugger;")).toMatchSnapshot();
+  expect(buildVisFromSource("import {a, b} from 'foo';")).toMatchSnapshot();
+  expect(buildVisFromSource("foo(); class A{}")).toMatchSnapshot();
+  expect(buildVisFromSource("function foo(){}\nfoo();")).toMatchSnapshot();
+});
+
+it("variable statement", () => {
+  expect(buildVisFromSource("var x = a < b, y = foo(), z;")).toMatchSnapshot();
+  expect(buildVisFromSource("let a:number;")).toMatchSnapshot();
+  expect(buildVisFromSource("const {a, b: c, d = foo()} = bar();")).toMatchSnapshot();
+  expect(buildVisFromSource("let [a, b,, c = foo()] = bar;")).toMatchSnapshot();
+});
+
+function buildVisFromSource(source: string, scriptKind: ts.ScriptKind = ts.ScriptKind.TSX) {
+  const sourceFile = parseString(source, scriptKind);
   const cfg = ControlFlowGraph.fromStatements(sourceFile.statements);
   return takeData(toVis(cfg));
 }

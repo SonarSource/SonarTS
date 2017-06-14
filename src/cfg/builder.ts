@@ -94,6 +94,13 @@ export class CfgBuilder {
           current = loopStart;
           break;
         }
+        case SyntaxKind.ForInStatement: {
+          current = this.buildForEachLoop(current, statement as ts.ForInStatement);
+          break;
+        }
+        case SyntaxKind.ForOfStatement:
+          current = this.buildForEachLoop(current, statement as ts.ForOfStatement);
+          break;
         case SyntaxKind.WhileStatement: {
           const whileLoop = statement as ts.WhileStatement;
           const loopBottom = this.createBlock();
@@ -154,10 +161,6 @@ export class CfgBuilder {
         case SyntaxKind.VariableStatement:
           current = this.buildVariableDeclarationList(current, (statement as ts.VariableStatement).declarationList);
           break;
-        case SyntaxKind.ForInStatement:
-        case SyntaxKind.ForOfStatement:
-          throw new Error("Not yet implemented statement: " + SyntaxKind[statement.kind]);
-
         case SyntaxKind.ContinueStatement:
         case SyntaxKind.BreakStatement:
         case SyntaxKind.WithStatement:
@@ -260,7 +263,7 @@ export class CfgBuilder {
 
   private buildExpression(current: CfgBlock, expression: ts.Expression): CfgBlock {
     switch (expression.kind) {
-      case SyntaxKind.CallExpression: {
+      case SyntaxKind.CallExpression:
         current.addElement(expression);
         const callExpression = expression as ts.CallExpression;
 
@@ -270,7 +273,6 @@ export class CfgBuilder {
         current = this.buildExpression(current, callExpression.expression);
 
         return current;
-      }
       case SyntaxKind.ConditionalExpression: {
         const conditionalExpression = expression as ts.ConditionalExpression;
         const whenFalse = this.buildExpression(this.createPredecessorBlock(current), conditionalExpression.whenFalse);
@@ -295,43 +297,176 @@ export class CfgBuilder {
       case SyntaxKind.FalseKeyword:
       case SyntaxKind.NumericLiteral:
       case SyntaxKind.StringLiteral:
+      case SyntaxKind.RegularExpressionLiteral:
       case SyntaxKind.SuperKeyword:
       case SyntaxKind.ThisKeyword:
       case SyntaxKind.NullKeyword:
       case SyntaxKind.Identifier:
+      case SyntaxKind.NoSubstitutionTemplateLiteral:
+      case SyntaxKind.MetaProperty:
         current.addElement(expression);
         return current;
       case SyntaxKind.OmittedExpression:
+        // empty element, do nothing
+        return current;
       case SyntaxKind.ArrayLiteralExpression:
-      case SyntaxKind.JsxElement:
-      case SyntaxKind.JsxExpression:
+        current.addElement(expression);
+        const arrayLiteral = expression as ts.ArrayLiteralExpression;
+        arrayLiteral.elements.reverse().forEach(element => (current = this.buildExpression(current, element)));
+        return current;
       case SyntaxKind.TemplateExpression:
+        current.addElement(expression);
+        const templateExpression = expression as ts.TemplateExpression;
+        templateExpression.templateSpans
+          .reverse()
+          .forEach(span => (current = this.buildExpression(current, span.expression)));
+        return current;
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.ArrowFunction:
       case SyntaxKind.ClassExpression:
+        current.addElement(expression);
+        return current;
       case SyntaxKind.PropertyAccessExpression:
+        current.addElement(expression);
+        const propertyAccessExpression = expression as ts.PropertyAccessExpression;
+        current = this.buildExpression(current, propertyAccessExpression.expression);
+        return current;
       case SyntaxKind.ElementAccessExpression:
+        current.addElement(expression);
+        const elementAccessExpression = expression as ts.ElementAccessExpression;
+        // it's not clear why ElementAccessExpression.argumentExpression is optional
+        if (elementAccessExpression.argumentExpression) {
+          current = this.buildExpression(current, elementAccessExpression.argumentExpression);
+        }
+        current = this.buildExpression(current, elementAccessExpression.expression);
+        return current;
       case SyntaxKind.NewExpression:
+        current.addElement(expression);
+        const newExpression = expression as ts.NewExpression;
+        if (newExpression.arguments) {
+          [...newExpression.arguments].reverse().forEach(arg => {
+            current = this.buildExpression(current, arg);
+          });
+        }
+        current = this.buildExpression(current, newExpression.expression);
+        return current;
       case SyntaxKind.TaggedTemplateExpression:
+        current.addElement(expression);
+        const taggedTemplateExpression = expression as ts.TaggedTemplateExpression;
+        current = this.buildExpression(current, taggedTemplateExpression.template);
+        current = this.buildExpression(current, taggedTemplateExpression.tag);
+        return current;
       case SyntaxKind.TypeAssertionExpression:
+        current.addElement(expression);
+        const typeAssertionExpression = expression as ts.TypeAssertion;
+        current = this.buildExpression(current, typeAssertionExpression.expression);
+        return current;
       case SyntaxKind.DeleteExpression:
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.DeleteExpression).expression);
+        return current;
       case SyntaxKind.TypeOfExpression:
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.TypeOfExpression).expression);
+        return current;
       case SyntaxKind.VoidExpression:
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.VoidExpression).expression);
+        return current;
       case SyntaxKind.AwaitExpression:
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.AwaitExpression).expression);
+        return current;
       case SyntaxKind.PrefixUnaryExpression:
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.PrefixUnaryExpression).operand);
+        return current;
       case SyntaxKind.PostfixUnaryExpression:
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.PostfixUnaryExpression).operand);
+        return current;
       case SyntaxKind.AsExpression:
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.AsExpression).expression);
+        return current;
       case SyntaxKind.NonNullExpression:
-      case SyntaxKind.RegularExpressionLiteral:
-      case SyntaxKind.NoSubstitutionTemplateLiteral:
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.NonNullExpression).expression);
+        return current;
       case SyntaxKind.SpreadElement:
-      case SyntaxKind.MetaProperty:
-        throw new Error("Not yet implemented expression: " + SyntaxKind[expression.kind]);
+        current.addElement(expression);
+        current = this.buildExpression(current, (expression as ts.SpreadElement).expression);
+        return current;
       case SyntaxKind.YieldExpression:
-        throw new Error("Expression out of current CFG implementation scope " + SyntaxKind[expression.kind]);
+        current.addElement(expression);
+        const yieldExpression = expression as ts.YieldExpression;
+        if (yieldExpression.expression) {
+          current = this.buildExpression(current, yieldExpression.expression);
+        }
+        return current;
+      case SyntaxKind.JsxElement:
+        current.addElement(expression);
+        const jsxElement = expression as ts.JsxElement;
+        current = this.buildTagName(current, jsxElement.closingElement.tagName);
+        jsxElement.children.reverse().forEach(jsxChild => (current = this.buildJsxChild(current, jsxChild)));
+        current = this.buildExpression(current, jsxElement.openingElement);
+        return current;
+      case SyntaxKind.JsxExpression:
+        // do not add jsxExpression itself to the current block elements
+        const jsxExpression = expression as ts.JsxExpression;
+        if (jsxExpression.expression) {
+          current = this.buildExpression(current, jsxExpression.expression);
+        }
+        return current;
+      case SyntaxKind.JsxOpeningElement:
+        // do not add jsxOpeningElement itself to the current block elements
+        const jsxOpeningElement = expression as ts.JsxOpeningElement;
+        current = this.buildJsxAttributes(current, jsxOpeningElement.attributes);
+        current = this.buildTagName(current, jsxOpeningElement.tagName);
+        return current;
+      case SyntaxKind.JsxSelfClosingElement:
+        current.addElement(expression);
+        const jsxSelfClosingElement = expression as ts.JsxSelfClosingElement;
+        current = this.buildJsxAttributes(current, jsxSelfClosingElement.attributes);
+        current = this.buildTagName(current, jsxSelfClosingElement.tagName);
+        return current;
       default:
         throw new Error("Unknown expression: " + SyntaxKind[expression.kind]);
     }
+  }
+
+  private buildTagName(current: CfgBlock, tagName: ts.JsxTagNameExpression) {
+    // JSX looks at first letter: capital - JS identifier, small - html tag
+    // "this" is the exception of this rule
+    if (
+      (tagName.kind === ts.SyntaxKind.Identifier && !startsWithLowerCase(tagName.getText())) ||
+      tagName.kind !== ts.SyntaxKind.Identifier
+    ) {
+      return this.buildExpression(current, tagName);
+    }
+    return current;
+
+    function startsWithLowerCase(str: string): boolean {
+      return !!str && str[0].toLocaleLowerCase() === str[0];
+    }
+  }
+
+  private buildJsxAttributes(current: CfgBlock, jsxAttributes: ts.JsxAttributes): CfgBlock {
+    jsxAttributes.properties.reverse().forEach(jsxAttributeLike => {
+      if (jsxAttributeLike.kind === SyntaxKind.JsxSpreadAttribute) {
+        current = this.buildExpression(current, jsxAttributeLike.expression);
+      } else if (jsxAttributeLike.initializer && jsxAttributeLike.initializer.kind !== SyntaxKind.StringLiteral) {
+        current = this.buildExpression(current, jsxAttributeLike.initializer);
+      }
+    });
+    return current;
+  }
+
+  private buildJsxChild(current: CfgBlock, jsxChild: ts.JsxChild): CfgBlock {
+    if (jsxChild.kind !== ts.SyntaxKind.JsxText) {
+      current = this.buildExpression(current, jsxChild);
+    }
+    return current;
   }
 
   private buildBinaryExpression(current: CfgBlock, expression: ts.BinaryExpression): CfgBlock {
@@ -360,20 +495,10 @@ export class CfgBuilder {
         const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
         return this.buildExpression(branching, expression.left);
       }
-      case SyntaxKind.ExclamationEqualsEqualsToken:
-      case SyntaxKind.EqualsEqualsEqualsToken:
-      case SyntaxKind.ExclamationEqualsToken:
-      case SyntaxKind.EqualsEqualsToken:
-      case SyntaxKind.GreaterThanEqualsToken:
-      case SyntaxKind.GreaterThanToken:
-      case SyntaxKind.LessThanEqualsToken:
-      case SyntaxKind.LessThanToken:
-      case SyntaxKind.EqualsToken:
-        current.addElement(expression);
-        return this.buildExpression(this.buildExpression(current, expression.right), expression.left);
-      default:
-        throw new Error("Unknown binary token: " + SyntaxKind[expression.operatorToken.kind]);
     }
+
+    current.addElement(expression);
+    return this.buildExpression(this.buildExpression(current, expression.right), expression.left);
   }
 
   private buildObjectLiteralExpression(current: CfgBlock, objectLiteral: ts.ObjectLiteralExpression): CfgBlock {
@@ -408,6 +533,16 @@ export class CfgBuilder {
       }
     });
     return current;
+  }
+
+  private buildForEachLoop(current: CfgBlock, forEach: ts.ForOfStatement | ts.ForInStatement): CfgBlock {
+    const loopBodyEnd = this.createBlock();
+    const loopBodyStart = this.buildStatements(loopBodyEnd, [forEach.statement]);
+    const branchingBlock = this.createBranchingBlock(this.forEachLoopLabel(forEach), loopBodyStart, current);
+    const initializerStart = this.buildForInitializer(branchingBlock, forEach.initializer);
+    const loopStart = this.buildExpression(this.createPredecessorBlock(initializerStart), forEach.expression);
+    loopBodyEnd.addSuccessor(initializerStart);
+    return loopStart;
   }
 
   private createBranchingBlock(
@@ -447,5 +582,10 @@ export class CfgBuilder {
       if (node) return node.getText();
       return "";
     }
+  }
+
+  private forEachLoopLabel(forEachLoop: ts.ForOfStatement | ts.ForInStatement) {
+    const keyword = forEachLoop.kind === SyntaxKind.ForInStatement ? "in" : "of";
+    return `for(${forEachLoop.initializer.getText()} ${keyword} ${forEachLoop.expression.getText()})`;
   }
 }

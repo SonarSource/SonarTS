@@ -135,6 +135,36 @@ a
 }
 `;
 
+exports[`'as' expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+1
+2
+foo(1, 2)
+foo(1, 2) as a.b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`|| 1`] = `
 Object {
   "edges": Array [
@@ -253,6 +283,39 @@ a
       "id": "1.2",
       "label": "b
 <if (a || b)>",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`array literal 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+1
+2
+foo
+foo()
+3
+[1, 2, foo(), , 3]
+x = [1, 2, foo(), , 3]",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
       "physics": false,
     },
   ],
@@ -839,6 +902,90 @@ a
 }
 `;
 
+exports[`declaration expressions 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+function() {foo ();}
+x = function() {foo ();}",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`declaration expressions 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+(a, b) => {foo();}
+x = (a, b) => {foo();}",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`declaration expressions 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+class A { foo(){ y } }
+x = class A { foo(){ y } }",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`declarations 1`] = `
 Object {
   "edges": Array [
@@ -947,6 +1094,122 @@ foo()",
 }
 `;
 
+exports[`delete/typeof/void/await expressions 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+a
+42
+a[42]
+delete a[42]",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`delete/typeof/void/await expressions 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+1
+2
+foo(1, 2)
+typeof foo(1, 2)",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`delete/typeof/void/await expressions 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+void foo",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`delete/typeof/void/await expressions 4`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+1
+2
+foo(1, 2)
+await foo(1, 2)",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`do while loop 1`] = `
 Object {
   "edges": Array [
@@ -987,6 +1250,177 @@ a",
     Object {
       "id": "1.1.2",
       "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`element access 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+a
+a[]
+x = a[]",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`element access 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+a
+b
+a[b]
+x = a[b]",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`element access 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 1,
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.1",
+      "id": 6,
+      "to": "1.1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 7,
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 8,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+x
+<x ? 1 : 2>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "foo(x ? 1 : 2)
+y
+<y ? 3 : 4>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "3",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "foo(x ? 1 : 2)[y ? 3 : 4]",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "4",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "2",
       "physics": false,
     },
   ],
@@ -1069,6 +1503,63 @@ a",
 }
 `;
 
+exports[`for in loop 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+obj",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "prop
+<for(let prop in obj)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "prop",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`for loop 1`] = `
 Object {
   "edges": Array [
@@ -1108,6 +1599,65 @@ x
     },
     Object {
       "id": "1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`for of loop 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+arr",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "x
+<for(let x of arr)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "x
+x.do
+x.do()",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
       "label": "END",
       "physics": false,
     },
@@ -1337,6 +1887,459 @@ Object {
 }
 `;
 
+exports[`jsx attributes 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+<a foo=\\"value\\"/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx attributes 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 1,
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 4,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+x
+<x ? 1 : 2>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "foo(x ? 1 : 2)
+<a {... foo(x ? 1 : 2)}/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "2",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx attributes 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+y
+<a {...x} {...y}/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx attributes 4`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+<a b={foo}/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx attributes 5`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+<a attr/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx children 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+<div>hello</div>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx children 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+name
+<div>hello {name}</div>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx children 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+attr1
+<p {...attr1}></p>
+attr2
+<a {...attr2}/>
+<div>hello <p {...attr1}></p><a {...attr2}/></div>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx tag names 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+<a/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx tag names 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+this
+<this/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx tag names 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+A
+<A/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx tag names 4`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+A
+A.b
+A.b.c
+<A.b.c/>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx tag names 5`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+<a></a>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx tag names 6`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+A
+A
+<A></A>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`jsx tag names 7`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+A
+A.b
+A
+A.b
+<A.b></A.b>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`keywords 1`] = `
 Object {
   "edges": Array [
@@ -1355,6 +2358,147 @@ super
 super()
 this
 null",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`metaproperty 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+new.target",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`new expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+A
+new A
+x = new A",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`new expression 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+A
+1
+2
+new A(1, 2)
+x = new A(1, 2)",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`non-null expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+foo!",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`non-null expression 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+foo!
+foo!.bar",
       "physics": false,
     },
     Object {
@@ -1683,6 +2827,218 @@ b
     Object {
       "id": "1.1.1.1.1.1",
       "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`postfix unary expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+x++",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`postfix unary expression 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+y
+y--
+x = y--",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`prefix unary expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+--x",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`prefix unary expression 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+y
++y
+x = +y",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`property access 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+a
+a.b
+x = a.b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`property access 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 1,
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 4,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+x
+<x ? 1 : 2>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "foo(x ? 1 : 2)
+foo(x ? 1 : 2).bar
+foo(x ? 1 : 2).bar()",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "2",
       "physics": false,
     },
   ],
@@ -2063,6 +3419,96 @@ r = a !== b",
 }
 `;
 
+exports[`simple binary operators 9`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+r
+a
+r = a
+b
+r = a , b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 10`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+r
+b
+r -= b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple binary operators 11`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+a
+b
+c
+b * c
+a + b * c
+d
+a + b * c - d",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`simple literals 1`] = `
 Object {
   "edges": Array [
@@ -2104,6 +3550,62 @@ Object {
       "id": "1",
       "label": "START
 1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`simple literals 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+/ab+c/",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`spread element 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+a
+b
+...b
+foo(a, ...b)",
       "physics": false,
     },
     Object {
@@ -2714,6 +4216,157 @@ a
 }
 `;
 
+exports[`tagged template 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+bar
+1
+2
+bar(1, 2)
+\`abc \${bar(1, 2)}\`
+foo\`abc \${bar(1, 2)}\`",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`tagged template 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+foo
+1
+2
+foo(1, 2)
+\`abc\`
+foo(1, 2)\`abc\`",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`template expression (string literal) 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+x
+foobar1
+foobar1()
+foobar2
+foobar2()
+\`foo\${foobar1()}bar\${foobar2()}\`
+x = \`foo\${foobar1()}bar\${foobar2()}\`",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`type assertion expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+a
+a.foo
+<number>a.foo",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`type assertion expression 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+a
+a.b
+<foo.bar>a.b",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`variable statement 1`] = `
 Object {
   "edges": Array [
@@ -2875,6 +4528,59 @@ true
     },
     Object {
       "id": "1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`yield expression 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+yield",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`yield expression 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+42
+yield 42",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
       "label": "END",
       "physics": false,
     },

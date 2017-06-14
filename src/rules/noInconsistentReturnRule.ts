@@ -19,7 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import { ControlFlowGraph } from "../cfg/cfg";
+// import { ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -39,11 +39,8 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
-
   public visitFunctionDeclaration(node: ts.FunctionDeclaration) {
     if (!node.body) return;
-    const cfg = ControlFlowGraph.fromStatements(node.body.statements);
+    // const cfg = ControlFlowGraph.fromStatements(node.body.statements);
   }
-
-
 }
