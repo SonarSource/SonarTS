@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as ts from "typescript";
 import { Network } from "vis";
 import { ControlFlowGraph } from "../../cfg/cfg";
 import { parseString } from "../../utils/parser";

@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import { ControlFlowGraph } from "../../src/cfg/cfg";
 import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
-import Parser from "../../src/utils/parser";
+import { parseString } from "../../src/utils/parser";
 
 it("empty file", () => {
   expect(buildVisFromSource("")).toMatchSnapshot();
@@ -188,7 +188,7 @@ it("object destructuring assignment", () => {
 });
 
 function buildVisFromSource(source: string) {
-  const sourceFile = Parser.parseString(source);
+  const sourceFile = parseString(source);
   const cfg = ControlFlowGraph.fromSource(sourceFile.statements);
   return takeData(toVis(cfg));
 }

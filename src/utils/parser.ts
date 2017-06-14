@@ -25,20 +25,16 @@ import * as ts from "typescript";
  * - ES2017
  * - JSX
  */
-export default class Parser {
+const TARGET = ts.ScriptTarget.ES2017;
 
-  private static readonly TARGET = ts.ScriptTarget.ES2017;
+export function parseString(source: string): ts.SourceFile {
+  return ts.createSourceFile("filename.ts", source, TARGET, true, ts.ScriptKind.TSX);
+}
 
-  public static parseString(source: string): ts.SourceFile {
-    return ts.createSourceFile("filename.ts", source, this.TARGET, true, ts.ScriptKind.TSX);
-  }
-
-  public static parseFile(filename: string): {sourceFile: ts.SourceFile, program: ts.Program} {
-    const compilerOptions = ts.getDefaultCompilerOptions();
-    compilerOptions.jsx = ts.JsxEmit.React;
-    compilerOptions.target = this.TARGET;
-    const program = ts.createProgram([filename], compilerOptions);
-    return {sourceFile: program.getSourceFile(filename), program};
-  }
-
+export function parseFile(filename: string): { sourceFile: ts.SourceFile; program: ts.Program } {
+  const compilerOptions = ts.getDefaultCompilerOptions();
+  compilerOptions.jsx = ts.JsxEmit.React;
+  compilerOptions.target = TARGET;
+  const program = ts.createProgram([filename], compilerOptions);
+  return { sourceFile: program.getSourceFile(filename), program };
 }
