@@ -68,7 +68,7 @@ export function writeResults(results: Results) {
   Object.keys(results).forEach(rule => {
     const content: string[] = [];
 
-    const files = Object.keys(results[rule]).map(file => {
+    Object.keys(results[rule]).forEach(file => {
       const lines = results[rule][file];
       content.push(`${file}: ${lines.join()}`);
     });
@@ -80,7 +80,6 @@ export function writeResults(results: Results) {
 export function checkResults(expected: Results) {
   const expectedRules = Object.keys(expected);
   const actual: Results = readSnapshots(expectedRules);
-  const actualRules = Object.keys(actual);
   let passed = true;
 
   expectedRules.forEach(rule => {

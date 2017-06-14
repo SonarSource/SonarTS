@@ -20,7 +20,6 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import areEquivalent from "../utils/areEquivalent";
 
 // https://jira.sonarsource.com/browse/RSPEC-3799
 

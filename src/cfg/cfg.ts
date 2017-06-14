@@ -17,11 +17,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { flatten, uniqBy } from "lodash";
 import * as ts from "typescript";
 import { CfgBuilder } from "./builder";
-
-const { SyntaxKind } = ts;
 
 export class ControlFlowGraph {
   private start: CfgBlock;
@@ -159,7 +156,7 @@ export class CfgGenericBlock extends CfgBlockWithElements implements CfgBlock {
 }
 
 export class CfgEndBlock extends CfgBlockWithPredecessors implements CfgBlock {
-  public addElement(element: ts.Node): CfgBlock {
+  public addElement(_: ts.Node): CfgBlock {
     return this;
   }
 
@@ -167,7 +164,7 @@ export class CfgEndBlock extends CfgBlockWithPredecessors implements CfgBlock {
     return [];
   }
 
-  public addSuccessor(successor: CfgBlock): void {
+  public addSuccessor(_: CfgBlock): void {
     return;
   }
 
@@ -175,7 +172,7 @@ export class CfgEndBlock extends CfgBlockWithPredecessors implements CfgBlock {
     return [];
   }
 
-  public replaceSuccessor(what: CfgBlock, withWhat: CfgBlock): void {
+  public replaceSuccessor(_: CfgBlock, __: CfgBlock): void {
     return;
   }
 

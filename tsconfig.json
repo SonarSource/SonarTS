@@ -9,7 +9,9 @@
     "declaration": true,
     "outDir": "lib",
     "strict": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "include": [
     "src/**/*"
