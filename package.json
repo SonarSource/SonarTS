@@ -4,6 +4,7 @@
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
   "scripts": {
+    "watch-cfg-viewer": "node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "clear": "rm -rf lib/*",
     "prepublish": "yarn build",
     "build": "yarn clear && tsc -p . && yarn build-cfg && webpack",
