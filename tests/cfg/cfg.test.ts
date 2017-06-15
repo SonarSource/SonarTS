@@ -309,6 +309,36 @@ it("variable statement", () => {
   expect(buildVisFromSource("let [a, b,, c = foo()] = bar;")).toMatchSnapshot();
 });
 
+it("'with' statement", () => {
+  expect(buildVisFromSource("with (a) { foo(); }")).toMatchSnapshot();
+});
+
+it("'throw' statement", () => {
+  expect(buildVisFromSource("foo(); if (cond) throw bar(); foobar();")).toMatchSnapshot();
+});
+
+it("continue/break statement", () => {
+  expect(buildVisFromSource("while(a) { if (b) continue; c}")).toMatchSnapshot();
+  expect(buildVisFromSource("while(a) { if (b) break; c}")).toMatchSnapshot();
+  expect(buildVisFromSource(`
+  while(a1) {
+    while(a2) continue;
+    if (b) break;
+  }`)).toMatchSnapshot();
+  expect(buildVisFromSource(`label1: while(a1) { while(a2) { if(b) break label1; c} d }`)).toMatchSnapshot();
+  expect(buildVisFromSource(`
+  foo:
+  while (a) {
+    c;
+    bar: {
+      if (b) continue;
+      else break bar;
+      e;
+    }
+    d;
+  }`)).toMatchSnapshot();
+});
+
 function buildVisFromSource(source: string, scriptKind: ts.ScriptKind = ts.ScriptKind.TSX) {
   const sourceFile = parseString(source, scriptKind);
   const cfg = ControlFlowGraph.fromStatements(sourceFile.statements);

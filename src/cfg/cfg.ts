@@ -105,7 +105,7 @@ export class ControlFlowGraph {
 
 export interface CfgBlock {
   id: string;
-
+  predecessors: CfgBlock[];
   addElement(element: ts.Node): void;
 
   getElements(): string[];
