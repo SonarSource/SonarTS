@@ -146,10 +146,12 @@ export class CfgBuilder {
           break;
         case SyntaxKind.ReturnStatement: {
           const returnStatement = statement as ts.ReturnStatement;
+          const returnBlock = this.createBlockPredecessorOf(this.end);
+          returnBlock.addElement(returnStatement.getFirstToken()); // The return keyword
           if (returnStatement.expression) {
-            current = this.buildExpression(this.createBlockPredecessorOf(this.end), returnStatement.expression);
+            current = this.buildExpression(returnBlock, returnStatement.expression);
           } else {
-            current = this.createBlockPredecessorOf(this.end);
+            current = returnBlock;
           }
           break;
         }

@@ -19,7 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-// import { ControlFlowGraph } from "../cfg/cfg";
+import { ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -39,8 +39,28 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
-  public visitFunctionDeclaration(node: ts.FunctionDeclaration) {
-    if (!node.body) return;
-    // const cfg = ControlFlowGraph.fromStatements(node.body.statements);
+  public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
+    if (!func.body) return;
+    const cfg = ControlFlowGraph.fromStatements(func.body.statements);
+    const end = cfg.findEnd();
+    if (end) {
+      const allExplicit = end.predecessors.every(predecessor => {
+        const elements = predecessor.getElements();
+        const lastElement = elements[elements.length - 1];
+        return lastElement.startsWith("return");
+      });
+      const allImplicit = end.predecessors.every(predecessor => {
+        const elements = predecessor.getElements();
+        const lastElement = elements[elements.length - 1];
+        return !lastElement.startsWith("return");
+      });
+      if (!allExplicit && !allImplicit) {
+        this.addFailureAt(
+          func.getFirstToken().getStart(),
+          func.getFirstToken().getWidth(),
+          'Refactor this function to use "return" consistently',
+        );
+      }
+    }
   }
 }

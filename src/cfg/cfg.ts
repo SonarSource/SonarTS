@@ -98,7 +98,7 @@ export class ControlFlowGraph {
     });
   }
 
-  private findEnd(): CfgEndBlock | undefined {
+  public findEnd(): CfgEndBlock | undefined {
     return this.getBlocks().find(block => block.getSuccessors().length === 0) as CfgEndBlock;
   }
 }
