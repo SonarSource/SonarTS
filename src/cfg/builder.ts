@@ -28,6 +28,10 @@ class Breakable {
   public label: string | null;
 }
 
+function getLine(node: ts.Node): number {
+  return node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line + 1;
+}
+
 export class CfgBuilder {
   private end = new CfgEndBlock();
   private blocks: CfgBlock[] = [this.end];
@@ -144,14 +148,32 @@ export class CfgBuilder {
     }
   }
 
-  private createBreakable(breakTarget: CfgBlock, continueTarget: CfgBlock | undefined, label?: ts.Identifier) {
+  private createNotLoopBreakable(breakTarget: CfgBlock, label: ts.Identifier | null) {
     const breakable = new Breakable();
     breakable.breakTarget = breakTarget;
-    breakable.continueTarget = continueTarget;
     if (label) {
       breakable.label = label.text;
     }
     this.breakables.push(breakable);
+  }
+
+  private createLoopBreakable(breakTarget: CfgBlock, continueTarget: CfgBlock, loop: ts.IterationStatement) {
+    const breakable = new Breakable();
+    breakable.breakTarget = breakTarget;
+    breakable.continueTarget = continueTarget;
+    const label = CfgBuilder.getLabel(loop);
+    if (label) {
+      breakable.label = label.text;
+    }
+    this.breakables.push(breakable);
+  }
+
+  private static getLabel(statement: ts.IterationStatement | ts.SwitchStatement): ts.Identifier | null {
+    if (statement.parent!.kind === SyntaxKind.LabeledStatement) {
+      return (statement.parent! as ts.LabeledStatement).label;
+    }
+
+    return null;
   }
 
   private getBreakable(label: ts.Identifier | undefined): Breakable | undefined {
@@ -174,8 +196,7 @@ export class CfgBuilder {
       const continueTarget = breakable.continueTarget;
       return this.createBlockPredecessorOf(continueTarget!);
     } else {
-      // fixme
-      throw new Error("No");
+      throw new Error("No point found to continue for continue-statement at line " + getLine(continueStatement));
     }
   }
 
@@ -185,24 +206,20 @@ export class CfgBuilder {
       const breakTarget = breakable.breakTarget;
       return this.createBlockPredecessorOf(breakTarget);
     } else {
-      // fixme
-      throw new Error("No");
+      throw new Error("No break target found for break-statement at line " + getLine(breakStatement));
     }
   }
 
   private buildLabeledStatement(current: CfgBlock, labeledStatement: ts.LabeledStatement): CfgBlock {
+    const labeledLoop = isLoop(labeledStatement.statement);
     const startOfLabeledStatementPlaceholder = this.createBlock();
-    this.createBreakable(
-      current,
-      isLoop(labeledStatement.statement) ? startOfLabeledStatementPlaceholder : undefined,
-      labeledStatement.label,
-    );
+    if (!labeledLoop) this.createNotLoopBreakable(current, labeledStatement.label);
     const startOfLabeledStatement = this.buildStatement(
       this.createBlockPredecessorOf(current),
       labeledStatement.statement,
     );
     startOfLabeledStatementPlaceholder.addSuccessor(startOfLabeledStatement);
-    this.breakables.pop();
+    if (!labeledLoop) this.breakables.pop();
     return startOfLabeledStatementPlaceholder;
 
     function isLoop(statement: ts.Statement): boolean {
@@ -217,21 +234,25 @@ export class CfgBuilder {
   }
 
   private buildDoStatement(current: CfgBlock, doWhileLoop: ts.DoStatement): CfgBlock {
+    const whileConditionStartBlockPlaceholder = this.createBlock();
+    this.createLoopBreakable(current, whileConditionStartBlockPlaceholder, doWhileLoop);
     const doBlockEnd = this.createBlock();
     const doBlockStart = this.buildStatement(doBlockEnd, doWhileLoop.statement);
     const whileBlockEnd = new CfgBranchingBlock(
-      "while(" + doWhileLoop.expression.getText() + ")",
+      "do while(" + doWhileLoop.expression.getText() + ")",
       doBlockStart,
       current,
     );
-    const whileStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
-    doBlockEnd.addSuccessor(whileStartBlock);
+    const whileConditionStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
+    doBlockEnd.addSuccessor(whileConditionStartBlockPlaceholder);
+    whileConditionStartBlockPlaceholder.addSuccessor(whileConditionStartBlock);
+    this.breakables.pop();
     return doBlockStart;
   }
 
   private buildWhileStatement(current: CfgBlock, whileLoop: ts.WhileStatement): CfgBlock {
     const loopStartPlaceholder = this.createBlock();
-    this.createBreakable(current, loopStartPlaceholder);
+    this.createLoopBreakable(current, loopStartPlaceholder, whileLoop);
     const loopBottom = this.createBlock();
     const firstLoopStatementBlock = this.buildStatement(loopBottom, whileLoop.statement);
     const loopStart = this.buildExpression(
@@ -246,21 +267,30 @@ export class CfgBuilder {
 
   private buildForEachLoop(current: CfgBlock, forEach: ts.ForOfStatement | ts.ForInStatement): CfgBlock {
     const loopBodyEnd = this.createBlock();
+    const continueTarget = this.createBlock();
+    this.createLoopBreakable(current, continueTarget, forEach);
     const loopBodyStart = this.buildStatement(loopBodyEnd, forEach.statement);
     const branchingBlock = this.createBranchingBlock(this.forEachLoopLabel(forEach), loopBodyStart, current);
     const initializerStart = this.buildForInitializer(branchingBlock, forEach.initializer);
     const loopStart = this.buildExpression(this.createBlockPredecessorOf(initializerStart), forEach.expression);
     loopBodyEnd.addSuccessor(initializerStart);
+    continueTarget.addSuccessor(initializerStart);
+    this.breakables.pop();
     return loopStart;
   }
 
   private buildForStatement(current: CfgBlock, forLoop: ts.ForStatement): CfgBlock {
     const loopBottom = this.createBlock();
     let lastBlockInLoopStatement: CfgBlock = loopBottom;
+    const continueTarget = this.createBlock();
+
     if (forLoop.incrementor) {
       lastBlockInLoopStatement = this.buildExpression(lastBlockInLoopStatement, forLoop.incrementor);
     }
-    const firstBlockInLoopStatement = this.buildStatement(lastBlockInLoopStatement, forLoop.statement);
+
+    this.createLoopBreakable(current, continueTarget, forLoop);
+
+    const firstBlockInLoopStatement = this.buildStatement(this.createBlockPredecessorOf(lastBlockInLoopStatement), forLoop.statement);
     let loopRoot: CfgBlock;
     if (forLoop.condition) {
       loopRoot = this.buildExpression(
@@ -275,6 +305,16 @@ export class CfgBuilder {
       loopStart = this.buildForInitializer(this.createBlockPredecessorOf(loopRoot), forLoop.initializer);
     }
     loopBottom.addSuccessor(loopRoot);
+
+    if (forLoop.incrementor) {
+      continueTarget.addSuccessor(lastBlockInLoopStatement);
+    } else if (forLoop.condition) {
+      continueTarget.addSuccessor(loopRoot);
+    } else {
+      continueTarget.addSuccessor(firstBlockInLoopStatement);
+    }
+
+    this.breakables.pop();
     return loopStart;
   }
 
@@ -291,6 +331,7 @@ export class CfgBuilder {
   }
 
   private buildSwitch(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
+    this.createNotLoopBreakable(current, CfgBuilder.getLabel(switchStatement));
     const afterSwitchBlock = current;
     let defaultBlockEnd: CfgGenericBlock | undefined;
     let defaultBlock: CfgBlock | undefined;
@@ -321,6 +362,7 @@ export class CfgBuilder {
         currentClauseStatementsStart = defaultBlock as CfgBlock;
       }
     });
+    this.breakables.pop();
     return this.buildExpression(nextBlock, switchStatement.expression);
   }
 

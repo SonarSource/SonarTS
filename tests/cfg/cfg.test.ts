@@ -318,11 +318,73 @@ it("'throw' statement", () => {
 });
 
 it("continue statement", () => {
+  // while
   expect(buildVisFromSource("while(a) { if (b) continue; c}")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: while(a) { if (b) continue; c}")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: while(a) { if (b) continue foo; c}")).toMatchSnapshot();
+
+  // do-while
+  expect(buildVisFromSource("do { if (b) continue; c} while (a);")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: do { if (b) continue; c} while (a);")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: do { if (b) continue foo; c} while (a);")).toMatchSnapshot();
+
+  // for
+  expect(buildVisFromSource("for(init; cond; inc) { if(subcond) continue; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("for(init; cond; ) { if(subcond) continue; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("for(init; ; ) { if(subcond) continue; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for(init; cond; inc) { if(subcond) continue; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for(init; cond; inc) { if(subcond) continue foo; stmt; }")).toMatchSnapshot();
+
+  // for-each
+  expect(buildVisFromSource("for (elem of obj) { if (subcond) continue; stmt; } ")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue; stmt; } ")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue foo; stmt; } ")).toMatchSnapshot();
 });
 
 it("break statement", () => {
+  // while
   expect(buildVisFromSource("while(a) { if (b) break; c}")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: while(a) { if (b) break; c}")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: while(a) { if (b) break foo; c}")).toMatchSnapshot();
+
+  // do-while
+  expect(buildVisFromSource("do { if (b) break; c} while (a);")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: do { if (b) break; c} while (a);")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: do { if (b) break foo; c} while (a);")).toMatchSnapshot();
+
+  // for
+  expect(buildVisFromSource("for(init; cond; inc) { if(subcond) break; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("for(init; cond; ) { if(subcond) break; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for(init; cond; inc) { if(subcond) break; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for(init; cond; inc) { if(subcond) break foo; stmt; }")).toMatchSnapshot();
+
+  // for-each
+  expect(buildVisFromSource("for (elem in obj) { if (subcond) break; stmt; } ")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for (elem in obj) { if (subcond) break; stmt; } ")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for (elem in obj) { if (subcond) break foo; stmt; } ")).toMatchSnapshot();
+
+  // switch
+  expect(buildVisFromSource("switch (a) { case 1: stmt1; break; case 2: stmt2; }")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: switch (a) { case 1: stmt1; break; case 2: stmt2; }")).toMatchSnapshot();
+  expect(buildVisFromSource(`
+  foo: switch(a) {
+    case 1:
+      stmt1; break;
+    case 2:
+      stmt2;
+      bar: switch(b) {
+        case 11:
+          stmt11; break foo;
+        case 12:
+          stmt12; break;
+        case 13:
+          stmt13; break bar;
+      }
+      stmt21;
+    case 3:
+      stmt3;
+  }`)).toMatchSnapshot();
+
 });
 
 it("labels", () => {
