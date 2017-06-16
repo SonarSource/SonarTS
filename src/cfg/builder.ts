@@ -125,7 +125,6 @@ export class CfgBuilder {
 
       case SyntaxKind.ThrowStatement:
         const throwStatement = statement as ts.ThrowStatement;
-        // fixme
         return this.buildExpression(this.createBlockPredecessorOf(this.end), throwStatement.expression);
 
       case SyntaxKind.LabeledStatement:
@@ -138,8 +137,7 @@ export class CfgBuilder {
         return this.buildContinueStatement(statement as ts.ContinueStatement);
 
       case SyntaxKind.TryStatement:
-        // todo
-        throw new Error("Statement out of current CFG implementation scope " + SyntaxKind[statement.kind]);
+        throw new Error("No support for 'try' statement in CFG builder.");
 
       // NotEmittedStatement should not appear in visited syntax tree
       case SyntaxKind.NotEmittedStatement:
