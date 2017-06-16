@@ -397,6 +397,7 @@ export class CfgBuilder {
         return this.buildBinaryExpression(current, expression as ts.BinaryExpression);
 
       case SyntaxKind.ParenthesizedExpression:
+        current.addElement(expression);
         return this.buildExpression(current, (expression as ts.ParenthesizedExpression).expression);
 
       case SyntaxKind.ObjectLiteralExpression:

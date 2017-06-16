@@ -781,27 +781,33 @@ Object {
       "arrows": "to",
       "from": "1.1",
       "id": 2,
+      "label": "true",
       "to": "1.1.1",
     },
     Object {
       "arrows": "to",
-      "from": "1.1.1",
+      "from": "1.1",
       "id": 3,
+      "label": "false",
       "to": "1.1.1.1",
     },
     Object {
       "arrows": "to",
-      "from": "1.2",
+      "from": "1.1.1",
       "id": 4,
-      "label": "true",
-      "to": "1.1",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "to": "1.1.1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.2",
-      "id": 5,
-      "label": "false",
-      "to": "1.1.1",
+      "id": 6,
+      "to": "1.1",
     },
   ],
   "nodes": Array [
@@ -815,23 +821,28 @@ a
     },
     Object {
       "id": "1.1",
-      "label": "c",
+      "label": "(a || b)
+<(a || b)>",
       "physics": false,
     },
     Object {
       "id": "1.1.1",
-      "label": "r = (a || b) && c",
+      "label": "c",
       "physics": false,
     },
     Object {
       "id": "1.1.1.1",
+      "label": "r = (a || b) && c",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
       "label": "END",
       "physics": false,
     },
     Object {
       "id": "1.2",
-      "label": "b
-<(a || b)>",
+      "label": "b",
       "physics": false,
     },
   ],
@@ -867,27 +878,33 @@ Object {
       "from": "1.1",
       "id": 3,
       "label": "false",
-      "to": "1.1.1.1",
+      "to": "1.1.1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.1.1",
       "id": 4,
-      "to": "1.1.1.1",
-    },
-    Object {
-      "arrows": "to",
-      "from": "1.2",
-      "id": 5,
       "label": "true",
-      "to": "1.1",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 6,
+      "to": "1.1.1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.2",
-      "id": 6,
-      "label": "false",
-      "to": "1.1.1.1",
+      "id": 7,
+      "to": "1.1",
     },
   ],
   "nodes": Array [
@@ -900,24 +917,29 @@ a
     },
     Object {
       "id": "1.1",
+      "label": "(a || b)
+<(a || b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
       "label": "c
 <if ((a || b) && c)>",
       "physics": false,
     },
     Object {
-      "id": "1.1.1",
+      "id": "1.1.1.1",
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "1.1.1.1",
+      "id": "1.1.1.1.1",
       "label": "END",
       "physics": false,
     },
     Object {
       "id": "1.2",
-      "label": "b
-<(a || b)>",
+      "label": "b",
       "physics": false,
     },
   ],
@@ -963,17 +985,29 @@ Object {
     },
     Object {
       "arrows": "to",
-      "from": "1.1.2",
+      "from": "1.1.1.1",
       "id": 5,
       "label": "true",
-      "to": "1.1.1",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 6,
+      "label": "false",
+      "to": "1.1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.1",
+      "id": 7,
+      "to": "1.1.1.1.1.1",
     },
     Object {
       "arrows": "to",
       "from": "1.1.2",
-      "id": 6,
-      "label": "false",
-      "to": "1.1.1.1",
+      "id": 8,
+      "to": "1.1.1",
     },
   ],
   "nodes": Array [
@@ -992,18 +1026,29 @@ a
     },
     Object {
       "id": "1.1.1",
-      "label": "d",
+      "label": "(b || (c))",
       "physics": false,
     },
     Object {
       "id": "1.1.1.1",
+      "label": "(a && (b || (c)))
+<if ((a && (b || (c))))>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "d",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1.1",
       "label": "END",
       "physics": false,
     },
     Object {
       "id": "1.1.2",
       "label": "c
-<if ((a && (b || (c))))>",
+(c)",
       "physics": false,
     },
   ],
@@ -3060,6 +3105,7 @@ b
 42
 locVarName1
 locVarName
+(locVarName)
 locVarName2
 42
 locVarName2 = 42
@@ -3077,7 +3123,14 @@ obj
     propName1: locVarName1,
     propName2: (locVarName),
     propName3: locVarName2 = 42
-  } = obj",
+  } = obj
+({
+    a,
+    b = 42,
+    propName1: locVarName1,
+    propName2: (locVarName),
+    propName3: locVarName2 = 42
+  } = obj)",
       "physics": false,
     },
     Object {
@@ -3262,7 +3315,8 @@ b
     },
     Object {
       "id": "1.1.1",
-      "label": "a < (b && c)
+      "label": "(b && c)
+a < (b && c)
 r = a < (b && c)",
       "physics": false,
     },
@@ -3341,7 +3395,8 @@ b
     },
     Object {
       "id": "1.1.1",
-      "label": "a < (b && c)
+      "label": "(b && c)
+a < (b && c)
 <if (a < (b && c))>",
       "physics": false,
     },
