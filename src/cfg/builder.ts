@@ -256,13 +256,47 @@ export class CfgBuilder {
     const loopBottom = this.createBlock();
     const firstLoopStatementBlock = this.buildStatement(loopBottom, whileLoop.statement);
     const loopStart = this.buildExpression(
-      new CfgBranchingBlock("while(" + whileLoop.expression.getText() + ")", firstLoopStatementBlock, current),
+      this.createWhileRootBlock(whileLoop, firstLoopStatementBlock, current),
       whileLoop.expression,
     );
     loopStartPlaceholder.addSuccessor(loopStart);
     loopBottom.addSuccessor(loopStartPlaceholder);
     this.breakables.pop();
     return loopStartPlaceholder;
+  }
+
+  private createWhileRootBlock(
+    whileLoop: ts.WhileStatement,
+    firstLoopStatementBlock: CfgBlock,
+    current: CfgBlock,
+  ): CfgBlock {
+    if (this.conditionAlwaysTrue(whileLoop.expression)) {
+      return this.createBlockPredecessorOf(firstLoopStatementBlock);
+    } else {
+      return this.createBranchingBlock(
+        "while(" + whileLoop.expression.getText() + ")",
+        firstLoopStatementBlock,
+        current,
+      );
+    }
+  }
+
+  private conditionAlwaysTrue(expression: ts.Expression): boolean {
+    switch (expression.kind) {
+      case SyntaxKind.TrueKeyword:
+        return true;
+      case SyntaxKind.ParenthesizedExpression:
+        return this.conditionAlwaysTrue((expression as ts.ParenthesizedExpression).expression);
+      case SyntaxKind.BinaryExpression: {
+        const binaryExpression = expression as ts.BinaryExpression;
+        switch (binaryExpression.operatorToken.kind) {
+          case SyntaxKind.AmpersandAmpersandToken: {
+            return this.conditionAlwaysTrue(binaryExpression.left) && this.conditionAlwaysTrue(binaryExpression.right);
+          }
+        }
+      }
+    }
+    return false;
   }
 
   private buildForEachLoop(current: CfgBlock, forEach: ts.ForOfStatement | ts.ForInStatement): CfgBlock {
@@ -290,7 +324,10 @@ export class CfgBuilder {
 
     this.createLoopBreakable(current, continueTarget, forLoop);
 
-    const firstBlockInLoopStatement = this.buildStatement(this.createBlockPredecessorOf(lastBlockInLoopStatement), forLoop.statement);
+    const firstBlockInLoopStatement = this.buildStatement(
+      this.createBlockPredecessorOf(lastBlockInLoopStatement),
+      forLoop.statement,
+    );
     let loopRoot: CfgBlock;
     if (forLoop.condition) {
       loopRoot = this.buildExpression(

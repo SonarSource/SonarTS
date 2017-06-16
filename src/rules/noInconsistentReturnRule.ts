@@ -19,7 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import { ControlFlowGraph } from "../cfg/cfg";
+import { CfgBlock, ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -44,17 +44,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     const cfg = ControlFlowGraph.fromStatements(func.body.statements);
     const end = cfg.findEnd();
     if (end) {
-      const allExplicit = end.predecessors.every(predecessor => {
-        const elements = predecessor.getElements();
-        const lastElement = elements[elements.length - 1];
-        return lastElement.startsWith("return");
-      });
-      const allImplicit = end.predecessors.every(predecessor => {
-        const elements = predecessor.getElements();
-        const lastElement = elements[elements.length - 1];
-        return !lastElement.startsWith("return");
-      });
-      if (!allExplicit && !allImplicit) {
+      const allExplicit = end.predecessors.every(this.lastElementIsReturn.bind(this));
+      const allImplicit = end.predecessors.every(this.lastElementIsNotReturn.bind(this));
+      if (!(allExplicit || allImplicit)) {
         this.addFailureAt(
           func.getFirstToken().getStart(),
           func.getFirstToken().getWidth(),
@@ -63,4 +55,15 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       }
     }
   }
+
+  private lastElementIsNotReturn(cfgBlock: CfgBlock): boolean {
+    return !this.lastElementIsReturn(cfgBlock);
+  }
+
+  private lastElementIsReturn(cfgBlock: CfgBlock): boolean {
+    const elements = cfgBlock.getElements();
+    const lastElement = elements[elements.length - 1];
+    return lastElement.startsWith("return");
+  }
+
 }

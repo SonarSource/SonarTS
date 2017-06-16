@@ -254,11 +254,12 @@ it("infinite for loop", () => {
 });
 
 it("while loop", () => {
+  expect(buildVisFromSource("while(x) {a;}")).toMatchSnapshot();
   expect(buildVisFromSource("while(true) {a;}")).toMatchSnapshot();
 });
 
 it("do while loop", () => {
-  expect(buildVisFromSource("do {a;} while (true)")).toMatchSnapshot();
+  expect(buildVisFromSource("do {a;} while (x)")).toMatchSnapshot();
 });
 
 it("for in loop", () => {

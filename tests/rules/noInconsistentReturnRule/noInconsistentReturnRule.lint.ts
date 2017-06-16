@@ -24,3 +24,15 @@ function allImplicitReturns(p: boolean) {
 
   function foo() {}
 }
+
+function infiniteFor() { // OK, there's no way to get to the end of the function
+  for(;;) {
+    return;
+  }
+}
+
+function infiniteWhile() { // OK, there's no way to get to the end of the function
+  while (true && (true)) {
+    return;
+  }
+}

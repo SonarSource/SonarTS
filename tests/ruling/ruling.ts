@@ -47,27 +47,25 @@ export function getTSConfigFiles(): string[] {
 export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: string[]): Results {
   let results = {};
   console.log("Analyzing:");
-  let totalFiles = 0;
-  let filesInError = 0;
   tsConfigFiles.forEach(tsConfigFile => {
     console.log("  *", getFileNameForSnapshot(tsConfigFile));
     const program = getProgram(tsConfigFile);
     const files = lodash.sortBy(getProgramFiles(program));
     files.forEach(file => {
       rules.forEach(Rule => {
-        totalFiles++;
         const rule = initRule(Rule);
         try {
           const errorLines = runRuleOnProjectFile(rule, file, program);
           const ruleName = (Rule as any).metadata.ruleName;
           results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);
         } catch (error) {
-          filesInError++;
+          if (error.toString().indexOf("Try") < 0) {
+            console.log("Error while analyzing " + file.fileName + " " + error);
+          }
         }
       });
     });
   });
-  console.log("errors : " + filesInError + "/" + totalFiles);
   console.log("");
   return results;
 }
