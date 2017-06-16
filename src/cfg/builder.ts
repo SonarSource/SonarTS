@@ -56,7 +56,7 @@ export class CfgBuilder {
   }
 
   private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
-    topDownStatements.reverse().forEach(statement => (current = this.buildStatement(current, statement)));
+    [...topDownStatements].reverse().forEach(statement => (current = this.buildStatement(current, statement)));
     return current;
   }
 
@@ -190,7 +190,7 @@ export class CfgBuilder {
     if (label) {
       breakable = this.breakables.find(b => b.label === label.getText());
     } else {
-      breakable = this.breakables.reverse().find(b => !!b.continueTarget);
+      breakable = [...this.breakables].reverse().find(b => !!b.continueTarget);
     }
     if (breakable) {
       const continueTarget = breakable.continueTarget;
@@ -381,7 +381,7 @@ export class CfgBuilder {
     });
     let currentClauseStatementsStart: CfgBlock = afterSwitchBlock;
     let nextBlock = defaultBlock ? defaultBlock : afterSwitchBlock;
-    switchStatement.caseBlock.clauses.reverse().forEach(caseClause => {
+    [...switchStatement.caseBlock.clauses].reverse().forEach(caseClause => {
       if (caseClause.kind === ts.SyntaxKind.CaseClause) {
         currentClauseStatementsStart = this.buildStatements(
           this.createBlockPredecessorOf(currentClauseStatementsStart),
@@ -410,7 +410,7 @@ export class CfgBuilder {
   }
 
   private buildVariableDeclarationList(current: CfgBlock, variableDeclarations: ts.VariableDeclarationList): CfgBlock {
-    variableDeclarations.declarations.reverse().forEach(variableDeclaration => {
+    [...variableDeclarations.declarations].reverse().forEach(variableDeclaration => {
       current = this.buildBindingName(current, variableDeclaration.name);
       if (variableDeclaration.initializer) {
         current = this.buildExpression(current, variableDeclaration.initializer);
@@ -422,7 +422,7 @@ export class CfgBuilder {
 
   private buildBindingName(current: CfgBlock, bindingName: ts.BindingName): CfgBlock {
     const buildElements = (elements: ts.NodeArray<ts.BindingElement | ts.OmittedExpression>) => {
-      elements.reverse().forEach(element => (current = this.buildBindingElement(current, element)));
+      [...elements].reverse().forEach(element => (current = this.buildBindingElement(current, element)));
     };
 
     switch (bindingName.kind) {
@@ -503,13 +503,13 @@ export class CfgBuilder {
       case SyntaxKind.ArrayLiteralExpression:
         current.addElement(expression);
         const arrayLiteral = expression as ts.ArrayLiteralExpression;
-        arrayLiteral.elements.reverse().forEach(element => (current = this.buildExpression(current, element)));
+        [...arrayLiteral.elements].reverse().forEach(element => (current = this.buildExpression(current, element)));
         return current;
 
       case SyntaxKind.TemplateExpression:
         current.addElement(expression);
         const templateExpression = expression as ts.TemplateExpression;
-        templateExpression.templateSpans
+        [...templateExpression.templateSpans]
           .reverse()
           .forEach(span => (current = this.buildExpression(current, span.expression)));
         return current;
@@ -596,7 +596,7 @@ export class CfgBuilder {
         current.addElement(expression);
         const jsxElement = expression as ts.JsxElement;
         current = this.buildTagName(current, jsxElement.closingElement.tagName);
-        jsxElement.children.reverse().forEach(jsxChild => (current = this.buildJsxChild(current, jsxChild)));
+        [...jsxElement.children].reverse().forEach(jsxChild => (current = this.buildJsxChild(current, jsxChild)));
         return this.buildExpression(current, jsxElement.openingElement);
 
       case SyntaxKind.JsxExpression:
@@ -641,7 +641,7 @@ export class CfgBuilder {
   }
 
   private buildJsxAttributes(current: CfgBlock, jsxAttributes: ts.JsxAttributes): CfgBlock {
-    jsxAttributes.properties.reverse().forEach(jsxAttributeLike => {
+    [...jsxAttributes.properties].reverse().forEach(jsxAttributeLike => {
       if (jsxAttributeLike.kind === SyntaxKind.JsxSpreadAttribute) {
         current = this.buildExpression(current, jsxAttributeLike.expression);
       } else if (jsxAttributeLike.initializer && jsxAttributeLike.initializer.kind !== SyntaxKind.StringLiteral) {
@@ -692,7 +692,7 @@ export class CfgBuilder {
 
   private buildObjectLiteralExpression(current: CfgBlock, objectLiteral: ts.ObjectLiteralExpression): CfgBlock {
     current.addElement(objectLiteral);
-    objectLiteral.properties.reverse().forEach(property => {
+    [...objectLiteral.properties].reverse().forEach(property => {
       switch (property.kind) {
         case SyntaxKind.PropertyAssignment:
           current = this.buildExpression(current, property.initializer);

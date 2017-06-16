@@ -4018,6 +4018,71 @@ a",
 }
 `;
 
+exports[`double continue 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "dead 0",
+      "id": 3,
+      "label": "true",
+      "to": "dead 0",
+    },
+    Object {
+      "arrows": "to",
+      "from": "dead 0",
+      "id": 4,
+      "label": "false",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "b
+<while(b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "dead 0",
+      "label": "a
+<while(a)>",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`element access 1`] = `
 Object {
   "edges": Array [

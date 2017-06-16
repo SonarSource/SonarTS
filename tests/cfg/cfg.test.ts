@@ -340,6 +340,17 @@ it("continue statement", () => {
   expect(buildVisFromSource("for (elem of obj) { if (subcond) continue; stmt; } ")).toMatchSnapshot();
   expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue; stmt; } ")).toMatchSnapshot();
   expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue foo; stmt; } ")).toMatchSnapshot();
+
+});
+
+it("double continue", () => {
+  expect(buildVisFromSource(`
+  outer:while(b) {
+   continue outer;
+   while (a) {
+     continue;
+   }
+  }`)).toMatchSnapshot();
 });
 
 it("break statement", () => {
