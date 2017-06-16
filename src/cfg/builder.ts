@@ -52,191 +52,106 @@ export class CfgBuilder {
   }
 
   private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
-    const statements = [...topDownStatements].reverse();
-
-    statements.forEach(statement => {
-      switch (statement.kind) {
-        case SyntaxKind.Block:
-          const block = statement as ts.Block;
-          current = this.buildStatements(current, block.statements);
-          break;
-        case SyntaxKind.ExpressionStatement:
-          current = this.buildExpression(current, (statement as ts.ExpressionStatement).expression);
-          break;
-        case SyntaxKind.IfStatement: {
-          const ifStatement = statement as ts.IfStatement;
-          let whenFalse = current;
-          if (ifStatement.elseStatement) {
-            whenFalse = this.buildStatements(this.createBlockPredecessorOf(current), [ifStatement.elseStatement]);
-          }
-          const whenTrue = this.buildStatements(this.createBlockPredecessorOf(current), [ifStatement.thenStatement]);
-          current = this.buildExpression(
-            this.createBranchingBlock("if (" + ifStatement.expression.getText() + ")", whenTrue, whenFalse),
-            ifStatement.expression,
-          );
-          break;
-        }
-        case SyntaxKind.ForStatement: {
-          const forLoop = statement as ts.ForStatement;
-          const loopBottom = this.createBlock();
-          let lastBlockInLoopStatement: CfgBlock = loopBottom;
-          if (forLoop.incrementor) {
-            lastBlockInLoopStatement = this.buildExpression(lastBlockInLoopStatement, forLoop.incrementor);
-          }
-          const firstBlockInLoopStatement = this.buildStatements(lastBlockInLoopStatement, [forLoop.statement]);
-          let loopRoot: CfgBlock;
-          if (forLoop.condition) {
-            loopRoot = this.buildExpression(
-              new CfgBranchingBlock(this.forLoopLabel(forLoop), firstBlockInLoopStatement, current),
-              forLoop.condition,
-            );
-          } else {
-            loopRoot = this.createBlockPredecessorOf(firstBlockInLoopStatement);
-          }
-          let loopStart = loopRoot;
-          if (forLoop.initializer) {
-            loopStart = this.buildForInitializer(this.createBlockPredecessorOf(loopRoot), forLoop.initializer);
-          }
-          loopBottom.addSuccessor(loopRoot);
-          current = loopStart;
-          break;
-        }
-        case SyntaxKind.ForInStatement: {
-          current = this.buildForEachLoop(current, statement as ts.ForInStatement);
-          break;
-        }
-        case SyntaxKind.ForOfStatement:
-          current = this.buildForEachLoop(current, statement as ts.ForOfStatement);
-          break;
-        case SyntaxKind.WhileStatement: {
-          const whileLoop = statement as ts.WhileStatement;
-          const loopBreakable = new Breakable();
-          const loopStartPlaceholder = this.createBlock();
-          loopBreakable.breakTarget = current;
-          loopBreakable.continueTarget = loopStartPlaceholder;
-          this.breakables.push(loopBreakable);
-          const loopBottom = this.createBlock();
-          const firstLoopStatementBlock = this.buildStatements(loopBottom, [whileLoop.statement]);
-          const loopStart = this.buildExpression(
-            new CfgBranchingBlock("while(" + whileLoop.expression.getText() + ")", firstLoopStatementBlock, current),
-            whileLoop.expression,
-          );
-          loopStartPlaceholder.addSuccessor(loopStart);
-          loopBottom.addSuccessor(loopStartPlaceholder);
-          this.breakables.pop();
-          current = loopStartPlaceholder;
-          break;
-        }
-        case SyntaxKind.DoStatement: {
-          const doWhileLoop = statement as ts.DoStatement;
-          const doBlockEnd = this.createBlock();
-          const doBlockStart = this.buildStatements(doBlockEnd, [doWhileLoop.statement]);
-          const whileBlockEnd = new CfgBranchingBlock(
-            "while(" + doWhileLoop.expression.getText() + ")",
-            doBlockStart,
-            current,
-          );
-          const whileStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
-          doBlockEnd.addSuccessor(whileStartBlock);
-          current = doBlockStart;
-          break;
-        }
-        case SyntaxKind.SwitchStatement:
-          current = this.buildSwitch(current, statement as ts.SwitchStatement);
-          break;
-        case SyntaxKind.ReturnStatement: {
-          const returnStatement = statement as ts.ReturnStatement;
-          const returnBlock = this.createBlockPredecessorOf(this.end);
-          returnBlock.addElement(returnStatement.getFirstToken()); // The return keyword
-          if (returnStatement.expression) {
-            current = this.buildExpression(returnBlock, returnStatement.expression);
-          } else {
-            current = returnBlock;
-          }
-          break;
-        }
-        case SyntaxKind.EmptyStatement:
-          break;
-        // Just add declaration statement as element to the current cfg block. Do not enter inside.
-        case SyntaxKind.DebuggerStatement:
-        case SyntaxKind.ImportDeclaration:
-        case SyntaxKind.MissingDeclaration:
-        case SyntaxKind.ClassDeclaration:
-        case SyntaxKind.FunctionDeclaration:
-        case SyntaxKind.EnumDeclaration:
-        case SyntaxKind.ModuleDeclaration:
-        case SyntaxKind.NamespaceExportDeclaration:
-        case SyntaxKind.ImportEqualsDeclaration:
-        case SyntaxKind.ExportDeclaration:
-        case SyntaxKind.ExportAssignment:
-        case SyntaxKind.TypeAliasDeclaration:
-        case SyntaxKind.InterfaceDeclaration:
-        case SyntaxKind.ModuleBlock:
-          current.addElement(statement);
-          break;
-        case SyntaxKind.VariableStatement:
-          current = this.buildVariableDeclarationList(current, (statement as ts.VariableStatement).declarationList);
-          break;
-        case SyntaxKind.WithStatement:
-          const withStatement = statement as ts.WithStatement;
-          current = this.buildStatements(current, [withStatement.statement]);
-          current = this.buildExpression(current, withStatement.expression);
-          break;
-        case SyntaxKind.ThrowStatement:
-          const throwStatement = statement as ts.ThrowStatement;
-          // fixme
-          current = this.buildExpression(this.createBlockPredecessorOf(this.end), throwStatement.expression);
-          break;
-        case SyntaxKind.LabeledStatement: {
-          const labeledStatement = statement as ts.LabeledStatement;
-          const breakable = new Breakable();
-          breakable.label = labeledStatement.label.getText();
-          breakable.breakTarget = current;
-          const startOfLabeledStatementPlaceholder = this.createBlock();
-          if (labeledStatement.statement.kind === SyntaxKind.WhileStatement) {
-            breakable.continueTarget = startOfLabeledStatementPlaceholder;
-          }
-          this.breakables.push(breakable);
-          const startOfLabeledStatement = this.buildStatements(this.createBlockPredecessorOf(current), [labeledStatement.statement]);
-          startOfLabeledStatementPlaceholder.addSuccessor(startOfLabeledStatement);
-          current = startOfLabeledStatementPlaceholder;
-          this.breakables.pop();
-          break;
-        }
-        case SyntaxKind.BreakStatement: {
-          const breakStatement = statement as ts.BreakStatement;
-          const breakable = this.getBreakable(breakStatement.label);
-          if (breakable) {
-            const breakTarget = breakable.breakTarget;
-            current = this.createBlockPredecessorOf(breakTarget);
-            break;
-          }
-        }
-        case SyntaxKind.ContinueStatement: {
-          const continueStatement = statement as ts.ContinueStatement;
-          let breakable;
-          const label = continueStatement.label;
-          if (label) {
-            breakable = this.breakables.find(b => b.label === label.getText());
-          } else {
-            breakable = this.breakables.reverse().find(b => !!b.continueTarget);
-          }
-          if (breakable) {
-            const continueTarget = breakable.continueTarget;
-            current = this.createBlockPredecessorOf(continueTarget!);
-            break;
-          }
-        }
-        case SyntaxKind.TryStatement:
-          throw new Error("Statement out of current CFG implementation scope " + SyntaxKind[statement.kind]);
-
-        case SyntaxKind.NotEmittedStatement:
-        default:
-          throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
-      }
-    });
-
+    topDownStatements.reverse().forEach(statement => (current = this.buildStatement(current, statement)));
     return current;
+  }
+
+  private buildStatement(current: CfgBlock, statement: ts.Statement): CfgBlock {
+    switch (statement.kind) {
+      case SyntaxKind.EmptyStatement:
+        return current;
+
+      case SyntaxKind.Block:
+        const block = statement as ts.Block;
+        return this.buildStatements(current, block.statements);
+
+      case SyntaxKind.ExpressionStatement:
+        return this.buildExpression(current, (statement as ts.ExpressionStatement).expression);
+
+      case SyntaxKind.IfStatement:
+        return this.buildIfStatement(current, statement as ts.IfStatement);
+
+      case SyntaxKind.ForStatement:
+        return this.buildForStatement(current, statement as ts.ForStatement);
+
+      case SyntaxKind.ForInStatement:
+      case SyntaxKind.ForOfStatement:
+        return this.buildForEachLoop(current, statement as ts.ForOfStatement | ts.ForInStatement);
+
+      case SyntaxKind.WhileStatement:
+        return this.buildWhileStatement(current, statement as ts.WhileStatement);
+
+      case SyntaxKind.DoStatement:
+        return this.buildDoStatement(current, statement as ts.DoStatement);
+
+      case SyntaxKind.SwitchStatement:
+        return this.buildSwitch(current, statement as ts.SwitchStatement);
+
+      case SyntaxKind.ReturnStatement:
+        const returnStatement = statement as ts.ReturnStatement;
+        const returnBlock = this.createBlockPredecessorOf(this.end);
+        returnBlock.addElement(returnStatement.getFirstToken()); // The return keyword
+        return returnStatement.expression ? this.buildExpression(returnBlock, returnStatement.expression) : returnBlock;
+
+      // Just add declaration statement as element to the current cfg block. Do not enter inside.
+      case SyntaxKind.DebuggerStatement:
+      case SyntaxKind.ImportDeclaration:
+      case SyntaxKind.MissingDeclaration:
+      case SyntaxKind.ClassDeclaration:
+      case SyntaxKind.FunctionDeclaration:
+      case SyntaxKind.EnumDeclaration:
+      case SyntaxKind.ModuleDeclaration:
+      case SyntaxKind.NamespaceExportDeclaration:
+      case SyntaxKind.ImportEqualsDeclaration:
+      case SyntaxKind.ExportDeclaration:
+      case SyntaxKind.ExportAssignment:
+      case SyntaxKind.TypeAliasDeclaration:
+      case SyntaxKind.InterfaceDeclaration:
+      case SyntaxKind.ModuleBlock:
+        current.addElement(statement);
+        return current;
+
+      case SyntaxKind.VariableStatement:
+        return this.buildVariableDeclarationList(current, (statement as ts.VariableStatement).declarationList);
+
+      case SyntaxKind.WithStatement:
+        const withStatement = statement as ts.WithStatement;
+        current = this.buildStatement(current, withStatement.statement);
+        return this.buildExpression(current, withStatement.expression);
+
+      case SyntaxKind.ThrowStatement:
+        const throwStatement = statement as ts.ThrowStatement;
+        // fixme
+        return this.buildExpression(this.createBlockPredecessorOf(this.end), throwStatement.expression);
+
+      case SyntaxKind.LabeledStatement:
+        return this.buildLabeledStatement(current, statement as ts.LabeledStatement);
+
+      case SyntaxKind.BreakStatement:
+        return this.buildBreakStatement(statement as ts.BreakStatement);
+
+      case SyntaxKind.ContinueStatement:
+        return this.buildContinueStatement(statement as ts.ContinueStatement);
+
+      case SyntaxKind.TryStatement:
+        // todo
+        throw new Error("Statement out of current CFG implementation scope " + SyntaxKind[statement.kind]);
+
+      // NotEmittedStatement should not appear in visited syntax tree
+      case SyntaxKind.NotEmittedStatement:
+      default:
+        throw new Error("Unknown statement: " + SyntaxKind[statement.kind]);
+    }
+  }
+
+  private createBreakable(breakTarget: CfgBlock, continueTarget: CfgBlock | undefined, label?: ts.Identifier) {
+    const breakable = new Breakable();
+    breakable.breakTarget = breakTarget;
+    breakable.continueTarget = continueTarget;
+    if (label) {
+      breakable.label = label.text;
+    }
+    this.breakables.push(breakable);
   }
 
   private getBreakable(label: ts.Identifier | undefined): Breakable | undefined {
@@ -245,6 +160,134 @@ export class CfgBuilder {
     } else {
       return this.breakables[this.breakables.length - 1];
     }
+  }
+
+  private buildContinueStatement(continueStatement: ts.ContinueStatement): CfgBlock {
+    let breakable;
+    const label = continueStatement.label;
+    if (label) {
+      breakable = this.breakables.find(b => b.label === label.getText());
+    } else {
+      breakable = this.breakables.reverse().find(b => !!b.continueTarget);
+    }
+    if (breakable) {
+      const continueTarget = breakable.continueTarget;
+      return this.createBlockPredecessorOf(continueTarget!);
+    } else {
+      // fixme
+      throw new Error("No");
+    }
+  }
+
+  private buildBreakStatement(breakStatement: ts.BreakStatement): CfgBlock {
+    const breakable = this.getBreakable(breakStatement.label);
+    if (breakable) {
+      const breakTarget = breakable.breakTarget;
+      return this.createBlockPredecessorOf(breakTarget);
+    } else {
+      // fixme
+      throw new Error("No");
+    }
+  }
+
+  private buildLabeledStatement(current: CfgBlock, labeledStatement: ts.LabeledStatement): CfgBlock {
+    const startOfLabeledStatementPlaceholder = this.createBlock();
+    this.createBreakable(
+      current,
+      isLoop(labeledStatement.statement) ? startOfLabeledStatementPlaceholder : undefined,
+      labeledStatement.label,
+    );
+    const startOfLabeledStatement = this.buildStatement(
+      this.createBlockPredecessorOf(current),
+      labeledStatement.statement,
+    );
+    startOfLabeledStatementPlaceholder.addSuccessor(startOfLabeledStatement);
+    this.breakables.pop();
+    return startOfLabeledStatementPlaceholder;
+
+    function isLoop(statement: ts.Statement): boolean {
+      return [
+        SyntaxKind.WhileStatement,
+        SyntaxKind.DoStatement,
+        SyntaxKind.ForStatement,
+        SyntaxKind.ForInStatement,
+        SyntaxKind.ForOfStatement,
+      ].includes(statement.kind);
+    }
+  }
+
+  private buildDoStatement(current: CfgBlock, doWhileLoop: ts.DoStatement): CfgBlock {
+    const doBlockEnd = this.createBlock();
+    const doBlockStart = this.buildStatement(doBlockEnd, doWhileLoop.statement);
+    const whileBlockEnd = new CfgBranchingBlock(
+      "while(" + doWhileLoop.expression.getText() + ")",
+      doBlockStart,
+      current,
+    );
+    const whileStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
+    doBlockEnd.addSuccessor(whileStartBlock);
+    return doBlockStart;
+  }
+
+  private buildWhileStatement(current: CfgBlock, whileLoop: ts.WhileStatement): CfgBlock {
+    const loopStartPlaceholder = this.createBlock();
+    this.createBreakable(current, loopStartPlaceholder);
+    const loopBottom = this.createBlock();
+    const firstLoopStatementBlock = this.buildStatement(loopBottom, whileLoop.statement);
+    const loopStart = this.buildExpression(
+      new CfgBranchingBlock("while(" + whileLoop.expression.getText() + ")", firstLoopStatementBlock, current),
+      whileLoop.expression,
+    );
+    loopStartPlaceholder.addSuccessor(loopStart);
+    loopBottom.addSuccessor(loopStartPlaceholder);
+    this.breakables.pop();
+    return loopStartPlaceholder;
+  }
+
+  private buildForEachLoop(current: CfgBlock, forEach: ts.ForOfStatement | ts.ForInStatement): CfgBlock {
+    const loopBodyEnd = this.createBlock();
+    const loopBodyStart = this.buildStatement(loopBodyEnd, forEach.statement);
+    const branchingBlock = this.createBranchingBlock(this.forEachLoopLabel(forEach), loopBodyStart, current);
+    const initializerStart = this.buildForInitializer(branchingBlock, forEach.initializer);
+    const loopStart = this.buildExpression(this.createBlockPredecessorOf(initializerStart), forEach.expression);
+    loopBodyEnd.addSuccessor(initializerStart);
+    return loopStart;
+  }
+
+  private buildForStatement(current: CfgBlock, forLoop: ts.ForStatement): CfgBlock {
+    const loopBottom = this.createBlock();
+    let lastBlockInLoopStatement: CfgBlock = loopBottom;
+    if (forLoop.incrementor) {
+      lastBlockInLoopStatement = this.buildExpression(lastBlockInLoopStatement, forLoop.incrementor);
+    }
+    const firstBlockInLoopStatement = this.buildStatement(lastBlockInLoopStatement, forLoop.statement);
+    let loopRoot: CfgBlock;
+    if (forLoop.condition) {
+      loopRoot = this.buildExpression(
+        new CfgBranchingBlock(this.forLoopLabel(forLoop), firstBlockInLoopStatement, current),
+        forLoop.condition,
+      );
+    } else {
+      loopRoot = this.createBlockPredecessorOf(firstBlockInLoopStatement);
+    }
+    let loopStart = loopRoot;
+    if (forLoop.initializer) {
+      loopStart = this.buildForInitializer(this.createBlockPredecessorOf(loopRoot), forLoop.initializer);
+    }
+    loopBottom.addSuccessor(loopRoot);
+    return loopStart;
+  }
+
+  private buildIfStatement(current: CfgBlock, ifStatement: ts.IfStatement): CfgBlock {
+    let whenFalse = current;
+    if (ifStatement.elseStatement) {
+      whenFalse = this.buildStatement(this.createBlockPredecessorOf(current), ifStatement.elseStatement);
+    }
+    const whenTrue = this.buildStatement(this.createBlockPredecessorOf(current), ifStatement.thenStatement);
+    return this.buildExpression(
+      this.createBranchingBlock("if (" + ifStatement.expression.getText() + ")", whenTrue, whenFalse),
+      ifStatement.expression,
+    );
   }
 
   private buildSwitch(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
@@ -339,10 +382,9 @@ export class CfgBuilder {
         [...callExpression.arguments].reverse().forEach(arg => {
           current = this.buildExpression(current, arg);
         });
-        current = this.buildExpression(current, callExpression.expression);
+        return this.buildExpression(current, callExpression.expression);
 
-        return current;
-      case SyntaxKind.ConditionalExpression: {
+      case SyntaxKind.ConditionalExpression:
         const conditionalExpression = expression as ts.ConditionalExpression;
         const whenFalse = this.buildExpression(this.createBlockPredecessorOf(current), conditionalExpression.whenFalse);
         const whenTrue = this.buildExpression(this.createBlockPredecessorOf(current), conditionalExpression.whenTrue);
@@ -350,18 +392,16 @@ export class CfgBuilder {
           new CfgBranchingBlock(expression.getText(), whenTrue, whenFalse),
           conditionalExpression.condition,
         );
-      }
-      case SyntaxKind.BinaryExpression: {
-        const binaryExpression = expression as ts.BinaryExpression;
-        return this.buildBinaryExpression(current, binaryExpression);
-      }
-      case SyntaxKind.ParenthesizedExpression: {
-        const parenthesizedExpression = expression as ts.ParenthesizedExpression;
-        return this.buildExpression(current, parenthesizedExpression.expression);
-      }
-      case SyntaxKind.ObjectLiteralExpression: {
+
+      case SyntaxKind.BinaryExpression:
+        return this.buildBinaryExpression(current, expression as ts.BinaryExpression);
+
+      case SyntaxKind.ParenthesizedExpression:
+        return this.buildExpression(current, (expression as ts.ParenthesizedExpression).expression);
+
+      case SyntaxKind.ObjectLiteralExpression:
         return this.buildObjectLiteralExpression(current, expression as ts.ObjectLiteralExpression);
-      }
+
       case SyntaxKind.TrueKeyword:
       case SyntaxKind.FalseKeyword:
       case SyntaxKind.NumericLiteral:
@@ -375,14 +415,17 @@ export class CfgBuilder {
       case SyntaxKind.MetaProperty:
         current.addElement(expression);
         return current;
+
       case SyntaxKind.OmittedExpression:
         // empty element, do nothing
         return current;
+
       case SyntaxKind.ArrayLiteralExpression:
         current.addElement(expression);
         const arrayLiteral = expression as ts.ArrayLiteralExpression;
         arrayLiteral.elements.reverse().forEach(element => (current = this.buildExpression(current, element)));
         return current;
+
       case SyntaxKind.TemplateExpression:
         current.addElement(expression);
         const templateExpression = expression as ts.TemplateExpression;
@@ -390,16 +433,18 @@ export class CfgBuilder {
           .reverse()
           .forEach(span => (current = this.buildExpression(current, span.expression)));
         return current;
+
       case SyntaxKind.FunctionExpression:
       case SyntaxKind.ArrowFunction:
       case SyntaxKind.ClassExpression:
         current.addElement(expression);
         return current;
+
       case SyntaxKind.PropertyAccessExpression:
         current.addElement(expression);
         const propertyAccessExpression = expression as ts.PropertyAccessExpression;
-        current = this.buildExpression(current, propertyAccessExpression.expression);
-        return current;
+        return this.buildExpression(current, propertyAccessExpression.expression);
+
       case SyntaxKind.ElementAccessExpression:
         current.addElement(expression);
         const elementAccessExpression = expression as ts.ElementAccessExpression;
@@ -407,8 +452,8 @@ export class CfgBuilder {
         if (elementAccessExpression.argumentExpression) {
           current = this.buildExpression(current, elementAccessExpression.argumentExpression);
         }
-        current = this.buildExpression(current, elementAccessExpression.expression);
-        return current;
+        return this.buildExpression(current, elementAccessExpression.expression);
+
       case SyntaxKind.NewExpression:
         current.addElement(expression);
         const newExpression = expression as ts.NewExpression;
@@ -417,88 +462,83 @@ export class CfgBuilder {
             current = this.buildExpression(current, arg);
           });
         }
-        current = this.buildExpression(current, newExpression.expression);
-        return current;
+        return this.buildExpression(current, newExpression.expression);
+
       case SyntaxKind.TaggedTemplateExpression:
         current.addElement(expression);
         const taggedTemplateExpression = expression as ts.TaggedTemplateExpression;
         current = this.buildExpression(current, taggedTemplateExpression.template);
-        current = this.buildExpression(current, taggedTemplateExpression.tag);
-        return current;
+        return this.buildExpression(current, taggedTemplateExpression.tag);
+
       case SyntaxKind.TypeAssertionExpression:
         current.addElement(expression);
         const typeAssertionExpression = expression as ts.TypeAssertion;
-        current = this.buildExpression(current, typeAssertionExpression.expression);
-        return current;
+        return this.buildExpression(current, typeAssertionExpression.expression);
+
       case SyntaxKind.DeleteExpression:
-        current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.DeleteExpression).expression);
-        return current;
       case SyntaxKind.TypeOfExpression:
-        current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.TypeOfExpression).expression);
-        return current;
       case SyntaxKind.VoidExpression:
-        current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.VoidExpression).expression);
-        return current;
       case SyntaxKind.AwaitExpression:
-        current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.AwaitExpression).expression);
-        return current;
-      case SyntaxKind.PrefixUnaryExpression:
-        current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.PrefixUnaryExpression).operand);
-        return current;
-      case SyntaxKind.PostfixUnaryExpression:
-        current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.PostfixUnaryExpression).operand);
-        return current;
       case SyntaxKind.AsExpression:
-        current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.AsExpression).expression);
-        return current;
       case SyntaxKind.NonNullExpression:
-        current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.NonNullExpression).expression);
-        return current;
       case SyntaxKind.SpreadElement:
         current.addElement(expression);
-        current = this.buildExpression(current, (expression as ts.SpreadElement).expression);
-        return current;
+        return this.buildExpression(
+          current,
+          (expression as
+            | ts.DeleteExpression
+            | ts.TypeAssertion
+            | ts.TypeOfExpression
+            | ts.VoidExpression
+            | ts.AwaitExpression
+            | ts.AsExpression
+            | ts.NonNullExpression
+            | ts.SpreadElement).expression,
+        );
+
+      case SyntaxKind.PrefixUnaryExpression:
+      case SyntaxKind.PostfixUnaryExpression:
+        current.addElement(expression);
+        return this.buildExpression(
+          current,
+          (expression as ts.PrefixUnaryExpression | ts.PostfixUnaryExpression).operand,
+        );
+
       case SyntaxKind.YieldExpression:
         current.addElement(expression);
         const yieldExpression = expression as ts.YieldExpression;
         if (yieldExpression.expression) {
-          current = this.buildExpression(current, yieldExpression.expression);
+          return this.buildExpression(current, yieldExpression.expression);
         }
         return current;
+
       case SyntaxKind.JsxElement:
         current.addElement(expression);
         const jsxElement = expression as ts.JsxElement;
         current = this.buildTagName(current, jsxElement.closingElement.tagName);
         jsxElement.children.reverse().forEach(jsxChild => (current = this.buildJsxChild(current, jsxChild)));
-        current = this.buildExpression(current, jsxElement.openingElement);
-        return current;
+        return this.buildExpression(current, jsxElement.openingElement);
+
       case SyntaxKind.JsxExpression:
         // do not add jsxExpression itself to the current block elements
         const jsxExpression = expression as ts.JsxExpression;
         if (jsxExpression.expression) {
-          current = this.buildExpression(current, jsxExpression.expression);
+          return this.buildExpression(current, jsxExpression.expression);
         }
         return current;
+
       case SyntaxKind.JsxOpeningElement:
         // do not add jsxOpeningElement itself to the current block elements
         const jsxOpeningElement = expression as ts.JsxOpeningElement;
         current = this.buildJsxAttributes(current, jsxOpeningElement.attributes);
-        current = this.buildTagName(current, jsxOpeningElement.tagName);
-        return current;
+        return this.buildTagName(current, jsxOpeningElement.tagName);
+
       case SyntaxKind.JsxSelfClosingElement:
         current.addElement(expression);
         const jsxSelfClosingElement = expression as ts.JsxSelfClosingElement;
         current = this.buildJsxAttributes(current, jsxSelfClosingElement.attributes);
-        current = this.buildTagName(current, jsxSelfClosingElement.tagName);
-        return current;
+        return this.buildTagName(current, jsxSelfClosingElement.tagName);
+
       default:
         throw new Error("Unknown expression: " + SyntaxKind[expression.kind]);
     }
@@ -602,16 +642,6 @@ export class CfgBuilder {
       }
     });
     return current;
-  }
-
-  private buildForEachLoop(current: CfgBlock, forEach: ts.ForOfStatement | ts.ForInStatement): CfgBlock {
-    const loopBodyEnd = this.createBlock();
-    const loopBodyStart = this.buildStatements(loopBodyEnd, [forEach.statement]);
-    const branchingBlock = this.createBranchingBlock(this.forEachLoopLabel(forEach), loopBodyStart, current);
-    const initializerStart = this.buildForInitializer(branchingBlock, forEach.initializer);
-    const loopStart = this.buildExpression(this.createBlockPredecessorOf(initializerStart), forEach.expression);
-    loopBodyEnd.addSuccessor(initializerStart);
-    return loopStart;
   }
 
   private createBranchingBlock(

@@ -317,15 +317,25 @@ it("'throw' statement", () => {
   expect(buildVisFromSource("foo(); if (cond) throw bar(); foobar();")).toMatchSnapshot();
 });
 
-it("continue/break statement", () => {
+it("continue statement", () => {
   expect(buildVisFromSource("while(a) { if (b) continue; c}")).toMatchSnapshot();
+});
+
+it("break statement", () => {
   expect(buildVisFromSource("while(a) { if (b) break; c}")).toMatchSnapshot();
+});
+
+it("labels", () => {
   expect(buildVisFromSource(`
+  label1:
   while(a1) {
-    while(a2) continue;
-    if (b) break;
+    while(a2) {
+      if(b) break label1;
+      c;
+    }
+    d;
   }`)).toMatchSnapshot();
-  expect(buildVisFromSource(`label1: while(a1) { while(a2) { if(b) break label1; c} d }`)).toMatchSnapshot();
+
   expect(buildVisFromSource(`
   foo:
   while (a) {
@@ -336,6 +346,14 @@ it("continue/break statement", () => {
       e;
     }
     d;
+  }`)).toMatchSnapshot();
+});
+
+it("mix continue/break statement", () => {
+  expect(buildVisFromSource(`
+  while(a1) {
+    while(a2) continue;
+    if (b) break;
   }`)).toMatchSnapshot();
 });
 
