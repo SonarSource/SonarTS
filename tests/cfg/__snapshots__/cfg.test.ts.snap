@@ -612,6 +612,1378 @@ Object {
 }
 `;
 
+exports[`break statement 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "a
+<while(a)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "c",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "a
+<while(a)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "c",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 4`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 1,
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 2,
+      "to": "1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2.1",
+      "id": 3,
+      "label": "true",
+      "to": "1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "c",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2.1",
+      "label": "a
+<do while(a)>",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 5`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2",
+      "id": 3,
+      "to": "1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "c",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1",
+      "label": "a
+<do while(a)>",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 6`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2",
+      "id": 3,
+      "to": "1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "c",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1",
+      "label": "a
+<do while(a)>",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 7`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2.1",
+      "id": 6,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "cond
+<for(init;cond;inc)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2.1",
+      "label": "inc",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 8`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "cond
+<for(init;cond;)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 9`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2",
+      "id": 6,
+      "to": "1.1.1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2.1",
+      "id": 7,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "cond
+<for(init;cond;inc)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2.1",
+      "label": "inc",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 10`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2",
+      "id": 6,
+      "to": "1.1.1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2.1",
+      "id": 7,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "cond
+<for(init;cond;inc)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2.1",
+      "label": "inc",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 11`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+obj",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "elem
+<for(elem in obj)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 12`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2",
+      "id": 6,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "obj",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "elem
+<for(elem in obj)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 13`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2",
+      "id": 6,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "obj",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "elem
+<for(elem in obj)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 14`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 1,
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 3,
+      "label": "true",
+      "to": "1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2.1",
+      "id": 5,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+a
+1
+<1>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "stmt1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "2
+<2>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2.1",
+      "label": "stmt2",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 15`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1",
+      "id": 6,
+      "to": "1.1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "a
+1
+<1>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "stmt1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "2
+<2>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1",
+      "label": "stmt2",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`break statement 16`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.2.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1",
+      "id": 6,
+      "to": "1.1.2.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1",
+      "id": 7,
+      "label": "true",
+      "to": "1.1.2.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1",
+      "id": 8,
+      "label": "false",
+      "to": "1.1.2.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.1",
+      "id": 9,
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.2",
+      "id": 10,
+      "label": "true",
+      "to": "1.1.2.1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.2",
+      "id": 11,
+      "label": "false",
+      "to": "1.1.2.1.1.2.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.2.1",
+      "id": 12,
+      "to": "1.1.2.1.1.2.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.2.1.1",
+      "id": 13,
+      "to": "1.1.2.1.1.2.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.2.1.1.1",
+      "id": 14,
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.2.2",
+      "id": 15,
+      "label": "true",
+      "to": "1.1.2.1.1.2.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.2.2",
+      "id": 16,
+      "label": "false",
+      "to": "1.1.2.1.1.2.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.1.1.2.2.1",
+      "id": 17,
+      "to": "1.1.2.1.1.2.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.2",
+      "id": 18,
+      "label": "true",
+      "to": "1.1.2.1.1.2.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2.2",
+      "id": 19,
+      "label": "false",
+      "to": "1.1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "a
+1
+<1>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "stmt1",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "2
+<2>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1",
+      "label": "stmt2",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1.1",
+      "label": "b
+11
+<11>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1.1.1",
+      "label": "stmt11",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1.1.2",
+      "label": "12
+<12>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1.1.2.1",
+      "label": "stmt12",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1.1.2.1.1",
+      "label": "stmt21",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1.1.2.1.1.1",
+      "label": "stmt3",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1.1.2.2",
+      "label": "13
+<13>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.1.1.2.2.1",
+      "label": "stmt13",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2.2",
+      "label": "3
+<3>",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`call expression 1`] = `
 Object {
   "edges": Array [
@@ -723,6 +2095,12 @@ Object {
       "arrows": "to",
       "from": "1.1.1",
       "id": 3,
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
       "to": "1.1",
     },
   ],
@@ -745,8 +2123,12 @@ x=true
     },
     Object {
       "id": "1.1.1",
-      "label": "a
-x
+      "label": "a",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "x
 1
 x=1",
       "physics": false,
@@ -1188,6 +2570,1100 @@ Object {
 }
 `;
 
+exports[`continue statement 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "a
+<while(a)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "c",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 3`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "a
+<while(a)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "c",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 4`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 1,
+      "label": "false",
+      "to": "1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.2",
+      "id": 4,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "a
+<do while(a)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.2",
+      "label": "c",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 5`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2",
+      "id": 5,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "a
+<do while(a)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "c",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 6`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.2",
+      "id": 5,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "b
+<if (b)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "a
+<do while(a)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "c",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 7`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 6,
+      "to": "1.1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "cond
+<for(init;cond;inc)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "inc",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 8`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "cond
+<for(init;cond;)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 9`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.1",
+      "id": 5,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 6,
+      "to": "1.1.1.2.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2.1",
+      "id": 7,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "dead 1",
+      "id": 8,
+      "to": "1.1.1.2",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2.1",
+      "label": "",
+      "physics": false,
+    },
+    Object {
+      "id": "dead 0",
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "dead 1",
+      "label": "",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 10`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.1",
+      "id": 6,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2",
+      "id": 7,
+      "to": "1.1.1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "cond
+<for(init;cond;inc)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "inc",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 11`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.1",
+      "id": 6,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2",
+      "id": 7,
+      "to": "1.1.1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "init",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "cond
+<for(init;cond;inc)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.1",
+      "label": "inc",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 12`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 2,
+      "label": "false",
+      "to": "1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "true",
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 4,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.2",
+      "id": 5,
+      "to": "1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START
+obj",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "elem
+<for(elem of obj)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 13`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2",
+      "id": 6,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "obj",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "elem
+<for(elem of obj)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`continue statement 14`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "label": "true",
+      "to": "1.1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 3,
+      "label": "false",
+      "to": "1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 4,
+      "label": "true",
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1",
+      "id": 5,
+      "label": "false",
+      "to": "1.1.1.1.2",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1.1.2",
+      "id": 6,
+      "to": "1.1.1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "obj",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "elem
+<for(elem of obj)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1",
+      "label": "subcond
+<if (subcond)>",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.1.2",
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
 exports[`declaration expressions 1`] = `
 Object {
   "edges": Array [
@@ -1530,7 +4006,7 @@ a",
     Object {
       "id": "1.1",
       "label": "true
-<while(true)>",
+<do while(true)>",
       "physics": false,
     },
     Object {
@@ -2150,7 +4626,19 @@ Object {
       "arrows": "to",
       "from": "1.1",
       "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
       "to": "1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "dead 1",
+      "id": 3,
+      "to": "1.1",
     },
   ],
   "nodes": Array [
@@ -2165,8 +4653,18 @@ Object {
       "physics": false,
     },
     Object {
+      "id": "1.1.1",
+      "label": "",
+      "physics": false,
+    },
+    Object {
       "id": "dead 0",
       "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": "dead 1",
+      "label": "",
       "physics": false,
     },
   ],
