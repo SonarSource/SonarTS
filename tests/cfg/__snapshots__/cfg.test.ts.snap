@@ -4005,8 +4005,8 @@ a",
     },
     Object {
       "id": "1.1",
-      "label": "true
-<do while(true)>",
+      "label": "x
+<do while(x)>",
       "physics": false,
     },
     Object {
@@ -7612,8 +7612,8 @@ Object {
     },
     Object {
       "id": "1.1",
-      "label": "true
-<while(true)>",
+      "label": "x
+<while(x)>",
       "physics": false,
     },
     Object {
@@ -7623,6 +7623,53 @@ Object {
     },
     Object {
       "id": "1.1.2",
+      "label": "END",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`while loop 2`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": "1",
+      "id": 0,
+      "to": "1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1",
+      "id": 1,
+      "to": "1.1.1",
+    },
+    Object {
+      "arrows": "to",
+      "from": "1.1.1",
+      "id": 2,
+      "to": "1",
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": "1",
+      "label": "START",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1",
+      "label": "true",
+      "physics": false,
+    },
+    Object {
+      "id": "1.1.1",
+      "label": "a",
+      "physics": false,
+    },
+    Object {
+      "id": "dead 0",
       "label": "END",
       "physics": false,
     },
