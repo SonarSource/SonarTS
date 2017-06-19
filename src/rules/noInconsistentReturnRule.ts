@@ -39,14 +39,28 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
+
   public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
     if (!func.body) return;
+    const isVoidType = (type: ts.Node) =>
+      type.kind === ts.SyntaxKind.UndefinedKeyword || type.kind === ts.SyntaxKind.VoidKeyword;
+    if (func.type) {
+      if (func.type.kind === ts.SyntaxKind.UnionType && (func.type as ts.UnionTypeNode).types.find(isVoidType)) {
+        return;
+
+      } else if (isVoidType(func.type)) {
+        return;
+      }
+    }
+
     const cfg = ControlFlowGraph.fromStatements(func.body.statements);
     if (cfg) {
+      const start = cfg.getStart();
       const end = cfg.findEnd();
       if (end) {
-        const allExplicit = end.predecessors.every(this.lastElementIsReturn.bind(this));
-        const allImplicit = end.predecessors.every(this.lastElementIsNotReturn.bind(this));
+        const predecessors = end.predecessors.filter(block => block === start || this.blockHasPredecessors(block));
+        const allExplicit = predecessors.every(this.lastElementIsExplicitReturn.bind(this));
+        const allImplicit = predecessors.every(this.lastElementIsNotExplicitReturn.bind(this));
         if (!(allExplicit || allImplicit)) {
           this.addFailureAt(
             func.getFirstToken().getStart(),
@@ -58,13 +72,20 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
   }
 
-  private lastElementIsNotReturn(cfgBlock: CfgBlock): boolean {
-    return !this.lastElementIsReturn(cfgBlock);
+  private lastElementIsNotExplicitReturn(cfgBlock: CfgBlock): boolean {
+    return !this.lastElementIsExplicitReturn(cfgBlock);
   }
 
-  private lastElementIsReturn(cfgBlock: CfgBlock): boolean {
+  private lastElementIsExplicitReturn(cfgBlock: CfgBlock): boolean {
     const elements = cfgBlock.getElements();
     const lastElement = elements[elements.length - 1];
-    return lastElement.kind === ts.SyntaxKind.ReturnStatement;
+    return lastElement.kind === ts.SyntaxKind.ReturnStatement && !!(lastElement as ts.ReturnStatement).expression;
+  }
+
+  private blockHasPredecessors(cfgBlock: any): boolean {
+    if (cfgBlock.predecessors) {
+      return cfgBlock.predecessors.length > 0;
+    }
+    return false;
   }
 }
