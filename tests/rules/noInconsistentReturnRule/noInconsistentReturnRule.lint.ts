@@ -32,7 +32,7 @@ function infiniteFor() { // OK, there's no way to get to the end of the function
 }
 
 function infiniteWhile() { // OK, there's no way to get to the end of the function
-  while (true && (true)) {
+  while (true) {
     return;
   }
 }
