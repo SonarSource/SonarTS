@@ -105,10 +105,10 @@ export class ControlFlowGraph {
 
 export interface CfgBlock {
   id: string;
-  predecessors: CfgBlock[];
+
   addElement(element: ts.Node): void;
 
-  getElements(): string[];
+  getElements(): ts.Node[];
 
   getSuccessors(): CfgBlock[];
 
@@ -129,12 +129,12 @@ export abstract class CfgBlockWithElements extends CfgBlockWithPredecessors {
     this.elements.unshift(element);
   }
 
-  public getElements(): string[] {
-    return this.elements.map(element => element.getText());
+  public getElements(): ts.Node[] {
+    return this.elements;
   }
 
   public getLabel(): string {
-    return this.getElements().join("\n");
+    return this.getElements().map(element => element.getText()).join("\n");
   }
 }
 
@@ -160,7 +160,7 @@ export class CfgEndBlock extends CfgBlockWithPredecessors implements CfgBlock {
     return this;
   }
 
-  public getElements(): string[] {
+  public getElements(): ts.Node[] {
     return [];
   }
 
