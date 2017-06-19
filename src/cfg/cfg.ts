@@ -101,6 +101,10 @@ export class ControlFlowGraph {
   public findEnd(): CfgEndBlock | undefined {
     return this.getBlocks().find(block => block.getSuccessors().length === 0) as CfgEndBlock;
   }
+
+  public getStart(): CfgBlock {
+    return this.start;
+  }
 }
 
 export interface CfgBlock {

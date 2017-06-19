@@ -31,19 +31,19 @@ class Viewer {
 
   public show(source: string) {
     const sourceFile = parseString(source);
+    const graph = ControlFlowGraph.fromStatements(sourceFile.statements);
 
-    try {
-      const graph = ControlFlowGraph.fromStatements(sourceFile.statements);
-
-      // tslint:disable-next-line:no-unused-expression
-      new Network(this.container, toVisData(graph), {
-        height: "500px",
-        width: "1000px",
-        nodes: { shape: "box" },
-      });
-    } catch (e) {
-      alert(e);
+    if (!graph) {
+      alert("The build of CFG faild.");
+      return;
     }
+
+    // tslint:disable-next-line:no-unused-expression
+    new Network(this.container, toVisData(graph), {
+      height: "500px",
+      width: "1000px",
+      nodes: { shape: "box" },
+    });
   }
 }
 
