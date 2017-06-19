@@ -174,14 +174,6 @@ export class CfgBuilder {
     return null;
   }
 
-  private getBreakable(label: ts.Identifier | undefined): Breakable | undefined {
-    if (label) {
-      return this.breakables.find(breakable => breakable.label === label.getText());
-    } else {
-      return this.breakables[this.breakables.length - 1];
-    }
-  }
-
   private buildContinueStatement(continueStatement: ts.ContinueStatement): CfgBlock {
     let breakable;
     const label = continueStatement.label;
@@ -199,7 +191,14 @@ export class CfgBuilder {
   }
 
   private buildBreakStatement(breakStatement: ts.BreakStatement): CfgBlock {
-    const breakable = this.getBreakable(breakStatement.label);
+    let breakable;
+    const label = breakStatement.label;
+    if (label) {
+      breakable = this.breakables.find(b => b.label === label.getText());
+    } else {
+      breakable = this.breakables[this.breakables.length - 1];
+    }
+
     if (breakable) {
       const breakTarget = breakable.breakTarget;
       return this.createBlockPredecessorOf(breakTarget);
@@ -268,7 +267,7 @@ export class CfgBuilder {
     firstLoopStatementBlock: CfgBlock,
     current: CfgBlock,
   ): CfgBlock {
-    if (this.conditionAlwaysTrue(whileLoop.expression)) {
+    if (whileLoop.expression.kind === SyntaxKind.TrueKeyword) {
       return this.createBlockPredecessorOf(firstLoopStatementBlock);
     } else {
       return this.createBranchingBlock(
@@ -277,24 +276,6 @@ export class CfgBuilder {
         current,
       );
     }
-  }
-
-  private conditionAlwaysTrue(expression: ts.Expression): boolean {
-    switch (expression.kind) {
-      case SyntaxKind.TrueKeyword:
-        return true;
-      case SyntaxKind.ParenthesizedExpression:
-        return this.conditionAlwaysTrue((expression as ts.ParenthesizedExpression).expression);
-      case SyntaxKind.BinaryExpression: {
-        const binaryExpression = expression as ts.BinaryExpression;
-        switch (binaryExpression.operatorToken.kind) {
-          case SyntaxKind.AmpersandAmpersandToken: {
-            return this.conditionAlwaysTrue(binaryExpression.left) && this.conditionAlwaysTrue(binaryExpression.right);
-          }
-        }
-      }
-    }
-    return false;
   }
 
   private buildForEachLoop(current: CfgBlock, forEach: ts.ForOfStatement | ts.ForInStatement): CfgBlock {
