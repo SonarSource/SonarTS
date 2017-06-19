@@ -94,7 +94,7 @@ export class CfgBuilder {
       case SyntaxKind.ReturnStatement:
         const returnStatement = statement as ts.ReturnStatement;
         const returnBlock = this.createBlockPredecessorOf(this.end);
-        returnBlock.addElement(returnStatement.getFirstToken()); // The return keyword
+        returnBlock.addElement(returnStatement);
         return returnStatement.expression ? this.buildExpression(returnBlock, returnStatement.expression) : returnBlock;
 
       // Just add declaration statement as element to the current cfg block. Do not enter inside.

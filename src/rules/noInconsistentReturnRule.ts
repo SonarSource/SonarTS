@@ -65,5 +65,4 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     const lastElement = elements[elements.length - 1];
     return lastElement.startsWith("return");
   }
-
 }

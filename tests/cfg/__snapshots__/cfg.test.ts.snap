@@ -6235,7 +6235,7 @@ a
     Object {
       "id": "1.1",
       "label": "true
-return",
+return true;",
       "physics": false,
     },
     Object {
