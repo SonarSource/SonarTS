@@ -42,16 +42,18 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
     if (!func.body) return;
     const cfg = ControlFlowGraph.fromStatements(func.body.statements);
-    const end = cfg.findEnd();
-    if (end) {
-      const allExplicit = end.predecessors.every(this.lastElementIsReturn.bind(this));
-      const allImplicit = end.predecessors.every(this.lastElementIsNotReturn.bind(this));
-      if (!(allExplicit || allImplicit)) {
-        this.addFailureAt(
-          func.getFirstToken().getStart(),
-          func.getFirstToken().getWidth(),
-          'Refactor this function to use "return" consistently',
-        );
+    if (cfg) {
+      const end = cfg.findEnd();
+      if (end) {
+        const allExplicit = end.predecessors.every(this.lastElementIsReturn.bind(this));
+        const allImplicit = end.predecessors.every(this.lastElementIsNotReturn.bind(this));
+        if (!(allExplicit || allImplicit)) {
+          this.addFailureAt(
+            func.getFirstToken().getStart(),
+            func.getFirstToken().getWidth(),
+            'Refactor this function to use "return" consistently',
+          );
+        }
       }
     }
   }

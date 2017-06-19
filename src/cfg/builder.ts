@@ -37,22 +37,26 @@ export class CfgBuilder {
   private blocks: CfgBlock[] = [this.end];
   private breakables: Breakable[] = [];
 
-  public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph {
+  public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph | undefined {
     const current = this.createBlock();
     current.addSuccessor(this.end);
-    const start = this.buildStatements(current, statements);
+    try {
+      const start = this.buildStatements(current, statements);
 
-    const graph = new ControlFlowGraph(this.blocks);
-    graph.addStart(start);
-    graph.finalize();
-    start.addElement(
-      {
-        getText() {
-          return "START";
-        },
-      } as ts.Expression,
-    );
-    return graph;
+      const graph = new ControlFlowGraph(this.blocks);
+      graph.addStart(start);
+      graph.finalize();
+      start.addElement(
+        {
+          getText() {
+            return "START";
+          },
+        } as ts.Expression,
+      );
+      return graph;
+    } catch (error) {
+      return;  // Silent for the time being
+    }
   }
 
   private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {

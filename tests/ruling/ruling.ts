@@ -54,15 +54,9 @@ export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: stri
     files.forEach(file => {
       rules.forEach(Rule => {
         const rule = initRule(Rule);
-        try {
-          const errorLines = runRuleOnProjectFile(rule, file, program);
-          const ruleName = (Rule as any).metadata.ruleName;
-          results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);
-        } catch (error) {
-          if (error.toString().indexOf("Try") < 0) {
-            console.log("Error while analyzing " + file.fileName + " " + error);
-          }
-        }
+        const errorLines = runRuleOnProjectFile(rule, file, program);
+        const ruleName = (Rule as any).metadata.ruleName;
+        results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);
       });
     });
   });
