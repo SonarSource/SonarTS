@@ -340,17 +340,18 @@ it("continue statement", () => {
   expect(buildVisFromSource("for (elem of obj) { if (subcond) continue; stmt; } ")).toMatchSnapshot();
   expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue; stmt; } ")).toMatchSnapshot();
   expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue foo; stmt; } ")).toMatchSnapshot();
-
 });
 
 it("double continue", () => {
-  expect(buildVisFromSource(`
+  expect(
+    buildVisFromSource(`
   outer:while(b) {
    continue outer;
    while (a) {
      continue;
    }
-  }`)).toMatchSnapshot();
+  }`),
+  ).toMatchSnapshot();
 });
 
 it("break statement", () => {
@@ -378,7 +379,8 @@ it("break statement", () => {
   // switch
   expect(buildVisFromSource("switch (a) { case 1: stmt1; break; case 2: stmt2; }")).toMatchSnapshot();
   expect(buildVisFromSource("foo: switch (a) { case 1: stmt1; break; case 2: stmt2; }")).toMatchSnapshot();
-  expect(buildVisFromSource(`
+  expect(
+    buildVisFromSource(`
   foo: switch(a) {
     case 1:
       stmt1; break;
@@ -395,12 +397,13 @@ it("break statement", () => {
       stmt21;
     case 3:
       stmt3;
-  }`)).toMatchSnapshot();
-
+  }`),
+  ).toMatchSnapshot();
 });
 
 it("labels", () => {
-  expect(buildVisFromSource(`
+  expect(
+    buildVisFromSource(`
   label1:
   while(a1) {
     while(a2) {
@@ -408,9 +411,11 @@ it("labels", () => {
       c;
     }
     d;
-  }`)).toMatchSnapshot();
+  }`),
+  ).toMatchSnapshot();
 
-  expect(buildVisFromSource(`
+  expect(
+    buildVisFromSource(`
   foo:
   while (a) {
     c;
@@ -420,15 +425,18 @@ it("labels", () => {
       e;
     }
     d;
-  }`)).toMatchSnapshot();
+  }`),
+  ).toMatchSnapshot();
 });
 
 it("mix continue/break statement", () => {
-  expect(buildVisFromSource(`
+  expect(
+    buildVisFromSource(`
   while(a1) {
     while(a2) continue;
     if (b) break;
-  }`)).toMatchSnapshot();
+  }`),
+  ).toMatchSnapshot();
 });
 
 function buildVisFromSource(source: string, scriptKind: ts.ScriptKind = ts.ScriptKind.TSX) {
