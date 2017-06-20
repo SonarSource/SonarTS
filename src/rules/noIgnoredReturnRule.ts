@@ -21,8 +21,6 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 
-// https://jira.sonarsource.com/browse/RSPEC-2201
-
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     description: "Return values should not be ignored when function calls don't have any side effects",

@@ -22,8 +22,6 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 
-// https://jira.sonarsource.com/browse/RSPEC-3923
-
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-all-duplicated-branches",
