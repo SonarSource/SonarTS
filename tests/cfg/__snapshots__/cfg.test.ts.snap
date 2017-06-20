@@ -208,7 +208,8 @@ cond
     Object {
       "id": "1.1",
       "label": "bar
-bar()",
+bar()
+throw bar();",
       "physics": false,
     },
     Object {
