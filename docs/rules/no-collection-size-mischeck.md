@@ -4,7 +4,7 @@ The size of a collection and the length of an array are always greater than or e
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 if (someSet.size >= 0) {...} // Noncompliant
 
 if (someMap.size < 0) {...} // Noncompliant

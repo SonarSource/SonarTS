@@ -9,12 +9,12 @@ of known objects & functions.
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 'hello'.lastIndexOf('e');
 ```
 
 ## Compliant Solution
 
-```javascript
+```typescript
 let char = 'hello'.lastIndexOf('e'); 
 ```

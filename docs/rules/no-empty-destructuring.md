@@ -9,7 +9,7 @@ This rule raises an issue when empty destructuring pattern is used.
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 var { a: {}, b } = myObj; // Noncompliant
 function foo({ first: [], second }) { // Noncompliant
   // ...
@@ -18,7 +18,7 @@ function foo({ first: [], second }) { // Noncompliant
 
 ## Compliant Solution
 
-```javascript
+```typescript
 var { a = {}, b } = myObj;
 function foo({ first = [], second }) {
   // ...

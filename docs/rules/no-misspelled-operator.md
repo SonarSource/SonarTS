@@ -5,7 +5,7 @@ This rule raises an issue when `=+`, `=-`, or `=!` is used without any spacing b
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 let target =-5;
 let num = 3;
 
@@ -15,7 +15,7 @@ target =+ num; // Noncompliant; target = 3
 
 ## Compliant Solution
 
-```javascript
+```typescript
 let target = -5;
 let num = 3;
 

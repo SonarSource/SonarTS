@@ -10,7 +10,7 @@ This rule ignores `*`, `+`, and `=`.
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 if ( a == a ) { // always true
   doZ();
 }
@@ -39,7 +39,7 @@ Similarly, left-shifting 1 onto 1 is common in the construction of bit masks, an
 
 Moreover comma operator , and `instanceof` operator are ignored as there are use-cases when there usage is valid.
 
-```javascript
+```typescript
 if (f !== f) { // test for NaN value
   console.log("f is NaN");
 }

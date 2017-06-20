@@ -6,7 +6,7 @@ functions return `undefined`, which is probably not what was intended.
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 function foo() {}
 a = foo();
 ```

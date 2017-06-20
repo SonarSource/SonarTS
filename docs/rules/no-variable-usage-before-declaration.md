@@ -10,7 +10,7 @@ To minimize confusion as much as possible, variables should always be declared b
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 var x = 1;
 
 function fun() {
@@ -25,7 +25,7 @@ fun(); // Unexpectedly alerts "undefined" instead of "1"
 
 ## Compliant Solution
 
-```javascript
+```typescript
 var x = 1;
 
 function fun() {

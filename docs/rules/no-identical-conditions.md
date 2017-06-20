@@ -16,7 +16,7 @@ but future maintainers may not notice that.
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 if (param == 1)
   openWindow();
 else if (param == 2)

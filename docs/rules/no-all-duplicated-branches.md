@@ -7,7 +7,7 @@ or there shouldn't be a `switch`/`if` chain at all. Note that this rule does not
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 if (b == 0) {  // Noncompliant
   doOneMoreThing();
 }
