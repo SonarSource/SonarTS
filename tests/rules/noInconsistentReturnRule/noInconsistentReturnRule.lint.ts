@@ -50,6 +50,7 @@ function explicitUndefinedDeclaration(p: boolean): number | undefined {
 }
 
 function empty() {
+
 }
 
 function explicitUndefinedDeclaration1(p: boolean): undefined {

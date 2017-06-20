@@ -79,6 +79,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   private lastElementIsExplicitReturn(cfgBlock: CfgBlock): boolean {
     const elements = cfgBlock.getElements();
     const lastElement = elements[elements.length - 1];
+    if (!lastElement) {
+      return false;
+    }
     return lastElement.kind === ts.SyntaxKind.ReturnStatement && !!(lastElement as ts.ReturnStatement).expression;
   }
 
