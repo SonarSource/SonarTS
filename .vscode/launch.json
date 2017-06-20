@@ -12,8 +12,7 @@
             "stopOnEntry": false,
             "args": [
                 "--runInBand",
-                "--no-cache",
-                "-t='^((?!ruling).)*$'"
+                "--no-cache"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": null,
