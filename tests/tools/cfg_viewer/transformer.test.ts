@@ -60,11 +60,11 @@ it("should create branch", () => {
   graph.addStart(condition);
 
   expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visBranchingNode("1", condition), visNode("1.1", trueBlock), visNode("1.2", falseBlock)]),
+    nodes: new DataSet([visBranchingNode("3", condition), visNode("1", trueBlock), visNode("2", falseBlock)]),
 
     edges: new DataSet([
-      { id: 0, from: "1", to: "1.1", arrows: "to", label: "true" },
-      { id: 1, from: "1", to: "1.2", arrows: "to", label: "false" },
+      { id: 0, from: "3", to: "1", arrows: "to", label: "true" },
+      { id: 1, from: "3", to: "2", arrows: "to", label: "false" },
     ]),
   });
 });
@@ -78,11 +78,11 @@ it("should create a loop between nodes", () => {
   body.addSuccessor(condition);
 
   expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visBranchingNode("1", condition), visNode("1.1", body), visNode("1.2", end)]),
+    nodes: new DataSet([visBranchingNode("3", condition), visNode("1", body), visNode("2", end)]),
     edges: new DataSet([
-      { id: 0, from: "1", to: "1.1", arrows: "to", label: "true" },
-      { id: 1, from: "1", to: "1.2", arrows: "to", label: "false" },
-      { id: 2, from: "1.1", to: "1", arrows: "to" },
+      { id: 0, from: "1", to: "3", arrows: "to" },
+      { id: 1, from: "3", to: "1", arrows: "to", label: "true" },
+      { id: 2, from: "3", to: "2", arrows: "to", label: "false" },
     ]),
   });
 });
@@ -95,8 +95,8 @@ it("should create unique edge ids", () => {
   graph.addStart(a);
 
   expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visNode("1", a), visNode("1.1", b)]),
-    edges: new DataSet([{ id: 0, from: "1", to: "1.1", arrows: "to" }, { id: 1, from: "1", to: "1.1", arrows: "to" }]),
+    nodes: new DataSet([visNode("1", a), visNode("2", b)]),
+    edges: new DataSet([{ id: 0, from: "1", to: "2", arrows: "to" }, { id: 1, from: "1", to: "2", arrows: "to" }]),
   });
 });
 
@@ -109,12 +109,14 @@ function branchingBlock(
 ): cfg.CfgBranchingBlock {
   const block = new cfg.CfgBranchingBlock("branching", trueSuccessor, falseSuccessor);
   addElements(block, ...elements);
+  graph.blocks.push(block);
   return block;
 }
 
 function createBlock(...elements: string[]): cfg.CfgGenericBlock {
   const block = new cfg.CfgGenericBlock();
   addElements(block, ...elements);
+  graph.blocks.push(block);
   return block;
 }
 

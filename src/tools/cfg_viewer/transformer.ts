@@ -29,8 +29,9 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
   const viewerNodes: any[] = [];
   const viewerEdges: any[] = [];
   let edgeCounter = 0;
+  let blockCounter = 1;
 
-  cfg.getBlocks().forEach(block => {
+  cfg.getBlocks().map(block => { block.id = "" + blockCounter++; return block; }).forEach(block => {
 
     let label = block.getLabel();
     if (block === cfg.getStart()) {

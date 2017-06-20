@@ -1,4 +1,4 @@
-/*
+  /*
  * SonarTS
  * Copyright (C) 2017-2017 SonarSource SA
  * mailto:info AT sonarsource DOT com
@@ -42,9 +42,10 @@ export class CfgBuilder {
     current.addSuccessor(this.end);
     try {
       const start = this.buildStatements(current, statements);
-
+      
       const graph = new ControlFlowGraph(this.blocks);
       graph.addStart(start);
+      graph.addEnd(this.end);
       graph.finalize();
       return graph;
     } catch (error) {
@@ -234,7 +235,7 @@ export class CfgBuilder {
     this.createLoopBreakable(current, whileConditionStartBlockPlaceholder, doWhileLoop);
     const doBlockEnd = this.createBlock();
     const doBlockStart = this.buildStatement(doBlockEnd, doWhileLoop.statement);
-    const whileBlockEnd = new CfgBranchingBlock(
+    const whileBlockEnd = this.createBranchingBlock(
       "do while(" + doWhileLoop.expression.getText() + ")",
       doBlockStart,
       current,
@@ -309,7 +310,7 @@ export class CfgBuilder {
     let loopRoot: CfgBlock;
     if (forLoop.condition) {
       loopRoot = this.buildExpression(
-        new CfgBranchingBlock(this.forLoopLabel(forLoop), firstBlockInLoopStatement, current),
+        this.createBranchingBlock(this.forLoopLabel(forLoop), firstBlockInLoopStatement, current),
         forLoop.condition,
       );
     } else {
@@ -446,7 +447,7 @@ export class CfgBuilder {
         const whenFalse = this.buildExpression(this.createBlockPredecessorOf(current), conditionalExpression.whenFalse);
         const whenTrue = this.buildExpression(this.createBlockPredecessorOf(current), conditionalExpression.whenTrue);
         return this.buildExpression(
-          new CfgBranchingBlock(expression.getText(), whenTrue, whenFalse),
+          this.createBranchingBlock(expression.getText(), whenTrue, whenFalse),
           conditionalExpression.condition,
         );
 
@@ -647,7 +648,7 @@ export class CfgBuilder {
           whenTrue = this.createBlockPredecessorOf(current);
         }
         whenTrue = this.buildExpression(whenTrue, expression.right);
-        const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
+        const branching = this.createBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
         return this.buildExpression(branching, expression.left);
       }
       case SyntaxKind.BarBarToken: {
@@ -659,7 +660,7 @@ export class CfgBuilder {
           whenFalse = this.createBlockPredecessorOf(current);
         }
         whenFalse = this.buildExpression(whenFalse, expression.right);
-        const branching = new CfgBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
+        const branching = this.createBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
         return this.buildExpression(branching, expression.left);
       }
     }
