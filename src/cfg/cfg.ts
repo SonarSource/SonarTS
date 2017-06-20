@@ -21,8 +21,9 @@ import * as ts from "typescript";
 import { CfgBuilder } from "./builder";
 
 export class ControlFlowGraph {
-  private start: CfgBlock;
-  private blocks: CfgBlock[];
+  public start: CfgBlock;
+  public end: CfgEndBlock;
+  public blocks: CfgBlock[];
 
   constructor(blocks: CfgBlock[] = []) {
     this.blocks = blocks;
@@ -33,52 +34,39 @@ export class ControlFlowGraph {
   }
 
   public getBlocks(): CfgBlock[] {
-    const graphBlocks: CfgBlock[] = [];
-    collectBlocks(this.start, "1");
-    return graphBlocks.concat(
-      this.blocks.filter(block => !graphBlocks.includes(block)).map((block, idx) => {
-        block.id = "dead " + idx;
-        return block;
-      }),
-    );
-
-    function collectBlocks(block: CfgBlock, baseId: string) {
-      if (graphBlocks.includes(block)) return;
-      block.id = baseId;
-      graphBlocks.push(block);
-      block.getSuccessors().forEach((successor, i) => collectBlocks(successor, baseId + "." + (i + 1)));
-    }
+    return this.blocks;
   }
 
   public addStart(start: CfgBlock) {
     this.start = start;
   }
 
+  public addEnd(end: CfgEndBlock) {
+    this.end = end;
+  }
+
   public finalize() {
-    const blocks = this.blocks;
+    const blocks = [...this.blocks];
     this.makeBidirectional();
     const visited: CfgBlock[] = [];
-    const end = this.findEnd();
-    if (end) {
-      collapseEmpty(end);
-    } else {
-      // We are in a loop, so we collapse arbitrarily from the start node
-      collapseEmpty(this.start);
-    }
+    collapseEmpty(this.blocks);
+    this.blocks = blocks;
     this.makeBidirectional();
 
-    function collapseEmpty(block: CfgBlock) {
-      if (visited.includes(block)) return;
-      visited.push(block);
-      if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
-        const successor = block.getSuccessors()[0];
-        blocks.splice(blocks.indexOf(block), 1);
-        if (block instanceof CfgBlockWithPredecessors) {
-          block.predecessors.forEach(predecessor => predecessor.replaceSuccessor(block, successor));
+    function collapseEmpty(thisBlocks: CfgBlock[]) {
+      for (const block of thisBlocks) {
+        if (visited.includes(block)) return;
+        visited.push(block);
+        if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
+          const successor = block.getSuccessors()[0];
+          blocks.splice(blocks.indexOf(block), 1);
+          if (block instanceof CfgBlockWithPredecessors) {
+            block.predecessors.forEach(predecessor => {
+              predecessor.replaceSuccessor(block, successor);
+              successor.replacePredecessor(block, predecessor);
+            });
+          }
         }
-      }
-      if (block instanceof CfgBlockWithPredecessors) {
-        block.predecessors.forEach(collapseEmpty);
       }
     }
   }
@@ -98,10 +86,6 @@ export class ControlFlowGraph {
     });
   }
 
-  public findEnd(): CfgEndBlock | undefined {
-    return this.getBlocks().find(block => block.getSuccessors().length === 0) as CfgEndBlock;
-  }
-
   public getStart(): CfgBlock {
     return this.start;
   }
@@ -118,12 +102,19 @@ export interface CfgBlock {
 
   replaceSuccessor(what: CfgBlock, withWhat: CfgBlock): void;
 
+  replacePredecessor(what: CfgBlock, withWhat: CfgBlock): void;
+
   getLabel(): string;
 }
 
 export abstract class CfgBlockWithPredecessors {
   public id: string = "";
   public predecessors: CfgBlock[] = [];
+
+  public replacePredecessor(what: CfgBlock, withWhat: CfgBlock): void {
+    const index = this.predecessors.indexOf(what);
+    this.predecessors[index] = withWhat;
+  }
 }
 
 export abstract class CfgBlockWithElements extends CfgBlockWithPredecessors {
