@@ -71,3 +71,18 @@ function explicitVoidDeclaration(p: boolean): void {
   }
 
 }
+
+function withThrowAndExplicitReturn(cond: boolean) {
+  if (cond) {
+    throw "";
+  }
+
+  return 42;
+}
+
+function withThrowAndImplicitReturn(cond: boolean) {
+  if (cond) {
+    throw "";
+  }
+  console.log("bar");
+}
