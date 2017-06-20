@@ -31,7 +31,17 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
   let edgeCounter = 0;
 
   cfg.getBlocks().forEach(block => {
-    viewerNodes.push({ id: block.id, label: block.getLabel(), physics: false });
+
+    let label = block.getLabel();
+    if (block === cfg.getStart()) {
+      if (label === "") {
+        label = "START";
+      } else {
+        label = "START\n" + label;
+      }
+    }
+
+    viewerNodes.push({ id: block.id, label, physics: false });
 
     if (block instanceof CfgBranchingBlock) {
       viewerEdges.push(createEdge(block, block.getTrueSuccessor(), "true"));

@@ -131,9 +131,21 @@ function addElements(block: cfg.CfgBlock, ...elements: string[]) {
 }
 
 function visNode(id: string, block: cfg.CfgBlock) {
-  return { id, label: block.getLabel(), physics: false };
+  return { id, label: getLabel(block), physics: false };
 }
 
 function visBranchingNode(id: string, block: cfg.CfgBlock) {
-  return { id, label: block.getLabel(), physics: false };
+  return { id, label: getLabel(block), physics: false };
+}
+
+function getLabel(block: cfg.CfgBlock): string {
+  let label = block.getLabel();
+  if (block === graph.getStart()) {
+    if (label === "") {
+      label = "START";
+    } else {
+      label = "START\n" + label;
+    }
+  }
+  return label;
 }

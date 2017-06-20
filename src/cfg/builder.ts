@@ -46,13 +46,6 @@ export class CfgBuilder {
       const graph = new ControlFlowGraph(this.blocks);
       graph.addStart(start);
       graph.finalize();
-      start.addElement(
-        {
-          getText() {
-            return "START";
-          },
-        } as ts.Expression,
-      );
       return graph;
     } catch (error) {
       return;  // Silent for the time being
