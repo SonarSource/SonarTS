@@ -11,6 +11,6 @@
     "no-self-assignment": true,
     "no-variable-usage-before-declaration": true,
     "no-misspelled-operator": true,
-    "no-inconsistent-return": true
+    "no-inconsistent-return": false
   }
 }
