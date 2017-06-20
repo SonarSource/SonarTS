@@ -29,7 +29,7 @@ export class Rule extends tslint.Rules.TypedRule {
     optionsDescription: "",
     rspecKey: "RSPEC-3801",
     ruleName: "no-inconsistent-return",
-    type: "functionality",
+    type: "maintainability",
     typescriptOnly: false,
   };
 
@@ -59,9 +59,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       const end = cfg.findEnd();
       if (end) {
         const predecessors = end.predecessors.filter(block => block === start || this.blockHasPredecessors(block));
-        const allExplicit = predecessors.every(this.lastElementIsExplicitReturn.bind(this));
-        const allImplicit = predecessors.every(this.lastElementIsNotExplicitReturn.bind(this));
-        if (!(allExplicit || allImplicit)) {
+        const hasExplicit = predecessors.find(this.lastElementIsExplicitReturn.bind(this));
+        const hasImplicit = predecessors.find(this.lastElementIsNotExplicitReturn.bind(this));
+        if (hasExplicit && hasImplicit) {
           this.addFailureAt(
             func.getFirstToken().getStart(),
             func.getFirstToken().getWidth(),
@@ -73,13 +73,26 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private lastElementIsNotExplicitReturn(cfgBlock: CfgBlock): boolean {
-    return !this.lastElementIsExplicitReturn(cfgBlock);
+    const elements = cfgBlock.getElements();
+    const lastElement = elements[elements.length - 1];
+    if (!lastElement) {
+      return false;
+    }
+
+    if (lastElement.kind === ts.SyntaxKind.ThrowStatement) {
+      return false;
+    }
+    return lastElement.kind !== ts.SyntaxKind.ReturnStatement || !(lastElement as ts.ReturnStatement).expression;
   }
 
   private lastElementIsExplicitReturn(cfgBlock: CfgBlock): boolean {
     const elements = cfgBlock.getElements();
     const lastElement = elements[elements.length - 1];
     if (!lastElement) {
+      return false;
+    }
+
+    if (lastElement.kind === ts.SyntaxKind.ThrowStatement) {
       return false;
     }
     return lastElement.kind === ts.SyntaxKind.ReturnStatement && !!(lastElement as ts.ReturnStatement).expression;
