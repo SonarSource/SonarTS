@@ -216,7 +216,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
         this.methodWithNoSideEffect(objectType, methodName) &&
         !this.isReplaceWithCallBack(methodName, node.arguments)
       ) {
-        this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Walker.message(methodName)));
+        this.addFailureAtNode(node, Walker.message(methodName));
       }
     }
 

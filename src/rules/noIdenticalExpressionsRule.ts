@@ -77,9 +77,7 @@ class Walker extends tslint.RuleWalker {
 
   public visitBinaryExpression(node: ts.BinaryExpression) {
     if (this.hasRelevantOperator(node) && !this.isOneOntoOneShifting(node) && areEquivalent(node.left, node.right)) {
-      this.addFailure(
-        this.createFailure(node.getStart(), node.getWidth(), Rule.formatMessage(node.operatorToken.getText())),
-      );
+      this.addFailureAtNode(node, Rule.formatMessage(node.operatorToken.getText()));
     }
 
     super.visitBinaryExpression(node);
