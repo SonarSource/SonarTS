@@ -7,7 +7,6 @@ src/TypeScript/src/compiler/transformers/generators.ts: 220,220,220,220
 src/TypeScript/src/compiler/sourcemap.ts: 460,460,460,460
 src/TypeScript/src/compiler/program.ts: 251,251,251,251
 src/TypeScript/src/compiler/commandLineParser.ts: 1358,1383,1358,1383,1358,1383,1358,1383,1358,1383
-src/TypeScript/src/compiler/tsc.ts: 99
 src/TypeScript/src/services/classifier.ts: 576,576,576
 src/TypeScript/src/services/pathCompletions.ts: 410,410,410
 src/TypeScript/src/services/completions.ts: 1486,1486,1486
@@ -74,7 +73,6 @@ src/angular/packages/upgrade/test/common/test_helpers.ts: 23
 src/angular/tools/@angular/tsc-wrapped/src/tsc.ts: 85
 src/angular/tools/tsc-watch/tsc_watch.ts: 156
 src/ant-design/components/button/button.tsx: 15
-src/console/src/utils/relay.ts: 28
 src/console/src/utils/location.ts: 1
 src/postgraphql/src/interface/collection/Condition.ts: 39
 src/postgraphql/src/interface/type/switchType.ts: 39
@@ -109,17 +107,12 @@ src/searchkit/src/core/query/query_dsl/full_text/MatchQuery.ts: 12
 src/searchkit/src/core/query/query_dsl/full_text/MultiMatchQuery.ts: 12
 src/vscode/build/lib/bundle.ts: 587
 src/vscode/build/lib/i18n.ts: 637,947
-src/vscode/extensions/git/src/askpass-main.ts: 20
 src/vscode/extensions/markdown/src/extension.ts: 203
 src/vscode/src/vs/base/common/strings.ts: 204
 src/vscode/src/vs/base/browser/dom.ts: 919
 src/vscode/src/vs/base/common/objects.ts: 49
-src/vscode/src/vs/base/common/filters.ts: 582
 src/vscode/src/vs/base/common/jsonEdit.ts: 14
 src/vscode/src/vs/base/common/uuid.ts: 105
-src/vscode/src/vs/base/node/flow.ts: 14
-src/vscode/src/vs/base/node/extfs.ts: 190,266,335
-src/vscode/src/vs/base/node/ports.ts: 35
 src/vscode/src/vs/platform/contextkey/common/contextkey.ts: 97
 src/vscode/src/vs/editor/common/config/editorOptions.ts: 563,612
 src/vscode/src/vs/code/electron-main/paths.ts: 100
@@ -130,4 +123,3 @@ src/vscode/src/vs/editor/common/modes/monarch/monarchCompile.ts: 389
 src/vscode/src/vs/editor/browser/standalone/standaloneLanguages.ts: 63,193
 src/vscode/src/vs/workbench/api/node/extHostTypeConverters.ts: 374
 src/vscode/src/vs/workbench/api/node/extHostConfiguration.ts: 15
-src/vscode/src/vs/workbench/browser/parts/editor/editorCommands.ts: 75
