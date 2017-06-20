@@ -15,6 +15,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`])
 * Variables should not be self-assigned ([`no-self-assignment`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
+* Functions should use "return" consistently ([`no-inconsistent-return`])
 
 [`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
@@ -26,6 +27,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 [`no-variable-usage-before-declaration`]: ./docs/rules/no-variable-usage-before-declaration.md
 [`no-self-assignment`]: ./docs/rules/no-self-assignment.md
 [`no-misspelled-operator`]: ./docs/rules/no-misspelled-operator.md
+[`no-inconsistent-return`]: ./docs/rules/no-inconsistent-return.md
 
 ## Installation
 * If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).
