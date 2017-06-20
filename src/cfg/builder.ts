@@ -122,7 +122,9 @@ export class CfgBuilder {
 
       case SyntaxKind.ThrowStatement:
         const throwStatement = statement as ts.ThrowStatement;
-        return this.buildExpression(this.createBlockPredecessorOf(this.end), throwStatement.expression);
+        const throwBlock = this.createBlockPredecessorOf(this.end);
+        throwBlock.addElement(throwStatement);
+        return this.buildExpression(throwBlock, throwStatement.expression);
 
       case SyntaxKind.LabeledStatement:
         return this.buildLabeledStatement(current, statement as ts.LabeledStatement);
