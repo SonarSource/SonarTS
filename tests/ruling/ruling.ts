@@ -77,20 +77,21 @@ export function writeResults(results: Results) {
   });
 }
 
-export function checkResults(expected: Results) {
-  const expectedRules = Object.keys(expected);
-  const actual: Results = readSnapshots(expectedRules);
+export function checkResults(actual: Results) {
+  const actualRules = Object.keys(actual);
+  const expected: Results = readSnapshots(actualRules);
   let passed = true;
 
-  expectedRules.forEach(rule => {
+  actualRules.forEach(rule => {
     const expectedFiles = expected[rule];
     const actualFiles = actual[rule] || {};
+    const allFiles = lodash.union(Object.keys(actualFiles), Object.keys(expectedFiles));
 
-    Object.keys(expectedFiles).forEach(file => {
-      const expectedLines = expectedFiles[file];
+    allFiles.forEach(file => {
+      const expectedLines = expectedFiles[file] || [];
       const actualLines = actualFiles[file] || [];
 
-      const missingLines = lodash.difference(actualLines, expectedLines);
+      const missingLines = lodash.difference(expectedLines, actualLines);
       if (missingLines.length > 0) {
         passed = false;
         console.log("Missing issues:");
@@ -100,7 +101,7 @@ export function checkResults(expected: Results) {
         console.log();
       }
 
-      const extraLines = lodash.difference(expectedLines, actualLines);
+      const extraLines = lodash.difference(actualLines, expectedLines);
       if (extraLines.length > 0) {
         passed = false;
         console.log("Extra issues:");
