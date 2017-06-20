@@ -22,8 +22,6 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 
-// https://jira.sonarsource.com/browse/RSPEC-3923
-
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-all-duplicated-branches",
@@ -55,7 +53,7 @@ class Walker extends tslint.RuleWalker {
       const { branches, endsWithElse } = this.collectIfBranches(node);
 
       if (endsWithElse && this.allDuplicated(branches)) {
-        this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.MESSAGE));
+        this.addFailureAtNode(node, Rule.MESSAGE);
       }
     }
 
@@ -66,7 +64,7 @@ class Walker extends tslint.RuleWalker {
     const { branches, endsWithDefault } = this.collectSwitchBranches(node);
 
     if (endsWithDefault && this.allDuplicated(branches)) {
-      this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.MESSAGE));
+      this.addFailureAtNode(node, Rule.MESSAGE);
     }
 
     super.visitSwitchStatement(node);
@@ -76,7 +74,7 @@ class Walker extends tslint.RuleWalker {
     const branches = [node.whenTrue, node.whenFalse];
 
     if (this.allDuplicated(branches)) {
-      this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Rule.MESSAGE_CONDITIONAL_EXPRESSION));
+      this.addFailureAtNode(node, Rule.MESSAGE_CONDITIONAL_EXPRESSION);
     }
 
     super.visitConditionalExpression(node);

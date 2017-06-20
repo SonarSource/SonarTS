@@ -6,7 +6,7 @@ assignment instead.
 
 ## Noncompliant Code Example
 
-```javascript
+```typescript
 function setName(name) {
   name = name;
 }

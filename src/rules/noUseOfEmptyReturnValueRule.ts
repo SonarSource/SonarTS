@@ -21,8 +21,6 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 
-// https://jira.sonarsource.com/browse/RSPEC-3699
-
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     description: "The output of functions that don't return anything should not be used",

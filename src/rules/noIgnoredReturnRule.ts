@@ -21,8 +21,6 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 
-// https://jira.sonarsource.com/browse/RSPEC-2201
-
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     description: "Return values should not be ignored when function calls don't have any side effects",
@@ -216,7 +214,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
         this.methodWithNoSideEffect(objectType, methodName) &&
         !this.isReplaceWithCallBack(methodName, node.arguments)
       ) {
-        this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Walker.message(methodName)));
+        this.addFailureAtNode(node, Walker.message(methodName));
       }
     }
 

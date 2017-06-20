@@ -53,7 +53,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
         const property = (node.left as ts.PropertyAccessExpression).name.text;
 
         if ((property === "length" || property === "size") && this.isCollection(object)) {
-          this.addFailure(this.createFailure(node.getStart(), node.getWidth(), Walker.message(object.getText(), property)));
+          this.addFailureAtNode(node, Walker.message(object.getText(), property));
         }
       }
     }

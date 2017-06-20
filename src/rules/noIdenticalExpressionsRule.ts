@@ -22,8 +22,6 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 
-// https://jira.sonarsource.com/browse/RSPEC-1764
-
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-identical-expressions",
@@ -77,9 +75,7 @@ class Walker extends tslint.RuleWalker {
 
   public visitBinaryExpression(node: ts.BinaryExpression) {
     if (this.hasRelevantOperator(node) && !this.isOneOntoOneShifting(node) && areEquivalent(node.left, node.right)) {
-      this.addFailure(
-        this.createFailure(node.getStart(), node.getWidth(), Rule.formatMessage(node.operatorToken.getText())),
-      );
+      this.addFailureAtNode(node, Rule.formatMessage(node.operatorToken.getText()));
     }
 
     super.visitBinaryExpression(node);

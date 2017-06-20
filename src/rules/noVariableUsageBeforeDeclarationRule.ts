@@ -21,8 +21,6 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 
-// https://jira.sonarsource.com/browse/RSPEC-1526
-
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-variable-usage-before-declaration",
