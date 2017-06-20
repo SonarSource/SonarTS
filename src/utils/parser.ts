@@ -31,10 +31,20 @@ export function parseString(source: string): ts.SourceFile {
   return ts.createSourceFile("filename.ts", source, TARGET, true, ts.ScriptKind.TSX);
 }
 
+/**
+ * @throws if parsing error
+ */
 export function parseFile(filename: string): { sourceFile: ts.SourceFile; program: ts.Program } {
   const compilerOptions = ts.getDefaultCompilerOptions();
   compilerOptions.jsx = ts.JsxEmit.React;
   compilerOptions.target = TARGET;
   const program = ts.createProgram([filename], compilerOptions);
+
+  if (program.getSyntacticDiagnostics().length > 0) {
+    const firstError = program.getSyntacticDiagnostics()[0];
+    const pos = firstError.file.getLineAndCharacterOfPosition(firstError.start);
+    throw new Error(`Parsing error at position [${pos.line + 1}, ${pos.character}]`);
+  }
+
   return { sourceFile: program.getSourceFile(filename), program };
 }
