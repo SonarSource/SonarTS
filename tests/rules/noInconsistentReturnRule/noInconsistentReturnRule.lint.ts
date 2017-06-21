@@ -86,3 +86,48 @@ function withThrowAndImplicitReturn(cond: boolean) {
   }
   console.log("bar");
 }
+
+var arrowWithExpressionBody = (p) => p ? true : false;
+
+var inconsistentArrow = (p) => {if (p) { return true; } return; };
+//                          ^^  {{Refactor this function to use "return" consistently}}
+
+  function* inconsistentGenerator(p) {
+//^^^^^^^^  {{Refactor this function to use "return" consistently}}
+  let i = 0
+  while(i < 10) {
+    yield i++;
+  }
+  if (p) {
+    return true;
+  }
+}
+
+class A {
+  inconsistentMethod(p) {
+//^^^^^^^^^^^^^^^^^^  {{Refactor this function to use "return" consistently}}
+    if (p) {
+      return true;
+    }
+  }
+
+  *inconsistentGenerator(p) {
+//^  {{Refactor this function to use "return" consistently}}
+    if (p) {
+      return;
+    }
+    return false;
+  }
+
+  private _value: number;
+
+  get value(): number {
+//^^^  {{Refactor this function to use "return" consistently}}
+    if (this._value) {
+      return this._value;
+    } else {
+      return;
+    }
+  }
+
+}
