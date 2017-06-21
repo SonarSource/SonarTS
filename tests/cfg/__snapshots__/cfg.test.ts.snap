@@ -594,7 +594,8 @@ Object {
     },
     Object {
       "id": "4",
-      "label": "a
+      "label": "START
+a
 <while(a)>",
       "physics": false,
     },
@@ -659,7 +660,8 @@ Object {
     },
     Object {
       "id": "4",
-      "label": "a
+      "label": "START
+a
 <while(a)>",
       "physics": false,
     },
@@ -724,7 +726,8 @@ Object {
     },
     Object {
       "id": "4",
-      "label": "a
+      "label": "START
+a
 <while(a)>",
       "physics": false,
     },
@@ -849,7 +852,8 @@ Object {
     },
     Object {
       "id": "3",
-      "label": "b
+      "label": "START
+b
 <if (b)>",
       "physics": false,
     },
@@ -914,7 +918,8 @@ Object {
     },
     Object {
       "id": "3",
-      "label": "b
+      "label": "START
+b
 <if (b)>",
       "physics": false,
     },
@@ -1173,7 +1178,8 @@ Object {
     },
     Object {
       "id": "6",
-      "label": "init",
+      "label": "START
+init",
       "physics": false,
     },
   ],
@@ -1260,7 +1266,8 @@ Object {
     },
     Object {
       "id": "6",
-      "label": "init",
+      "label": "START
+init",
       "physics": false,
     },
   ],
@@ -1413,7 +1420,8 @@ Object {
     },
     Object {
       "id": "5",
-      "label": "obj",
+      "label": "START
+obj",
       "physics": false,
     },
   ],
@@ -1489,7 +1497,8 @@ Object {
     },
     Object {
       "id": "5",
-      "label": "obj",
+      "label": "START
+obj",
       "physics": false,
     },
   ],
@@ -1642,7 +1651,8 @@ Object {
     },
     Object {
       "id": "5",
-      "label": "a
+      "label": "START
+a
 1
 <1>",
       "physics": false,
@@ -1855,7 +1865,8 @@ Object {
     },
     Object {
       "id": "14",
-      "label": "a
+      "label": "START
+a
 1
 <1>",
       "physics": false,
@@ -2431,7 +2442,8 @@ Object {
     },
     Object {
       "id": "4",
-      "label": "a
+      "label": "START
+a
 <while(a)>",
       "physics": false,
     },
@@ -2496,7 +2508,8 @@ Object {
     },
     Object {
       "id": "4",
-      "label": "a
+      "label": "START
+a
 <while(a)>",
       "physics": false,
     },
@@ -2561,7 +2574,8 @@ Object {
     },
     Object {
       "id": "4",
-      "label": "a
+      "label": "START
+a
 <while(a)>",
       "physics": false,
     },
@@ -2686,7 +2700,8 @@ Object {
     },
     Object {
       "id": "3",
-      "label": "b
+      "label": "START
+b
 <if (b)>",
       "physics": false,
     },
@@ -2751,7 +2766,8 @@ Object {
     },
     Object {
       "id": "3",
-      "label": "b
+      "label": "START
+b
 <if (b)>",
       "physics": false,
     },
@@ -3067,7 +3083,8 @@ Object {
     },
     Object {
       "id": "6",
-      "label": "init",
+      "label": "START
+init",
       "physics": false,
     },
   ],
@@ -3154,7 +3171,8 @@ Object {
     },
     Object {
       "id": "6",
-      "label": "init",
+      "label": "START
+init",
       "physics": false,
     },
   ],
@@ -3307,7 +3325,8 @@ Object {
     },
     Object {
       "id": "5",
-      "label": "obj",
+      "label": "START
+obj",
       "physics": false,
     },
   ],
@@ -3383,7 +3402,8 @@ Object {
     },
     Object {
       "id": "5",
-      "label": "obj",
+      "label": "START
+obj",
       "physics": false,
     },
   ],
@@ -3790,7 +3810,8 @@ Object {
     },
     Object {
       "id": "3",
-      "label": "b
+      "label": "START
+b
 <while(b)>",
       "physics": false,
     },
@@ -3975,7 +3996,8 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "END",
+      "label": "START
+END",
       "physics": false,
     },
   ],
@@ -3988,7 +4010,8 @@ Object {
   "nodes": Array [
     Object {
       "id": "1",
-      "label": "END",
+      "label": "START
+END",
       "physics": false,
     },
   ],
@@ -4387,7 +4410,8 @@ Object {
     },
     Object {
       "id": "2",
-      "label": "a",
+      "label": "START
+a",
       "physics": false,
     },
   ],
@@ -4964,7 +4988,8 @@ Object {
     },
     Object {
       "id": "6",
-      "label": "a1
+      "label": "START
+a1
 <while(a1)>",
       "physics": false,
     },
@@ -5051,7 +5076,8 @@ Object {
     },
     Object {
       "id": "6",
-      "label": "a
+      "label": "START
+a
 <while(a)>",
       "physics": false,
     },
@@ -5151,7 +5177,8 @@ Object {
     },
     Object {
       "id": "4",
-      "label": "a1
+      "label": "START
+a1
 <while(a1)>",
       "physics": false,
     },
@@ -7301,7 +7328,8 @@ Object {
     },
     Object {
       "id": "3",
-      "label": "x
+      "label": "START
+x
 <while(x)>",
       "physics": false,
     },
@@ -7338,7 +7366,8 @@ Object {
     },
     Object {
       "id": "3",
-      "label": "true",
+      "label": "START
+true",
       "physics": false,
     },
   ],

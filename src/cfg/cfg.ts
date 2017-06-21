@@ -63,6 +63,9 @@ export class ControlFlowGraph {
             successor.replacePredecessor(block, predecessor);
           });
         }
+        if (block === this.start) {
+          this.start = successor;
+        }
       }
     }
   }
