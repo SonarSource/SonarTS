@@ -46,30 +46,27 @@ export class ControlFlowGraph {
   }
 
   public finalize() {
-    const blocks = [...this.blocks];
     this.makeBidirectional();
-    const visited: CfgBlock[] = [];
-    collapseEmpty(this.blocks);
-    this.blocks = blocks;
+    this.collapseEmpty();
     this.makeBidirectional();
+  }
 
-    function collapseEmpty(thisBlocks: CfgBlock[]) {
-      for (const block of thisBlocks) {
-        if (visited.includes(block)) return;
-        visited.push(block);
-        if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
-          const successor = block.getSuccessors()[0];
-          blocks.splice(blocks.indexOf(block), 1);
-          if (block instanceof CfgBlockWithPredecessors) {
-            block.predecessors.forEach(predecessor => {
-              predecessor.replaceSuccessor(block, successor);
-              successor.replacePredecessor(block, predecessor);
-            });
-          }
+  private collapseEmpty() {
+    const originalBlocks = [...this.blocks];
+    for (const block of originalBlocks) {
+      if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
+        const successor = block.getSuccessors()[0];
+        this.blocks.splice(this.blocks.indexOf(block), 1);
+        if (block instanceof CfgBlockWithPredecessors) {
+          block.predecessors.forEach(predecessor => {
+            predecessor.replaceSuccessor(block, successor);
+            successor.replacePredecessor(block, predecessor);
+          });
         }
       }
     }
   }
+
 
   private makeBidirectional() {
     this.getBlocks().forEach(block => {
