@@ -39,7 +39,6 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
-
   public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
     if (!func.body) return;
     this.checkFunctionLikeDeclaration(func.getFirstToken(), func.body, func.type);
@@ -65,7 +64,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     if (this.declaredReturnTypeContainsVoidTypes(returnType)) return;
     const cfg = ControlFlowGraph.fromStatements(body.statements);
     if (cfg) {
-      const predecessors = cfg.end.predecessors.filter(block => block === cfg.start || this.blockHasPredecessors(block));
+      const predecessors = cfg.end.predecessors.filter(
+        block => block === cfg.start || this.blockHasPredecessors(block),
+      );
       const hasExplicit = predecessors.find(this.lastElementIsExplicitReturn);
       const hasImplicit = predecessors.find(this.lastElementIsNotExplicitReturn);
       if (hasExplicit && hasImplicit) {
@@ -82,7 +83,6 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     if (returnType) {
       if (returnType.kind === ts.SyntaxKind.UnionType && (returnType as ts.UnionTypeNode).types.find(isVoidType)) {
         return true;
-
       } else if (isVoidType(returnType)) {
         return true;
       }
@@ -127,5 +127,4 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
     return false;
   }
-
 }

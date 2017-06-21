@@ -1,4 +1,4 @@
-  /*
+/*
  * SonarTS
  * Copyright (C) 2017-2017 SonarSource SA
  * mailto:info AT sonarsource DOT com
@@ -22,12 +22,6 @@ import { CfgBlock, CfgBranchingBlock, CfgEndBlock, CfgGenericBlock, ControlFlowG
 
 const { SyntaxKind } = ts;
 
-class Breakable {
-  public continueTarget?: CfgBlock;
-  public breakTarget: CfgBlock;
-  public label: string | null;
-}
-
 function getLine(node: ts.Node): number {
   return node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line + 1;
 }
@@ -42,19 +36,14 @@ export class CfgBuilder {
     current.addSuccessor(this.end);
     try {
       const start = this.buildStatements(current, statements);
-      
-      const graph = new ControlFlowGraph(this.blocks);
-      graph.addStart(start);
-      graph.addEnd(this.end);
-      graph.finalize();
-      return graph;
+      return new ControlFlowGraph(start, this.end, this.blocks);
     } catch (error) {
-      return;  // Silent for the time being
+      return; // Silent for the time being
     }
   }
 
   private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
-    [...topDownStatements].reverse().forEach(statement => (current = this.buildStatement(current, statement)));
+    [...topDownStatements].reverse().forEach(statement => current = this.buildStatement(current, statement));
     return current;
   }
 
@@ -64,8 +53,7 @@ export class CfgBuilder {
         return current;
 
       case SyntaxKind.Block:
-        const block = statement as ts.Block;
-        return this.buildStatements(current, block.statements);
+        return this.buildStatements(current, (statement as ts.Block).statements);
 
       case SyntaxKind.ExpressionStatement:
         return this.buildExpression(current, (statement as ts.ExpressionStatement).expression);
@@ -87,13 +75,10 @@ export class CfgBuilder {
         return this.buildDoStatement(current, statement as ts.DoStatement);
 
       case SyntaxKind.SwitchStatement:
-        return this.buildSwitch(current, statement as ts.SwitchStatement);
+        return this.buildSwitchStatement(current, statement as ts.SwitchStatement);
 
       case SyntaxKind.ReturnStatement:
-        const returnStatement = statement as ts.ReturnStatement;
-        const returnBlock = this.createBlockPredecessorOf(this.end);
-        returnBlock.addElement(returnStatement);
-        return returnStatement.expression ? this.buildExpression(returnBlock, returnStatement.expression) : returnBlock;
+        return this.buildReturnStatement(statement as ts.ReturnStatement);
 
       // Just add declaration statement as element to the current cfg block. Do not enter inside.
       case SyntaxKind.DebuggerStatement:
@@ -346,7 +331,7 @@ export class CfgBuilder {
     );
   }
 
-  private buildSwitch(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
+  private buildSwitchStatement(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
     this.createNotLoopBreakable(current, CfgBuilder.getLabel(switchStatement));
     const afterSwitchBlock = current;
     let defaultBlockEnd: CfgGenericBlock | undefined;
@@ -380,6 +365,12 @@ export class CfgBuilder {
     });
     this.breakables.pop();
     return this.buildExpression(nextBlock, switchStatement.expression);
+  }
+
+  private buildReturnStatement(returnStatement: ts.ReturnStatement): CfgBlock {
+    const returnBlock = this.createBlockPredecessorOf(this.end);
+    returnBlock.addElement(returnStatement);
+    return returnStatement.expression ? this.buildExpression(returnBlock, returnStatement.expression) : returnBlock;
   }
 
   private buildForInitializer(current: CfgBlock, forInitializer: ts.Expression | ts.VariableDeclarationList): CfgBlock {
@@ -746,4 +737,10 @@ export class CfgBuilder {
     const keyword = forEachLoop.kind === SyntaxKind.ForInStatement ? "in" : "of";
     return `for(${forEachLoop.initializer.getText()} ${keyword} ${forEachLoop.expression.getText()})`;
   }
+}
+
+class Breakable {
+  public continueTarget?: CfgBlock;
+  public breakTarget: CfgBlock;
+  public label: string | null;
 }

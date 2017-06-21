@@ -29,20 +29,10 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
   const viewerNodes: any[] = [];
   const viewerEdges: any[] = [];
   let edgeCounter = 0;
-  let blockCounter = 1;
+  const blocks = cfg.getBlocks();
 
-  cfg.getBlocks().map(block => { block.id = "" + blockCounter++; return block; }).forEach(block => {
-
-    let label = block.getLabel();
-    if (block === cfg.getStart()) {
-      if (label === "") {
-        label = "START";
-      } else {
-        label = "START\n" + label;
-      }
-    }
-
-    viewerNodes.push({ id: block.id, label, physics: false });
+  blocks.forEach(block => {
+    viewerNodes.push({ id: blocks.indexOf(block), label: enrichLabelIfStart(block), physics: false });
 
     if (block instanceof CfgBranchingBlock) {
       viewerEdges.push(createEdge(block, block.getTrueSuccessor(), "true"));
@@ -63,9 +53,21 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
 
   function createEdge(start: CfgBlock, end: CfgBlock, label?: string) {
     if (label) {
-      return { id: edgeCounter++, from: start.id, to: end.id, arrows: "to", label };
+      return { id: edgeCounter++, from: blocks.indexOf(start), to: blocks.indexOf(end), arrows: "to", label };
     } else {
-      return { id: edgeCounter++, from: start.id, to: end.id, arrows: "to" };
+      return { id: edgeCounter++, from: blocks.indexOf(start), to: blocks.indexOf(end), arrows: "to" };
     }
+  }
+
+  function enrichLabelIfStart(block: CfgBlock) {
+    let label = block.getLabel();
+    if (block === cfg.start) {
+      if (label === "") {
+        label = "START";
+      } else {
+        label = "START\n" + label;
+      }
+    }
+    return label;
   }
 }

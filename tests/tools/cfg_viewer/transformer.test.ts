@@ -23,33 +23,24 @@ import { DataSet } from "vis";
 import * as cfg from "../../../src/cfg/cfg";
 import toVis from "../../../src/tools/cfg_viewer/transformer";
 
-let graph: cfg.ControlFlowGraph;
-let blockCounter;
-
-beforeEach(() => {
-  graph = new cfg.ControlFlowGraph();
-  blockCounter = 0;
-});
+const START = "START\n";
 
 it("should create single block with one element", () => {
   const block = createBlock("foo");
-  graph.addStart(block);
-  expect(toVis(graph)).toEqual({ nodes: new DataSet([visNode("1", block)]) });
+  expect(toVis(createGraph(block))).toEqual({ nodes: new DataSet([visNode(0, block, START)]) });
 });
 
 it("should create multi-element block", () => {
   const block = createBlock("a", "b");
-  graph.addStart(block);
-  expect(toVis(graph)).toEqual({ nodes: new DataSet([visNode("1", block)]) });
+  expect(toVis(createGraph(block))).toEqual({ nodes: new DataSet([visNode(0, block, START)]) });
 });
 
 it("should create edge to the same block", () => {
-  const a = createBlock("a");
-  graph.addStart(a);
-  a.addSuccessor(a);
-  expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visNode("1", a)]),
-    edges: new DataSet([{ id: 0, from: "1", to: "1", arrows: "to" }]),
+  const selfReferencing = createBlock("a");
+  selfReferencing.addSuccessor(selfReferencing);
+  expect(toVis(createGraph(selfReferencing))).toEqual({
+    nodes: new DataSet([visNode(0, selfReferencing, START)]),
+    edges: new DataSet([{ id: 0, from: 0, to: 0, arrows: "to" }]),
   });
 });
 
@@ -57,14 +48,13 @@ it("should create branch", () => {
   const trueBlock = createBlock("true");
   const falseBlock = createBlock("false");
   const condition = branchingBlock(trueBlock, falseBlock, "condition");
-  graph.addStart(condition);
 
-  expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visBranchingNode("3", condition), visNode("1", trueBlock), visNode("2", falseBlock)]),
+  expect(toVis(createGraph(condition, trueBlock, falseBlock))).toEqual({
+    nodes: new DataSet([visBranchingNode(0, condition, START), visNode(1, trueBlock), visNode(2, falseBlock)]),
 
     edges: new DataSet([
-      { id: 0, from: "3", to: "1", arrows: "to", label: "true" },
-      { id: 1, from: "3", to: "2", arrows: "to", label: "false" },
+      { id: 0, from: 0, to: 1, arrows: "to", label: "true" },
+      { id: 1, from: 0, to: 2, arrows: "to", label: "false" },
     ]),
   });
 });
@@ -74,15 +64,14 @@ it("should create a loop between nodes", () => {
   const end = createBlock("end");
   const condition = branchingBlock(body, end, "condition");
 
-  graph.addStart(condition);
   body.addSuccessor(condition);
 
-  expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visBranchingNode("3", condition), visNode("1", body), visNode("2", end)]),
+  expect(toVis(createGraph(condition, body, end))).toEqual({
+    nodes: new DataSet([visBranchingNode(0, condition, START), visNode(1, body), visNode(2, end)]),
     edges: new DataSet([
-      { id: 0, from: "1", to: "3", arrows: "to" },
-      { id: 1, from: "3", to: "1", arrows: "to", label: "true" },
-      { id: 2, from: "3", to: "2", arrows: "to", label: "false" },
+      { id: 0, from: 0, to: 1, arrows: "to", label: "true" },
+      { id: 1, from: 0, to: 2, arrows: "to", label: "false" },
+      { id: 2, from: 1, to: 0, arrows: "to" },
     ]),
   });
 });
@@ -92,11 +81,10 @@ it("should create unique edge ids", () => {
   const b = createBlock("a");
   a.addSuccessor(b);
   a.addSuccessor(b);
-  graph.addStart(a);
 
-  expect(toVis(graph)).toEqual({
-    nodes: new DataSet([visNode("1", a), visNode("2", b)]),
-    edges: new DataSet([{ id: 0, from: "1", to: "2", arrows: "to" }, { id: 1, from: "1", to: "2", arrows: "to" }]),
+  expect(toVis(createGraph(a, b))).toEqual({
+    nodes: new DataSet([visNode(0, a, START), visNode(1, b)]),
+    edges: new DataSet([{ id: 0, from: 0, to: 1, arrows: "to" }, { id: 1, from: 0, to: 1, arrows: "to" }]),
   });
 });
 
@@ -109,15 +97,17 @@ function branchingBlock(
 ): cfg.CfgBranchingBlock {
   const block = new cfg.CfgBranchingBlock("branching", trueSuccessor, falseSuccessor);
   addElements(block, ...elements);
-  graph.blocks.push(block);
   return block;
 }
 
 function createBlock(...elements: string[]): cfg.CfgGenericBlock {
   const block = new cfg.CfgGenericBlock();
   addElements(block, ...elements);
-  graph.blocks.push(block);
   return block;
+}
+
+function createGraph(...blocks: cfg.CfgBlock[]) {
+  return new cfg.ControlFlowGraph(blocks[0], new cfg.CfgEndBlock(), blocks);
 }
 
 function addElements(block: cfg.CfgBlock, ...elements: string[]) {
@@ -132,22 +122,10 @@ function addElements(block: cfg.CfgBlock, ...elements: string[]) {
   );
 }
 
-function visNode(id: string, block: cfg.CfgBlock) {
-  return { id, label: getLabel(block), physics: false };
+function visNode(id: number, block: cfg.CfgBlock, startPrefix = "") {
+  return { id, label: startPrefix + block.getLabel(), physics: false };
 }
 
-function visBranchingNode(id: string, block: cfg.CfgBlock) {
-  return { id, label: getLabel(block), physics: false };
-}
-
-function getLabel(block: cfg.CfgBlock): string {
-  let label = block.getLabel();
-  if (block === graph.getStart()) {
-    if (label === "") {
-      label = "START";
-    } else {
-      label = "START\n" + label;
-    }
-  }
-  return label;
+function visBranchingNode(id: number, block: cfg.CfgBlock, startPrefix = "") {
+  return { id, label: startPrefix + block.getLabel(), physics: false };
 }
