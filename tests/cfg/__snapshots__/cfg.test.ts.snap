@@ -5,69 +5,69 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "b
 <if (a && b)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 a
 <a>",
@@ -82,49 +82,49 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "r = a && b",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 r
 a
@@ -140,19 +140,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 1
@@ -170,52 +170,52 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "foobar
 foobar()",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "bar
 bar()
 throw bar();",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 foo
 foo()
@@ -232,19 +232,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 foo
@@ -260,49 +260,49 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "r = a || b",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 r
 a
@@ -318,58 +318,58 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b
 <if (a || b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <a>",
@@ -384,19 +384,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 1
@@ -417,19 +417,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 'something'
@@ -445,60 +445,60 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 3,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a = b ? c : d",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 a
 b
@@ -514,19 +514,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 b
@@ -542,58 +542,58 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <while(a)>",
@@ -608,58 +608,58 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <while(a)>",
@@ -674,58 +674,58 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <while(a)>",
@@ -740,59 +740,59 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "a
 <do while(a)>",
       "physics": false,
@@ -806,59 +806,59 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "a
 <do while(a)>",
       "physics": false,
@@ -872,59 +872,59 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "a
 <do while(a)>",
       "physics": false,
@@ -938,81 +938,81 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
-      "to": "5",
+      "to": 4,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "inc",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "cond
 <for(init;cond;inc)>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 init",
       "physics": false,
@@ -1026,70 +1026,70 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "cond
 <for(init;cond;)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 init",
       "physics": false,
@@ -1103,81 +1103,81 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
-      "to": "5",
+      "to": 4,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "inc",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "cond
 <for(init;cond;inc)>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 init",
       "physics": false,
@@ -1191,81 +1191,81 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
-      "to": "5",
+      "to": 4,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "inc",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "cond
 <for(init;cond;inc)>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 init",
       "physics": false,
@@ -1279,70 +1279,70 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "elem
 <for(elem in obj)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 obj",
       "physics": false,
@@ -1356,70 +1356,70 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "elem
 <for(elem in obj)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 obj",
       "physics": false,
@@ -1433,70 +1433,70 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "elem
 <for(elem in obj)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 obj",
       "physics": false,
@@ -1510,69 +1510,69 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt2",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "stmt1",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 a
 1
@@ -1588,69 +1588,69 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt2",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "stmt1",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 a
 1
@@ -1666,205 +1666,205 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "11",
+      "to": 10,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "7",
+      "from": 6,
       "id": 6,
       "label": "true",
-      "to": "6",
+      "to": 5,
     },
     Object {
       "arrows": "to",
-      "from": "7",
+      "from": 6,
       "id": 7,
       "label": "false",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "8",
+      "from": 7,
       "id": 8,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "9",
+      "from": 8,
       "id": 9,
       "label": "true",
-      "to": "8",
+      "to": 7,
     },
     Object {
       "arrows": "to",
-      "from": "9",
+      "from": 8,
       "id": 10,
       "label": "false",
-      "to": "7",
+      "to": 6,
     },
     Object {
       "arrows": "to",
-      "from": "10",
+      "from": 9,
       "id": 11,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "11",
+      "from": 10,
       "id": 12,
       "label": "true",
-      "to": "10",
+      "to": 9,
     },
     Object {
       "arrows": "to",
-      "from": "11",
+      "from": 10,
       "id": 13,
       "label": "false",
-      "to": "9",
+      "to": 8,
     },
     Object {
       "arrows": "to",
-      "from": "12",
+      "from": 11,
       "id": 14,
       "label": "true",
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "12",
+      "from": 11,
       "id": 15,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "13",
+      "from": 12,
       "id": 16,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "14",
+      "from": 13,
       "id": 17,
       "label": "true",
-      "to": "13",
+      "to": 12,
     },
     Object {
       "arrows": "to",
-      "from": "14",
+      "from": 13,
       "id": 18,
       "label": "false",
-      "to": "12",
+      "to": 11,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt3",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "3
 <3>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "stmt21",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "stmt2",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "stmt13",
       "physics": false,
     },
     Object {
-      "id": "7",
+      "id": 6,
       "label": "13
 <13>",
       "physics": false,
     },
     Object {
-      "id": "8",
+      "id": 7,
       "label": "stmt12",
       "physics": false,
     },
     Object {
-      "id": "9",
+      "id": 8,
       "label": "12
 <12>",
       "physics": false,
     },
     Object {
-      "id": "10",
+      "id": 9,
       "label": "stmt11",
       "physics": false,
     },
     Object {
-      "id": "11",
+      "id": 10,
       "label": "b
 11
 <11>",
       "physics": false,
     },
     Object {
-      "id": "12",
+      "id": 11,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "13",
+      "id": 12,
       "label": "stmt1",
       "physics": false,
     },
     Object {
-      "id": "14",
+      "id": 13,
       "label": "START
 a
 1
@@ -1880,19 +1880,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 a()",
@@ -1907,19 +1907,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 b
@@ -1935,19 +1935,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 b
@@ -1964,57 +1964,57 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "x
 1
 x=1",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "a",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "x
 true
 x=true
@@ -2022,7 +2022,7 @@ x=true
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 x
 0
@@ -2038,80 +2038,80 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "false",
-      "to": "5",
+      "to": 4,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "r = (a || b) && c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "(a || b)
 <(a || b)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 r
 a
@@ -2127,89 +2127,89 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 7,
       "label": "false",
-      "to": "5",
+      "to": 4,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "c
 <if ((a || b) && c)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "(a || b)
 <(a || b)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 a
 <a>",
@@ -2224,101 +2224,101 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "false",
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "7",
+      "from": 6,
       "id": 7,
       "label": "true",
-      "to": "6",
+      "to": 5,
     },
     Object {
       "arrows": "to",
-      "from": "7",
+      "from": 6,
       "id": 8,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "(a && (b || (c)))
 <if ((a && (b || (c))))>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "(b || (c))",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "c
 (c)",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "b
 <b>",
       "physics": false,
     },
     Object {
-      "id": "7",
+      "id": 6,
       "label": "START
 a
 <a>",
@@ -2333,49 +2333,49 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <a ? b : c>",
@@ -2390,58 +2390,58 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <while(a)>",
@@ -2456,58 +2456,58 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <while(a)>",
@@ -2522,58 +2522,58 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <while(a)>",
@@ -2588,59 +2588,59 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "a
 <do while(a)>",
       "physics": false,
@@ -2654,59 +2654,59 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "a
 <do while(a)>",
       "physics": false,
@@ -2720,59 +2720,59 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "a
 <do while(a)>",
       "physics": false,
@@ -2786,81 +2786,81 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
-      "to": "5",
+      "to": 4,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "inc",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "cond
 <for(init;cond;inc)>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 init",
       "physics": false,
@@ -2874,70 +2874,70 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "cond
 <for(init;cond;)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 init",
       "physics": false,
@@ -2951,50 +2951,50 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 init",
       "physics": false,
@@ -3008,81 +3008,81 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
-      "to": "5",
+      "to": 4,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "inc",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "cond
 <for(init;cond;inc)>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 init",
       "physics": false,
@@ -3096,81 +3096,81 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
-      "to": "5",
+      "to": 4,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "inc",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "cond
 <for(init;cond;inc)>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 init",
       "physics": false,
@@ -3184,70 +3184,70 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "elem
 <for(elem of obj)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 obj",
       "physics": false,
@@ -3261,70 +3261,70 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "elem
 <for(elem of obj)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 obj",
       "physics": false,
@@ -3338,70 +3338,70 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "stmt",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "elem
 <for(elem of obj)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 obj",
       "physics": false,
@@ -3415,19 +3415,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 function() {foo ();}
@@ -3443,19 +3443,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 (a, b) => {foo();}
@@ -3471,19 +3471,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 class A { foo(){ y } }
@@ -3499,19 +3499,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 debugger;",
       "physics": false,
@@ -3525,19 +3525,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 import {a, b} from 'foo';",
       "physics": false,
@@ -3551,19 +3551,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 foo()
@@ -3579,19 +3579,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 function foo(){}
 foo
@@ -3607,19 +3607,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 42
@@ -3636,19 +3636,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 1
@@ -3666,19 +3666,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 void foo",
@@ -3693,19 +3693,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 1
@@ -3723,39 +3723,39 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "x
 <do while(x)>",
       "physics": false,
@@ -3769,47 +3769,47 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 1,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 3,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a
 <while(a)>",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 b
 <while(b)>",
@@ -3824,19 +3824,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 a
@@ -3853,19 +3853,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 a
@@ -3883,103 +3883,103 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 3,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "7",
+      "from": 6,
       "id": 6,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "8",
+      "from": 7,
       "id": 7,
       "label": "true",
-      "to": "7",
+      "to": 6,
     },
     Object {
       "arrows": "to",
-      "from": "8",
+      "from": 7,
       "id": 8,
       "label": "false",
-      "to": "6",
+      "to": 5,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "foo(x ? 1 : 2)[y ? 3 : 4]",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "4",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "3",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "foo(x ? 1 : 2)
 y
 <y ? 3 : 4>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "2",
       "physics": false,
     },
     Object {
-      "id": "7",
+      "id": 6,
       "label": "1",
       "physics": false,
     },
     Object {
-      "id": "8",
+      "id": 7,
       "label": "START
 foo
 x
@@ -3995,7 +3995,7 @@ Object {
   "edges": null,
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "START
 END",
       "physics": false,
@@ -4009,7 +4009,7 @@ Object {
   "edges": null,
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "START
 END",
       "physics": false,
@@ -4023,19 +4023,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a",
       "physics": false,
@@ -4049,50 +4049,50 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "prop",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "prop
 <for(let prop in obj)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 obj",
       "physics": false,
@@ -4106,38 +4106,38 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 x
 <for(;x;)>",
@@ -4152,52 +4152,52 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "x
 x.do
 x.do()",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "x
 <for(let x of arr)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 arr",
       "physics": false,
@@ -4211,19 +4211,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a",
       "physics": false,
@@ -4237,38 +4237,38 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 a
 <if (a)>",
@@ -4283,49 +4283,49 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <if (a)>",
@@ -4340,49 +4340,49 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <if (a)>",
@@ -4397,19 +4397,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a",
       "physics": false,
@@ -4423,19 +4423,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 <a foo=\\"value\\"/>",
       "physics": false,
@@ -4449,61 +4449,61 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 3,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "foo(x ? 1 : 2)
 <a {... foo(x ? 1 : 2)}/>",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "2",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "1",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 foo
 x
@@ -4519,19 +4519,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 y
@@ -4547,19 +4547,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 <a b={foo}/>",
@@ -4574,19 +4574,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 <a attr/>",
       "physics": false,
@@ -4600,19 +4600,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 <div>hello</div>",
       "physics": false,
@@ -4626,19 +4626,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 name
 <div>hello {name}</div>",
@@ -4653,19 +4653,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 attr1
 <p {...attr1}></p>
@@ -4683,19 +4683,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 <a/>",
       "physics": false,
@@ -4709,19 +4709,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 this
 <this/>",
@@ -4736,19 +4736,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 A
 <A/>",
@@ -4763,19 +4763,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 A
 A.b
@@ -4792,19 +4792,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 <a></a>",
       "physics": false,
@@ -4818,19 +4818,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 A
 A
@@ -4846,19 +4846,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 A
 A.b
@@ -4876,19 +4876,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 super
 super()
@@ -4905,89 +4905,89 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "6",
+      "to": 5,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "true",
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 7,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "a2
 <while(a2)>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 a1
 <while(a1)>",
@@ -5002,80 +5002,80 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "6",
+      "to": 5,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 3,
       "label": "true",
-      "to": "6",
+      "to": 5,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "e",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 a
 <while(a)>",
@@ -5090,19 +5090,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 new.target",
       "physics": false,
@@ -5116,67 +5116,67 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
       "label": "true",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 1,
       "label": "false",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 5,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "a2
 <while(a2)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a1
 <while(a1)>",
@@ -5191,19 +5191,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 A
@@ -5220,19 +5220,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 A
@@ -5251,19 +5251,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 foo!",
@@ -5278,19 +5278,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 foo!
@@ -5306,19 +5306,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 b
@@ -5362,71 +5362,71 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 3,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "7",
+      "from": 6,
       "id": 6,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "8",
+      "from": 7,
       "id": 7,
       "label": "true",
-      "to": "7",
+      "to": 6,
     },
     Object {
       "arrows": "to",
-      "from": "8",
+      "from": 7,
       "id": 8,
       "label": "false",
-      "to": "6",
+      "to": 5,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "3
 a
 {
@@ -5446,33 +5446,33 @@ obj = {
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "'small'",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "'big'",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "x
 <x ? 'big':'small'>",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "2",
       "physics": false,
     },
     Object {
-      "id": "7",
+      "id": 6,
       "label": "1",
       "physics": false,
     },
     Object {
-      "id": "8",
+      "id": 7,
       "label": "START
 obj
 c
@@ -5488,51 +5488,51 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "(b && c)
 a < (b && c)
 r = a < (b && c)",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 r
 a
@@ -5549,81 +5549,81 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
       "label": "true",
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "false",
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "e",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "(b && c)
 a < (b && c)
 <if (a < (b && c))>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "c",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 a
 b
@@ -5639,19 +5639,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 x++",
@@ -5666,19 +5666,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 y
@@ -5695,19 +5695,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 --x",
@@ -5722,19 +5722,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 y
@@ -5751,19 +5751,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 a
@@ -5780,62 +5780,62 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 3,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "foo(x ? 1 : 2)
 foo(x ? 1 : 2).bar
 foo(x ? 1 : 2).bar()",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "2",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "1",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 foo
 x
@@ -5851,50 +5851,50 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "true
 return true;",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 <if (a)>",
@@ -5909,69 +5909,69 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "d",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "c
 <if (c)>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "b",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 a
 <if (a)>",
@@ -5986,19 +5986,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6016,19 +6016,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6046,19 +6046,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6076,19 +6076,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6106,19 +6106,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6136,19 +6136,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6166,19 +6166,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6196,19 +6196,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6226,19 +6226,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 a
@@ -6256,19 +6256,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 r
 b
@@ -6284,19 +6284,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 b
@@ -6316,19 +6316,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 'literal'",
       "physics": false,
@@ -6342,19 +6342,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 1",
       "physics": false,
@@ -6368,19 +6368,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 /ab+c/",
       "physics": false,
@@ -6394,19 +6394,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 a
@@ -6424,80 +6424,80 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
       "label": "true",
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "false",
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "myDefault",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "a2",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "a1",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 a
 1
@@ -6513,80 +6513,80 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
       "label": "true",
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "false",
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "myDefault",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "a2",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "a1",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 a
 1
@@ -6602,80 +6602,80 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 2,
       "label": "true",
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
       "label": "true",
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "false",
-      "to": "4",
+      "to": 3,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "myDefault",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "a2",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "a1",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "START
 a
 1
@@ -6691,69 +6691,69 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a2",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "a1",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 a
 1
@@ -6769,69 +6769,69 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
       "label": "true",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 5,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a2",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "a1",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "START
 a
 1
@@ -6847,58 +6847,58 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 4,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a2",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "START
 a
 1
@@ -6914,100 +6914,100 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
     Object {
       "arrows": "to",
-      "from": "4",
+      "from": 3,
       "id": 3,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "5",
+      "from": 4,
       "id": 4,
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 5,
       "label": "true",
-      "to": "5",
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": "6",
+      "from": 5,
       "id": 6,
       "label": "false",
-      "to": "4",
+      "to": 3,
     },
     Object {
       "arrows": "to",
-      "from": "7",
+      "from": 6,
       "id": 7,
       "label": "true",
-      "to": "6",
+      "to": 5,
     },
     Object {
       "arrows": "to",
-      "from": "7",
+      "from": 6,
       "id": 8,
       "label": "false",
-      "to": "3",
+      "to": 2,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a2",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "2
 <2>",
       "physics": false,
     },
     Object {
-      "id": "4",
+      "id": 3,
       "label": "bar",
       "physics": false,
     },
     Object {
-      "id": "5",
+      "id": 4,
       "label": "foo",
       "physics": false,
     },
     Object {
-      "id": "6",
+      "id": 5,
       "label": "a1
 <if (a1)>",
       "physics": false,
     },
     Object {
-      "id": "7",
+      "id": 6,
       "label": "START
 a
 1
@@ -7023,19 +7023,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 bar
@@ -7055,19 +7055,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 foo
 1
@@ -7086,19 +7086,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 x
 foobar1
@@ -7118,19 +7118,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 a.foo
@@ -7146,19 +7146,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 a.b
@@ -7174,19 +7174,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a
 b
@@ -7207,19 +7207,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 a",
       "physics": false,
@@ -7233,19 +7233,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 bar
 bar()
@@ -7265,19 +7265,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 bar
 a
@@ -7296,38 +7296,38 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
       "label": "true",
-      "to": "2",
+      "to": 1,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 2,
       "label": "false",
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 x
 <while(x)>",
@@ -7342,30 +7342,30 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "3",
+      "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": "3",
+      "from": 2,
       "id": 1,
-      "to": "2",
+      "to": 1,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "a",
       "physics": false,
     },
     Object {
-      "id": "3",
+      "id": 2,
       "label": "START
 true",
       "physics": false,
@@ -7379,19 +7379,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 yield",
       "physics": false,
@@ -7405,19 +7405,19 @@ Object {
   "edges": Array [
     Object {
       "arrows": "to",
-      "from": "2",
+      "from": 1,
       "id": 0,
-      "to": "1",
+      "to": 0,
     },
   ],
   "nodes": Array [
     Object {
-      "id": "1",
+      "id": 0,
       "label": "END",
       "physics": false,
     },
     Object {
-      "id": "2",
+      "id": 1,
       "label": "START
 42
 yield 42",

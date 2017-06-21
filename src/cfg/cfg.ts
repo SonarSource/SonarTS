@@ -21,12 +21,19 @@ import * as ts from "typescript";
 import { CfgBuilder } from "./builder";
 
 export class ControlFlowGraph {
-  public start: CfgBlock;
-  public end: CfgEndBlock;
-  public blocks: CfgBlock[];
+  private startBlock: CfgBlock;
+  public readonly end: CfgEndBlock;
+  private readonly blocks: CfgBlock[];
 
-  constructor(blocks: CfgBlock[] = []) {
+  get start() {
+    return this.startBlock;
+  }
+
+  constructor(start: CfgBlock, end: CfgEndBlock, blocks: CfgBlock[] = []) {
+    this.startBlock = start;
+    this.end = end;
     this.blocks = blocks;
+    this.finalize();
   }
 
   public static fromStatements(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph | undefined {
@@ -37,15 +44,7 @@ export class ControlFlowGraph {
     return this.blocks;
   }
 
-  public addStart(start: CfgBlock) {
-    this.start = start;
-  }
-
-  public addEnd(end: CfgEndBlock) {
-    this.end = end;
-  }
-
-  public finalize() {
+  private finalize() {
     this.makeBidirectional();
     this.collapseEmpty();
     this.makeBidirectional();
@@ -64,12 +63,11 @@ export class ControlFlowGraph {
           });
         }
         if (block === this.start) {
-          this.start = successor;
+          this.startBlock = successor;
         }
       }
     }
   }
-
 
   private makeBidirectional() {
     this.getBlocks().forEach(block => {
@@ -85,15 +83,9 @@ export class ControlFlowGraph {
       });
     });
   }
-
-  public getStart(): CfgBlock {
-    return this.start;
-  }
 }
 
 export interface CfgBlock {
-  id: string;
-
   addElement(element: ts.Node): void;
 
   getElements(): ts.Node[];
@@ -108,7 +100,6 @@ export interface CfgBlock {
 }
 
 export abstract class CfgBlockWithPredecessors {
-  public id: string = "";
   public predecessors: CfgBlock[] = [];
 
   public replacePredecessor(what: CfgBlock, withWhat: CfgBlock): void {
