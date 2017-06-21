@@ -337,9 +337,9 @@ it("continue statement", () => {
   expect(buildVisFromSource("foo: for(init; cond; inc) { if(subcond) continue foo; stmt; }")).toMatchSnapshot();
 
   // for-each
-  expect(buildVisFromSource("for (elem of obj) { if (subcond) continue; stmt; } ")).toMatchSnapshot();
-  expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue; stmt; } ")).toMatchSnapshot();
-  expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue foo; stmt; } ")).toMatchSnapshot();
+  expect(buildVisFromSource("for (elem of obj) { if (subcond) continue; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue foo; stmt; }")).toMatchSnapshot();
 });
 
 it("double continue", () => {
