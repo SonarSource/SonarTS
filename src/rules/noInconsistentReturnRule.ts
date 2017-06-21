@@ -42,29 +42,56 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
     if (!func.body) return;
-    const isVoidType = (type: ts.Node) =>
-      type.kind === ts.SyntaxKind.UndefinedKeyword || type.kind === ts.SyntaxKind.VoidKeyword;
-    if (func.type) {
-      if (func.type.kind === ts.SyntaxKind.UnionType && (func.type as ts.UnionTypeNode).types.find(isVoidType)) {
-        return;
+    this.checkFunctionLikeDeclaration(func.getFirstToken(), func.body, func.type);
+  }
 
-      } else if (isVoidType(func.type)) {
-        return;
-      }
+  public visitMethodDeclaration(meth: ts.MethodDeclaration) {
+    if (!meth.body) return;
+    this.checkFunctionLikeDeclaration(meth.getFirstToken(), meth.body, meth.type);
+  }
+
+  public visitGetAccessor(accessor: ts.AccessorDeclaration) {
+    if (!accessor.body) return;
+    this.checkFunctionLikeDeclaration(accessor.getFirstToken(), accessor.body, accessor.type);
+  }
+
+  public visitArrowFunction(func: ts.ArrowFunction) {
+    if (func.body.kind === ts.SyntaxKind.Block) {
+      this.checkFunctionLikeDeclaration(func.equalsGreaterThanToken, func.body as ts.Block, func.type);
     }
+  }
 
-    const cfg = ControlFlowGraph.fromStatements(func.body.statements);
+  private checkFunctionLikeDeclaration(issuePositionToken: ts.Node, body: ts.Block, returnType?: ts.TypeNode) {
+    if (this.declaredReturnTypeContainsVoidTypes(returnType)) return;
+    const cfg = ControlFlowGraph.fromStatements(body.statements);
     if (cfg) {
       const predecessors = cfg.end.predecessors.filter(block => block === cfg.start || this.blockHasPredecessors(block));
-      const hasExplicit = predecessors.find(this.lastElementIsExplicitReturn.bind(this));
-      const hasImplicit = predecessors.find(this.lastElementIsNotExplicitReturn.bind(this));
+      const hasExplicit = predecessors.find(this.lastElementIsExplicitReturn);
+      const hasImplicit = predecessors.find(this.lastElementIsNotExplicitReturn);
       if (hasExplicit && hasImplicit) {
         this.addFailureAt(
-          func.getFirstToken().getStart(),
-          func.getFirstToken().getWidth(),
+          issuePositionToken.getStart(),
+          issuePositionToken.getWidth(),
           'Refactor this function to use "return" consistently',
         );
       }
+    }
+  }
+
+  private declaredReturnTypeContainsVoidTypes(returnType?: ts.TypeNode) {
+    if (returnType) {
+      if (returnType.kind === ts.SyntaxKind.UnionType && (returnType as ts.UnionTypeNode).types.find(isVoidType)) {
+        return true;
+
+      } else if (isVoidType(returnType)) {
+        return true;
+      }
+    }
+
+    return false;
+
+    function isVoidType(type: ts.Node) {
+      return type.kind === ts.SyntaxKind.UndefinedKeyword || type.kind === ts.SyntaxKind.VoidKeyword;
     }
   }
 
@@ -100,4 +127,5 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
     return false;
   }
+
 }
