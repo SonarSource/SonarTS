@@ -112,7 +112,7 @@ class A {
   }
 
   *inconsistentGenerator(p) {
-//^  {{Refactor this function to use "return" consistently}}
+// ^^^^^^^^^^^^^^^^^^^^^  {{Refactor this function to use "return" consistently}}
     if (p) {
       return;
     }
