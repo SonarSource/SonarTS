@@ -1,0 +1,44 @@
+/*
+ * SonarTS
+ * Copyright (C) 2017-2017 SonarSource SA
+ * mailto:info AT sonarsource DOT com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+import * as ts from "typescript";
+
+const Kind = ts.SyntaxKind;
+
+export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | ts.ReturnStatement): ts.Node {
+  return node.getFirstToken();
+}
+
+export function parentsChain(node: ts.Node, scope: Set<ts.SyntaxKind> = FUNCTION_LIKE): ts.Node[] {
+  const chain: ts.Node[] = [];
+  for (let parent = node.parent; parent && !scope.has(parent.kind); parent = parent.parent) {
+    chain.push(parent);
+  }
+  return chain;
+}
+
+export const FUNCTION_LIKE = new Set<ts.SyntaxKind>([Kind.FunctionDeclaration]);
+export const CONDITIONAL_STATEMENTS = new Set<ts.SyntaxKind>([Kind.IfStatement]);
+export const LOOP_STATEMENTS = new Set<ts.SyntaxKind>([
+  Kind.ForStatement,
+  Kind.ForInStatement,
+  Kind.ForOfStatement,
+  Kind.WhileStatement,
+  Kind.DoStatement,
+]);

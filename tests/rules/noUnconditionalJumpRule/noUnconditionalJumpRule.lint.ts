@@ -9,22 +9,25 @@ while(foo()) {
 
 while(foo()) {
   bar();
-  break; // Noncompliant {{Remove this "break" statement or make it conditional}}
+  break;
+//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
 while(foo()) {
   bar();
-  continue; // Noncompliant {{Remove this "continue" statement or make it conditional}}
+  continue;
+//^^^^^^^^ {{Remove this "continue" statement or make it conditional}}
 }
 
 while(foo()) {
   bar();
-  throw x; // Noncompliant
-//^^^^^
+  throw x;
+//^^^^^   {{Remove this "throw" statement or make it conditional}}
 }
 
 while(foo())
-  break; // Noncompliant
+  break;
+//^^^^^  {{Remove this "break" statement or make it conditional}}
 
 function f() {
   while(foo()) {
@@ -35,33 +38,46 @@ function f() {
   }
   while(foo()) {
     bar();
-    return; // Noncompliant
+    return;
+//  ^^^^^^  {{Remove this "return" statement or make it conditional}}
   }
 }
 
 do {
   bar();
-  break; // Noncompliant
+  break;
+//^^^^^  {{Remove this "break" statement or make it conditional}}
 } while (foo())
 
 for (i = 0; foo(); i++) {
   bar();
-  break; // Noncompliant
+  break;
+//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
-for(p in obj) {
+for (p in obj) {
   bar();
   break; // Compliant: often used to check whether an object is "empty"
 }
 
 for (p in obj) {
+  while(true) {
+    bar();
+    break;
+//  ^^^^^  {{Remove this "break" statement or make it conditional}}
+  }
+}
+
+for (p in obj) {
   foo();
-  continue; // Noncompliant
+  continue;
+//^^^^^^^^  {{Remove this "continue" statement or make it conditional}}
 }
 
 for(p of obj) {
   bar();
-  break; // Noncompliant
+  break;
+//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
 while(foo()) {
@@ -69,7 +85,8 @@ while(foo()) {
     break;
   }
   baz();
-  break; // Noncompliant
+  break;
+//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
 
@@ -86,7 +103,8 @@ while(foo()) {
     continue;
   }
   baz();
-  continue; // Noncompliant
+  continue;
+//^^^^^^^^  {{Remove this "continue" statement or make it conditional}}
 }
 
 for (i = 0; foo(); i++) {
@@ -94,17 +112,19 @@ for (i = 0; foo(); i++) {
     continue;
   }
   baz();
-  break; // compliant
+  break; // Compliant
 }
 
 for (i = 0; foo();) {
   baz();
-  break; // Noncompliant
+  break;
+//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
 for (i = 0; foo(); i++) {
   baz();
-  continue; // Noncompliant
+  continue;
+//^^^^^^^^  {{Remove this "continue" statement or make it conditional}}
 }
 
 for (;;) {
@@ -118,4 +138,5 @@ for (;;) {
 for (;;) {
   foo();
   return 42; // FN
+//^^^^^^  {{Remove this "return" statement or make it conditional}}
 }
