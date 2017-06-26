@@ -59,6 +59,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   private checkJump(node: ts.BreakOrContinueStatement | ts.ThrowStatement | ts.ReturnStatement) {
     if (this.isConditional(node)) return;
     if (node.kind === ts.SyntaxKind.BreakStatement && this.isInsideForIn(node)) return;
+    if (node.kind === ts.SyntaxKind.ReturnStatement && this.isInsideForOf(node)) return;
     const cfg = this.buildCfg(node);
     if (!cfg) return;
     const keyword = nav.keyword(node);
@@ -92,6 +93,11 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   private isInsideForIn(node: ts.BreakStatement): boolean {
     const parentLoop = nav.firstAncestor(node, nav.LOOP_STATEMENTS);
     return !!parentLoop && parentLoop.kind === ts.SyntaxKind.ForInStatement;
+  }
+
+  private isInsideForOf(node: ts.ReturnStatement): boolean {
+    const parentLoop = nav.firstAncestor(node, nav.LOOP_STATEMENTS);
+    return !!parentLoop && parentLoop.kind === ts.SyntaxKind.ForOfStatement;
   }
 
   private buildCfg(node: ts.Node): ControlFlowGraph | void {

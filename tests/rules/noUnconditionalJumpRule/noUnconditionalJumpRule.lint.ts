@@ -86,10 +86,14 @@ for (p in obj) {
 //^^^^^^^^  {{Remove this "continue" statement or make it conditional}}
 }
 
-for(p of obj) {
+for(p of arr) {
   bar();
   break;
 //^^^^^  {{Remove this "break" statement or make it conditional}}
+}
+
+for(p of arr) {
+  return p;  // Compliant: used to return the first element of an array
 }
 
 while(foo()) {
