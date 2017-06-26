@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { CfgBlock, ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
 
-export class Rule extends tslint.Rules.TypedRule {
+export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     description: "Functions should use 'return' consistently",
     options: null,
@@ -33,12 +33,12 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+  public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
+    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Walker extends tslint.RuleWalker {
   public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
     if (!func.body) return;
     this.checkFunctionLikeDeclaration(func.getFirstToken(), func.body, func.type);
