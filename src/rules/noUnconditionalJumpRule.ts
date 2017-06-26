@@ -23,7 +23,7 @@ import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg
 import { SonarRuleMetaData } from "../sonarRule";
 import * as nav from "../utils/navigation";
 
-export class Rule extends tslint.Rules.TypedRule {
+export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     description: "Jump statements should not be used unconditionally",
     options: null,
@@ -34,12 +34,12 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+  public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
+    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Walker extends tslint.RuleWalker {
   public visitBreakStatement(node: ts.BreakOrContinueStatement): void {
     this.checkJump(node);
   }
@@ -102,7 +102,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       if (wrappingFunction.body.kind === ts.SyntaxKind.Block) {
         return ControlFlowGraph.fromStatements((wrappingFunction.body as ts.Block).statements);
       } else {
-        return; // When moving buildCfg to cfg file this should be replaced by fromExpression, here instead we skip
+        return; // When moving buildCfg to cfg file this should be replaced by fromExpression, here instead, we skip
       }
     }
     return ControlFlowGraph.fromStatements(node.getSourceFile().statements);
