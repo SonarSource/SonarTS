@@ -44,6 +44,13 @@ function main() {
   z = returnReturnNoReturn()().noReturn();
 //    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
 
+  function returnObjectObjectNoReturn() {
+    return { a: { b: { noReturn }}};
+  }
+
+  z = returnObjectObjectNoReturn().a.b.noReturn();
+//    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
+
   let arrowFunc = (a) => noReturn(a); // OK
 
   let arrowFunc2 = (a) => (noReturn(a)); // OK

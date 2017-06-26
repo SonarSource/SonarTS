@@ -107,7 +107,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private endOfPropertyChain(expression: ts.Expression): ts.Expression {
     if (expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
-      return this.endOfPropertyChain((expression as ts.PropertyAccessExpression).name);
+      return (expression as ts.PropertyAccessExpression).name;
     }
     return expression;
   }
