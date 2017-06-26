@@ -5,14 +5,14 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 
 ## Rules
 
-* Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`])
+* Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
-* Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`])
-* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`])
-* Variables should be declared before they are used ([`no-variable-usage-before-declaration`])
+* Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
+* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
+* Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Variables should not be self-assigned ([`no-self-assignment`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
@@ -32,6 +32,8 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 [`no-inconsistent-return`]: ./docs/rules/no-inconsistent-return.md
 [`no-useless-increment`]: ./docs/rules/no-useless-increment.md
 [`no-unconditional-jump`]: ./docs/rules/no-unconditional-jump.md
+
+[`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
 ## Installation
 * If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).
