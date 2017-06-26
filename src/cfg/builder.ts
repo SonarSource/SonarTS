@@ -228,6 +228,7 @@ export class CfgBuilder {
     const whileConditionStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
     doBlockEnd.addSuccessor(whileConditionStartBlockPlaceholder);
     whileConditionStartBlockPlaceholder.addSuccessor(whileConditionStartBlock);
+    whileConditionStartBlock.loopingStatement = doWhileLoop;
     this.breakables.pop();
     return doBlockStart;
   }

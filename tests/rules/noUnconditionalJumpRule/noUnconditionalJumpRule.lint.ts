@@ -120,6 +120,15 @@ while(foo()) {
   break; // Compliant: the loop can execute more than once
 }
 
+
+do {
+  if(bar()) {
+    continue;
+  }
+  baz();
+  break; // Compliant: the loop can execture more than once
+} while (foo())
+
 while(foo()) {
   if (bar()) {
     continue;
@@ -159,6 +168,6 @@ for (;;) {
 
 for (;;) {
   foo();
-  return 42; // FN
+  return 42;
 //^^^^^^  {{Remove this "return" statement or make it conditional}}
 }
