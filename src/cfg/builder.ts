@@ -43,7 +43,7 @@ export class CfgBuilder {
   }
 
   private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
-    [...topDownStatements].reverse().forEach(statement => current = this.buildStatement(current, statement));
+    [...topDownStatements].reverse().forEach(statement => (current = this.buildStatement(current, statement)));
     return current;
   }
 
@@ -228,6 +228,7 @@ export class CfgBuilder {
     const whileConditionStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
     doBlockEnd.addSuccessor(whileConditionStartBlockPlaceholder);
     whileConditionStartBlockPlaceholder.addSuccessor(whileConditionStartBlock);
+    whileConditionStartBlock.loopingStatement = doWhileLoop;
     this.breakables.pop();
     return doBlockStart;
   }
@@ -243,6 +244,7 @@ export class CfgBuilder {
     );
     loopStartPlaceholder.addSuccessor(loopStart);
     loopBottom.addSuccessor(loopStartPlaceholder);
+    loopStartPlaceholder.loopingStatement = whileLoop;
     this.breakables.pop();
     return loopStartPlaceholder;
   }
@@ -273,6 +275,7 @@ export class CfgBuilder {
     const loopStart = this.buildExpression(this.createBlockPredecessorOf(initializerStart), forEach.expression);
     loopBodyEnd.addSuccessor(initializerStart);
     continueTarget.addSuccessor(initializerStart);
+    initializerStart.loopingStatement = forEach;
     this.breakables.pop();
     return loopStart;
   }
@@ -306,6 +309,7 @@ export class CfgBuilder {
       loopStart = this.buildForInitializer(this.createBlockPredecessorOf(loopRoot), forLoop.initializer);
     }
     loopBottom.addSuccessor(loopRoot);
+    loopRoot.loopingStatement = forLoop;
 
     if (forLoop.incrementor) {
       continueTarget.addSuccessor(lastBlockInLoopStatement);

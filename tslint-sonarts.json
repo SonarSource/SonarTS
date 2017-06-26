@@ -12,6 +12,7 @@
     "no-self-assignment": true,
     "no-variable-usage-before-declaration": true,
     "no-misspelled-operator": true,
-    "no-inconsistent-return": false
+    "no-inconsistent-return": false,
+    "no-unconditional-jump": true
   }
 }

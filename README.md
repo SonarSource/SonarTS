@@ -17,6 +17,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
+* Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 
 [`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
@@ -30,6 +31,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 [`no-misspelled-operator`]: ./docs/rules/no-misspelled-operator.md
 [`no-inconsistent-return`]: ./docs/rules/no-inconsistent-return.md
 [`no-useless-increment`]: ./docs/rules/no-useless-increment.md
+[`no-unconditional-jump`]: ./docs/rules/no-unconditional-jump.md
 
 ## Installation
 * If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).

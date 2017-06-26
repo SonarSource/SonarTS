@@ -22,7 +22,6 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 
 export class Rule extends Lint.Rules.TypedRule {
-
   public static metadata: SonarRuleMetaData = {
     description: "Collection sizes and array length comparisons should make sense",
     options: null,
@@ -39,7 +38,6 @@ export class Rule extends Lint.Rules.TypedRule {
 }
 
 class Walker extends Lint.ProgramAwareRuleWalker {
-
   private static readonly COLLECTION_TYPES = ["Array", "Map", "Set"];
 
   private static message(collection: string, property: string) {
@@ -47,7 +45,10 @@ class Walker extends Lint.ProgramAwareRuleWalker {
   }
 
   public visitBinaryExpression(node: ts.BinaryExpression) {
-    if (node.operatorToken.kind === ts.SyntaxKind.GreaterThanEqualsToken || node.operatorToken.kind === ts.SyntaxKind.LessThanToken) {
+    if (
+      node.operatorToken.kind === ts.SyntaxKind.GreaterThanEqualsToken ||
+      node.operatorToken.kind === ts.SyntaxKind.LessThanToken
+    ) {
       if (node.right.getText() === "0" && node.left.kind === ts.SyntaxKind.PropertyAccessExpression) {
         const object = (node.left as ts.PropertyAccessExpression).expression;
         const property = (node.left as ts.PropertyAccessExpression).name.text;
@@ -65,5 +66,4 @@ class Walker extends Lint.ProgramAwareRuleWalker {
     const type = this.getTypeChecker().getTypeAtLocation(object);
     return !!type.symbol && Walker.COLLECTION_TYPES.includes(type.symbol.name);
   }
-
 }

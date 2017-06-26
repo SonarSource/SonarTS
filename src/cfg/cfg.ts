@@ -36,6 +36,12 @@ export class ControlFlowGraph {
     this.finalize();
   }
 
+  private finalize() {
+    this.makeBidirectional();
+    this.collapseEmpty();
+    this.makeBidirectional();
+  }
+
   public static fromStatements(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph | undefined {
     return new CfgBuilder().build(statements);
   }
@@ -44,10 +50,8 @@ export class ControlFlowGraph {
     return this.blocks;
   }
 
-  private finalize() {
-    this.makeBidirectional();
-    this.collapseEmpty();
-    this.makeBidirectional();
+  public findLoopingBlock(loopNode: ts.Node): CfgBlock | undefined {
+    return this.blocks.find(block => block.loopingStatement === loopNode);
   }
 
   private collapseEmpty() {
@@ -56,6 +60,15 @@ export class ControlFlowGraph {
       if (block.getElements().length === 0 && block.getSuccessors().length === 1) {
         const successor = block.getSuccessors()[0];
         this.blocks.splice(this.blocks.indexOf(block), 1);
+        if (block.loopingStatement) {
+          if (!successor.loopingStatement) {
+            successor.loopingStatement = block.loopingStatement;
+          } else {
+            throw new Error(
+              `CFG inconsistency : both empty block "${block.getLabel()}" and successor "${successor.getLabel()}" have loopingStatement`,
+            );
+          }
+        }
         if (block instanceof CfgBlockWithPredecessors) {
           block.predecessors.forEach(predecessor => {
             predecessor.replaceSuccessor(block, successor);
@@ -86,6 +99,8 @@ export class ControlFlowGraph {
 }
 
 export interface CfgBlock {
+  loopingStatement: ts.IterationStatement | undefined;
+
   addElement(element: ts.Node): void;
 
   getElements(): ts.Node[];
@@ -101,6 +116,7 @@ export interface CfgBlock {
 
 export abstract class CfgBlockWithPredecessors {
   public predecessors: CfgBlock[] = [];
+  public loopingStatement: ts.IterationStatement | undefined;
 
   public replacePredecessor(what: CfgBlock, withWhat: CfgBlock): void {
     const index = this.predecessors.indexOf(what);

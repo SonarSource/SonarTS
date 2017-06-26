@@ -46,7 +46,11 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   public visitMethodDeclaration(meth: ts.MethodDeclaration) {
     if (!meth.body) return;
-    this.checkFunctionLikeDeclaration(meth.asteriskToken ? meth.getChildAt(1) : meth.getFirstToken(), meth.body, meth.type);
+    this.checkFunctionLikeDeclaration(
+      meth.asteriskToken ? meth.getChildAt(1) : meth.getFirstToken(),
+      meth.body,
+      meth.type,
+    );
   }
 
   public visitGetAccessor(accessor: ts.AccessorDeclaration) {
