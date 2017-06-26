@@ -108,7 +108,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     return ControlFlowGraph.fromStatements(node.getSourceFile().statements);
   }
 
-  private actuallyLoops(block: CfgBlock) {
+  private actuallyLoops(block: CfgBlock): boolean {
     if (!block.loopingStatement) return false;
     const loopContents = this.collectLoopContents(block.loopingStatement);
     if (block instanceof CfgBlockWithPredecessors) {
@@ -122,7 +122,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
   }
 
-  private collectLoopContents(iterationStatement: ts.IterationStatement) {
+  private collectLoopContents(iterationStatement: ts.IterationStatement): ts.Node[] {
     const bodyContents = nav.descendants(iterationStatement.statement);
     if (iterationStatement.kind === ts.SyntaxKind.ForStatement) {
       const updateExpression = (iterationStatement as ts.ForStatement).incrementor;
@@ -131,7 +131,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     return bodyContents;
   }
 
-  private hasPredecessor(block: CfgBlock) {
+  private hasPredecessor(block: CfgBlock): boolean {
     if (block instanceof CfgBlockWithPredecessors) {
       return block.predecessors.length > 0;
     } else {

@@ -42,7 +42,7 @@ export function firstAncestor(
   return ancestorsChain(node, boundary).find(ancestor => targetAncestor.includes(ancestor.kind));
 }
 
-export function descendants(node: ts.Node) {
+export function descendants(node: ts.Node): ts.Node[] {
   const children = node.getChildren();
   let collectedDescendants = children;
   children.forEach(child => (collectedDescendants = collectedDescendants.concat(descendants(child))));
