@@ -54,7 +54,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   public visitCallExpression(node: ts.CallExpression) {
     const type = this.getTypeChecker().getTypeAtLocation(node);
     if (type.flags === ts.TypeFlags.Void && this.isReturnValueUsed(node)) {
-      this.addFailureAtNode(node.expression, Rule.formatMessage(node.expression));
+      this.addFailureAtNode(node.expression, Rule.formatMessage(this.endOfPropertyChain(node.expression)));
     }
 
     super.visitCallExpression(node);
@@ -103,5 +103,12 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private isBinaryExpression(node: ts.Node): node is ts.BinaryExpression {
     return node.kind === ts.SyntaxKind.BinaryExpression;
+  }
+
+  private endOfPropertyChain(expression: ts.Expression): ts.Expression {
+    if (expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
+      return (expression as ts.PropertyAccessExpression).name;
+    }
+    return expression;
   }
 }

@@ -25,6 +25,31 @@ function main() {
   arr[noReturn()];
 //    ^^^^^^^^               {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
 
+  let obj = {
+    noReturn() { let prop = 0; }
+  }
+
+  let z = obj.noReturn();
+//        ^^^^^^^^^^^^       {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
+
+  let returnNoReturn = function () { return noReturn; };
+
+  z = returnNoReturn()();
+//    ^^^^^^^^^^^^^^^^       {{Remove this use of the output from "returnNoReturn()"; "returnNoReturn()" doesn't return anything.}}
+
+  function returnReturnNoReturn() {
+    return function() { return { noReturn }};
+  }
+
+  z = returnReturnNoReturn()().noReturn();
+//    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
+
+  function returnObjectObjectNoReturn() {
+    return { a: { b: { noReturn }}};
+  }
+
+  z = returnObjectObjectNoReturn().a.b.noReturn();
+//    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     {{Remove this use of the output from "noReturn"; "noReturn" doesn't return anything.}}
 
   let arrowFunc = (a) => noReturn(a); // OK
 
