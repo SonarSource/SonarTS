@@ -25,20 +25,44 @@ export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | 
   return node.getFirstToken();
 }
 
-export function parentsChain(node: ts.Node, scope: Set<ts.SyntaxKind> = FUNCTION_LIKE): ts.Node[] {
+export function ancestorsChain(node: ts.Node, boundary = FUNCTION_LIKE): ts.Node[] {
   const chain: ts.Node[] = [];
-  for (let parent = node.parent; parent && !scope.has(parent.kind); parent = parent.parent) {
+  for (let parent = node.parent; !!parent; parent = parent.parent) {
     chain.push(parent);
+    if (boundary.includes(parent.kind)) break;
   }
   return chain;
 }
 
-export const FUNCTION_LIKE = new Set<ts.SyntaxKind>([Kind.FunctionDeclaration]);
-export const CONDITIONAL_STATEMENTS = new Set<ts.SyntaxKind>([Kind.IfStatement]);
-export const LOOP_STATEMENTS = new Set<ts.SyntaxKind>([
+export function firstAncestor(
+  node: ts.Node,
+  targetAncestor: ts.SyntaxKind[],
+  boundary = FUNCTION_LIKE,
+): ts.Node | undefined {
+  return ancestorsChain(node, boundary).find(ancestor => targetAncestor.includes(ancestor.kind));
+}
+
+export function descendants(node: ts.Node) {
+  const children = node.getChildren();
+  let collectedDescendants = children;
+  children.forEach(child => (collectedDescendants = collectedDescendants.concat(descendants(child))));
+  return collectedDescendants;
+}
+
+export const FUNCTION_LIKE = [
+  Kind.FunctionDeclaration,
+  Kind.FunctionExpression,
+  Kind.ArrowFunction,
+  Kind.MethodDeclaration,
+  Kind.Constructor,
+  Kind.GetAccessor,
+  Kind.SetAccessor,
+];
+export const CONDITIONAL_STATEMENTS = [Kind.IfStatement, Kind.SwitchStatement];
+export const LOOP_STATEMENTS = [
   Kind.ForStatement,
   Kind.ForInStatement,
   Kind.ForOfStatement,
   Kind.WhileStatement,
   Kind.DoStatement,
-]);
+];

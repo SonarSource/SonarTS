@@ -8,6 +8,18 @@ while(foo()) {
 }
 
 while(foo()) {
+  switch (bar()) {
+    case a : continue;
+    case b : break
+    case c : zoo();
+  }
+}
+
+for(x of arr) {
+  doSomething(() => { return "bar";});
+}
+
+while(foo()) {
   bar();
   break;
 //^^^^^  {{Remove this "break" statement or make it conditional}}
@@ -89,6 +101,12 @@ while(foo()) {
 //^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
+if (cond()) {
+  while(foo()) {
+    break;
+//  ^^^^^  {{Remove this "break" statement or make it conditional}}
+  }
+}
 
 while(foo()) {
   if (bar()) {

@@ -19,12 +19,13 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
+import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
 import * as nav from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
-    description: "Jumo statements should not be used unconditionally",
+    description: "Jump statements should not be used unconditionally",
     options: null,
     optionsDescription: "",
     rspecKey: "RSPEC-1751",
@@ -39,7 +40,6 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
-
   public visitBreakStatement(node: ts.BreakOrContinueStatement): void {
     this.checkJump(node);
   }
@@ -59,20 +59,81 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   private checkJump(node: ts.BreakOrContinueStatement | ts.ThrowStatement | ts.ReturnStatement) {
     if (this.isConditional(node)) return;
     if (node.kind === ts.SyntaxKind.BreakStatement && this.isInsideForIn(node)) return;
+    const cfg = this.buildCfg(node);
+    if (!cfg) return;
     const keyword = nav.keyword(node);
-    this.addFailureAt(keyword.getStart(), keyword.getWidth(), `Remove this "${keyword.getText()}" statement or make it conditional`);
+    const loop = nav.firstAncestor(node, nav.LOOP_STATEMENTS);
+    if (!loop) return;
+    if (node.kind === ts.SyntaxKind.ContinueStatement) {
+      this.raiseIssue(keyword);
+    } else {
+      const loopingBlock = cfg.findLoopingBlock(loop);
+      if (loopingBlock && this.actuallyLoops(loopingBlock)) return;
+      this.raiseIssue(keyword);
+    }
+  }
+
+  private raiseIssue(keyword: ts.Node) {
+    this.addFailureAt(
+      keyword.getStart(),
+      keyword.getWidth(),
+      `Remove this "${keyword.getText()}" statement or make it conditional`,
+    );
   }
 
   private isConditional(node: ts.Node): boolean {
-    const parents = nav.parentsChain(node).map(p => p.kind);
-    const conditionalsAndLoops = parents.filter(kind => nav.LOOP_STATEMENTS.has(kind) || nav.CONDITIONAL_STATEMENTS.has(kind));
-    return conditionalsAndLoops.length > 0 && nav.CONDITIONAL_STATEMENTS.has(conditionalsAndLoops[0]);
+    const parents = nav.ancestorsChain(node).map(p => p.kind);
+    const conditionalsAndLoops = parents.filter(kind =>
+      nav.LOOP_STATEMENTS.concat(nav.CONDITIONAL_STATEMENTS).includes(kind),
+    );
+    return conditionalsAndLoops.length > 0 && nav.CONDITIONAL_STATEMENTS.includes(conditionalsAndLoops[0]);
   }
 
   private isInsideForIn(node: ts.BreakStatement): boolean {
-    const parents = nav.parentsChain(node).map(p => p.kind);
-    const loops = parents.filter(kind => nav.LOOP_STATEMENTS.has(kind));
-    return loops.length > 0 && loops[0] === ts.SyntaxKind.ForInStatement;
+    const parentLoop = nav.firstAncestor(node, nav.LOOP_STATEMENTS);
+    return !!parentLoop && parentLoop.kind === ts.SyntaxKind.ForInStatement;
   }
 
+  private buildCfg(node: ts.Node): ControlFlowGraph | void {
+    const wrappingFunction = nav.firstAncestor(node, nav.FUNCTION_LIKE) as ts.FunctionLikeDeclaration | undefined;
+    if (wrappingFunction && wrappingFunction.body) {
+      if (wrappingFunction.body.kind === ts.SyntaxKind.Block) {
+        return ControlFlowGraph.fromStatements((wrappingFunction.body as ts.Block).statements);
+      } else {
+        return; // When moving buildCfg to cfg file this should be replaced by fromExpression, here instead we skip
+      }
+    }
+    return ControlFlowGraph.fromStatements(node.getSourceFile().statements);
+  }
+
+  private actuallyLoops(block: CfgBlock) {
+    if (!block.loopingStatement) return false;
+    const loopContents = this.collectLoopContents(block.loopingStatement);
+    if (block instanceof CfgBlockWithPredecessors) {
+      return !!block.predecessors.find(
+        predecessor =>
+          this.hasPredecessor(predecessor) &&
+          !!predecessor.getElements().find(predecessorElement => loopContents.includes(predecessorElement)),
+      );
+    } else {
+      return false;
+    }
+  }
+
+  private collectLoopContents(iterationStatement: ts.IterationStatement) {
+    const bodyContents = nav.descendants(iterationStatement.statement);
+    if (iterationStatement.kind === ts.SyntaxKind.ForStatement) {
+      const updateExpression = (iterationStatement as ts.ForStatement).incrementor;
+      if (updateExpression) return bodyContents.concat(nav.descendants(updateExpression));
+    }
+    return bodyContents;
+  }
+
+  private hasPredecessor(block: CfgBlock) {
+    if (block instanceof CfgBlockWithPredecessors) {
+      return block.predecessors.length > 0;
+    } else {
+      return false;
+    }
+  }
 }

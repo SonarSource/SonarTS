@@ -243,6 +243,7 @@ export class CfgBuilder {
     );
     loopStartPlaceholder.addSuccessor(loopStart);
     loopBottom.addSuccessor(loopStartPlaceholder);
+    loopStartPlaceholder.loopingStatement = whileLoop;
     this.breakables.pop();
     return loopStartPlaceholder;
   }
@@ -273,6 +274,7 @@ export class CfgBuilder {
     const loopStart = this.buildExpression(this.createBlockPredecessorOf(initializerStart), forEach.expression);
     loopBodyEnd.addSuccessor(initializerStart);
     continueTarget.addSuccessor(initializerStart);
+    initializerStart.loopingStatement = forEach;
     this.breakables.pop();
     return loopStart;
   }
@@ -306,6 +308,7 @@ export class CfgBuilder {
       loopStart = this.buildForInitializer(this.createBlockPredecessorOf(loopRoot), forLoop.initializer);
     }
     loopBottom.addSuccessor(loopRoot);
+    loopRoot.loopingStatement = forLoop;
 
     if (forLoop.incrementor) {
       continueTarget.addSuccessor(lastBlockInLoopStatement);
