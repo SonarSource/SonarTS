@@ -7,6 +7,7 @@
     "no-use-of-empty-return-value": true,
     "no-identical-conditions": true,
     "no-identical-expressions": true,
+    "no-useless-increment": true,
     "no-ignored-return": true,
     "no-self-assignment": true,
     "no-variable-usage-before-declaration": true,
