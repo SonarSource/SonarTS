@@ -43,7 +43,7 @@ export class CfgBuilder {
   }
 
   private buildStatements(current: CfgBlock, topDownStatements: ts.Statement[]): CfgBlock {
-    [...topDownStatements].reverse().forEach(statement => current = this.buildStatement(current, statement));
+    [...topDownStatements].reverse().forEach(statement => (current = this.buildStatement(current, statement)));
     return current;
   }
 

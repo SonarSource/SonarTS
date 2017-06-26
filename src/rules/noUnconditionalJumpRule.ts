@@ -75,11 +75,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private raiseIssue(keyword: ts.Node) {
-    this.addFailureAt(
-      keyword.getStart(),
-      keyword.getWidth(),
-      `Remove this "${keyword.getText()}" statement or make it conditional`,
-    );
+    this.addFailureAtNode(keyword, `Remove this "${keyword.getText()}" statement or make it conditional`);
   }
 
   private isConditional(node: ts.Node): boolean {
