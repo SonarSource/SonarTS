@@ -17,12 +17,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarSensor } from "./sensor";
-import * as tslint from "tslint";
 
 export class SyntaxHighlighter implements SonarSensor {
-  execute(sourceFile: ts.SourceFile, _: any, output: any): void {
+  public execute(sourceFile: ts.SourceFile, _: any, output: any): void {
     new HighlighterWalker(output).walk(sourceFile);
   }
 }
@@ -44,7 +44,7 @@ class HighlighterWalker extends tslint.SyntaxWalker {
         return;
       }
       default : {
-        if (node.getChildren().length == 0) {
+        if (node.getChildren().length === 0) {
           this.highlights.push(highlight(node, "s"));
           return;
         } else {
@@ -63,7 +63,7 @@ function highlight(node: ts.Node, highlightKind: SonarTypeOfText) {
     startCol : startPosition.character,
     endLine : toSonarLine(endPosition.line),
     endCol : endPosition.character,
-    textType : highlightKind
+    textType : highlightKind,
   };
 }
 

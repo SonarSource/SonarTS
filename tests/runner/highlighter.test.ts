@@ -18,22 +18,20 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
+import { SyntaxHighlighter } from "../../src/runner/highlighter";
 import { parseString } from "../../src/utils/parser";
-import { SyntaxHighlighter, KEYWORD } from "../../src/runner/highlighter";
 
 it("should highlight 'this'", () => {
-  const input = { "file_content":"class A {\n a: string;\n getA() { return this.a; }\n}" };
+  const input = { file_content: "class A {\n a: string;\n getA() { return this.a; }\n}" };
   const sourceFile = parseString(input.file_content);
-  const output = {};
+  const output: any = {};
   new SyntaxHighlighter().execute(sourceFile, input, output);
   expect(output.highlights.length).toBe(7);
-  expect(output.highlights.find(highlight => highlight.textType == "k")).toEqual(
-    {
-      "startLine": 3,
-      "startCol": 17,
-      "endLine": 3,
-      "endCol": 21,
-      "textType": "k"
-    }
-  );
+  expect(output.highlights.find(highlight => highlight.textType === "k")).toEqual({
+    startLine: 3,
+    startCol: 17,
+    endLine: 3,
+    endCol: 21,
+    textType: "k",
+  });
 });

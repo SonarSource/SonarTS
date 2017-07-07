@@ -18,8 +18,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { parseString } from "../utils/parser";
-import { SonarSensor } from "./sensor";
 import { SyntaxHighlighter } from "./highlighter";
+import { SonarSensor } from "./sensor";
 const chunks: string[] = [];
 
 process.stdin.resume();
@@ -27,11 +27,11 @@ process.stdin.setEncoding("utf8");
 
 const sensors: SonarSensor[] = [new SyntaxHighlighter()];
 
-process.stdin.on("data", function(chunk: string) {
+process.stdin.on("data", (chunk: string) => {
   chunks.push(chunk);
 });
 
-process.stdin.on("end", function() {
+process.stdin.on("end", () => {
   const inputString = chunks.join("");
   const input = JSON.parse(inputString);
   const sourceFile = parseString(input.file_content); // TODO manage ScriptKind
