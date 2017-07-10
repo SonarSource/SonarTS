@@ -23,7 +23,7 @@ import { parseString } from "../../src/utils/parser";
 
 it("should highlight keywords", () => {
   const result = actual(
-  `class A {
+    `class A {
      get b() {
        return this.a;
      }
@@ -31,19 +31,20 @@ it("should highlight keywords", () => {
        if (cond);
      }
      a: string;
-  }`);
-  expect(result).toContainEqual(token(1, 0, 1, 5, "keyword"));   // class
-  expect(result).toContainEqual(token(2, 5, 2, 8, "keyword"));   // get
-  expect(result).toContainEqual(token(3, 7, 3, 13, "keyword"));  // return
+  }`,
+  );
+  expect(result).toContainEqual(token(1, 0, 1, 5, "keyword")); // class
+  expect(result).toContainEqual(token(2, 5, 2, 8, "keyword")); // get
+  expect(result).toContainEqual(token(3, 7, 3, 13, "keyword")); // return
   expect(result).toContainEqual(token(3, 14, 3, 18, "keyword")); // this
-  expect(result).toContainEqual(token(5, 5, 5, 11, "keyword"));  // static
-  expect(result).toContainEqual(token(6, 7, 6, 9, "keyword"));   // if
-  expect(result).toContainEqual(token(8, 8, 8, 14, "keyword"));   // string
+  expect(result).toContainEqual(token(5, 5, 5, 11, "keyword")); // static
+  expect(result).toContainEqual(token(6, 7, 6, 9, "keyword")); // if
+  expect(result).toContainEqual(token(8, 8, 8, 14, "keyword")); // string
 });
 
 it("should highlight comments", () => {
   const result = actual(
-  `a // comment1
+    `a // comment1
   /*comment2*/
   // comment3
   b // comment4
@@ -51,7 +52,8 @@ it("should highlight comments", () => {
    * comment5
    */
   c
-  // comment6`);
+  // comment6`,
+  );
   expect(result.length).toBe(6);
   expect(result).toContainEqual(token(1, 2, 1, 13, "comment")); // 1
   expect(result).toContainEqual(token(2, 2, 2, 14, "comment")); // 2
@@ -63,7 +65,7 @@ it("should highlight comments", () => {
 
 it("should highlight strings", () => {
   expect(actual("'str'")).toContainEqual(token(1, 0, 1, 5, "string"));
-  expect(actual("\"str\"")).toContainEqual(token(1, 0, 1, 5, "string"));
+  expect(actual('"str"')).toContainEqual(token(1, 0, 1, 5, "string"));
 
   expect(actual("`str`")).toContainEqual(token(1, 0, 1, 5, "string"));
   expect(actual("`line1\nline2`")).toContainEqual(token(1, 0, 2, 6, "string"));
@@ -80,7 +82,13 @@ it("should highlight numbers", () => {
   expect(actual("10e-2")).toContainEqual(token(1, 0, 1, 5, "constant"));
 });
 
-function token(startLine: number, startCol: number, endLine: number, endCol: number, textType: SonarTypeOfText): HighlightedToken {
+function token(
+  startLine: number,
+  startCol: number,
+  endLine: number,
+  endCol: number,
+  textType: SonarTypeOfText,
+): HighlightedToken {
   return {
     startLine,
     startCol,

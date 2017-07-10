@@ -55,7 +55,7 @@ export function toTokens(node: ts.Node): ts.Node[] {
   return result;
 }
 
-export function is(node: ts.Node, ... kinds: ts.SyntaxKind[]): boolean {
+export function is(node: ts.Node, ...kinds: ts.SyntaxKind[]): boolean {
   for (const kind of kinds) {
     if (node.kind === kind) {
       return true;

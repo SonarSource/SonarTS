@@ -44,7 +44,7 @@ export class SyntaxHighlighter implements SonarSensor {
       });
 
       // STRINGS
-      const isString =  is(
+      const isString = is(
         token,
         ts.SyntaxKind.StringLiteral,
         ts.SyntaxKind.NoSubstitutionTemplateLiteral,
