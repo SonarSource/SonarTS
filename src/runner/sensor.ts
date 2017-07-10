@@ -20,5 +20,6 @@
 import * as ts from "typescript";
 
 export interface SonarSensor {
-  execute(sourceFile: ts.SourceFile, input: any, output: any): void;
+  execute(sourceFile: ts.SourceFile): any;
+  name(): string;
 }

@@ -35,8 +35,8 @@ process.stdin.on("end", () => {
   const inputString = chunks.join("");
   const input = JSON.parse(inputString);
   const sourceFile = parseString(input.file_content); // TODO manage ScriptKind
-  const output = {};
-  sensors.forEach(sensor => sensor.execute(sourceFile, input, output));
+  const output: any = {};
+  sensors.forEach(sensor => (output[sensor.name()] = sensor.execute(sourceFile)));
   const outputString = JSON.stringify(output, null, " ");
   process.stdout.write(outputString);
   process.stdout.write("\n");

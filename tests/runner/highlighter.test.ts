@@ -99,9 +99,6 @@ function token(
 }
 
 function actual(content: string): HighlightedToken[] {
-  const input = { file_content: content };
-  const sourceFile = parseString(input.file_content);
-  const output: any = {};
-  new SyntaxHighlighter().execute(sourceFile, input, output);
-  return output.highlights;
+  const sourceFile = parseString(content);
+  return new SyntaxHighlighter().execute(sourceFile);
 }

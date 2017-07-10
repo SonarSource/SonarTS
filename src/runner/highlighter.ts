@@ -22,7 +22,7 @@ import { getComments, getText, is, toTokens } from "../utils/navigation";
 import { SonarSensor } from "./sensor";
 
 export class SyntaxHighlighter implements SonarSensor {
-  public execute(sourceFile: ts.SourceFile, _: any, output: any): void {
+  public execute(sourceFile: ts.SourceFile): HighlightedToken[] {
     const highlights: HighlightedToken[] = [];
     const tokens = toTokens(sourceFile);
 
@@ -62,7 +62,11 @@ export class SyntaxHighlighter implements SonarSensor {
       }
     });
 
-    output.highlights = highlights;
+    return highlights;
+  }
+
+  public name() {
+    return "highlights";
   }
 }
 
