@@ -17,53 +17,84 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as tslint from "tslint";
 import * as ts from "typescript";
+import { getComments, getText, is, toTokens } from "../utils/navigation";
 import { SonarSensor } from "./sensor";
 
 export class SyntaxHighlighter implements SonarSensor {
   public execute(sourceFile: ts.SourceFile, _: any, output: any): void {
-    new HighlighterWalker(output).walk(sourceFile);
+    const highlights: HighlightedToken[] = [];
+    const tokens = toTokens(sourceFile);
+
+    tokens.forEach(token => {
+      // KEYWORDS
+      if (isKeyword(token)) {
+        highlights.push(highlight(token, "keyword"));
+      }
+
+      // COMMENTS
+      getComments(token).forEach(comment => {
+        highlights.push(
+          highlightComment(
+            comment,
+            getText(comment, token.getSourceFile()).startsWith("/**") ? "structured_comment" : "comment",
+            token.getSourceFile(),
+          ),
+        );
+      });
+
+      // STRINGS
+      const isString =  is(
+        token,
+        ts.SyntaxKind.StringLiteral,
+        ts.SyntaxKind.NoSubstitutionTemplateLiteral,
+        ts.SyntaxKind.TemplateHead,
+        ts.SyntaxKind.TemplateMiddle,
+        ts.SyntaxKind.TemplateTail,
+      );
+      if (isString) {
+        highlights.push(highlight(token, "string"));
+      }
+
+      // NUMBERS
+      if (is(token, ts.SyntaxKind.NumericLiteral)) {
+        highlights.push(highlight(token, "constant"));
+      }
+    });
+
+    output.highlights = highlights;
   }
 }
 
-class HighlighterWalker extends tslint.SyntaxWalker {
-
-  private highlights: any[];
-
-  constructor(output: any) {
-    super();
-    this.highlights = [];
-    output.highlights = this.highlights;
-  }
-
-  protected visitNode(node: ts.Node): void {
-    switch (node.kind) {
-      case ts.SyntaxKind.ThisKeyword : {
-        this.highlights.push(highlight(node, "k"));
-        return;
-      }
-      default : {
-        if (node.getChildren().length === 0) {
-          this.highlights.push(highlight(node, "s"));
-          return;
-        } else {
-          super.visitNode(node);
-        }
-      }
-    }
-  }
+function isKeyword(node: ts.Node): boolean {
+  return node.kind >= ts.SyntaxKind.BreakKeyword && node.kind <= ts.SyntaxKind.OfKeyword;
 }
 
-function highlight(node: ts.Node, highlightKind: SonarTypeOfText) {
+function highlight(node: ts.Node, highlightKind: SonarTypeOfText): HighlightedToken {
   const startPosition = node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
   const endPosition = node.getSourceFile().getLineAndCharacterOfPosition(node.getEnd());
   return {
-    startLine : toSonarLine(startPosition.line),
-    startCol : startPosition.character,
-    endLine : toSonarLine(endPosition.line),
-    endCol : endPosition.character,
-    textType : highlightKind,
+    startLine: toSonarLine(startPosition.line),
+    startCol: startPosition.character,
+    endLine: toSonarLine(endPosition.line),
+    endCol: endPosition.character,
+    textType: highlightKind,
+  };
+}
+
+function highlightComment(
+  comment: ts.CommentRange,
+  highlightKind: SonarTypeOfText,
+  file: ts.SourceFile,
+): HighlightedToken {
+  const startPosition = file.getLineAndCharacterOfPosition(comment.pos);
+  const endPosition = file.getLineAndCharacterOfPosition(comment.end);
+  return {
+    startLine: toSonarLine(startPosition.line),
+    startCol: startPosition.character,
+    endLine: toSonarLine(endPosition.line),
+    endCol: endPosition.character,
+    textType: highlightKind,
   };
 }
 
@@ -71,4 +102,12 @@ function toSonarLine(line: number) {
   return line + 1;
 }
 
-export type SonarTypeOfText = "a" | "c" | "cd" | "j" | "k" | "s" | "h" | "p";
+export type SonarTypeOfText = "constant" | "comment" | "structured_comment" | "keyword" | "string";
+
+export interface HighlightedToken {
+  startLine: number;
+  startCol: number;
+  endLine: number;
+  endCol: number;
+  textType: SonarTypeOfText;
+}
