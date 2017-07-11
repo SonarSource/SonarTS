@@ -25,6 +25,49 @@ export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | 
   return node.getFirstToken();
 }
 
+export function getComments(node: ts.Node): ts.CommentRange[] {
+  const result: ts.CommentRange[] = [];
+  const commentsAfter = ts.getTrailingCommentRanges(node.getSourceFile().text, node.getEnd());
+  const commentsBefore = ts.getLeadingCommentRanges(node.getSourceFile().text, node.getFullStart());
+
+  [commentsAfter, commentsBefore].forEach(comments => {
+    if (comments) {
+      result.push(...comments);
+    }
+  });
+
+  return result;
+}
+
+export function getText(textRange: ts.TextRange, file: ts.SourceFile): string {
+  return file.getText().substr(textRange.pos, textRange.end - textRange.pos);
+}
+
+export function toTokens(node: ts.Node): ts.Node[] {
+  if (isToken(node)) {
+    return [node];
+  }
+
+  const result: ts.Node[] = [];
+  node.getChildren().forEach(child => {
+    result.push(...toTokens(child));
+  });
+  return result;
+}
+
+export function is(node: ts.Node, ...kinds: ts.SyntaxKind[]): boolean {
+  for (const kind of kinds) {
+    if (node.kind === kind) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isToken(node: ts.Node): boolean {
+  return node.kind <= ts.SyntaxKind.OfKeyword;
+}
+
 export function ancestorsChain(node: ts.Node, boundary = FUNCTION_LIKE): ts.Node[] {
   const chain: ts.Node[] = [];
   for (let parent = node.parent; !!parent; parent = parent.parent) {

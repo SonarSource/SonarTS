@@ -17,15 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import * as ts from "typescript";
 import { parseString } from "../utils/parser";
-import { SyntaxHighlighter } from "./highlighter";
-import { SonarSensor } from "./sensor";
+import getHighlighting from "./highlighter";
 const chunks: string[] = [];
 
 process.stdin.resume();
 process.stdin.setEncoding("utf8");
 
-const sensors: SonarSensor[] = [new SyntaxHighlighter()];
+const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting];
 
 process.stdin.on("data", (chunk: string) => {
   chunks.push(chunk);
@@ -35,8 +35,8 @@ process.stdin.on("end", () => {
   const inputString = chunks.join("");
   const input = JSON.parse(inputString);
   const sourceFile = parseString(input.file_content); // TODO manage ScriptKind
-  const output = {};
-  sensors.forEach(sensor => sensor.execute(sourceFile, input, output));
+  const output: any = {};
+  sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
   const outputString = JSON.stringify(output, null, " ");
   process.stdout.write(outputString);
   process.stdout.write("\n");
