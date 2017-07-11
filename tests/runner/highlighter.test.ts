@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { HighlightedToken, SonarTypeOfText, SyntaxHighlighter } from "../../src/runner/highlighter";
+import getHighlighting, { HighlightedToken, SonarTypeOfText } from "../../src/runner/highlighter";
 import { parseString } from "../../src/utils/parser";
 
 it("should highlight keywords", () => {
@@ -100,5 +100,5 @@ function token(
 
 function actual(content: string): HighlightedToken[] {
   const sourceFile = parseString(content);
-  return new SyntaxHighlighter().execute(sourceFile);
+  return getHighlighting(sourceFile).highlights;
 }

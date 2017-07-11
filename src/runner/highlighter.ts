@@ -19,55 +19,48 @@
  */
 import * as ts from "typescript";
 import { getComments, getText, is, toTokens } from "../utils/navigation";
-import { SonarSensor } from "./sensor";
 
-export class SyntaxHighlighter implements SonarSensor {
-  public execute(sourceFile: ts.SourceFile): HighlightedToken[] {
-    const highlights: HighlightedToken[] = [];
-    const tokens = toTokens(sourceFile);
+export default function getHighlighting(sourceFile: ts.SourceFile): { highlights: HighlightedToken[] } {
+  const highlights: HighlightedToken[] = [];
+  const tokens = toTokens(sourceFile);
 
-    tokens.forEach(token => {
-      // KEYWORDS
-      if (isKeyword(token)) {
-        highlights.push(highlight(token, "keyword"));
-      }
+  tokens.forEach(token => {
+    // KEYWORDS
+    if (isKeyword(token)) {
+      highlights.push(highlight(token, "keyword"));
+    }
 
-      // COMMENTS
-      getComments(token).forEach(comment => {
-        highlights.push(
-          highlightComment(
-            comment,
-            getText(comment, token.getSourceFile()).startsWith("/**") ? "structured_comment" : "comment",
-            token.getSourceFile(),
-          ),
-        );
-      });
-
-      // STRINGS
-      const isString = is(
-        token,
-        ts.SyntaxKind.StringLiteral,
-        ts.SyntaxKind.NoSubstitutionTemplateLiteral,
-        ts.SyntaxKind.TemplateHead,
-        ts.SyntaxKind.TemplateMiddle,
-        ts.SyntaxKind.TemplateTail,
+    // COMMENTS
+    getComments(token).forEach(comment => {
+      highlights.push(
+        highlightComment(
+          comment,
+          getText(comment, token.getSourceFile()).startsWith("/**") ? "structured_comment" : "comment",
+          token.getSourceFile(),
+        ),
       );
-      if (isString) {
-        highlights.push(highlight(token, "string"));
-      }
-
-      // NUMBERS
-      if (is(token, ts.SyntaxKind.NumericLiteral)) {
-        highlights.push(highlight(token, "constant"));
-      }
     });
 
-    return highlights;
-  }
+    // STRINGS
+    const isString = is(
+      token,
+      ts.SyntaxKind.StringLiteral,
+      ts.SyntaxKind.NoSubstitutionTemplateLiteral,
+      ts.SyntaxKind.TemplateHead,
+      ts.SyntaxKind.TemplateMiddle,
+      ts.SyntaxKind.TemplateTail,
+    );
+    if (isString) {
+      highlights.push(highlight(token, "string"));
+    }
 
-  public name() {
-    return "highlights";
-  }
+    // NUMBERS
+    if (is(token, ts.SyntaxKind.NumericLiteral)) {
+      highlights.push(highlight(token, "constant"));
+    }
+  });
+
+  return { highlights };
 }
 
 function isKeyword(node: ts.Node): boolean {
