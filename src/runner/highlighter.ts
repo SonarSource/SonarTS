@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { getComments, getText, is, toTokens } from "../utils/navigation";
+import { getComments, getText, is, lineAndCharacter, toTokens } from "../utils/navigation";
 
 export default function getHighlighting(sourceFile: ts.SourceFile): { highlights: HighlightedToken[] } {
   const highlights: HighlightedToken[] = [];
@@ -68,8 +68,8 @@ function isKeyword(node: ts.Node): boolean {
 }
 
 function highlight(node: ts.Node, highlightKind: SonarTypeOfText): HighlightedToken {
-  const startPosition = node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
-  const endPosition = node.getSourceFile().getLineAndCharacterOfPosition(node.getEnd());
+  const startPosition = lineAndCharacter(node.getStart(), node.getSourceFile());
+  const endPosition = lineAndCharacter(node.getEnd(), node.getSourceFile());
   return {
     startLine: toSonarLine(startPosition.line),
     startCol: startPosition.character,

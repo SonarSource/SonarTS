@@ -20,12 +20,13 @@
 import * as ts from "typescript";
 import { parseString } from "../utils/parser";
 import getHighlighting from "./highlighter";
+import getMetrics from "./metrics";
 const chunks: string[] = [];
 
 process.stdin.resume();
 process.stdin.setEncoding("utf8");
 
-const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting];
+const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting, getMetrics];
 
 process.stdin.on("data", (chunk: string) => {
   chunks.push(chunk);
