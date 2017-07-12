@@ -26,21 +26,19 @@ export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | 
 }
 
 export function getComments(node: ts.Node): ts.CommentRange[] {
-  const result: ts.CommentRange[] = [];
-  const commentsAfter = ts.getTrailingCommentRanges(node.getSourceFile().text, node.getEnd());
-  const commentsBefore = ts.getLeadingCommentRanges(node.getSourceFile().text, node.getFullStart());
+  return [...getCommentsBefore(node), ...getCommentsAfter(node)];
+}
 
-  [commentsAfter, commentsBefore].forEach(comments => {
-    if (comments) {
-      result.push(...comments);
-    }
-  });
+export function getCommentsBefore(node: ts.Node): ts.CommentRange[] {
+  return ts.getLeadingCommentRanges(node.getSourceFile().text, node.getFullStart()) || [];
+}
 
-  return result;
+export function getCommentsAfter(node: ts.Node): ts.CommentRange[] {
+  return ts.getTrailingCommentRanges(node.getSourceFile().text, node.getEnd()) || [];
 }
 
 export function getText(textRange: ts.TextRange, file: ts.SourceFile): string {
-  return file.getText().substr(textRange.pos, textRange.end - textRange.pos);
+  return file.getFullText().substr(textRange.pos, textRange.end - textRange.pos);
 }
 
 export function toTokens(node: ts.Node): ts.Node[] {
@@ -53,6 +51,10 @@ export function toTokens(node: ts.Node): ts.Node[] {
     result.push(...toTokens(child));
   });
   return result;
+}
+
+export function lineAndCharacter(pos: number, file: ts.SourceFile): ts.LineAndCharacter {
+  return file.getLineAndCharacterOfPosition(pos);
 }
 
 export function is(node: ts.Node, ...kinds: ts.SyntaxKind[]): boolean {

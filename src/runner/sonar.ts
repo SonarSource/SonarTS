@@ -20,12 +20,13 @@
 import * as ts from "typescript";
 import { parseString } from "../utils/parser";
 import getHighlighting from "./highlighter";
+import getMetrics from "./metrics";
 const chunks: string[] = [];
 
 process.stdin.resume();
 process.stdin.setEncoding("utf8");
 
-const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting];
+const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting, getMetrics];
 
 process.stdin.on("data", (chunk: string) => {
   chunks.push(chunk);
@@ -34,7 +35,7 @@ process.stdin.on("data", (chunk: string) => {
 process.stdin.on("end", () => {
   const inputString = chunks.join("");
   const input = JSON.parse(inputString);
-  const sourceFile = parseString(input.file_content); // TODO manage ScriptKind
+  const sourceFile = parseString(input.fileСontent); // TODO manage ScriptKind
   const output: any = {};
   sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
   const outputString = JSON.stringify(output, null, " ");
