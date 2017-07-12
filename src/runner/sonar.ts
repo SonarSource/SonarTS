@@ -39,6 +39,7 @@ process.stdin.on("end", () => {
   const output: any = {};
   sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
   const outputString = JSON.stringify(output, null, " ");
+  process.stdout.setEncoding("utf8");
   process.stdout.write(outputString);
   process.stdout.write("\n");
 });
