@@ -1,10 +1,12 @@
 .sonarlint/
+.sonar/
 .vscode/
 coverage/
 docs/
 src/
 tests/
 typescript-test-sources/
+lib/tools/
 
 .gitignore
 .gitmodules

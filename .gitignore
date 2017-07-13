@@ -1,4 +1,6 @@
 .DS_Store
+.sonar/
+.sonarlint/
 node_modules/
 coverage/
 lib/
