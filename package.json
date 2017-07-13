@@ -1,6 +1,6 @@
 {
   "name": "tslint-sonarts",
-  "version": "0.3.0-3",
+  "version": "0.3.0-4",
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
   "scripts": {
