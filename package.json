@@ -10,7 +10,7 @@
     "build": "yarn clear && tsc -p . && yarn build-cfg && webpack",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer/",
     "lint": "tslint --type-check --project tsconfig.json -c tslint.json 'src/**/*.ts'",
-    "test": "jest",
+    "test": "jest --forceExit",
     "ruling": "ts-node tests/ruling/index.ts",
     "license-check": "license-check",
     "format": "prettier --write --print-width 120 --trailing-comma all '{src,tests}/**/!(*.lint).ts'"
