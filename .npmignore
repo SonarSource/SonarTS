@@ -6,6 +6,7 @@ docs/
 src/
 tests/
 typescript-test-sources/
+lib/tools/
 
 .gitignore
 .gitmodules
