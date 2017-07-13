@@ -34,12 +34,16 @@ process.stdin.on("data", (chunk: string) => {
 
 process.stdin.on("end", () => {
   const inputString = chunks.join("");
+  const json = JSON.stringify(processRequest(inputString), null, " ");
+  process.stdout.setEncoding("utf8");
+  process.stdout.write(json);
+  process.stdout.write("\n");
+});
+
+export function processRequest(inputString: string): any {
   const input = JSON.parse(inputString);
   const sourceFile = parseString(input.fileContent); // TODO manage ScriptKind
   const output: any = {};
   sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
-  const outputString = JSON.stringify(output, null, " ");
-  process.stdout.setEncoding("utf8");
-  process.stdout.write(outputString);
-  process.stdout.write("\n");
-});
+  return output;
+}
