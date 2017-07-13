@@ -1,4 +1,5 @@
 .sonarlint/
+.sonar/
 .vscode/
 coverage/
 docs/
