@@ -42,15 +42,25 @@ export function getText(textRange: ts.TextRange, file: ts.SourceFile): string {
 }
 
 export function toTokens(node: ts.Node): ts.Node[] {
-  if (isToken(node)) {
-    return [node];
+  const result: ts.Node[] = [];
+  const stack: ts.Node[] = [node];
+
+  while (stack.length) {
+    const currentNode = stack.pop() as ts.Node;
+    if (isToken(currentNode)) {
+      result.push(currentNode);
+      continue;
+    }
+
+    // skip jsDoc
+    if (currentNode.kind === ts.SyntaxKind.FirstJSDocTagNode) {
+      continue;
+    }
+
+    stack.push(...currentNode.getChildren());
   }
 
-  const result: ts.Node[] = [];
-  node.getChildren().forEach(child => {
-    result.push(...toTokens(child));
-  });
-  return result;
+  return result.reverse();
 }
 
 export function lineAndCharacter(pos: number, file: ts.SourceFile): ts.LineAndCharacter {
