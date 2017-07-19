@@ -1,8 +1,11 @@
 {
   "name": "tslint-sonarts",
-  "version": "0.3.0-4",
+  "version": "0.3.0-5",
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
+  "bin": {
+    "tsmetrics": "./bin/tsmetrics"
+  },
   "scripts": {
     "watch-cfg-viewer": "node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "clear": "rm -rf lib/*",
