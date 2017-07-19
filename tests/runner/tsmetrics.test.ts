@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { processRequest } from "../../src/runner/sonar";
+import { processRequest } from "../../src/runner/tsmetrics";
 import { parseString } from "../../src/utils/parser";
 
 it("should process input", () => {
