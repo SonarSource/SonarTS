@@ -1,0 +1,104 @@
+/*
+ * SonarTS
+ * Copyright (C) 2017-2017 SonarSource SA
+ * mailto:info AT sonarsource DOT com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+import * as ts from "typescript";
+import getCpdTokens, { CpdToken } from "../../src/runner/cpd";
+import { parseString } from "../../src/utils/parser";
+
+it("should not skip any token", () => {
+  const result = actual(
+    `class A {
+     get b() {
+       return this.a;
+     }
+     static foo() {
+       if (cond);
+     }
+     a: string;
+  }`,
+  );
+  expect(result.length).toBe(30);
+});
+
+it("should skip comments", () => {
+  const result = actual(
+    `a // comment1
+  /*comment2*/
+  // comment3
+  b // comment4
+  /**
+   * comment5
+   */
+/**
+ * Shift down
+ * @param  {Array} array
+ * @param  {Number} i
+ * @param  {Number} j
+ */
+  c
+  // comment6`,
+  );
+  expect(result.length).toBe(3);
+});
+
+it("should provide correct position", () => {
+  const result = actual(
+    ` foo
+bar
+/**/foobar
+\`
+multiline string
+\`
+  `,
+  );
+  expect(result.length).toBe(4);
+  expect(result).toContainEqual(token(1, 1, 1, 4, "foo"));
+  expect(result).toContainEqual(token(2, 0, 2, 3, "bar"));
+  expect(result).toContainEqual(token(3, 4, 3, 10, "foobar"));
+  expect(result).toContainEqual(token(4, 0, 6, 1, "LITERAL"));
+});
+
+it("should replace strings", () => {
+  expect(actual("'string'")[0].image).toBe("LITERAL");
+  expect(actual("`string`")[0].image).toBe("LITERAL");
+  expect(actual("\"string\"")[0].image).toBe("LITERAL");
+  expect(actual("42")[0].image).toBe("42");
+  expect(actual("true")[0].image).toBe("true");
+});
+
+function token(
+  startLine: number,
+  startCol: number,
+  endLine: number,
+  endCol: number,
+  image: string,
+): CpdToken {
+  return {
+    startLine,
+    startCol,
+    endLine,
+    endCol,
+    image,
+  };
+}
+
+function actual(content: string): CpdToken[] {
+  const sourceFile = parseString(content);
+  return getCpdTokens(sourceFile).cpdTokens;
+}

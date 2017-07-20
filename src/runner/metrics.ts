@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { getComments, getCommentsAfter, getText, is, lineAndCharacter, toTokens } from "../utils/navigation";
+import { toSonarLine } from "./sonar-utils";
 
 export default function getMetrics(
   sourceFile: ts.SourceFile,
@@ -106,8 +107,4 @@ function addLines(start: number, end: number, lines: Set<number>, sourceFile: ts
   for (let i = firstLine; i <= lastLine; i++) {
     lines.add(i);
   }
-}
-
-function toSonarLine(line: number) {
-  return line + 1;
 }

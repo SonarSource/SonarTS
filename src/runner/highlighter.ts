@@ -19,6 +19,7 @@
  */
 import * as ts from "typescript";
 import { getComments, getText, is, lineAndCharacter, toTokens } from "../utils/navigation";
+import { toSonarLine } from "./sonar-utils";
 
 export default function getHighlighting(sourceFile: ts.SourceFile): { highlights: HighlightedToken[] } {
   const highlights: HighlightedToken[] = [];
@@ -93,10 +94,6 @@ function highlightComment(
     endCol: endPosition.character,
     textType: highlightKind,
   };
-}
-
-function toSonarLine(line: number) {
-  return line + 1;
 }
 
 export type SonarTypeOfText = "constant" | "comment" | "structured_comment" | "keyword" | "string";
