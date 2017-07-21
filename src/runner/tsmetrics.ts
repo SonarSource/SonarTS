@@ -43,7 +43,8 @@ process.stdin.on("end", () => {
 
 export function processRequest(inputString: string): any {
   const input = JSON.parse(inputString);
-  const sourceFile = parseString(input.fileContent); // TODO manage ScriptKind
+  const scriptKind = input.filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  const sourceFile = parseString(input.fileContent, scriptKind);
   const output: any = {};
   sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
   return output;
