@@ -22,7 +22,7 @@ import { processRequest } from "../../src/runner/tsmetrics";
 import { parseString } from "../../src/utils/parser";
 
 it("should process input", () => {
-  const result = processRequest(`{"fileContent":"function x(){}"}`);
+  const result = processRequest(`{"fileContent":"function x(){}", "filepath": "file.ts"}`);
   expect(result).toEqual({
     highlights: [{ startLine: 1, startCol: 0, endLine: 1, endCol: 8, textType: "keyword" }],
     cpdTokens: [
