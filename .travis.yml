@@ -6,7 +6,7 @@ node_js:
 script:
   - yarn build
   - yarn test
-  - ./travis.sh
+  - node scripts/analyse.js
   - yarn ruling
   - yarn lint
   - yarn license-check
