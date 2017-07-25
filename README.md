@@ -18,6 +18,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
+* `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`])
 
 [`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
@@ -32,6 +33,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 [`no-inconsistent-return`]: ./docs/rules/no-inconsistent-return.md
 [`no-useless-increment`]: ./docs/rules/no-useless-increment.md
 [`no-unconditional-jump`]: ./docs/rules/no-unconditional-jump.md
+[`no-misleading-array-reverse`]: ./docs/rules/no-misleading-array-reverse.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
