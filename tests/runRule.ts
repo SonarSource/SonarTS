@@ -94,6 +94,21 @@ function parseErrorsFromMarkup(source: string): LintError[] {
         startPos: { col: startColumn, line: errorLine },
       });
     }
+
+    const multiLineMatch = line.match(/\[(\d+):(\d+)-(\d+):(\d+)\].*{{/);
+    if (multiLineMatch) {
+      const startLine = Number(multiLineMatch[1]);
+      const startColumn = Number(multiLineMatch[2]);
+      const endLine = Number(multiLineMatch[3]);
+      const endColumn = Number(multiLineMatch[4]);
+      const message = line.match(/\{\{(.+)\}\}/)[1];
+
+      errors.push({
+        endPos: { col: endColumn, line: endLine },
+        message,
+        startPos: { col: startColumn, line: startLine },
+      });
+    }
   });
 
   return errors;
