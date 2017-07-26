@@ -17,6 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import * as fs from "fs";
 import * as ts from "typescript";
 import { parseString } from "../utils/parser";
 import getCpdTokens from "./cpd";
@@ -43,9 +44,15 @@ process.stdin.on("end", () => {
 
 export function processRequest(inputString: string): any {
   const input = JSON.parse(inputString);
-  const scriptKind = input.filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-  const sourceFile = parseString(input.fileContent, scriptKind);
-  const output: any = {};
-  sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
-  return output;
+  const result: any[] = [];
+  input.filepaths.forEach((filepath: string) => {
+    const scriptKind = filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+    const fileContent = fs.readFileSync(filepath, "utf8");
+    const sourceFile = parseString(fileContent, scriptKind);
+    const output: any = {filepath};
+    sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
+    result.push(output);
+  });
+
+  return result;
 }
