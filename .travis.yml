@@ -1,12 +1,12 @@
 language: node_js
 
 node_js:
-  - "7"
+  - "8"
 
 script:
   - yarn build
   - yarn test
-  - ./travis.sh
+  - node scripts/analyse.js
   - yarn ruling
   - yarn lint
   - yarn license-check
