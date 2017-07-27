@@ -38,7 +38,7 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public static MESSAGE = "Move this array update to a separate call.";
+  public static MESSAGE = 'Move this array "reverse" operation to a separate statement.';
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
@@ -46,26 +46,36 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
-  public visitCallExpression(node: ts.CallExpression) {
+  public visitCallExpression(callExpression: ts.CallExpression) {
+    // first, take all call expressions: `foo()`
+
+    // then check that:
+    // * callee is a property access expression
+    // * left part of callee is array
+    // * the property name is "reverse": `foo.reverse()`
     if (
-      // a.b
-      this.isPropertyAccessExpression(node.expression) &&
-      // a.b or a.b.c
-      this.isIdentifierOrPropertyAccessExpression(node.expression.expression) &&
-      // a is array
-      this.isArray(node.expression.expression) &&
-      // only a.reverse
-      node.expression.name.text === "reverse" &&
-      this.isForbiddenOperation(node)
+      this.isPropertyAccessExpression(callExpression.expression) &&
+      this.isArray(callExpression.expression.expression) &&
+      callExpression.expression.name.text === "reverse"
     ) {
-      this.addFailureAtNode(node, Rule.MESSAGE);
+      const propertyAccessExpression = callExpression.expression.expression;
+
+      // then check that the left part of the property access expression is:
+      // * identifier: `foo.reverse()`
+      // * another property access expression: `foo.bar.reverse()`
+      if (this.isIdentifierOrPropertyAccessExpression(propertyAccessExpression)) {
+        // then check if we face one of the forbidden usages
+        if (this.isForbiddenOperation(callExpression)) {
+          this.addFailureAtNode(callExpression, Rule.MESSAGE);
+        }
+      }
     }
 
-    super.visitCallExpression(node);
+    super.visitCallExpression(callExpression);
   }
 
-  private isPropertyAccessExpression(node?: ts.Node): node is ts.PropertyAccessExpression {
-    return node != null && node.kind === ts.SyntaxKind.PropertyAccessExpression;
+  private isPropertyAccessExpression(node: ts.Node): node is ts.PropertyAccessExpression {
+    return node.kind === ts.SyntaxKind.PropertyAccessExpression;
   }
 
   private isArray(node: ts.Node): boolean {
@@ -74,14 +84,18 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private isIdentifierOrPropertyAccessExpression(node: ts.Node): boolean {
-    return node.kind === ts.SyntaxKind.Identifier || node.kind === ts.SyntaxKind.PropertyAccessExpression;
+    return node.kind === ts.SyntaxKind.Identifier || this.isPropertyAccessExpression(node);
   }
 
   private isForbiddenOperation(node: ts.Node): boolean {
     return (
+      // const a = b.reverse()
       this.isForbiddenVariableDeclaration(node) ||
+      // a = b.reverse();
       this.isForbiddenBinaryExpression(node) ||
+      // foo(b.reverse())
       this.isForbiddenCallExpression(node) ||
+      // foo(b => b.reverse())
       this.isForbiddenArrowFunction(node)
     );
   }

@@ -3,7 +3,7 @@
 let a = [];
 
 const b = a.reverse();
-//        ^^^^^^^^^^^  {{Move this array update to a separate call.}}
+//        ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 
 // ok, there is `slice`
 a.slice().reverse().forEach(() => {});
@@ -15,11 +15,11 @@ a.reverse();
 a.map(() => true).reverse();
 
 a = a.reverse();
-//  ^^^^^^^^^^^  {{Move this array update to a separate call.}}
+//  ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 
 function something(a: string[]) {}
 something(a.reverse());
-//        ^^^^^^^^^^^  {{Move this array update to a separate call.}}
+//        ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 
 // ok
 const c = [1, 2, 3].reverse();
@@ -31,7 +31,7 @@ function foo() {
   // fill keys...
 
   const x = keys.reverse();
-  //        ^^^^^^^^^^^^^^  {{Move this array update to a separate call.}}
+  //        ^^^^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 
   return keys.reverse();
 }
@@ -41,21 +41,21 @@ class Bar {
 
   public method() {
     const b = this.field.reverse();
-    //        ^^^^^^^^^^^^^^^^^^^^  {{Move this array update to a separate call.}}
+    //        ^^^^^^^^^^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 
     // ok
     this.field.reverse();
 
     // ok
-    const c = this.getField().reverse();
+    const c = this.getFieldCopy().reverse();
   }
 
-  public getField() {
+  public getFieldCopy() {
     return [...this.field];
   }
 }
 
-function reverse(s: string): string {
+function change(s: string): string {
   // ok
   return s.split("").reverse().join();
 }
@@ -70,5 +70,5 @@ const notArrayReversed = notArray.reverse();
 
 function qux(a: string[][]) {
   return a.map(b => b.reverse());
-  //                ^^^^^^^^^^^  {{Move this array update to a separate call.}}
+  //                ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 }
