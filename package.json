@@ -9,7 +9,7 @@
   "scripts": {
     "watch-cfg-viewer": "webpack-dev-server",
     "clear": "rm -rf lib/*",
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "build": "npm run clear && tsc -p . && npm run build-cfg && webpack",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer/",
     "lint": "tslint --type-check --project tsconfig.json -c tslint.json 'src/**/*.ts'",
