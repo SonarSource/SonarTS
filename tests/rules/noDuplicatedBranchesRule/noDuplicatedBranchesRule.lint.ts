@@ -169,3 +169,16 @@ switch (a) {
   case 2:
     third();
 }
+
+switch (a) {
+  case 1: {
+    first();
+    second();
+    break;
+  }
+  default: {
+    // [173:11-178:4] {{This case's code block is the same as the block for the case on line 174.}}
+    first();
+    second();
+  }
+}

@@ -129,7 +129,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private getLine(node: ts.Node): number {
-    return this.getSourceFile().getLineAndCharacterOfPosition(node.getStart(this.getSourceFile())).line + 1;
+    return this.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line + 1;
   }
 
   private getLastLine(node: ts.Node): number {
