@@ -44,15 +44,12 @@ process.stdin.on("end", () => {
 
 export function processRequest(inputString: string): any {
   const input = JSON.parse(inputString);
-  const result: any[] = [];
-  input.filepaths.forEach((filepath: string) => {
+  return input.filepaths.map((filepath: string) => {
     const scriptKind = filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
     const fileContent = fs.readFileSync(filepath, "utf8");
     const sourceFile = parseString(fileContent, scriptKind);
-    const output: any = {filepath};
+    const output: any = { filepath };
     sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
-    result.push(output);
+    return output;
   });
-
-  return result;
 }
