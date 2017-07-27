@@ -2,6 +2,7 @@
 .sonar/
 .sonarlint/
 .scannerwork/
+.idea/
 node_modules/
 coverage/
 lib/
