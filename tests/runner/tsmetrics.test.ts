@@ -17,27 +17,36 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+jest.mock("fs", () => ({
+  readFileSync: () => "function x(){}",
+}));
+
+import * as path from "path";
 import * as ts from "typescript";
 import { processRequest } from "../../src/runner/tsmetrics";
 import { parseString } from "../../src/utils/parser";
 
 it("should process input", () => {
-  const result = processRequest(`{"fileContent":"function x(){}", "filepath": "file.ts"}`);
-  expect(result).toEqual({
-    highlights: [{ startLine: 1, startCol: 0, endLine: 1, endCol: 8, textType: "keyword" }],
-    cpdTokens: [
-      { startLine: 1, startCol: 0, endLine: 1, endCol: 8, image: "function" },
-      { startLine: 1, startCol: 9, endLine: 1, endCol: 10, image: "x" },
-      { startLine: 1, startCol: 10, endLine: 1, endCol: 11, image: "(" },
-      { startLine: 1, startCol: 11, endLine: 1, endCol: 12, image: ")" },
-      { startLine: 1, startCol: 12, endLine: 1, endCol: 13, image: "{" },
-      { startLine: 1, startCol: 13, endLine: 1, endCol: 14, image: "}" },
-    ],
-    ncloc: [1],
-    commentLines: [],
-    nosonarLines: [],
-    statements: 0,
-    functions: 1,
-    classes: 0,
-  });
+  const filepath = path.join(__dirname, "file.ts");
+  const result = processRequest(`{"filepaths": ["${filepath}"]}`);
+  expect(result).toEqual([
+    {
+      filepath,
+      highlights: [{ startLine: 1, startCol: 0, endLine: 1, endCol: 8, textType: "keyword" }],
+      cpdTokens: [
+        { startLine: 1, startCol: 0, endLine: 1, endCol: 8, image: "function" },
+        { startLine: 1, startCol: 9, endLine: 1, endCol: 10, image: "x" },
+        { startLine: 1, startCol: 10, endLine: 1, endCol: 11, image: "(" },
+        { startLine: 1, startCol: 11, endLine: 1, endCol: 12, image: ")" },
+        { startLine: 1, startCol: 12, endLine: 1, endCol: 13, image: "{" },
+        { startLine: 1, startCol: 13, endLine: 1, endCol: 14, image: "}" },
+      ],
+      ncloc: [1],
+      commentLines: [],
+      nosonarLines: [],
+      statements: 0,
+      functions: 1,
+      classes: 0,
+    },
+  ]);
 });
