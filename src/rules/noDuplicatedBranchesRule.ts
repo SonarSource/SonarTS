@@ -55,8 +55,9 @@ class Walker extends tslint.RuleWalker {
       for (let i = 1; i < branches.length; i++) {
         if (this.hasRequiredSize(branches[i])) {
           for (let j = 0; j < i; j++) {
-            if (this.hasRequiredSize(branches[j]) && areEquivalent(branches[i], branches[j])) {
+            if (areEquivalent(branches[i], branches[j])) {
               this.addFailureAtNode(branches[i], Rule.formatMessage("branch", this.getLine(branches[j])));
+              break;
             }
           }
         }
@@ -77,11 +78,9 @@ class Walker extends tslint.RuleWalker {
             this.expandSingleBlockStatement(clauses[j].statements),
           );
 
-          if (
-            this.hasRequiredSize(secondClauseWithoutBreak) &&
-            areEquivalent(firstClauseWithoutBreak, secondClauseWithoutBreak)
-          ) {
+          if (areEquivalent(firstClauseWithoutBreak, secondClauseWithoutBreak)) {
             this.addFailureAtNode(clauses[i], Rule.formatMessage("case", this.getLine(clauses[j])));
+            break;
           }
         }
       }

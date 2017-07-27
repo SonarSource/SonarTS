@@ -182,3 +182,26 @@ switch (a) {
     second();
   }
 }
+
+// check that for each branch we generate only one issue
+switch (a) {
+  case 1:
+    first();
+    second();
+    break;
+  case 2:
+    // [192:2-196:10] {{This case's code block is the same as the block for the case on line 188.}}
+    first();
+    second();
+    break;
+  case 3:
+    // [197:2-201:10] {{This case's code block is the same as the block for the case on line 188.}}
+    first();
+    second();
+    break;
+  case 4:
+    // [202:2-206:10] {{This case's code block is the same as the block for the case on line 188.}}
+    first();
+    second();
+    break;
+}

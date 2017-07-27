@@ -1,5 +1,5 @@
 src/TypeScript/src/compiler/checker.ts: 21828,21828,21828,21828
-src/console/src/actions/gettingStarted.tsx: 219,223,223,227,227,227
+src/console/src/actions/gettingStarted.tsx: 219,223,227
 src/console/src/views/models/FieldPopup/FieldLabel.tsx: 175
 src/console/src/views/models/FieldPopup/EditValueInput.tsx: 154
 src/vscode/build/lib/i18n.ts: 653

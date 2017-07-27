@@ -1,4 +1,4 @@
-# no-all-duplicated-branches
+# no-duplicated-branches
 
 Having two `cases` in a `switch` statement or two branches in an `if` chain with the same implementation is at best 
 duplicate code, and at worst a coding error. If the same logic is truly needed for both instances, then in an `if` 
@@ -104,5 +104,5 @@ else {
 
 ## Exceptions
 
-Blocks in an `if` chain that contain a single line of code are ignored, as are blocks in a `switc`h statement that 
+Blocks in an `if` chain that contain a single line of code are ignored, as are blocks in a `switch` statement that 
 contain a single line of code with or without a following break.
