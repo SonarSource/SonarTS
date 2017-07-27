@@ -74,17 +74,17 @@ to enable TypeScript support.
 
 To run unit tests:
 ```
-yarn test
+npm test
 ```
 
 To run unit tests in watch mode:
 ```
-yarn test -- --watch
+npm test -- --watch
 ```
 
 And finally to run unit tests with coverage:
 ```
-yarn test -- --coverage
+npm test -- --coverage
 ```
 When you run tests with coverage, the `coverage/` directory will be created at the root. You can
 open the web version of the coverage report `coverage/lcov-report/index.html` to see which lines are covered by tests.
@@ -101,10 +101,10 @@ To have this code base locally:
 
 To run the ruling test:
 ```
-yarn ruling
-yarn ruling -- --rule <RuleFileName> # to run ruling for a single rule
-yarn ruling -- --update # to update the snapshots
-yarn ruling -- --rule <RuleFileName> --update # it is possible to combine both options
+npm run ruling
+npm run ruling -- --rule <RuleFileName> # to run ruling for a single rule
+npm run ruling -- --update # to update the snapshots
+npm run ruling -- --rule <RuleFileName> --update # it is possible to combine both options
 ```
 
 ### Tools we use
