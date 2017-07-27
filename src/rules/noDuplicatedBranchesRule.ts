@@ -69,11 +69,13 @@ class Walker extends tslint.RuleWalker {
   public visitSwitchStatement(node: ts.SwitchStatement) {
     const { clauses } = node.caseBlock;
     for (let i = 1; i < clauses.length; i++) {
-      const firstClauseWithoutBreak = this.takeWithoutBreak(clauses[i].statements);
+      const firstClauseWithoutBreak = this.takeWithoutBreak(this.expandSingleBlockStatement(clauses[i].statements));
 
       if (this.hasRequiredSize(firstClauseWithoutBreak)) {
         for (let j = 0; j < i; j++) {
-          const secondClauseWithoutBreak = this.takeWithoutBreak(clauses[j].statements);
+          const secondClauseWithoutBreak = this.takeWithoutBreak(
+            this.expandSingleBlockStatement(clauses[j].statements),
+          );
 
           if (
             this.hasRequiredSize(secondClauseWithoutBreak) &&
@@ -89,12 +91,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private hasRequiredSize(node: ts.Node | ts.Node[]) {
-    let nodes = Array.isArray(node) ? node : node.getChildren();
-
-    // expand case 1: { ... }
-    if (nodes.length === 1 && this.isBlock(nodes[0])) {
-      nodes = nodes[0].getChildren();
-    }
+    const nodes = Array.isArray(node) ? node : node.getChildren();
 
     const children = nodes.filter(
       child => child.kind !== ts.SyntaxKind.OpenBraceToken && child.kind !== ts.SyntaxKind.CloseBraceToken,
@@ -124,8 +121,8 @@ class Walker extends tslint.RuleWalker {
     return node.kind === ts.SyntaxKind.IfStatement;
   }
 
-  private isBlock(node: ts.Node): node is ts.Block {
-    return node.kind === ts.SyntaxKind.Block;
+  private isBlock(node?: ts.Node): node is ts.Block {
+    return node != null && node.kind === ts.SyntaxKind.Block;
   }
 
   private getLine(node: ts.Node): number {
@@ -136,9 +133,14 @@ class Walker extends tslint.RuleWalker {
     return this.getSourceFile().getLineAndCharacterOfPosition(node.getEnd()).line + 1;
   }
 
-  private takeWithoutBreak(nodes: ts.NodeArray<ts.Node>) {
+  private takeWithoutBreak(nodes: ts.Node[]) {
     return nodes.length > 0 && nodes[nodes.length - 1].kind === ts.SyntaxKind.BreakStatement
       ? nodes.slice(0, -1)
       : nodes;
+  }
+
+  private expandSingleBlockStatement(nodes: ts.Node[]) {
+    const child = nodes[0];
+    return this.isBlock(child) ? child.statements : nodes;
   }
 }
