@@ -39,10 +39,13 @@ export function parseFile(filename: string): { sourceFile: ts.SourceFile; progra
   compilerOptions.target = TARGET;
   const program = ts.createProgram([filename], compilerOptions);
 
-  if (program.getSyntacticDiagnostics().length > 0) {
-    const firstError = program.getSyntacticDiagnostics()[0];
-    const pos = firstError.file.getLineAndCharacterOfPosition(firstError.start);
-    throw new Error(`Parsing error at position [${pos.line + 1}, ${pos.character}]`);
+  const syntacticDiagnostics = program.getSyntacticDiagnostics();
+  if (syntacticDiagnostics.length > 0) {
+    const firstError = syntacticDiagnostics[0];
+    if (firstError.file != null && firstError.start != null) {
+      const pos = firstError.file.getLineAndCharacterOfPosition(firstError.start);
+      throw new Error(`Parsing error at position [${pos.line + 1}, ${pos.character}]`);
+    }
   }
 
   return { sourceFile: program.getSourceFile(filename), program };
