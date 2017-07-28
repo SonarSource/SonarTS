@@ -143,6 +143,6 @@ function isIdentifier(node: ts.Node): node is ts.Identifier {
   return node.kind === ts.SyntaxKind.Identifier;
 }
 
-function getSymbol(node: ts.Node, program: ts.Program): ts.Symbol {
+function getSymbol(node: ts.Node, program: ts.Program): ts.Symbol | undefined {
   return program.getTypeChecker().getSymbolAtLocation(node);
 }

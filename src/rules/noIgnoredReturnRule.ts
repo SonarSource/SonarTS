@@ -237,8 +237,9 @@ class Walker extends Lint.ProgramAwareRuleWalker {
       return typeAsString;
     }
 
-    if (type.getSymbol()) {
-      const name = type.getSymbol().getName();
+    const symbol = type.getSymbol();
+    if (symbol) {
+      const name = symbol.getName();
       switch (name) {
         case "Array":
         case "Date":
