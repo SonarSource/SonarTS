@@ -91,8 +91,14 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     return node.kind === ts.SyntaxKind.Identifier;
   }
 
+  private isGetAccessor(node: ts.Node): boolean {
+    const { declarations } = this.getTypeChecker().getSymbolAtLocation(node);
+    return declarations != null && declarations.length === 1 && declarations[0].kind === ts.SyntaxKind.GetAccessor;
+  }
+
   private isIdentifierOrPropertyAccessExpression(node: ts.Node): boolean {
-    return this.isIdentifier(node) || this.isPropertyAccessExpression(node);
+    // exclude class getters from consideration
+    return this.isIdentifier(node) || (this.isPropertyAccessExpression(node) && !this.isGetAccessor(node));
   }
 
   private isForbiddenOperation(node: ts.Node): boolean {

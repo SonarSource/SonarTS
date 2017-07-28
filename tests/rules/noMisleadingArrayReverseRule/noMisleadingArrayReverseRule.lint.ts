@@ -76,3 +76,17 @@ function qux(a: string[][]) {
   return a.map(b => b.reverse());
   //                ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 }
+
+class WithGetter {
+  _groups: string[];
+
+  public get groups() {
+    return this._groups.slice(0);
+  }
+
+  public foo() {
+    // ok, using getter
+    const groups = this.groups.reverse();
+    return groups;
+  }
+}
