@@ -120,8 +120,8 @@ class Walker extends tslint.RuleWalker {
     return node.kind === ts.SyntaxKind.IfStatement;
   }
 
-  private isBlock(node?: ts.Node): node is ts.Block {
-    return node != null && node.kind === ts.SyntaxKind.Block;
+  private isBlock(node: ts.Node): node is ts.Block {
+    return node.kind === ts.SyntaxKind.Block;
   }
 
   private getLine(node: ts.Node): number {
@@ -139,7 +139,6 @@ class Walker extends tslint.RuleWalker {
   }
 
   private expandSingleBlockStatement(nodes: ts.Node[]) {
-    const child = nodes[0];
-    return this.isBlock(child) ? child.statements : nodes;
+    return nodes.length === 1 && this.isBlock(nodes[0]) ? (nodes[0] as ts.Block).statements : nodes;
   }
 }
