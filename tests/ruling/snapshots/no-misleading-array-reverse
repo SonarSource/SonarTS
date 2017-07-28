@@ -1,7 +1,1 @@
-src/postgraphql/src/postgres/inventory/paginator/PgPaginatorOrderingAttributes.ts: 111
-src/vscode/build/lib/nls.ts: 355
-src/vscode/src/vs/base/common/async.ts: 377
-src/vscode/src/vs/editor/contrib/linesOperations/common/sortLinesCommand.ts: 80
-src/vscode/src/vs/editor/contrib/smartSelect/common/tokenSelectionSupport.ts: 66
 src/vscode/src/vs/workbench/browser/parts/editor/editorPart.ts: 652
-src/vscode/src/vs/workbench/parts/extensions/electron-browser/extensionsViewlet.ts: 287

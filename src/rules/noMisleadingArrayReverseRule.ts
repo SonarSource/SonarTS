@@ -58,16 +58,20 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       this.isArray(callExpression.expression.expression) &&
       callExpression.expression.name.text === "reverse"
     ) {
-      const propertyAccessExpression = callExpression.expression.expression;
+      // store `foo` from `foo.reverse()`, or `foo.bar` from `foo.bar.reverse()`, etc
+      const reversedArray = callExpression.expression.expression;
 
-      // then check that the left part of the property access expression is:
-      // * identifier: `foo.reverse()`
-      // * another property access expression: `foo.bar.reverse()`
-      if (this.isIdentifierOrPropertyAccessExpression(propertyAccessExpression)) {
-        // then check if we face one of the forbidden usages
-        if (this.isForbiddenOperation(callExpression)) {
-          this.addFailureAtNode(callExpression, Rule.MESSAGE);
-        }
+      if (
+        // check that the left part of the property access expression is:
+        // * identifier: `foo.reverse()`
+        // * another property access expression: `foo.bar.reverse()`
+        this.isIdentifierOrPropertyAccessExpression(reversedArray) &&
+        // exlude case `a = a.reverse()`
+        !this.isReverseInSelfAssignment(reversedArray, callExpression.parent) &&
+        // check if we face one of the forbidden usages
+        this.isForbiddenOperation(callExpression)
+      ) {
+        this.addFailureAtNode(callExpression, Rule.MESSAGE);
       }
     }
 
@@ -83,8 +87,12 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     return !!type.symbol && type.symbol.name === "Array";
   }
 
+  private isIdentifier(node: ts.Node): node is ts.Identifier {
+    return node.kind === ts.SyntaxKind.Identifier;
+  }
+
   private isIdentifierOrPropertyAccessExpression(node: ts.Node): boolean {
-    return node.kind === ts.SyntaxKind.Identifier || this.isPropertyAccessExpression(node);
+    return this.isIdentifier(node) || this.isPropertyAccessExpression(node);
   }
 
   private isForbiddenOperation(node: ts.Node): boolean {
@@ -105,7 +113,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private isForbiddenBinaryExpression(node: ts.Node): boolean {
-    return node.parent != null && node.parent.kind === ts.SyntaxKind.BinaryExpression;
+    return node.parent != null && this.isBinaryExpression(node.parent);
   }
 
   private isForbiddenCallExpression(node: ts.Node): boolean {
@@ -120,5 +128,21 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   private isForbiddenArrowFunction(node: ts.Node): boolean {
     const { parent } = node;
     return parent != null && parent.kind === ts.SyntaxKind.ArrowFunction && (parent as ts.ArrowFunction).body === node;
+  }
+
+  private isBinaryExpression(node?: ts.Node): node is ts.BinaryExpression {
+    return node != null && node.kind === ts.SyntaxKind.BinaryExpression;
+  }
+
+  private isReverseInSelfAssignment(reversedArray: ts.Expression, node?: ts.Node): boolean {
+    return (
+      // check assignment
+      this.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+      // check that identifiers on both sides are the same
+      this.isIdentifier(node.left) &&
+      this.isIdentifier(reversedArray) &&
+      node.left.text === reversedArray.text
+    );
   }
 }

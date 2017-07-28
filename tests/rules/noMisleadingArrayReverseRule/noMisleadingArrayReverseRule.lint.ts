@@ -1,6 +1,7 @@
 // tslint:disable
 
 let a = [];
+let d;
 
 const b = a.reverse();
 //        ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
@@ -14,7 +15,10 @@ a.reverse();
 // ok
 a.map(() => true).reverse();
 
+// ok, excluded
 a = a.reverse();
+
+d = a.reverse();
 //  ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 
 function something(a: string[]) {}
