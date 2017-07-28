@@ -3,6 +3,7 @@
   "rules": {
     "no-collection-size-mischeck": true,
     "no-all-duplicated-branches": true,
+    "no-duplicated-branches": true,
     "no-empty-destructuring": true,
     "no-use-of-empty-return-value": true,
     "no-identical-conditions": true,

@@ -7,6 +7,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 
 * Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
+* Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
@@ -21,6 +22,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 
 [`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
+[`no-duplicated-branches`]: ./docs/rules/no-duplicated-branches.md
 [`no-empty-destructuring`]: ./docs/rules/no-empty-destructuring.md
 [`no-identical-conditions`]: ./docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./docs/rules/no-identical-expressions.md
