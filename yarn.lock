@@ -2,6 +2,37 @@
 # yarn lockfile v1
 
 
+"@types/babel-core@^6.7.14":
+  version "6.25.0"
+  resolved "https://registry.yarnpkg.com/@types/babel-core/-/babel-core-6.25.0.tgz#e6439b193c3644cf3fbd24b05620876f76017313"
+  dependencies:
+    "@types/babel-template" "*"
+    "@types/babel-traverse" "*"
+    "@types/babel-types" "*"
+
+"@types/babel-template@*":
+  version "6.25.0"
+  resolved "https://registry.yarnpkg.com/@types/babel-template/-/babel-template-6.25.0.tgz#2505d7b55b88f821d98048b4fdf07b3b22563d30"
+  dependencies:
+    "@types/babel-types" "*"
+    "@types/babylon" "*"
+
+"@types/babel-traverse@*":
+  version "6.25.0"
+  resolved "https://registry.yarnpkg.com/@types/babel-traverse/-/babel-traverse-6.25.0.tgz#fff48b65c7ce77072d567ec9b400fd55b206b337"
+  dependencies:
+    "@types/babel-types" "*"
+
+"@types/babel-types@*":
+  version "6.25.1"
+  resolved "https://registry.yarnpkg.com/@types/babel-types/-/babel-types-6.25.1.tgz#ce8f126a4403e11e1b0033a424f11638afac7889"
+
+"@types/babylon@*":
+  version "6.16.2"
+  resolved "https://registry.yarnpkg.com/@types/babylon/-/babylon-6.16.2.tgz#062ce63b693d9af1c246f5aedf928bc9c30589c8"
+  dependencies:
+    "@types/babel-types" "*"
+
 "@types/glob@^5.0.30":
   version "5.0.30"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-5.0.30.tgz#1026409c5625a8689074602808d082b2867b8a51"
@@ -4200,10 +4231,11 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
-ts-jest@^20.0.3:
-  version "20.0.5"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-20.0.5.tgz#6cb151e718e8739529d0a79459e09f7280fe044f"
+ts-jest@^20.0.7:
+  version "20.0.7"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-20.0.7.tgz#82c99b9163f8c0a864a2b221238202fa1e623c26"
   dependencies:
+    "@types/babel-core" "^6.7.14"
     babel-core "^6.24.1"
     babel-plugin-istanbul "^4.1.4"
     babel-plugin-transform-es2015-modules-commonjs "^6.24.1"
@@ -4213,7 +4245,6 @@ ts-jest@^20.0.3:
     jest-util "^20.0.0"
     pkg-dir "^2.0.0"
     source-map-support "^0.4.4"
-    tsconfig "^6.0.0"
     yargs "^8.0.1"
 
 ts-node@^3.0.4:

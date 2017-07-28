@@ -5,7 +5,7 @@ node_js:
 
 script:
   - yarn build
-  - yarn test
+  - yarn test -- --coverage
   - node scripts/analyse.js
   - yarn ruling
   - yarn lint

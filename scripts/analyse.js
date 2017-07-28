@@ -33,6 +33,7 @@ if (branch === "master" && pullRequest === "false") {
       options: {
         "sonar.sources": "src",
         "sonar.tests": "tests",
+        "sonar.typescript.lcov.reportPaths": "coverage/lcov.info",
       },
     },
     () => {
