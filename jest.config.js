@@ -1,7 +1,13 @@
 module.exports = {
-  moduleFileExtensions: ['js', 'ts'],
-  transform: {
-    '^.+\\.ts$': '<rootDir>/node_modules/ts-jest/preprocessor.js'
+  globals: {
+    "ts-jest": {
+      skipBabel: true,
+    },
   },
-  testMatch: ['<rootDir>/tests/**/*.test.ts']
+  mapCoverage: true,
+  moduleFileExtensions: ["js", "ts"],
+  transform: {
+    "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+  },
+  testMatch: ["<rootDir>/tests/**/*.test.ts"],
 };
