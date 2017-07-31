@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 
-export class Rule extends tslint.Rules.AbstractRule {
+export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-self-assignment",
     description: "Variables should not be self-assigned",
@@ -40,19 +40,22 @@ export class Rule extends tslint.Rules.AbstractRule {
     return "Remove or correct this useless self-assignment.";
   }
 
-  public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+  public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
+    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Walker extends tslint.ProgramAwareRuleWalker {
   public visitBinaryExpression(expression: ts.BinaryExpression) {
-    if (
-      this.isAssignment(expression) &&
-      this.isIdentifier(expression.left) &&
-      expression.left.getText() === expression.right.getText()
-    ) {
-      this.addFailureAtNode(expression, Rule.formatMessage());
+    if (this.isAssignment(expression) && this.isIdentifier(expression.left)) {
+      if (this.isIdentifier(expression.right) && expression.left.text === expression.right.text) {
+        this.addFailureAtNode(expression, Rule.formatMessage());
+      }
+
+      if (this.isArrayReverseAssignment(expression.left, expression.right)) {
+        // a = a.reverse()
+        this.addFailureAtNode(expression, Rule.formatMessage());
+      }
     }
 
     super.visitBinaryExpression(expression);
@@ -62,7 +65,32 @@ class Walker extends tslint.RuleWalker {
     return expression.operatorToken.kind === ts.SyntaxKind.EqualsToken;
   }
 
-  private isIdentifier(expression: ts.Expression) {
+  private isIdentifier(expression: ts.Expression): expression is ts.Identifier {
     return expression.kind === ts.SyntaxKind.Identifier;
+  }
+
+  private isArrayReverseAssignment(left: ts.Identifier, right: ts.Expression): boolean {
+    // in case of `a = a.reverse()`, left is `a` and right is `a.reverse()`
+    return (
+      this.isCallExpression(right) &&
+      this.isPropertyAccessExpression(right.expression) &&
+      this.isIdentifier(right.expression.expression) &&
+      this.isArray(right.expression.expression) &&
+      right.expression.name.text === "reverse" &&
+      right.expression.expression.text === left.text
+    );
+  }
+
+  private isCallExpression(expression: ts.Expression): expression is ts.CallExpression {
+    return expression.kind === ts.SyntaxKind.CallExpression;
+  }
+
+  private isPropertyAccessExpression(expression: ts.Expression): expression is ts.PropertyAccessExpression {
+    return expression.kind === ts.SyntaxKind.PropertyAccessExpression;
+  }
+
+  private isArray(node: ts.Node): boolean {
+    const type = this.getTypeChecker().getTypeAtLocation(node);
+    return !!type.symbol && type.symbol.name === "Array";
   }
 }
