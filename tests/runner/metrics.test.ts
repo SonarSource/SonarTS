@@ -56,6 +56,12 @@ it("should return NOSONAR lines", () => {
   expect(metrics.findCommentLines(sourceFile).nosonarLines).toEqual([1, 2, 3]);
 });
 
+it("should return executable lines", () => {
+  // executable lines simply have trailling comments in the fixture file
+  const sourceFile = parseString(fs.readFileSync(path.join(__dirname, "./fixtures/executable-lines.ts"), "utf-8"));
+  expect(metrics.findExecutableLines(sourceFile)).toEqual(metrics.findCommentLines(sourceFile).commentLines);
+});
+
 it("should count classes", () => {
   const sourceFile = parseString(
     `class A { // 1

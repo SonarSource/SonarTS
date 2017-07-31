@@ -44,6 +44,7 @@ it("should process input", () => {
       ncloc: [1],
       commentLines: [],
       nosonarLines: [],
+      executableLines: [],
       statements: 0,
       functions: 1,
       classes: 0,

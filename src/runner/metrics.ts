@@ -25,6 +25,7 @@ export default function getMetrics(sourceFile: ts.SourceFile): Metrics {
   return {
     ncloc: findLinesOfCode(sourceFile),
     ...findCommentLines(sourceFile),
+    executableLines: findExecutableLines(sourceFile),
     functions: countFunctions(sourceFile),
     statements: countStatements(sourceFile),
     classes: countClasses(sourceFile),
@@ -35,6 +36,7 @@ export interface Metrics {
   ncloc: number[];
   commentLines: number[];
   nosonarLines: number[];
+  executableLines: number[];
   functions: number;
   statements: number;
   classes: number;
@@ -79,6 +81,38 @@ export function findCommentLines(sourceFile: ts.SourceFile): { commentLines: num
   }
 
   return { commentLines: Array.from(commentLines), nosonarLines: Array.from(nosonarLines) };
+}
+
+export function findExecutableLines(sourceFile: ts.SourceFile): number[] {
+  const EXECUTABLE_STATEMENT_KINDS = [
+    ts.SyntaxKind.DebuggerStatement,
+    ts.SyntaxKind.VariableStatement,
+    ts.SyntaxKind.LabeledStatement,
+    ts.SyntaxKind.ReturnStatement,
+    ts.SyntaxKind.BreakStatement,
+    ts.SyntaxKind.ContinueStatement,
+    ts.SyntaxKind.ThrowStatement,
+    ts.SyntaxKind.WithStatement,
+    ts.SyntaxKind.TryStatement,
+    ts.SyntaxKind.SwitchStatement,
+    ts.SyntaxKind.IfStatement,
+    ts.SyntaxKind.WhileStatement,
+    ts.SyntaxKind.DoStatement,
+    ts.SyntaxKind.ExpressionStatement,
+    ts.SyntaxKind.ForStatement,
+    ts.SyntaxKind.ForInStatement,
+    ts.SyntaxKind.ForOfStatement,
+  ];
+
+  const lines: Set<number> = new Set();
+
+  walk(sourceFile, node => {
+    if (EXECUTABLE_STATEMENT_KINDS.includes(node.kind)) {
+      lines.add(toSonarLine(lineAndCharacter(node.getStart(), sourceFile).line));
+    }
+  });
+
+  return Array.from(lines);
 }
 
 export function countClasses(sourceFile: ts.SourceFile): number {
