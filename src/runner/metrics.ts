@@ -17,50 +17,58 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as tslint from "tslint";
 import * as ts from "typescript";
-import { getComments, getCommentsAfter, getText, is, lineAndCharacter, toTokens } from "../utils/navigation";
+import { getComments, getCommentsAfter, getText, is, lineAndCharacter } from "../utils/navigation";
 import { toSonarLine } from "./sonar-utils";
 
-export default function getMetrics(
-  sourceFile: ts.SourceFile,
-): {
+export default function getMetrics(sourceFile: ts.SourceFile): Metrics {
+  return {
+    ncloc: findLinesOfCode(sourceFile),
+    ...findCommentLines(sourceFile),
+    functions: countFunctions(sourceFile),
+    statements: countStatements(sourceFile),
+    classes: countClasses(sourceFile),
+  };
+}
+
+export interface Metrics {
   ncloc: number[];
   commentLines: number[];
   nosonarLines: number[];
   functions: number;
   statements: number;
   classes: number;
-} {
+}
 
-  const linesOfCode: Set<number> = new Set();
-  const commentLines: Set<number> = new Set();
-  const nosonarLines: Set<number> = new Set();
-  const tokens = toTokens(sourceFile);
+export function findLinesOfCode(sourceFile: ts.SourceFile): number[] {
+  const lines: Set<number> = new Set();
 
-  // CODE
-  tokens.forEach(token => {
-    if (token.kind !== ts.SyntaxKind.EndOfFileToken) {
-      addLines(token.getStart(), token.getEnd(), linesOfCode, sourceFile);
+  walk(sourceFile, node => {
+    if (node.kind <= ts.SyntaxKind.OfKeyword && node.kind !== ts.SyntaxKind.EndOfFileToken) {
+      addLines(node.getStart(), node.getEnd(), lines, sourceFile);
     }
   });
 
-  // COMMENTS
+  return Array.from(lines);
+}
+
+export function findCommentLines(sourceFile: ts.SourceFile): { commentLines: number[]; nosonarLines: number[] } {
+  const commentLines: Set<number> = new Set();
+  const nosonarLines: Set<number> = new Set();
+
   // ignore header comments -> comments before first token
-  getCommentsAfter(tokens[0]).forEach(processComment);
-  tokens.slice(1).forEach(token => getComments(token).forEach(processComment));
+  let first = true;
 
-  const counter = new CounterWalker();
-  counter.walk(sourceFile);
-
-  return {
-    ncloc: Array.from(linesOfCode),
-    commentLines: Array.from(commentLines),
-    nosonarLines: Array.from(nosonarLines),
-    functions: counter.functions,
-    statements: counter.statements,
-    classes: counter.classes,
-  };
+  walk(sourceFile, node => {
+    if (node.kind <= ts.SyntaxKind.OfKeyword) {
+      if (first) {
+        first = false;
+        getCommentsAfter(node).forEach(processComment);
+      } else {
+        getComments(node).forEach(processComment);
+      }
+    }
+  });
 
   function processComment(comment: ts.CommentRange) {
     const content = getText(comment, sourceFile).substr(2);
@@ -69,35 +77,44 @@ export default function getMetrics(
     }
     addLines(comment.pos, comment.end, commentLines, sourceFile);
   }
+
+  return { commentLines: Array.from(commentLines), nosonarLines: Array.from(nosonarLines) };
 }
 
-class CounterWalker extends tslint.SyntaxWalker {
-  public functions = 0;
-  public statements = 0;
-  public classes = 0;
+export function countClasses(sourceFile: ts.SourceFile): number {
+  return walkAndCountIf(sourceFile, node => is(node, ts.SyntaxKind.ClassDeclaration, ts.SyntaxKind.ClassExpression));
+}
 
-  private static readonly FUNCTION_KINDS = [
+export function countFunctions(sourceFile: ts.SourceFile): number {
+  const FUNCTION_KINDS = [
     ts.SyntaxKind.FunctionDeclaration,
     ts.SyntaxKind.FunctionExpression,
     ts.SyntaxKind.MethodDeclaration,
     ts.SyntaxKind.ArrowFunction,
   ];
+  return walkAndCountIf(sourceFile, node => is(node, ...FUNCTION_KINDS));
+}
 
-  protected visitNode(node: ts.Node): void {
-    if (is(node, ts.SyntaxKind.ClassDeclaration, ts.SyntaxKind.ClassExpression)) {
-      this.classes++;
+export function countStatements(sourceFile: ts.SourceFile): number {
+  return walkAndCountIf(
+    sourceFile,
+    node => node.kind >= ts.SyntaxKind.VariableStatement && node.kind <= ts.SyntaxKind.DebuggerStatement,
+  );
+}
+
+function walk(node: ts.Node, walker: (node: ts.Node) => void): void {
+  walker(node);
+  node.getChildren().forEach(child => walk(child, walker));
+}
+
+function walkAndCountIf(root: ts.Node, condition: (node: ts.Node) => boolean): number {
+  let results = 0;
+  walk(root, node => {
+    if (condition(node)) {
+      results++;
     }
-
-    if (is(node, ...CounterWalker.FUNCTION_KINDS)) {
-      this.functions++;
-    }
-
-    if (node.kind >= ts.SyntaxKind.VariableStatement && node.kind <= ts.SyntaxKind.DebuggerStatement) {
-      this.statements++;
-    }
-
-    super.visitNode(node);
-  }
+  });
+  return results;
 }
 
 function addLines(start: number, end: number, lines: Set<number>, sourceFile: ts.SourceFile) {

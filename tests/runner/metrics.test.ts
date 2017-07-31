@@ -17,74 +17,76 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import getMetrics from "../../src/runner/metrics";
+import * as fs from "fs";
+import * as path from "path";
+import * as ts from "typescript";
+import * as metrics from "../../src/runner/metrics";
 import { parseString } from "../../src/utils/parser";
 
 it("should return lines of code and comment lines", () => {
-  const result = actual(
-  `/*
-  * header comment is ignored
-  */
-  class /*after first token*/ A {
+  const sourceFile = parseString(
+    `/*
+      * header comment is ignored
+      */
+     class /*after first token*/ A {
 
-     get b() { // comment
-       return \`hello
-        world\`;
+       get b() { // comment
+         return \`hello
+           world\`;
+       }
+       // comment
      }
-     // comment
-  }
-  /* multi
-  line
-  comment */
-  `,
+     /* multi
+     line
+     comment */`,
   );
-  expect(result.ncloc).toEqual([4, 6, 7, 8, 9, 11]);
-  expect(result.commentLines).toEqual([4, 6, 10, 12, 13, 14]);
+  expect(metrics.findLinesOfCode(sourceFile)).toEqual([4, 6, 7, 8, 9, 11]);
+  expect(metrics.findCommentLines(sourceFile).commentLines).toEqual([4, 6, 10, 12, 13, 14]);
 });
 
 it("should return NOSONAR lines", () => {
-  const result = actual(
-  `x; // NoSonar foo
-  y; /* NOSONAR */
-  // NOSONAR
+  const sourceFile = parseString(
+    `x; // NoSonar foo
+     y; /* NOSONAR */
+     // NOSONAR
 
-  z; // NOOOSONAR
-  z; // some comment
-  `,
+     z; // NOOOSONAR
+     z; // some comment`,
   );
-  expect(result.nosonarLines).toEqual([1, 2, 3]);
+  expect(metrics.findCommentLines(sourceFile).nosonarLines).toEqual([1, 2, 3]);
 });
 
 it("should count classes", () => {
-  const result = actual(
-  `class A { // 1
-    foo() {
-      return class {}; // 2
-    }
-  }`);
-  expect(result.classes).toEqual(2);
+  const sourceFile = parseString(
+    `class A { // 1
+       foo() {
+         return class {}; // 2
+       }
+     }`,
+  );
+  expect(metrics.countClasses(sourceFile)).toEqual(2);
 });
 
 it("should count functions", () => {
-  const result = actual(
-  `class A {
-    foo() { // 1
-      return function(){};// 2
-    }
-    get x() { // don't count
-      return 42;
-    }
-  }
-  function bar(){ // 3
-    return ()=>42; // 4
-  }
-  function * gen(){} // 5`);
-  expect(result.functions).toEqual(5);
+  const sourceFile = parseString(
+    `class A {
+       foo() { // 1
+         return function(){};// 2
+       }
+       get x() { // don't count
+         return 42;
+       }
+     }
+     function bar(){ // 3
+       return ()=>42; // 4
+     }
+     function * gen(){} // 5`,
+  );
+  expect(metrics.countFunctions(sourceFile)).toEqual(5);
 });
 
 it("should count statements", () => {
-  const result = actual(
-  `
+  const sourceFile = parseString(`
   let x = 42; // 1
   ; // 2
   foo(); // 3
@@ -99,10 +101,5 @@ it("should count statements", () => {
   } catch (e) {}
   finally {}
   `);
-  expect(result.statements).toEqual(10);
+  expect(metrics.countStatements(sourceFile)).toEqual(10);
 });
-
-function actual(content: string): any {
-  const sourceFile = parseString(content);
-  return getMetrics(sourceFile);
-}
