@@ -18,6 +18,7 @@
     "no-misleading-array-reverse": true,
     "no-empty-nested-blocks": false,
     "no-multiline-string-literals": true,
-    "no-array-delete": true
+    "no-array-delete": true,
+    "no-dead-stores": true
   }
 }
