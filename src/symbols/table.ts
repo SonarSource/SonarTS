@@ -20,7 +20,23 @@
 import * as ts from "typescript";
 
 export class SymbolTable {
-  public registerUsage(symbol: ts.Symbol, node: ts.Node) {
-    
+
+  private usages = new Map<ts.Node, Usage>();
+
+  public registerUsage(symbol: ts.Symbol, node: ts.Node, flags: UsageFlag) {
+    this.usages.set(node, new Usage(symbol, flags));
   }
+
+  public getUsage(node: ts.Node): Usage | undefined {
+    return this.usages.get(node);
+  }
+}
+
+export class Usage {
+  constructor(public readonly symbol: ts.Symbol, public readonly flags: UsageFlag) {}
+}
+
+export enum UsageFlag {
+  DECLARATION = 1,
+  WRITE = 2,
 }

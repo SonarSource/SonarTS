@@ -19,7 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import { SymbolTable } from "./symbolTable";
+import { SymbolTable, UsageFlag } from "./table";
 
 export class SymbolTableBuilder extends tslint.SyntaxWalker {
   private table = new SymbolTable();
@@ -34,10 +34,24 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     super();
   }
 
-  protected visitIdentifier(node: ts.Identifier): void {
-    const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
-    if (symbol) {
-      this.table.registerUsage(symbol, node);
+  protected visitBinaryExpression(exp: ts.BinaryExpression): void {
+    if (exp.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+      this.registerUsage(exp.left, UsageFlag.WRITE);
     }
   }
+
+  protected visitIdentifier(node: ts.Identifier): void {
+    this.registerUsage(node, UsageFlag.DECLARATION);
+  }
+
+  private registerUsage(node: ts.Node, flags: UsageFlag) {
+    this.symbol(node, symbol => this.table.registerUsage(symbol, node, flags));
+  }
+
+  private symbol(node: ts.Node, operationWithSymbol: (symbol: ts.Symbol) => void = () => {}): ts.Symbol | undefined {
+    const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
+    if (symbol) operationWithSymbol(symbol);
+    return symbol;
+  }
+
 }

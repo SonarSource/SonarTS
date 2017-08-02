@@ -17,14 +17,23 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import * as path from "path";
 import * as ts from "typescript";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
+import { UsageFlag } from "../../src/symbols/table";
 import { descendants, is } from "../../src/utils/navigation";
 import { parseFile } from "../../src/utils/parser";
 
-it("should distinguish between declaration and write", () => {
-  const { sourceFile, program } = parseFile("sample_symbols.ts");
+it("should identify declarations", () => {
+  const { sourceFile, program } = parseFile(path.join(__dirname, "sample_symbols.ts"));
   const symbols = SymbolTableBuilder.build(sourceFile, program);
-  const declaration = descendants(sourceFile).filter(node => is(node, ts.SyntaxKind.Identifier)).find(node => node.getText().includes("a"));
-  expect(symbols.getUsage(declaration)).toBe("a");
+  const declaration = descendants(sourceFile).filter(node => is(node, ts.SyntaxKind.Identifier))[0];
+  expect(symbols.getUsage(declaration).flags & UsageFlag.DECLARATION).not.toBe(0);
+});
+
+it("should distinguish between declaration and write", () => {
+  const { sourceFile, program } = parseFile(path.join(__dirname, "sample_symbols.ts"));
+  const symbols = SymbolTableBuilder.build(sourceFile, program);
+  const write = descendants(sourceFile).filter(node => is(node, ts.SyntaxKind.Identifier))[1];
+  expect(symbols.getUsage(write).flags & UsageFlag.WRITE).not.toBe(0);
 });
