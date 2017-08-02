@@ -20,6 +20,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`])
+* Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 
 [`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
@@ -36,6 +37,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 [`no-useless-increment`]: ./docs/rules/no-useless-increment.md
 [`no-unconditional-jump`]: ./docs/rules/no-unconditional-jump.md
 [`no-misleading-array-reverse`]: ./docs/rules/no-misleading-array-reverse.md
+[`no-empty-nested-blocks`]: ./docs/rules/no-empty-nested-blocks.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 

@@ -15,6 +15,7 @@
     "no-misspelled-operator": true,
     "no-inconsistent-return": false,
     "no-unconditional-jump": true,
-    "no-misleading-array-reverse": true
+    "no-misleading-array-reverse": true,
+    "no-empty-nested-blocks": false
   }
 }
