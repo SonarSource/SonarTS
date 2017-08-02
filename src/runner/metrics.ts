@@ -51,7 +51,7 @@ export function findLinesOfCode(sourceFile: ts.SourceFile): number[] {
     }
   });
 
-  return Array.from(lines);
+  return Array.from(lines).sort((a, b) => a - b);
 }
 
 export function findCommentLines(sourceFile: ts.SourceFile): { commentLines: number[]; nosonarLines: number[] } {
@@ -80,7 +80,10 @@ export function findCommentLines(sourceFile: ts.SourceFile): { commentLines: num
     addLines(comment.pos, comment.end, commentLines, sourceFile);
   }
 
-  return { commentLines: Array.from(commentLines), nosonarLines: Array.from(nosonarLines) };
+  return {
+    commentLines: Array.from(commentLines).sort((a, b) => a - b),
+    nosonarLines: Array.from(nosonarLines).sort((a, b) => a - b),
+  };
 }
 
 export function findExecutableLines(sourceFile: ts.SourceFile): number[] {
@@ -112,7 +115,7 @@ export function findExecutableLines(sourceFile: ts.SourceFile): number[] {
     }
   });
 
-  return Array.from(lines);
+  return Array.from(lines).sort((a, b) => a - b);
 }
 
 export function countClasses(sourceFile: ts.SourceFile): number {
@@ -137,8 +140,14 @@ export function countStatements(sourceFile: ts.SourceFile): number {
 }
 
 function walk(node: ts.Node, walker: (node: ts.Node) => void): void {
-  walker(node);
-  node.getChildren().forEach(child => walk(child, walker));
+  const stack: ts.Node[] = [node];
+  const toWalk = [];
+  while (stack.length) {
+    const currentNode = stack.pop() as ts.Node;
+    toWalk.push(currentNode);
+    stack.push(...currentNode.getChildren());
+  }
+  toWalk.reverse().forEach(walker);
 }
 
 function walkAndCountIf(root: ts.Node, condition: (node: ts.Node) => boolean): number {
