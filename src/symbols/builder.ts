@@ -34,23 +34,42 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     super();
   }
 
-  protected visitBinaryExpression(exp: ts.BinaryExpression): void {
-    if (exp.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
-      this.registerUsage(exp.left, UsageFlag.WRITE);
+  protected visitIdentifier(node: ts.Identifier) {
+    this.registerUsage(node, UsageFlag.READ);
+  }
+
+  protected visitBinaryExpression(node: ts.BinaryExpression) {
+    if (node.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+      const leftSide = node.left;
+      if (leftSide.kind === ts.SyntaxKind.Identifier) {
+        this.registerUsage(leftSide as ts.Identifier, UsageFlag.WRITE);
+      }
+    } else {
+      this.walkChildren(node);
     }
   }
 
-  protected visitIdentifier(node: ts.Identifier): void {
-    this.registerUsage(node, UsageFlag.DECLARATION);
+  protected visitVariableDeclaration(node: ts.VariableDeclaration) {
+    this.addVariable(node);
   }
 
-  private registerUsage(node: ts.Node, flags: UsageFlag) {
-    this.symbol(node, symbol => this.table.registerUsage(symbol, node, flags));
+  protected visitParameterDeclaration(node: ts.ParameterDeclaration) {
+    this.addVariable(node);
   }
 
-  private symbol(node: ts.Node, operationWithSymbol: (symbol: ts.Symbol) => void = () => {}): ts.Symbol | undefined {
-    const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
-    if (symbol) operationWithSymbol(symbol);
+  private addVariable(node: ts.VariableDeclaration | ts.ParameterDeclaration) {
+    const declarationName = node.name;
+    if (declarationName.kind === ts.SyntaxKind.Identifier) {
+      let usageFlags = UsageFlag.DECLARATION;
+      if (node.initializer) usageFlags += UsageFlag.WRITE;
+      this.registerUsage(declarationName, usageFlags);
+    }
+    if (node.initializer) this.walkChildren(node.initializer);
+  }
+
+  private registerUsage(identifier: ts.Identifier, flags: UsageFlag) {
+    const symbol = this.program.getTypeChecker().getSymbolAtLocation(identifier);
+    if (symbol) this.table.registerUsage(symbol, identifier, flags);
     return symbol;
   }
 

@@ -20,20 +20,52 @@
 import * as path from "path";
 import * as ts from "typescript";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
-import { UsageFlag } from "../../src/symbols/table";
+import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { descendants, is } from "../../src/utils/navigation";
 import { parseFile } from "../../src/utils/parser";
 
-it("should identify declarations", () => {
-  const { sourceFile, program } = parseFile(path.join(__dirname, "sample_symbols.ts"));
-  const symbols = SymbolTableBuilder.build(sourceFile, program);
-  const declaration = descendants(sourceFile).filter(node => is(node, ts.SyntaxKind.Identifier))[0];
-  expect(symbols.getUsage(declaration).flags & UsageFlag.DECLARATION).not.toBe(0);
+it("variable declarations", () => {
+  const {symbols, sourceFile} = buildSymbolTable();
+  expect(symbols.getUsage(getIdentifier(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "variable")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "constant")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "parameter")).flags).toBe(UsageFlag.DECLARATION);
 });
 
-it("should distinguish between declaration and write", () => {
+it("writes", () => {
+  const {symbols, sourceFile} = buildSymbolTable();
+  expect(symbols.getUsage(getIdentifier(sourceFile, "local", 4)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "decAndInit")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "pWithDefault")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+});
+
+it("reads", () => {
+  const {symbols, sourceFile} = buildSymbolTable();
+  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 9)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 10)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 12)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 13)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 15)).flags).toBe(UsageFlag.READ);
+});
+
+it("identify read-writes", () => {
+
+});
+
+function getIdentifier(sourceFile: ts.SourceFile, identifierText: string, line?: number): ts.Identifier | undefined {
+  const identifiers = descendants(sourceFile)
+    .filter(node => is(node, ts.SyntaxKind.Identifier))
+    .map(node => node as ts.Identifier)
+    .filter(node => node.getText() === identifierText);
+  if (line) {
+    return identifiers.find(node => sourceFile.getLineAndCharacterOfPosition(node.getEnd()).line === line - 1);
+  } else {
+    return identifiers[0];
+  }
+}
+
+function buildSymbolTable(): {symbols: SymbolTable, sourceFile: ts.SourceFile} {
   const { sourceFile, program } = parseFile(path.join(__dirname, "sample_symbols.ts"));
   const symbols = SymbolTableBuilder.build(sourceFile, program);
-  const write = descendants(sourceFile).filter(node => is(node, ts.SyntaxKind.Identifier))[1];
-  expect(symbols.getUsage(write).flags & UsageFlag.WRITE).not.toBe(0);
-});
+  return { symbols, sourceFile };
+}

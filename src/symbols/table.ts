@@ -39,4 +39,5 @@ export class Usage {
 export enum UsageFlag {
   DECLARATION = 1,
   WRITE = 2,
+  READ = 4,
 }
