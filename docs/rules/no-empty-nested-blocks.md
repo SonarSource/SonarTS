@@ -11,4 +11,4 @@ for (let i = 0; i < 42; i++) {}  // Empty on purpose or missing piece of code ?
 
 ## Exceptions
 
-When a block contains a comment, this block is not considered to be empty.
+When a block contains a comment, this block is not considered to be empty. Moreover `catch` blocks are ignored.
