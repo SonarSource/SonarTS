@@ -1,8 +1,10 @@
 .sonarlint/
+.scannerwork/
 .sonar/
 .vscode/
 coverage/
 docs/
+scripts/
 src/
 tests/
 typescript-test-sources/
