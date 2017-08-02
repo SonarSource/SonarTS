@@ -82,6 +82,36 @@ it("should replace strings", () => {
   expect(actual("true")[0].image).toBe("true");
 });
 
+it("should process JSX syntax", () => {
+  const result = actual("<foo/>");
+  expect(result.length).toBe(4);
+  expect(result).toContainEqual(token(1, 0, 1, 1, "<"));
+  expect(result).toContainEqual(token(1, 1, 1, 4, "foo"));
+  expect(result).toContainEqual(token(1, 4, 1, 5, "/"));
+  expect(result).toContainEqual(token(1, 5, 1, 6, ">"));
+});
+
+it("should process JSX syntax with empty text elements", () => {
+  const result = actual(`<foo>
+      </foo>`);
+  expect(result.length).toBe(7);
+  expect(result).toContainEqual(token(1, 0, 1, 1, "<"));
+  expect(result).toContainEqual(token(1, 1, 1, 4, "foo"));
+  expect(result).toContainEqual(token(1, 4, 1, 5, ">"));
+  expect(result).toContainEqual(token(2, 6, 2, 7, "<"));
+});
+
+it("should process JSX syntax with not empty text elements", () => {
+  const result = actual(`<foo> hello
+    world </foo>`);
+  expect(result.length).toBe(8);
+  expect(result).toContainEqual(token(1, 0, 1, 1, "<"));
+  expect(result).toContainEqual(token(1, 1, 1, 4, "foo"));
+  expect(result).toContainEqual(token(1, 4, 1, 5, ">"));
+  expect(result).toContainEqual(token(1, 6, 2, 10, "hello\n    world "));
+  expect(result).toContainEqual(token(2, 10, 2, 11, "<"));
+});
+
 function token(
   startLine: number,
   startCol: number,

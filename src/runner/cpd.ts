@@ -26,11 +26,12 @@ export default function getCpdTokens(sourceFile: ts.SourceFile): {cpdTokens: Cpd
   const tokens = toTokens(sourceFile);
 
   tokens.forEach(token => {
-    if (token.kind === ts.SyntaxKind.EndOfFileToken) {
+    let text = token.getText();
+
+    if (text.length === 0) {
+      // for EndOfFileToken and JsxText tokens containing only whitespaces
       return;
     }
-
-    let text = token.getText();
 
     if (text.startsWith("\"") || text.startsWith("'") || text.startsWith("`")) {
       text = "LITERAL";
