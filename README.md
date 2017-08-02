@@ -21,6 +21,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
+* Multiline string literals should not be used ([`no-multiline-string-literals`])
 
 [`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
@@ -38,6 +39,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 [`no-unconditional-jump`]: ./docs/rules/no-unconditional-jump.md
 [`no-misleading-array-reverse`]: ./docs/rules/no-misleading-array-reverse.md
 [`no-empty-nested-blocks`]: ./docs/rules/no-empty-nested-blocks.md
+[`no-multiline-string-literals`]: ./docs/rules/no-multiline-string-literals.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
