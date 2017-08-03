@@ -41,11 +41,11 @@ it("writes", () => {
 
 it("reads", () => {
   const {symbols, sourceFile} = buildSymbolTable();
-  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 9)).flags).toBe(UsageFlag.READ);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 10)).flags).toBe(UsageFlag.READ);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 12)).flags).toBe(UsageFlag.READ);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 13)).flags).toBe(UsageFlag.READ);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "r", 15)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 10)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 12)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 14)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 15)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 17)).flags).toBe(UsageFlag.READ);
 });
 
 it("identify read-writes", () => {

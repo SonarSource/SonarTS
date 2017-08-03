@@ -43,9 +43,12 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
       const leftSide = node.left;
       if (leftSide.kind === ts.SyntaxKind.Identifier) {
         this.registerUsage(leftSide as ts.Identifier, UsageFlag.WRITE);
+        this.walk(node.right);
+      } else {
+        super.visitBinaryExpression(node);
       }
     } else {
-      this.walkChildren(node);
+      super.visitBinaryExpression(node);
     }
   }
 
