@@ -99,6 +99,16 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     super.visitExportAssignment(node);
   }
 
+  protected visitPrefixUnaryExpression(node: ts.PrefixUnaryExpression) {
+    if (node.operator === ts.SyntaxKind.PlusPlusToken || node.operator === ts.SyntaxKind.MinusMinusToken) {
+      this.registerUsage(node.operand, UsageFlag.READ | UsageFlag.WRITE);
+    }
+    super.visitPrefixUnaryExpression(node);
+  }
+
+  protected visitPostfixUnaryExpression(node: ts.PostfixUnaryExpression) {
+    this.registerUsage(node.operand, UsageFlag.READ | UsageFlag.WRITE);
+  }
   protected visitModuleDeclaration(node: ts.ModuleDeclaration) {
     this.registerUsage(node.name, UsageFlag.DECLARATION);
     super.visitModuleDeclaration(node);
@@ -123,9 +133,13 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     }
   }
 
-  private registerUsage(node: ts.Node, flags: UsageFlag) {
-    const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
-    if (symbol) this.table.registerUsage(symbol, node, flags);
-    return symbol;
+  private registerUsage(node: ts.Node, flags: UsageFlag) : ts.Symbol {
+    if (node.kind !== ts.SyntaxKind.ParenthesizedExpression) {
+      const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
+      if (symbol) this.table.registerUsage(symbol, node, flags);
+      return symbol;
+    } else {
+      return this.registerUsage((node as ts.ParenthesizedExpression).expression, flags);
+    }
   }
 }

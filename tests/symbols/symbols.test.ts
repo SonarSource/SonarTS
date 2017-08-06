@@ -79,8 +79,13 @@ it("reads", () => {
   // expect(symbols.getUsage(getNode(sourceFile, "exported")).flags).toBe(UsageFlag.READ | UsageFlag.WRITE | UsageFlag.DECLARATION);
 });
 
-it("identify read-writes", () => {
-  expect(symbols.getUsage(getNode(sourceFile, "rw")).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
+it("read-writes", () => {
+  expect(symbols.getUsage(getNode(sourceFile, "rw", 62)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "rw", 63)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "rw", 64)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "rw", 65)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "rw", 66)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "rw", 67)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
 });
 
 function getNode(sourceFile: ts.SourceFile, identifierText: string, line?: number): ts.Node | undefined {

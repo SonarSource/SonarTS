@@ -57,3 +57,11 @@ let varEl1, varEl2 = 42;
 interface Interface {
 
 }
+
+let rw = 0;
+++rw;
+--rw;
+++(rw);
+(rw)--;
+rw++;
+rw--;
