@@ -20,8 +20,8 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { SymbolTableBuilder } from "../symbols/builder";
-import { SymbolTable } from "../symbols/table";
+//import { SymbolTableBuilder } from "../symbols/builder";
+//import { SymbolTable } from "../symbols/table";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -49,8 +49,8 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    const table = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, table));
+    //const table = SymbolTableBuilder.build(sourceFile, program);
+    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
   }
 }
 
@@ -58,8 +58,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   public constructor(
     sourceFile: ts.SourceFile,
     options: tslint.IOptions,
-    program: ts.Program,
-    private symbols: SymbolTable,
+    program: ts.Program
   ) {
     super(sourceFile, options, program);
   }

@@ -20,10 +20,9 @@
 import * as ts from "typescript";
 
 export class SymbolTable {
-
   private usages = new Map<ts.Node, Usage>();
 
-  public registerUsage(symbol: ts.Symbol, node: ts.Node, flags: UsageFlag) : boolean {
+  public registerUsage(symbol: ts.Symbol, node: ts.Node, flags: UsageFlag): boolean {
     if (this.usages.has(node)) return false;
     this.usages.set(node, new Usage(symbol, flags));
     return true;
@@ -35,11 +34,17 @@ export class SymbolTable {
 }
 
 export class Usage {
+  public dead = false;
+
   constructor(public readonly symbol: ts.Symbol, public readonly flags: UsageFlag) {}
+
+  public is(requestedFlags: UsageFlag) {
+    return (this.flags & requestedFlags) > 0;
+  }
 }
 
 export enum UsageFlag {
   DECLARATION = 1,
   WRITE = 2,
-  READ = 4,
+  READ = 4
 }

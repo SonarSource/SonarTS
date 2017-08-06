@@ -19,12 +19,10 @@
  */
 import * as path from "path";
 import * as ts from "typescript";
-import { SymbolTableBuilder } from "../../src/symbols/builder";
 import { SymbolTable, UsageFlag } from "../../src/symbols/table";
-import { descendants, is } from "../../src/utils/navigation";
-import { parseFile } from "../../src/utils/parser";
+import { buildSymbolTable, getNode } from "./test_utils";
 
-const { symbols, sourceFile } = buildSymbolTable();
+const { symbols, sourceFile } = buildSymbolTable("sample_symbols.ts");
 
 it("variable declarations", () => {
   expect(symbols.getUsage(getNode(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);
@@ -87,22 +85,3 @@ it("read-writes", () => {
   expect(symbols.getUsage(getNode(sourceFile, "rw", 66)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "rw", 67)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
 });
-
-function getNode(sourceFile: ts.SourceFile, identifierText: string, line?: number): ts.Node | undefined {
-  const identifiers = descendants(sourceFile)
-    .filter(node => is(node, ts.SyntaxKind.Identifier, ts.SyntaxKind.StringLiteral))
-    .filter(node => node.getText().match(".?" + identifierText + ".?"));
-  if (line) {
-    return identifiers.find(
-      identifier => identifier.getSourceFile().getLineAndCharacterOfPosition(identifier.getEnd()).line === line - 1,
-    );
-  } else {
-    return identifiers[0];
-  }
-}
-
-function buildSymbolTable(): { symbols: SymbolTable; sourceFile: ts.SourceFile } {
-  const { sourceFile, program } = parseFile(path.join(__dirname, "sample_symbols.ts"));
-  const symbols = SymbolTableBuilder.build(sourceFile, program);
-  return { symbols, sourceFile };
-}

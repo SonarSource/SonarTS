@@ -19,23 +19,25 @@
  */
 import * as path from "path";
 import * as ts from "typescript";
+import { ControlFlowGraph } from "../../src/cfg/cfg";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
 import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { descendants, is, FUNCTION_LIKE } from "../../src/utils/navigation";
-import { parseFile } from "../../src/utils/parser";
+import { buildSymbolTable, getNode } from "./test_utils";
+import { LiveVariableAnalyzer } from "../../src/symbols/lva";
 
 it("linear", () => {
-  const { symbols, sourceFile } = buildSymbolTable();
-  // Tell Lena about rule capable of spotting something like FUNCTION_LIKE.includes(node.kind) ? casted = node as FunctionLikeDeclaration
-  descendants(sourceFile)
-    .filter(node => node instanceof ts.FunctionLikeDeclaration)
-    .map(node => node as ts.FunctionDeclaration)
-    .find(func => func.name.getText() === "linear");
-  expect(symbols.getUsage(getIdentifier(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);
+  const { symbols, sourceFile } = buildSymbolTable("sample_lva.ts");
+  const func = findFunction(sourceFile, "linear");
+  const cfg = ControlFlowGraph.fromStatements(func.body.statements);
+  new LiveVariableAnalyzer(symbols).analyze(cfg);
+  expect(symbols.getUsage(getNode(sourceFile, "x")).dead).toBe(false);
+  expect(symbols.getUsage(getNode(sourceFile, "y", 4)).dead).toBe(true);
 });
 
-function buildSymbolTable(): { symbols: SymbolTable; sourceFile: ts.SourceFile } {
-  const { sourceFile, program } = parseFile(path.join(__dirname, "sample_lva.ts"));
-  const symbols = SymbolTableBuilder.build(sourceFile, program);
-  return { symbols, sourceFile };
+function findFunction(sourceFile: ts.SourceFile, functionName: string): ts.FunctionDeclaration {
+  return descendants(sourceFile)
+    .filter(node => node.kind === ts.SyntaxKind.FunctionDeclaration)
+    .map(node => node as ts.FunctionDeclaration)
+    .find(func => func.name.getText() === functionName);
 }
