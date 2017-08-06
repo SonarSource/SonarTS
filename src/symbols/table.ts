@@ -23,8 +23,10 @@ export class SymbolTable {
 
   private usages = new Map<ts.Node, Usage>();
 
-  public registerUsage(symbol: ts.Symbol, node: ts.Node, flags: UsageFlag) {
+  public registerUsage(symbol: ts.Symbol, node: ts.Node, flags: UsageFlag) : boolean {
+    if (this.usages.has(node)) return false;
     this.usages.set(node, new Usage(symbol, flags));
+    return true;
   }
 
   public getUsage(node: ts.Node): Usage | undefined {

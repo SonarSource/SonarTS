@@ -24,47 +24,79 @@ import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { descendants, is } from "../../src/utils/navigation";
 import { parseFile } from "../../src/utils/parser";
 
+const { symbols, sourceFile } = buildSymbolTable();
+
 it("variable declarations", () => {
-  const {symbols, sourceFile} = buildSymbolTable();
-  expect(symbols.getUsage(getIdentifier(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "variable")).flags).toBe(UsageFlag.DECLARATION);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "constant")).flags).toBe(UsageFlag.DECLARATION);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "parameter")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "variable")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "constant")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "parameter")).flags).toBe(UsageFlag.DECLARATION);
+});
+
+it("other declarations", () => {
+  expect(symbols.getUsage(getNode(sourceFile, "foo")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "Foo")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "Enum")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "imported1")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "imported2")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "importedNS")).flags).toBe(UsageFlag.DECLARATION);
+  // Are there more variants of module declaration and imports?
+  expect(symbols.getUsage(getNode(sourceFile, "Module")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "StringLiteralModule")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "varEl1")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "Interface")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "importEquals")).flags).toBe(UsageFlag.DECLARATION);
+  // No way to spot a write in a destructuring except for default values ?
+  expect(symbols.getUsage(getNode(sourceFile, "dstruct1")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "arrDStruct1")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "_")).flags).toBe(UsageFlag.DECLARATION);
+  /*
+    Maybe implement some day :
+    TypeAliasDeclaration
+    IndexSignatureDeclaration
+    MethodDeclaration
+    PropertyDeclaration
+    ConstructorDeclaration
+  */
 });
 
 it("writes", () => {
-  const {symbols, sourceFile} = buildSymbolTable();
-  expect(symbols.getUsage(getIdentifier(sourceFile, "local", 4)).flags).toBe(UsageFlag.WRITE);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "decAndInit")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "pWithDefault")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "local", 19)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "decAndInit")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "pWithDefault")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "read", 23)).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "varEl2")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "dstruct2")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "arrDStruct2")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
 });
 
 it("reads", () => {
-  const {symbols, sourceFile} = buildSymbolTable();
-  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 10)).flags).toBe(UsageFlag.READ);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 12)).flags).toBe(UsageFlag.READ);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 14)).flags).toBe(UsageFlag.READ);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 15)).flags).toBe(UsageFlag.READ);
-  expect(symbols.getUsage(getIdentifier(sourceFile, "read", 17)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "read", 27)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "read", 29)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "read", 31)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "read", 32)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "read", 35)).flags).toBe(UsageFlag.READ);
+  // expect(symbols.getUsage(getNode(sourceFile, "exported")).flags).toBe(UsageFlag.READ | UsageFlag.WRITE | UsageFlag.DECLARATION);
 });
 
 it("identify read-writes", () => {
-
+  expect(symbols.getUsage(getNode(sourceFile, "rw")).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
 });
 
-function getIdentifier(sourceFile: ts.SourceFile, identifierText: string, line?: number): ts.Identifier | undefined {
+function getNode(sourceFile: ts.SourceFile, identifierText: string, line?: number): ts.Node | undefined {
   const identifiers = descendants(sourceFile)
-    .filter(node => is(node, ts.SyntaxKind.Identifier))
-    .map(node => node as ts.Identifier)
-    .filter(node => node.getText() === identifierText);
+    .filter(node => is(node, ts.SyntaxKind.Identifier, ts.SyntaxKind.StringLiteral))
+    .filter(node => node.getText().match(".?" + identifierText + ".?"));
   if (line) {
-    return identifiers.find(node => sourceFile.getLineAndCharacterOfPosition(node.getEnd()).line === line - 1);
+    return identifiers.find(
+      identifier => identifier.getSourceFile().getLineAndCharacterOfPosition(identifier.getEnd()).line === line - 1,
+    );
   } else {
     return identifiers[0];
   }
 }
 
-function buildSymbolTable(): {symbols: SymbolTable, sourceFile: ts.SourceFile} {
+function buildSymbolTable(): { symbols: SymbolTable; sourceFile: ts.SourceFile } {
   const { sourceFile, program } = parseFile(path.join(__dirname, "sample_symbols.ts"));
   const symbols = SymbolTableBuilder.build(sourceFile, program);
   return { symbols, sourceFile };
