@@ -133,7 +133,7 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     }
   }
 
-  private registerUsage(node: ts.Node, flags: UsageFlag) : ts.Symbol {
+  private registerUsage(node: ts.Node, flags: UsageFlag): ts.Symbol {
     if (node.kind !== ts.SyntaxKind.ParenthesizedExpression) {
       const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
       if (symbol) this.table.registerUsage(symbol, node, flags);

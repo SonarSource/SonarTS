@@ -26,16 +26,25 @@ import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { descendants, FUNCTION_LIKE, is } from "../../src/utils/navigation";
 import { buildSymbolTable, getNode } from "./test_utils";
 
+const { symbols, sourceFile } = buildSymbolTable("sample_lva.ts");
+
 it("linear", () => {
-  const { symbols, sourceFile } = buildSymbolTable("sample_lva.ts");
-  const func = findFunction(sourceFile, "linear");
+  const func = findFunction("linear");
   const cfg = ControlFlowGraph.fromStatements(func.body.statements);
   new LiveVariableAnalyzer(symbols).analyze(cfg);
-  expect(symbols.getUsage(getNode(sourceFile, "x")).dead).toBe(false);
-  expect(symbols.getUsage(getNode(sourceFile, "y")).dead).toBe(true);
+  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
 });
 
-function findFunction(sourceFile: ts.SourceFile, functionName: string): ts.FunctionDeclaration {
+it("oneBranch", () => {
+  const func = findFunction("oneBranch");
+  const cfg = ControlFlowGraph.fromStatements(func.body.statements);
+  new LiveVariableAnalyzer(symbols).analyze(cfg);
+  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
+});
+
+function findFunction(functionName: string): ts.FunctionDeclaration {
   return descendants(sourceFile)
     .filter(node => node.kind === ts.SyntaxKind.FunctionDeclaration)
     .map(node => node as ts.FunctionDeclaration)

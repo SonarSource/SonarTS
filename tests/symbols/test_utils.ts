@@ -24,8 +24,8 @@ import { descendants, is } from "../../src/utils/navigation";
 import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
 
-export function getNode(sourceFile: ts.SourceFile, identifierText: string, line?: number): ts.Node | undefined {
-  const identifiers = descendants(sourceFile)
+export function getNode(root: ts.Node, identifierText: string, line?: number): ts.Node | undefined {
+  const identifiers = descendants(root)
     .filter(node => is(node, ts.SyntaxKind.Identifier, ts.SyntaxKind.StringLiteral))
     .filter(node => node.getText().match(".?" + identifierText + ".?"));
   if (line) {

@@ -18,16 +18,31 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { ControlFlowGraph } from "../cfg/cfg";
+import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
 import { descendants } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
+
+  private blocksReads: Map<CfgBlock, Map<ts.Symbol, Usage>>;
+
   constructor(private readonly symbols: SymbolTable) {}
 
   public analyze(cfg: ControlFlowGraph) {
-    const availableReads = new Map<ts.Symbol, Usage>();
-    const block = cfg.end.predecessors[0];
+    this.blocksReads = new Map<CfgBlock, Map<ts.Symbol, Usage>>();
+    const blocks = [...cfg.getBlocks(), cfg.end];
+    while (blocks.length > 0) {
+      const block = blocks.pop()!;
+      const readsInBlock = this.analyzeBlock(block);
+      this.blocksReads.set(block, readsInBlock);
+      if (block instanceof CfgBlockWithPredecessors) {
+        blocks.unshift(...block.predecessors);
+      }
+    }
+  }
+
+  private analyzeBlock(block: CfgBlock) {
+    const availableReads = this.collectAvailableReads(block);
     [...block.getElements()].reverse().forEach(node => {
       descendants(node)
         .map(descendant => this.symbols.getUsage(descendant))
@@ -35,6 +50,7 @@ export class LiveVariableAnalyzer {
           if (usage) {
             if (usage.is(UsageFlag.WRITE)) {
               if (availableReads.has(usage.symbol)) {
+                usage.dead = false;
                 availableReads.delete(usage.symbol);
               } else {
                 usage.dead = true;
@@ -46,5 +62,18 @@ export class LiveVariableAnalyzer {
           }
         });
     });
+    return availableReads;
   }
+
+  private collectAvailableReads(block: CfgBlock) {
+    const availableReads = new Map<ts.Symbol, Usage>();
+    block.getSuccessors().forEach(successor => {
+      const availableReadsInSuccessor = this.blocksReads.get(successor);
+      if (availableReadsInSuccessor) {
+        availableReadsInSuccessor.forEach((usage, symbol) => availableReads.set(symbol, usage));
+      }
+    });
+    return availableReads;
+  }
+
 }
