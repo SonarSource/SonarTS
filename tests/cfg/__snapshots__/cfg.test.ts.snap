@@ -7191,9 +7191,11 @@ Object {
 a
 b
 a < b
+x = a < b
 x
 foo
 foo()
+y = foo()
 y
 z",
       "physics": false,
@@ -7249,6 +7251,7 @@ Object {
       "label": "START
 bar
 bar()
+{a, b: c, d = foo()} = bar()
 a
 c
 foo
@@ -7280,6 +7283,7 @@ Object {
       "id": 1,
       "label": "START
 bar
+[a, b,, c = foo()] = bar
 a
 b
 foo

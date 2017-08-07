@@ -21,10 +21,10 @@ import * as path from "path";
 import * as ts from "typescript";
 import { ControlFlowGraph } from "../../src/cfg/cfg";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
-import { SymbolTable, UsageFlag } from "../../src/symbols/table";
-import { descendants, is, FUNCTION_LIKE } from "../../src/utils/navigation";
-import { buildSymbolTable, getNode } from "./test_utils";
 import { LiveVariableAnalyzer } from "../../src/symbols/lva";
+import { SymbolTable, UsageFlag } from "../../src/symbols/table";
+import { descendants, FUNCTION_LIKE, is } from "../../src/utils/navigation";
+import { buildSymbolTable, getNode } from "./test_utils";
 
 it("linear", () => {
   const { symbols, sourceFile } = buildSymbolTable("sample_lva.ts");
