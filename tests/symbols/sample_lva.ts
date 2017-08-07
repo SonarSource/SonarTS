@@ -2,7 +2,7 @@ function linear() {
   let x = 0;
   let y = 0;
   y = 1;
-  let z = x + y;
+  const z = x + y;
 }
 
 function oneBranch(p: boolean) {
@@ -14,7 +14,17 @@ function oneBranch(p: boolean) {
     read(x);
     read(y);
   } else {
-    // Since we never read 'y' here, 'y = 0' is dead
+    // Since we don't read 'y' here, 'y = 0' is dead
     read(x);
+  }
+}
+
+function oneLoop() {
+  let x = 0;
+  let y = 0;
+  while (x < 5) {
+    x++;
+    y = x; // 'y = 0' is dead because the only read happens after increment
+    read(y);
   }
 }

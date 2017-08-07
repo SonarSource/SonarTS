@@ -44,6 +44,14 @@ it("oneBranch", () => {
   expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
 });
 
+it("oneLoop", () => {
+  const func = findFunction("oneLoop");
+  const cfg = ControlFlowGraph.fromStatements(func.body.statements);
+  new LiveVariableAnalyzer(symbols).analyze(cfg);
+  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
+});
+
 function findFunction(functionName: string): ts.FunctionDeclaration {
   return descendants(sourceFile)
     .filter(node => node.kind === ts.SyntaxKind.FunctionDeclaration)

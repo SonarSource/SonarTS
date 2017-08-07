@@ -23,7 +23,6 @@ import { descendants } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
-
   private blocksReads: Map<CfgBlock, Map<ts.Symbol, Usage>>;
 
   constructor(private readonly symbols: SymbolTable) {}
@@ -34,33 +33,33 @@ export class LiveVariableAnalyzer {
     while (blocks.length > 0) {
       const block = blocks.pop()!;
       const readsInBlock = this.analyzeBlock(block);
-      this.blocksReads.set(block, readsInBlock);
-      if (block instanceof CfgBlockWithPredecessors) {
-        blocks.unshift(...block.predecessors);
+      if (!this.sameSymbols(readsInBlock, this.blocksReads.get(block))) {
+        if (block instanceof CfgBlockWithPredecessors) {
+          blocks.unshift(...block.predecessors);
+        }
       }
+      this.blocksReads.set(block, readsInBlock);
     }
   }
 
   private analyzeBlock(block: CfgBlock) {
     const availableReads = this.collectAvailableReads(block);
     [...block.getElements()].reverse().forEach(node => {
-      descendants(node)
-        .map(descendant => this.symbols.getUsage(descendant))
-        .forEach(usage => {
-          if (usage) {
-            if (usage.is(UsageFlag.WRITE)) {
-              if (availableReads.has(usage.symbol)) {
-                usage.dead = false;
-                availableReads.delete(usage.symbol);
-              } else {
-                usage.dead = true;
-              }
-            }
-            if (usage.is(UsageFlag.READ)) {
-              availableReads.set(usage.symbol, usage);
+      descendants(node).map(descendant => this.symbols.getUsage(descendant)).forEach(usage => {
+        if (usage) {
+          if (usage.is(UsageFlag.WRITE)) {
+            if (availableReads.has(usage.symbol)) {
+              usage.dead = false;
+              availableReads.delete(usage.symbol);
+            } else {
+              usage.dead = true;
             }
           }
-        });
+          if (usage.is(UsageFlag.READ)) {
+            availableReads.set(usage.symbol, usage);
+          }
+        }
+      });
     });
     return availableReads;
   }
@@ -76,4 +75,14 @@ export class LiveVariableAnalyzer {
     return availableReads;
   }
 
+  private sameSymbols(newReads: Map<ts.Symbol, Usage>, oldReads: Map<ts.Symbol, Usage> | undefined) {
+    if (oldReads === undefined) return false;
+    if (oldReads.size !== newReads.size) return false;
+    for (const symbol of newReads.keys()) {
+      if (!oldReads.has(symbol)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
