@@ -32,7 +32,7 @@ it("linear", () => {
   const cfg = ControlFlowGraph.fromStatements(func.body.statements);
   new LiveVariableAnalyzer(symbols).analyze(cfg);
   expect(symbols.getUsage(getNode(sourceFile, "x")).dead).toBe(false);
-  expect(symbols.getUsage(getNode(sourceFile, "y", 4)).dead).toBe(true);
+  expect(symbols.getUsage(getNode(sourceFile, "y")).dead).toBe(true);
 });
 
 function findFunction(sourceFile: ts.SourceFile, functionName: string): ts.FunctionDeclaration {

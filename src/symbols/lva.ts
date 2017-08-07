@@ -17,9 +17,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import * as ts from "typescript";
 import { ControlFlowGraph } from "../cfg/cfg";
 import { descendants } from "../utils/navigation";
-import * as ts from "typescript";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
@@ -29,14 +29,11 @@ export class LiveVariableAnalyzer {
     const availableReads = new Map<ts.Symbol, Usage>();
     const block = cfg.end.predecessors[0];
     [...block.getElements()].reverse().forEach(node => {
-      console.log(node.getText());
       descendants(node)
         .map(descendant => this.symbols.getUsage(descendant))
         .forEach(usage => {
           if (usage) {
-            //console.log(usage);
             if (usage.is(UsageFlag.WRITE)) {
-
               if (availableReads.has(usage.symbol)) {
                 availableReads.delete(usage.symbol);
               } else {
