@@ -19,12 +19,31 @@ function oneBranch(p: boolean) {
   }
 }
 
-function oneLoop() {
+function oneLoop(end: boolean) {
   let x = 0;
-  let y = 0;
-  while (x < 5) {
-    x++;
-    y = x; // 'y = 0' is dead because the only read happens after increment
+  while (end) {
+    x = x + 1;  // 'x = x + 1' is dead because of 'x = -1'
+    x = -1;
+  }
+}
+
+function loopsAndBranches(p: boolean) {
+  let x = 0;
+  let y = 0; // 'y = 0' is dead because of 'y = p'
+  if (p) {
+    y = p;
+    for (; x < 5; x++) {
+      read(y);
+      y = x;
+    }
+    x = 3;
+  }
+  while (read(x)) {
+    y = x;
     read(y);
+    y = x + 1; // 'y = x + 1' is dead because of 'y = x'
+  }
+  if (p === x) {
+    x++; // 'x++' is never used afterwards
   }
 }

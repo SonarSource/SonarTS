@@ -41,6 +41,14 @@ export class Usage {
   public is(requestedFlags: UsageFlag) {
     return (this.flags & requestedFlags) > 0;
   }
+
+  public flagsAsString() {
+    let result = "";
+    if (this.is(UsageFlag.DECLARATION)) result += "d";
+    if (this.is(UsageFlag.WRITE)) result += "w";
+    if (this.is(UsageFlag.READ)) result += "r";
+    return result;
+  }
 }
 
 export enum UsageFlag {

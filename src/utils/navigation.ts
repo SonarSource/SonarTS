@@ -25,6 +25,20 @@ export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | 
   return node.getFirstToken();
 }
 
+export function isAssignment(node: ts.Node): node is ts.BinaryExpression {
+  return (
+    node.kind === ts.SyntaxKind.BinaryExpression &&
+    (node as ts.BinaryExpression).operatorToken.kind === ts.SyntaxKind.EqualsToken
+  );
+}
+
+export function retrievePureIdentifier(node: ts.Node): ts.Identifier | undefined {
+  if (node.kind === ts.SyntaxKind.Identifier) return node as ts.Identifier;
+  if (node.kind === ts.SyntaxKind.ParenthesizedExpression)
+    return retrievePureIdentifier((node as ts.ParenthesizedExpression).expression);
+  return undefined;
+}
+
 export function getComments(node: ts.Node): ts.CommentRange[] {
   return [...getCommentsBefore(node), ...getCommentsAfter(node)];
 }

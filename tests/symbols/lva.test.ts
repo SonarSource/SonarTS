@@ -49,7 +49,23 @@ it("oneLoop", () => {
   const cfg = ControlFlowGraph.fromStatements(func.body.statements);
   new LiveVariableAnalyzer(symbols).analyze(cfg);
   expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "x", 25)).dead).toBe(true);
+  expect(symbols.getUsage(getNode(func, "x", 26)).dead).toBe(false);
+});
+
+it("loopsAndBranches", () => {
+  const func = findFunction("loopsAndBranches");
+  const cfg = ControlFlowGraph.fromStatements(func.body.statements);
+  new LiveVariableAnalyzer(symbols).analyze(cfg);
+  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "x", 39)).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "x", 47)).dead).toBe(true);
+
   expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
+  expect(symbols.getUsage(getNode(func, "y", 34)).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "y", 37)).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "y", 42)).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "y", 44)).dead).toBe(true);
 });
 
 function findFunction(functionName: string): ts.FunctionDeclaration {

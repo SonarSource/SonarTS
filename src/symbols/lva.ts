@@ -19,6 +19,7 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
+import { isAssignment, retrievePureIdentifier } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
@@ -31,19 +32,21 @@ export class LiveVariableAnalyzer {
     const blocks = cfg.getBlocks().concat(cfg.end);
     while (blocks.length > 0) {
       const block = blocks.pop()!;
-      const readsInBlock = this.analyzeBlock(block);
-      if (!this.sameSymbols(readsInBlock, this.blocksReads.get(block))) {
+      const newLive = this.analyzeBlock(block);
+      const oldLive = this.blocksReads.get(block);
+      if (!this.sameSymbols(newLive, oldLive)) {
         if (block instanceof CfgBlockWithPredecessors) {
           blocks.unshift(...block.predecessors);
         }
       }
-      this.blocksReads.set(block, readsInBlock);
+      this.blocksReads.set(block, newLive);
     }
   }
 
   private analyzeBlock(block: CfgBlock) {
     const availableReads = this.collectAvailableReads(block);
-    [...block.getElements()].reverse().map(node => this.symbols.getUsage(node)).forEach(usage => {
+    [...block.getElements()].reverse().forEach(node => {
+      const usage = this.symbols.getUsage(nodeOrAssignmentIdentifier(node));
       if (usage) {
         if (usage.is(UsageFlag.WRITE)) {
           if (availableReads.has(usage.symbol)) {
@@ -59,6 +62,14 @@ export class LiveVariableAnalyzer {
       }
     });
     return availableReads;
+
+    function nodeOrAssignmentIdentifier(node: ts.Node): ts.Node | ts.Identifier {
+      if (isAssignment(node)) {
+        const identifier = retrievePureIdentifier(node.left);
+        if (identifier) return identifier;
+      }
+      return node;
+    }
   }
 
   private collectAvailableReads(block: CfgBlock) {
@@ -72,14 +83,15 @@ export class LiveVariableAnalyzer {
     return availableReads;
   }
 
-  private sameSymbols(newReads: Map<ts.Symbol, Usage>, oldReads: Map<ts.Symbol, Usage> | undefined) {
-    if (oldReads === undefined) return false;
-    if (oldReads.size !== newReads.size) return false;
-    for (const symbol of newReads.keys()) {
-      if (!oldReads.has(symbol)) {
+  private sameSymbols(newLive: Map<ts.Symbol, Usage>, oldLive: Map<ts.Symbol, Usage> | undefined) {
+    if (oldLive === undefined) return false;
+    if (oldLive.size !== newLive.size) return false;
+    for (const symbol of newLive.keys()) {
+      if (!oldLive.has(symbol)) {
         return false;
       }
     }
     return true;
   }
+
 }

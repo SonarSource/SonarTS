@@ -54,7 +54,7 @@ export class ControlFlowGraph {
     return this.blocks.find(block => block.loopingStatement === loopNode);
   }
 
-  private collapseEmpty() {
+  public collapseEmpty() {
     const originalBlocks = [...this.blocks];
     for (const block of originalBlocks) {
       if (block.getElements().length === 0 && block.getSuccessors().length === 1) {

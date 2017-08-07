@@ -126,7 +126,6 @@ Object {
     Object {
       "id": 3,
       "label": "START
-r
 a
 <a>",
       "physics": false,
@@ -304,7 +303,6 @@ Object {
     Object {
       "id": 3,
       "label": "START
-r
 a
 <a>",
       "physics": false,
@@ -398,7 +396,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 1
 2
 foo
@@ -431,9 +428,37 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 'something'
 x = 'something'",
+      "physics": false,
+    },
+  ],
+}
+`;
+
+exports[`assignment and binary 1`] = `
+Object {
+  "edges": Array [
+    Object {
+      "arrows": "to",
+      "from": 1,
+      "id": 0,
+      "to": 0,
+    },
+  ],
+  "nodes": Array [
+    Object {
+      "id": 0,
+      "label": "END",
+      "physics": false,
+    },
+    Object {
+      "id": 1,
+      "label": "START
+2
+1
+2 + 1
+x = 2 + 1",
       "physics": false,
     },
   ],
@@ -500,7 +525,6 @@ Object {
     Object {
       "id": 4,
       "label": "START
-a
 b
 <b ? c : d>",
       "physics": false,
@@ -2003,8 +2027,7 @@ Object {
     },
     Object {
       "id": 1,
-      "label": "x
-1
+      "label": "1
 x=1",
       "physics": false,
     },
@@ -2015,8 +2038,7 @@ x=1",
     },
     Object {
       "id": 3,
-      "label": "x
-true
+      "label": "true
 x=true
 <for(x=0;x=true;x=1)>",
       "physics": false,
@@ -2024,7 +2046,6 @@ x=true
     Object {
       "id": 4,
       "label": "START
-x
 0
 x=0",
       "physics": false,
@@ -2113,7 +2134,6 @@ Object {
     Object {
       "id": 5,
       "label": "START
-r
 a
 <a>",
       "physics": false,
@@ -2422,6 +2442,12 @@ Object {
       "label": "false",
       "to": 0,
     },
+    Object {
+      "arrows": "to",
+      "from": 4,
+      "id": 5,
+      "to": 3,
+    },
   ],
   "nodes": Array [
     Object {
@@ -2442,9 +2468,16 @@ Object {
     },
     Object {
       "id": 3,
-      "label": "START
-a
+      "label": "a
 <while(a)>",
+      "physics": false,
+    },
+    Object {
+      "id": 4,
+      "label": "START
+x
+b = x
+b",
       "physics": false,
     },
   ],
@@ -2524,33 +2557,39 @@ Object {
       "arrows": "to",
       "from": 1,
       "id": 0,
-      "to": 3,
+      "to": 4,
     },
     Object {
       "arrows": "to",
       "from": 2,
       "id": 1,
-      "label": "true",
-      "to": 3,
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": 2,
+      "from": 3,
       "id": 2,
-      "label": "false",
-      "to": 1,
+      "label": "true",
+      "to": 4,
     },
     Object {
       "arrows": "to",
       "from": 3,
       "id": 3,
-      "label": "true",
+      "label": "false",
       "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": 3,
+      "from": 4,
       "id": 4,
+      "label": "true",
+      "to": 3,
+    },
+    Object {
+      "arrows": "to",
+      "from": 4,
+      "id": 5,
       "label": "false",
       "to": 0,
     },
@@ -2563,19 +2602,26 @@ Object {
     },
     Object {
       "id": 1,
-      "label": "c",
+      "label": "START
+x
+b = x
+b",
       "physics": false,
     },
     Object {
       "id": 2,
+      "label": "c",
+      "physics": false,
+    },
+    Object {
+      "id": 3,
       "label": "b
 <if (b)>",
       "physics": false,
     },
     Object {
-      "id": 3,
-      "label": "START
-a
+      "id": 4,
+      "label": "a
 <while(a)>",
       "physics": false,
     },
@@ -3263,41 +3309,47 @@ Object {
       "arrows": "to",
       "from": 1,
       "id": 0,
-      "to": 3,
+      "to": 5,
     },
     Object {
       "arrows": "to",
       "from": 2,
       "id": 1,
-      "label": "true",
-      "to": 3,
+      "to": 4,
     },
     Object {
       "arrows": "to",
-      "from": 2,
+      "from": 3,
       "id": 2,
-      "label": "false",
-      "to": 1,
+      "label": "true",
+      "to": 4,
     },
     Object {
       "arrows": "to",
       "from": 3,
       "id": 3,
-      "label": "true",
+      "label": "false",
       "to": 2,
     },
     Object {
       "arrows": "to",
-      "from": 3,
+      "from": 4,
       "id": 4,
-      "label": "false",
-      "to": 0,
+      "label": "true",
+      "to": 3,
     },
     Object {
       "arrows": "to",
       "from": 4,
       "id": 5,
-      "to": 3,
+      "label": "false",
+      "to": 0,
+    },
+    Object {
+      "arrows": "to",
+      "from": 5,
+      "id": 6,
+      "to": 4,
     },
   ],
   "nodes": Array [
@@ -3308,25 +3360,32 @@ Object {
     },
     Object {
       "id": 1,
-      "label": "stmt",
+      "label": "START
+1
+x = 1
+x",
       "physics": false,
     },
     Object {
       "id": 2,
+      "label": "stmt",
+      "physics": false,
+    },
+    Object {
+      "id": 3,
       "label": "subcond
 <if (subcond)>",
       "physics": false,
     },
     Object {
-      "id": 3,
+      "id": 4,
       "label": "elem
-<for(elem of obj)>",
+<for(elem in obj)>",
       "physics": false,
     },
     Object {
-      "id": 4,
-      "label": "START
-obj",
+      "id": 5,
+      "label": "obj",
       "physics": false,
     },
   ],
@@ -3429,7 +3488,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 function() {foo ();}
 x = function() {foo ();}",
       "physics": false,
@@ -3457,7 +3515,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 (a, b) => {foo();}
 x = (a, b) => {foo();}",
       "physics": false,
@@ -3485,7 +3542,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 class A { foo(){ y } }
 x = class A { foo(){ y } }",
       "physics": false,
@@ -3741,6 +3797,12 @@ Object {
       "label": "false",
       "to": 0,
     },
+    Object {
+      "arrows": "to",
+      "from": 3,
+      "id": 3,
+      "to": 1,
+    },
   ],
   "nodes": Array [
     Object {
@@ -3750,14 +3812,21 @@ Object {
     },
     Object {
       "id": 1,
-      "label": "START
-a",
+      "label": "a",
       "physics": false,
     },
     Object {
       "id": 2,
       "label": "x
 <do while(x)>",
+      "physics": false,
+    },
+    Object {
+      "id": 3,
+      "label": "START
+0
+x =0
+x",
       "physics": false,
     },
   ],
@@ -3838,7 +3907,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 a
 a[]
 x = a[]",
@@ -3867,7 +3935,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 a
 b
 a[b]
@@ -4124,6 +4191,12 @@ Object {
       "label": "false",
       "to": 0,
     },
+    Object {
+      "arrows": "to",
+      "from": 3,
+      "id": 3,
+      "to": 2,
+    },
   ],
   "nodes": Array [
     Object {
@@ -4138,9 +4211,16 @@ Object {
     },
     Object {
       "id": 2,
-      "label": "START
-x
+      "label": "x
 <for(;x;)>",
+      "physics": false,
+    },
+    Object {
+      "id": 3,
+      "label": "START
+0
+x=0
+x",
       "physics": false,
     },
   ],
@@ -5205,7 +5285,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 A
 new A
 x = new A",
@@ -5234,7 +5313,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 A
 1
 2
@@ -5326,7 +5404,6 @@ b
 locVarName1
 locVarName
 (locVarName)
-locVarName2
 42
 locVarName2 = 42
 {
@@ -5474,7 +5551,6 @@ obj = {
     Object {
       "id": 7,
       "label": "START
-obj
 c
 <c ? 1 : 2>",
       "physics": false,
@@ -5534,7 +5610,6 @@ r = a < (b && c)",
     Object {
       "id": 3,
       "label": "START
-r
 a
 b
 <b>",
@@ -5680,7 +5755,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 y
 y--
 x = y--",
@@ -5736,7 +5810,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 y
 +y
 x = +y",
@@ -5765,7 +5838,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 a
 a.b
 x = a.b",
@@ -6000,7 +6072,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 b
 a < b
@@ -6030,7 +6101,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 b
 a <= b
@@ -6060,7 +6130,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 b
 a > b
@@ -6090,7 +6159,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 b
 a >= b
@@ -6120,7 +6188,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 b
 a == b
@@ -6150,7 +6217,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 b
 a === b
@@ -6180,7 +6246,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 b
 a != b
@@ -6210,7 +6275,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 b
 a !== b
@@ -6240,7 +6304,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-r
 a
 r = a
 b
@@ -7100,7 +7163,6 @@ Object {
     Object {
       "id": 1,
       "label": "START
-x
 foobar1
 foobar1()
 foobar2
@@ -7318,6 +7380,12 @@ Object {
       "label": "false",
       "to": 0,
     },
+    Object {
+      "arrows": "to",
+      "from": 3,
+      "id": 3,
+      "to": 2,
+    },
   ],
   "nodes": Array [
     Object {
@@ -7332,9 +7400,16 @@ Object {
     },
     Object {
       "id": 2,
-      "label": "START
-x
+      "label": "x
 <while(x)>",
+      "physics": false,
+    },
+    Object {
+      "id": 3,
+      "label": "START
+0
+x = 0
+x",
       "physics": false,
     },
   ],
