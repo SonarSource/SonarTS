@@ -19,7 +19,6 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import { descendants } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
@@ -29,7 +28,7 @@ export class LiveVariableAnalyzer {
 
   public analyze(cfg: ControlFlowGraph) {
     this.blocksReads = new Map<CfgBlock, Map<ts.Symbol, Usage>>();
-    const blocks = [...cfg.getBlocks(), cfg.end];
+    const blocks = cfg.getBlocks().concat(cfg.end);
     while (blocks.length > 0) {
       const block = blocks.pop()!;
       const readsInBlock = this.analyzeBlock(block);
@@ -44,22 +43,20 @@ export class LiveVariableAnalyzer {
 
   private analyzeBlock(block: CfgBlock) {
     const availableReads = this.collectAvailableReads(block);
-    [...block.getElements()].reverse().forEach(node => {
-      descendants(node).map(descendant => this.symbols.getUsage(descendant)).forEach(usage => {
-        if (usage) {
-          if (usage.is(UsageFlag.WRITE)) {
-            if (availableReads.has(usage.symbol)) {
-              usage.dead = false;
-              availableReads.delete(usage.symbol);
-            } else {
-              usage.dead = true;
-            }
-          }
-          if (usage.is(UsageFlag.READ)) {
-            availableReads.set(usage.symbol, usage);
+    [...block.getElements()].reverse().map(node => this.symbols.getUsage(node)).forEach(usage => {
+      if (usage) {
+        if (usage.is(UsageFlag.WRITE)) {
+          if (availableReads.has(usage.symbol)) {
+            usage.dead = false;
+            availableReads.delete(usage.symbol);
+          } else {
+            usage.dead = true;
           }
         }
-      });
+        if (usage.is(UsageFlag.READ)) {
+          availableReads.set(usage.symbol, usage);
+        }
+      }
     });
     return availableReads;
   }
