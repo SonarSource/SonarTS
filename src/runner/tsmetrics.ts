@@ -36,19 +36,28 @@ process.stdin.on("data", (chunk: string) => {
 
 process.stdin.on("end", () => {
   const inputString = chunks.join("");
-  const json = JSON.stringify(processRequest(inputString), null, " ");
+
   process.stdout.setEncoding("utf8");
-  process.stdout.write(json);
-  process.stdout.write("\n");
+  process.stdout.write("[");
+
+  const results = processRequest(inputString);
+  results.forEach((output, index) => {
+    process.stdout.write(JSON.stringify(output, null, " "));
+    if (index < results.length - 1) {
+      process.stdout.write(",");
+    }
+  });
+
+  process.stdout.write("]\n");
 });
 
-export function processRequest(inputString: string): any {
+export function processRequest(inputString: string): object[] {
   const input = JSON.parse(inputString);
   return input.filepaths.map((filepath: string) => {
     const scriptKind = filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
     const fileContent = fs.readFileSync(filepath, "utf8");
     const sourceFile = parseString(fileContent, scriptKind);
-    const output: any = { filepath };
+    const output: object = { filepath };
     sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
     return output;
   });
