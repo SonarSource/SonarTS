@@ -41,6 +41,14 @@ if (a) { first(); second(); } else { first(); }
 
 if (a) { first(); second(); } else if (b) { first(); second(); } else { first(); third(); }
 
+function render() {
+  if (a) {
+    return <p>foo</p>;
+  } else {
+    return <p>bar</p>;
+  }
+}
+
 
 /*
  * NOK SWITCH

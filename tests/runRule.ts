@@ -114,9 +114,15 @@ function parseErrorsFromMarkup(source: string): LintError[] {
   return errors;
 }
 
-function getLintFileName(testFileName: string) {
+function getLintFileName(testFileName: string): string {
   const baseName = path.basename(testFileName, ".test.ts");
-  return path.join(__dirname, `./rules/${baseName}/${baseName}.lint.ts`);
+  for (const ext of ["ts", "tsx"]) {
+    const file = path.join(__dirname, `./rules/${baseName}/${baseName}.lint.${ext}`);
+    if (fs.existsSync(file)) {
+      return file;
+    }
+  }
+  throw new Error(`No lint file found for ${testFileName}`);
 }
 
 function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
