@@ -81,7 +81,8 @@ export function lineAndCharacter(pos: number, file: ts.SourceFile): ts.LineAndCh
   return file.getLineAndCharacterOfPosition(pos);
 }
 
-export function is(node: ts.Node, ...kinds: ts.SyntaxKind[]): boolean {
+export function is(node: ts.Node | undefined, ...kinds: ts.SyntaxKind[]): boolean {
+  if (!node) return false;
   for (const kind of kinds) {
     if (node.kind === kind) {
       return true;

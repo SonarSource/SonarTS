@@ -20,8 +20,10 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-//import { SymbolTableBuilder } from "../symbols/builder";
-//import { SymbolTable } from "../symbols/table";
+import { SymbolTableBuilder } from "../symbols/builder";
+import { LiveVariableAnalyzer } from "../symbols/lva";
+import { SymbolTable } from "../symbols/table";
+import { descendants, FUNCTION_LIKE, is } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -34,23 +36,18 @@ export class Rule extends tslint.Rules.TypedRule {
       Calculating or retrieving a value only to then overwrite it or throw it away, could indicate a serious error in the code.
       Even if it's not an error, it is at best a waste of resources. Therefore all calculated values should be used.`,
     rspecKey: "RSPEC-1854",
-    ruleName: "no-dead-stores",
+    ruleName: "no-dead-store",
     type: "functionality",
     typescriptOnly: false,
   };
 
-  public static formatMessage(expression: ts.Expression) {
-    if (expression.kind === ts.SyntaxKind.FunctionExpression) {
-      return "Remove this use of the output from this function; this function doesn't return anything.";
-    } else {
-      const name = expression.getText();
-      return `Remove this use of the output from "${name}"; "${name}" doesn't return anything.`;
-    }
+  public static formatMessage(deadIdentifier: ts.Identifier) {
+    return `Remove this useless assignment to local variable "${deadIdentifier.getText()}".`;
   }
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    //const table = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    const symbols = SymbolTableBuilder.build(sourceFile, program);
+    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
   }
 }
 
@@ -58,8 +55,26 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   public constructor(
     sourceFile: ts.SourceFile,
     options: tslint.IOptions,
-    program: ts.Program
+    program: ts.Program,
+    private readonly symbols: SymbolTable,
   ) {
     super(sourceFile, options, program);
+  }
+
+  protected visitNode(node: ts.Node): void {
+    if (is(node, ...FUNCTION_LIKE)) {
+      const functionBody = (node as ts.FunctionLikeDeclaration).body;
+      if (is(functionBody, ts.SyntaxKind.Block)) {
+        new LiveVariableAnalyzer(this.symbols).analyze(functionBody as ts.Block);
+        descendants(node).filter(descendant => is(descendant, ts.SyntaxKind.Identifier)).forEach(descendant => {
+          const identifier = descendant as ts.Identifier;
+          const usage = this.symbols.getUsage(identifier);
+          if (usage && usage.dead) {
+            this.addFailureAtNode(identifier, Rule.formatMessage(identifier));
+          }
+        });
+      }
+    }
+    super.visitNode(node);
   }
 }
