@@ -19,10 +19,10 @@
  */
 import * as path from "path";
 import * as ts from "typescript";
-import { parseFile } from "../../src/utils/parser";
-import { descendants, is } from "../../src/utils/navigation";
-import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
+import { SymbolTable, UsageFlag } from "../../src/symbols/table";
+import { descendants, is } from "../../src/utils/navigation";
+import { parseFile } from "../../src/utils/parser";
 
 export function getNode(root: ts.Node, identifierText: string, line?: number): ts.Node | undefined {
   const identifiers = descendants(root)

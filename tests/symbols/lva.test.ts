@@ -26,37 +26,34 @@ import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { descendants, FUNCTION_LIKE, is } from "../../src/utils/navigation";
 import { buildSymbolTable, getNode } from "./test_utils";
 
-const { symbols, sourceFile } = buildSymbolTable("sample_lva.ts");
+let symbols: SymbolTable;
+let sourceFile: ts.SourceFile;
+
+beforeEach(() => {
+  ({ symbols, sourceFile } = buildSymbolTable("sample_lva.ts"));
+});
 
 it("linear", () => {
-  const func = findFunction("linear");
-  const cfg = ControlFlowGraph.fromStatements(func.body.statements);
-  new LiveVariableAnalyzer(symbols).analyze(cfg);
+  const func = liveVariableAnalysis("linear");
   expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
   expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
 });
 
-it("oneBranch", () => {
-  const func = findFunction("oneBranch");
-  const cfg = ControlFlowGraph.fromStatements(func.body.statements);
-  new LiveVariableAnalyzer(symbols).analyze(cfg);
+it("simple if", () => {
+  const func = liveVariableAnalysis("oneBranch");
   expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
   expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
 });
 
-it("oneLoop", () => {
-  const func = findFunction("oneLoop");
-  const cfg = ControlFlowGraph.fromStatements(func.body.statements);
-  new LiveVariableAnalyzer(symbols).analyze(cfg);
+it("simple loop", () => {
+  const func = liveVariableAnalysis("oneLoop");
   expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
   expect(symbols.getUsage(getNode(func, "x", 25)).dead).toBe(true);
   expect(symbols.getUsage(getNode(func, "x", 26)).dead).toBe(false);
 });
 
-it("loopsAndBranches", () => {
-  const func = findFunction("loopsAndBranches");
-  const cfg = ControlFlowGraph.fromStatements(func.body.statements);
-  new LiveVariableAnalyzer(symbols).analyze(cfg);
+it("loops and branches", () => {
+  const func = liveVariableAnalysis("loopsAndBranches");
   expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
   expect(symbols.getUsage(getNode(func, "x", 39)).dead).toBe(false);
   expect(symbols.getUsage(getNode(func, "x", 47)).dead).toBe(true);
@@ -68,9 +65,30 @@ it("loopsAndBranches", () => {
   expect(symbols.getUsage(getNode(func, "y", 44)).dead).toBe(true);
 });
 
-function findFunction(functionName: string): ts.FunctionDeclaration {
+it("ignore class fields", () => {
+  const func = liveVariableAnalysis("someMethod");
+  expect(symbols.getUsage(getNode(func, "x", 55)).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "y", 56)).dead).toBe(true);
+  expect(symbols.getUsage(getNode(func, "y", 57)).dead).toBe(true);
+});
+
+it("ignore symbols used in nested functions", () => {
+  const func = liveVariableAnalysis("containerMethod");
+  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "x", 62)).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
+  expect(symbols.getUsage(getNode(func, "z")).dead).toBe(false);
+});
+
+function liveVariableAnalysis(functionName: string) {
+  const func = findFunction(functionName);
+  new LiveVariableAnalyzer(symbols).analyze((func.body as ts.Block));
+  return func;
+}
+
+function findFunction(functionName: string): ts.FunctionLikeDeclaration {
   return descendants(sourceFile)
-    .filter(node => node.kind === ts.SyntaxKind.FunctionDeclaration)
-    .map(node => node as ts.FunctionDeclaration)
+    .filter(node => is(node, ...FUNCTION_LIKE))
+    .map(node => node as ts.FunctionLikeDeclaration)
     .find(func => func.name.getText() === functionName);
 }

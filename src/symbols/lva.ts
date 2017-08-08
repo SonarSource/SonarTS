@@ -19,15 +19,19 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import { isAssignment, retrievePureIdentifier } from "../utils/navigation";
+import { descendants, FUNCTION_LIKE, is, isAssignment, retrievePureIdentifier } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
   private blocksReads: Map<CfgBlock, Map<ts.Symbol, Usage>>;
+  private root: ts.Block;
 
   constructor(private readonly symbols: SymbolTable) {}
 
-  public analyze(cfg: ControlFlowGraph) {
+  public analyze(root: ts.Block) {
+    const cfg = ControlFlowGraph.fromStatements(root.statements);
+    if (!cfg) return;
+    this.root = root;
     this.blocksReads = new Map<CfgBlock, Map<ts.Symbol, Usage>>();
     const blocks = cfg.getBlocks().concat(cfg.end);
     while (blocks.length > 0) {
@@ -47,7 +51,7 @@ export class LiveVariableAnalyzer {
     const availableReads = this.collectAvailableReads(block);
     [...block.getElements()].reverse().forEach(node => {
       const usage = this.symbols.getUsage(nodeOrAssignmentIdentifier(node));
-      if (usage) {
+      if (usage && !this.isUsedInNestedFunctions(usage.symbol)) {
         if (usage.is(UsageFlag.WRITE)) {
           if (availableReads.has(usage.symbol)) {
             usage.dead = false;
@@ -70,6 +74,12 @@ export class LiveVariableAnalyzer {
       }
       return node;
     }
+
+  }
+
+  private isUsedInNestedFunctions(symbol: ts.Symbol): boolean {
+    const nestedFunctions = descendants(this.root).filter(descendant => is(descendant, ...FUNCTION_LIKE));
+    return !!this.symbols.allUsages(symbol).find(usage => !!nestedFunctions.find(func => usage.isUsedInside(func)));
   }
 
   private collectAvailableReads(block: CfgBlock) {

@@ -18,25 +18,34 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
+import { ancestorsChain } from "../utils/navigation";
 
 export class SymbolTable {
   private usages = new Map<ts.Node, Usage>();
+  private usagesBySymbol = new Map<ts.Symbol, Usage[]>();
 
   public registerUsage(symbol: ts.Symbol, node: ts.Node, flags: UsageFlag): boolean {
     if (this.usages.has(node)) return false;
-    this.usages.set(node, new Usage(symbol, flags));
+    const usage = new Usage(symbol, flags, node);
+    this.usages.set(node, usage);
+    if (!this.usagesBySymbol.has(symbol)) this.usagesBySymbol.set(symbol, []);
+    this.usagesBySymbol.get(symbol)!.push(usage);
     return true;
   }
 
   public getUsage(node: ts.Node): Usage | undefined {
     return this.usages.get(node);
   }
+
+  public allUsages(symbol: ts.Symbol): Usage[] {
+    return this.usagesBySymbol.has(symbol) ? this.usagesBySymbol.get(symbol)! : [];
+  }
 }
 
 export class Usage {
   public dead = false;
 
-  constructor(public readonly symbol: ts.Symbol, public readonly flags: UsageFlag) {}
+  constructor(public readonly symbol: ts.Symbol, public readonly flags: UsageFlag, public readonly node: ts.Node) {}
 
   public is(requestedFlags: UsageFlag) {
     return (this.flags & requestedFlags) > 0;
@@ -48,6 +57,10 @@ export class Usage {
     if (this.is(UsageFlag.WRITE)) result += "w";
     if (this.is(UsageFlag.READ)) result += "r";
     return result;
+  }
+
+  public isUsedInside(node: ts.Node) {
+    return ancestorsChain(this.node, [ts.SyntaxKind.SourceFile]).includes(node);
   }
 }
 
