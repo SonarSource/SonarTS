@@ -29,6 +29,7 @@ const COMPARED_BY_TEXT = new Set([
   ts.SyntaxKind.TemplateHead,
   ts.SyntaxKind.TemplateMiddle,
   ts.SyntaxKind.TemplateTail,
+  ts.SyntaxKind.JsxText,
 ]);
 
 export default function areEquivalent(first: ts.Node | ts.Node[], second: ts.Node | ts.Node[]): boolean {
