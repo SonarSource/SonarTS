@@ -1,7 +1,7 @@
+// tslint:disable
 // DECLARATIONS
-
 var variable;
-const constant;
+const constant = 42;
 let local;
 
 function foo(parameter: any, pWithDefault: any = {}) {}
@@ -34,9 +34,9 @@ const obj = {
 
 foo(read);
 
-let { dstruct1, dstruct2 = 42 } = someObj;
+let { dstruct1, dstruct2 = 42 } = {dstruct1: 1};
 
-let [ arrDStruct1, _, , arrDStruct2 = 4] = someArr;
+let [ arrDStruct1, _, , arrDStruct2 = 4] = [1, 2, 3, 4];
 
 export let exported = 42; // I have not yet found a way to intercept this
 
@@ -65,3 +65,6 @@ let rw = 0;
 (rw)--;
 rw++;
 rw--;
+
+let obj42 = {trololo: 3};
+console.log(obj42.trololo);

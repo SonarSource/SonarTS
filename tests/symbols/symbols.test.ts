@@ -27,7 +27,7 @@ const { symbols, sourceFile } = buildSymbolTable("sample_symbols.ts");
 it("variable declarations", () => {
   expect(symbols.getUsage(getNode(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "variable")).flags).toBe(UsageFlag.DECLARATION);
-  expect(symbols.getUsage(getNode(sourceFile, "constant")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "constant")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "parameter")).flags).toBe(UsageFlag.DECLARATION);
 });
 

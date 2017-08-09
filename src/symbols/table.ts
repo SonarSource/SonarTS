@@ -24,13 +24,14 @@ export class SymbolTable {
   private usages = new Map<ts.Node, Usage>();
   private usagesBySymbol = new Map<ts.Symbol, Usage[]>();
 
-  public registerUsage(symbol: ts.Symbol, node: ts.Node, flags: UsageFlag): boolean {
-    if (this.usages.has(node)) return false;
+  public registerUsageIfMissing(symbol: ts.Symbol, node: ts.Node, flags: UsageFlag): void {
+    // if this node is "write" usage, "Usage" instance was created before and we do nothing
+    if (this.usages.has(node)) return;
+
     const usage = new Usage(symbol, flags, node);
     this.usages.set(node, usage);
     if (!this.usagesBySymbol.has(symbol)) this.usagesBySymbol.set(symbol, []);
     this.usagesBySymbol.get(symbol)!.push(usage);
-    return true;
   }
 
   public getUsage(node: ts.Node): Usage | undefined {

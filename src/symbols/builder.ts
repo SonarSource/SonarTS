@@ -19,6 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
+import { isAssignment } from "../utils/navigation";
 import { SymbolTable, UsageFlag } from "./table";
 
 export class SymbolTableBuilder extends tslint.SyntaxWalker {
@@ -30,20 +31,19 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     return builder.table;
   }
 
-  private constructor(private program: ts.Program) {
+  private constructor(private readonly program: ts.Program) {
     super();
   }
 
   protected visitIdentifier(node: ts.Identifier) {
-    if (node.parent && node.parent.kind === ts.SyntaxKind.OmittedExpression) return;
-    this.registerUsage(node, UsageFlag.READ);
+    this.registerUsageIfMissing(node, UsageFlag.READ);
   }
 
   protected visitBinaryExpression(node: ts.BinaryExpression) {
-    if (node.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+    if (isAssignment(node)) {
       const leftSide = node.left;
       if (leftSide.kind === ts.SyntaxKind.Identifier) {
-        this.registerUsage(leftSide as ts.Identifier, UsageFlag.WRITE);
+        this.registerUsageIfMissing(leftSide as ts.Identifier, UsageFlag.WRITE);
       }
     }
     super.visitBinaryExpression(node);
@@ -60,37 +60,37 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
   }
 
   protected visitFunctionDeclaration(node: ts.FunctionDeclaration) {
-    if (node.name) this.registerUsage(node.name, UsageFlag.DECLARATION);
+    if (node.name) this.registerUsageIfMissing(node.name, UsageFlag.DECLARATION);
     super.visitFunctionDeclaration(node);
   }
 
   protected visitClassDeclaration(node: ts.ClassDeclaration) {
-    if (node.name) this.registerUsage(node.name, UsageFlag.DECLARATION);
+    if (node.name) this.registerUsageIfMissing(node.name, UsageFlag.DECLARATION);
     super.visitClassDeclaration(node);
   }
 
   protected visitEnumDeclaration(node: ts.EnumDeclaration) {
-    if (node.name) this.registerUsage(node.name, UsageFlag.DECLARATION);
+    if (node.name) this.registerUsageIfMissing(node.name, UsageFlag.DECLARATION);
     super.visitEnumDeclaration(node);
   }
 
   protected visitInterfaceDeclaration(node: ts.InterfaceDeclaration) {
-    if (node.name) this.registerUsage(node.name, UsageFlag.DECLARATION);
+    if (node.name) this.registerUsageIfMissing(node.name, UsageFlag.DECLARATION);
     super.visitInterfaceDeclaration(node);
   }
 
   protected visitNamedImports(node: ts.NamedImports) {
-    node.elements.forEach(importSpecifier => this.registerUsage(importSpecifier.name, UsageFlag.DECLARATION));
+    node.elements.forEach(importSpecifier => this.registerUsageIfMissing(importSpecifier.name, UsageFlag.DECLARATION));
     super.visitNamedImports(node);
   }
 
   protected visitNamespaceImport(node: ts.NamespaceImport) {
-    this.registerUsage(node.name, UsageFlag.DECLARATION);
+    this.registerUsageIfMissing(node.name, UsageFlag.DECLARATION);
     super.visitNamespaceImport(node);
   }
 
   protected visitImportEqualsDeclaration(node: ts.ImportEqualsDeclaration) {
-    this.registerUsage(node.name, UsageFlag.DECLARATION);
+    this.registerUsageIfMissing(node.name, UsageFlag.DECLARATION);
     super.visitImportEqualsDeclaration(node);
   }
 
@@ -101,16 +101,16 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
 
   protected visitPrefixUnaryExpression(node: ts.PrefixUnaryExpression) {
     if (node.operator === ts.SyntaxKind.PlusPlusToken || node.operator === ts.SyntaxKind.MinusMinusToken) {
-      this.registerUsage(node.operand, UsageFlag.READ | UsageFlag.WRITE);
+      this.registerUsageIfMissing(node.operand, UsageFlag.READ | UsageFlag.WRITE);
     }
     super.visitPrefixUnaryExpression(node);
   }
 
   protected visitPostfixUnaryExpression(node: ts.PostfixUnaryExpression) {
-    this.registerUsage(node.operand, UsageFlag.READ | UsageFlag.WRITE);
+    this.registerUsageIfMissing(node.operand, UsageFlag.READ | UsageFlag.WRITE);
   }
   protected visitModuleDeclaration(node: ts.ModuleDeclaration) {
-    this.registerUsage(node.name, UsageFlag.DECLARATION);
+    this.registerUsageIfMissing(node.name, UsageFlag.DECLARATION);
     super.visitModuleDeclaration(node);
   }
 
@@ -119,13 +119,15 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     if (declarationName.kind === ts.SyntaxKind.Identifier) {
       let usageFlags = UsageFlag.DECLARATION;
       if (node.initializer) usageFlags += UsageFlag.WRITE;
-      this.registerUsage(declarationName, usageFlags);
+      this.registerUsageIfMissing(declarationName, usageFlags);
+
     } else if (declarationName.kind === ts.SyntaxKind.ArrayBindingPattern) {
       declarationName.elements.forEach(element => {
         if (element.kind === ts.SyntaxKind.BindingElement) {
           this.addVariable(element);
         }
       });
+
     } else if (declarationName.kind === ts.SyntaxKind.ObjectBindingPattern) {
       declarationName.elements.forEach(element => {
         this.addVariable(element);
@@ -133,13 +135,13 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     }
   }
 
-  private registerUsage(node: ts.Node, flags: UsageFlag): ts.Symbol {
+  private registerUsageIfMissing(node: ts.Node, flags: UsageFlag): ts.Symbol {
     if (node.kind !== ts.SyntaxKind.ParenthesizedExpression) {
       const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
-      if (symbol) this.table.registerUsage(symbol, node, flags);
+      if (symbol) this.table.registerUsageIfMissing(symbol, node, flags);
       return symbol;
     } else {
-      return this.registerUsage((node as ts.ParenthesizedExpression).expression, flags);
+      return this.registerUsageIfMissing((node as ts.ParenthesizedExpression).expression, flags);
     }
   }
 }
