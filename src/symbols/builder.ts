@@ -49,25 +49,20 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
   private registerWriteUsageForAssignment(node: ts.Node) {
     if (node.kind === ts.SyntaxKind.Identifier) {
       this.registerUsageIfMissing(node as ts.Identifier, UsageFlag.WRITE);
-
     } else if (node.kind === ts.SyntaxKind.ObjectLiteralExpression) {
       (node as ts.ObjectLiteralExpression).properties.forEach(property => {
         this.registerWriteUsageForAssignment(property);
       });
-
     } else if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
       (node as ts.ArrayLiteralExpression).elements.forEach(element => {
         this.registerWriteUsageForAssignment(element);
       });
     } else if (is(node, ts.SyntaxKind.PropertyAssignment)) {
       this.registerWriteUsageForAssignment((node as ts.PropertyAssignment).initializer);
-
     } else if (is(node, ts.SyntaxKind.ShorthandPropertyAssignment)) {
       this.registerWriteUsageForAssignment((node as ts.ShorthandPropertyAssignment).name);
-
     } else if (is(node, ts.SyntaxKind.SpreadAssignment, ts.SyntaxKind.SpreadElement)) {
       this.registerWriteUsageForAssignment((node as ts.SpreadAssignment).expression);
-
     } else if (is(node, ts.SyntaxKind.BinaryExpression)) {
       this.registerWriteUsageForAssignment((node as ts.BinaryExpression).left);
     }
@@ -143,7 +138,8 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     if (declarationName.kind === ts.SyntaxKind.Identifier) {
       let usageFlags = UsageFlag.DECLARATION;
       if (
-        node.initializer || is(node, ts.SyntaxKind.Parameter) ||
+        node.initializer ||
+        is(node, ts.SyntaxKind.Parameter) ||
         (node.parent && is(node.parent, ts.SyntaxKind.ObjectBindingPattern, ts.SyntaxKind.ArrayBindingPattern))
       )
         usageFlags += UsageFlag.WRITE;

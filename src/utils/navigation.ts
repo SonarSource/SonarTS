@@ -25,8 +25,9 @@ export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | 
   return node.getFirstToken();
 }
 
-export function isAssignment(node: ts.Node): node is ts.BinaryExpression {
+export function isAssignment(node: ts.Node | undefined): node is ts.BinaryExpression {
   return (
+    !!node &&
     node.kind === ts.SyntaxKind.BinaryExpression &&
     (node as ts.BinaryExpression).operatorToken.kind === ts.SyntaxKind.EqualsToken
   );
@@ -110,6 +111,20 @@ export function firstAncestor(
   boundary = FUNCTION_LIKE,
 ): ts.Node | undefined {
   return ancestorsChain(node, boundary).find(ancestor => targetAncestor.includes(ancestor.kind));
+}
+
+export function floatToTopParenthesis(node: ts.Node): ts.Node {
+  if (is(node, ts.SyntaxKind.ParenthesizedExpression)) {
+    if (node.parent) return floatToTopParenthesis(node.parent);
+    return node;
+  }
+  return node;
+}
+
+export function drillDownThroughParenthesis(node: ts.Node): ts.Node {
+  if (is(node, ts.SyntaxKind.ParenthesizedExpression))
+    return drillDownThroughParenthesis((node as ts.ParenthesizedExpression).expression);
+  return node;
 }
 
 export function descendants(node: ts.Node): ts.Node[] {

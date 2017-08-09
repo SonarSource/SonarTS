@@ -1,4 +1,4 @@
-function linear() {
+function linear(p: boolean) {
   let x = 0;
   let y = 0;
   y = 1;
