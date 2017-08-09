@@ -386,11 +386,11 @@ export class CfgBuilder {
 
   private buildVariableDeclarationList(current: CfgBlock, variableDeclarations: ts.VariableDeclarationList): CfgBlock {
     [...variableDeclarations.declarations].reverse().forEach(variableDeclaration => {
-      current = this.buildBindingName(current, variableDeclaration.name);
       if (variableDeclaration.initializer) {
         current.addElement(variableDeclaration);
         current = this.buildExpression(current, variableDeclaration.initializer);
       }
+      current = this.buildBindingName(current, variableDeclaration.name);
     });
     return current;
   }

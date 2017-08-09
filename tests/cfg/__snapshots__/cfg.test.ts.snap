@@ -2475,9 +2475,9 @@ Object {
     Object {
       "id": 4,
       "label": "START
+b
 x
-b = x
-b",
+b = x",
       "physics": false,
     },
   ],
@@ -2603,9 +2603,9 @@ Object {
     Object {
       "id": 1,
       "label": "START
+b
 x
-b = x
-b",
+b = x",
       "physics": false,
     },
     Object {
@@ -3361,9 +3361,9 @@ Object {
     Object {
       "id": 1,
       "label": "START
+x
 1
-x = 1
-x",
+x = 1",
       "physics": false,
     },
     Object {
@@ -3824,9 +3824,9 @@ Object {
     Object {
       "id": 3,
       "label": "START
+x
 0
-x =0
-x",
+x =0",
       "physics": false,
     },
   ],
@@ -4218,9 +4218,9 @@ Object {
     Object {
       "id": 3,
       "label": "START
+x
 0
-x=0
-x",
+x=0",
       "physics": false,
     },
   ],
@@ -7250,15 +7250,15 @@ Object {
     Object {
       "id": 1,
       "label": "START
+x
 a
 b
 a < b
 x = a < b
-x
+y
 foo
 foo()
 y = foo()
-y
 z",
       "physics": false,
     },
@@ -7311,14 +7311,14 @@ Object {
     Object {
       "id": 1,
       "label": "START
-bar
-bar()
-{a, b: c, d = foo()} = bar()
 a
 c
 foo
 foo()
-d",
+d
+bar
+bar()
+{a, b: c, d = foo()} = bar()",
       "physics": false,
     },
   ],
@@ -7344,13 +7344,13 @@ Object {
     Object {
       "id": 1,
       "label": "START
-bar
-[a, b,, c = foo()] = bar
 a
 b
 foo
 foo()
-c",
+c
+bar
+[a, b,, c = foo()] = bar",
       "physics": false,
     },
   ],
@@ -7407,9 +7407,9 @@ Object {
     Object {
       "id": 3,
       "label": "START
+x
 0
-x = 0
-x",
+x = 0",
       "physics": false,
     },
   ],

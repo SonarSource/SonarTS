@@ -90,6 +90,8 @@ it("reads", () => {
   // there are symbols for properties in symbol table, while the usages kind might be not correct
   expect(symbols.getUsage(getNode(sourceFile, "prop", 70)).flags).toBe(UsageFlag.READ);
   expect(symbols.getUsage(getNode(sourceFile, "prop", 71)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "a", 78)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "b", 78)).flags).toBe(UsageFlag.READ);
   expect(symbols.getUsage(getNode(sourceFile, "c", 75)).flags).toBe(UsageFlag.READ);
 });
 

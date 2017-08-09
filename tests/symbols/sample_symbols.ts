@@ -74,3 +74,5 @@ let a, b, d, e, rest;
 ({a, b = 1, c:d = 42, f:e, ...rest} 
                            = {a: 1, b: 2, c: 3, f:4});
 [a, b = 1, , d, ...rest] = [1, 2, 3, 4];
+
+foo({a, b});
