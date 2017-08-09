@@ -76,3 +76,8 @@ let a, b, d, e, rest;
 [a, b = 1, , d, ...rest] = [1, 2, 3, 4];
 
 foo({a, b});
+
+function objectLiteralShorthand() {
+  const x = 41;
+  return {x};
+}

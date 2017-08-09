@@ -103,3 +103,9 @@ it("read-writes", () => {
   expect(symbols.getUsage(getNode(sourceFile, "rw", 66)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "rw", 67)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
 });
+
+it("same symbol for shorthand property", () => {
+  const declSymbol = symbols.getUsage(getNode(sourceFile, "x", 81)).symbol;
+  const usageSymbol = symbols.getUsage(getNode(sourceFile, "x", 82)).symbol;
+  expect(declSymbol === usageSymbol).toBe(true);
+});

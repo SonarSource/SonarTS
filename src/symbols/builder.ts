@@ -161,13 +161,16 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     }
   }
 
-  private registerUsageIfMissing(node: ts.Node, flags: UsageFlag): ts.Symbol {
+  private registerUsageIfMissing(node: ts.Node, flags: UsageFlag): void {
     if (node.kind !== ts.SyntaxKind.ParenthesizedExpression) {
-      const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
+      let symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
+
+      if (node.parent && node.parent.kind === ts.SyntaxKind.ShorthandPropertyAssignment) {
+        symbol = this.program.getTypeChecker().getShorthandAssignmentValueSymbol(node.parent);
+      }
       if (symbol) this.table.registerUsageIfMissing(symbol, node, flags);
-      return symbol;
     } else {
-      return this.registerUsageIfMissing((node as ts.ParenthesizedExpression).expression, flags);
+      this.registerUsageIfMissing((node as ts.ParenthesizedExpression).expression, flags);
     }
   }
 }
