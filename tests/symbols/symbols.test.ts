@@ -27,8 +27,6 @@ const { symbols, sourceFile } = buildSymbolTable("sample_symbols.ts");
 it("variable declarations", () => {
   expect(symbols.getUsage(getNode(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "variable")).flags).toBe(UsageFlag.DECLARATION);
-  expect(symbols.getUsage(getNode(sourceFile, "constant")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
-  expect(symbols.getUsage(getNode(sourceFile, "parameter")).flags).toBe(UsageFlag.DECLARATION);
 });
 
 it("other declarations", () => {
@@ -38,16 +36,11 @@ it("other declarations", () => {
   expect(symbols.getUsage(getNode(sourceFile, "imported1")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "imported2")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "importedNS")).flags).toBe(UsageFlag.DECLARATION);
-  // Are there more variants of module declaration and imports?
   expect(symbols.getUsage(getNode(sourceFile, "Module")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "StringLiteralModule")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "varEl1")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "Interface")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "importEquals")).flags).toBe(UsageFlag.DECLARATION);
-  // No way to spot a write in a destructuring except for default values ?
-  expect(symbols.getUsage(getNode(sourceFile, "dstruct1")).flags).toBe(UsageFlag.DECLARATION);
-  expect(symbols.getUsage(getNode(sourceFile, "arrDStruct1")).flags).toBe(UsageFlag.DECLARATION);
-  expect(symbols.getUsage(getNode(sourceFile, "_")).flags).toBe(UsageFlag.DECLARATION);
   /*
     Maybe implement some day :
     TypeAliasDeclaration
@@ -60,12 +53,29 @@ it("other declarations", () => {
 
 it("writes", () => {
   expect(symbols.getUsage(getNode(sourceFile, "local", 19)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "variable", 27)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "constant")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "decAndInit")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "pWithDefault")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "parameter")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "read", 23)).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "varEl2")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "dstruct1")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "dstruct2")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "arrDStruct1")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "arrDStruct2")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "_")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+
+  expect(symbols.getUsage(getNode(sourceFile, "a", 74)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "b", 74)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "d", 74)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "e", 74)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "rest", 74)).flags).toBe(UsageFlag.WRITE);
+
+  expect(symbols.getUsage(getNode(sourceFile, "a", 76)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "b", 76)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "d", 76)).flags).toBe(UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "rest", 76)).flags).toBe(UsageFlag.WRITE);
 });
 
 it("reads", () => {
@@ -74,7 +84,13 @@ it("reads", () => {
   expect(symbols.getUsage(getNode(sourceFile, "read", 31)).flags).toBe(UsageFlag.READ);
   expect(symbols.getUsage(getNode(sourceFile, "read", 32)).flags).toBe(UsageFlag.READ);
   expect(symbols.getUsage(getNode(sourceFile, "read", 35)).flags).toBe(UsageFlag.READ);
-  // expect(symbols.getUsage(getNode(sourceFile, "exported")).flags).toBe(UsageFlag.READ | UsageFlag.WRITE | UsageFlag.DECLARATION);
+  // read usage is not there. This case will be specifically considered in LVA
+  expect(symbols.getUsage(getNode(sourceFile, "exported")).flags).toBe(UsageFlag.WRITE | UsageFlag.DECLARATION);
+
+  // there are symbols for properties in symbol table, while the usages kind might be not correct
+  expect(symbols.getUsage(getNode(sourceFile, "prop", 70)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "prop", 71)).flags).toBe(UsageFlag.READ);
+  expect(symbols.getUsage(getNode(sourceFile, "c", 75)).flags).toBe(UsageFlag.READ);
 });
 
 it("read-writes", () => {

@@ -19,7 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import { isAssignment } from "../utils/navigation";
+import { is, isAssignment } from "../utils/navigation";
 import { SymbolTable, UsageFlag } from "./table";
 
 export class SymbolTableBuilder extends tslint.SyntaxWalker {
@@ -41,12 +41,36 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
 
   protected visitBinaryExpression(node: ts.BinaryExpression) {
     if (isAssignment(node)) {
-      const leftSide = node.left;
-      if (leftSide.kind === ts.SyntaxKind.Identifier) {
-        this.registerUsageIfMissing(leftSide as ts.Identifier, UsageFlag.WRITE);
-      }
+      this.registerWriteUsageForAssignment(node.left);
     }
     super.visitBinaryExpression(node);
+  }
+
+  private registerWriteUsageForAssignment(node: ts.Node) {
+    if (node.kind === ts.SyntaxKind.Identifier) {
+      this.registerUsageIfMissing(node as ts.Identifier, UsageFlag.WRITE);
+
+    } else if (node.kind === ts.SyntaxKind.ObjectLiteralExpression) {
+      (node as ts.ObjectLiteralExpression).properties.forEach(property => {
+        this.registerWriteUsageForAssignment(property);
+      });
+
+    } else if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
+      (node as ts.ArrayLiteralExpression).elements.forEach(element => {
+        this.registerWriteUsageForAssignment(element);
+      });
+    } else if (is(node, ts.SyntaxKind.PropertyAssignment)) {
+      this.registerWriteUsageForAssignment((node as ts.PropertyAssignment).initializer);
+
+    } else if (is(node, ts.SyntaxKind.ShorthandPropertyAssignment)) {
+      this.registerWriteUsageForAssignment((node as ts.ShorthandPropertyAssignment).name);
+
+    } else if (is(node, ts.SyntaxKind.SpreadAssignment, ts.SyntaxKind.SpreadElement)) {
+      this.registerWriteUsageForAssignment((node as ts.SpreadAssignment).expression);
+
+    } else if (is(node, ts.SyntaxKind.BinaryExpression)) {
+      this.registerWriteUsageForAssignment((node as ts.BinaryExpression).left);
+    }
   }
 
   protected visitVariableDeclaration(node: ts.VariableDeclaration) {
@@ -118,16 +142,18 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     const declarationName = node.name;
     if (declarationName.kind === ts.SyntaxKind.Identifier) {
       let usageFlags = UsageFlag.DECLARATION;
-      if (node.initializer) usageFlags += UsageFlag.WRITE;
+      if (
+        node.initializer || is(node, ts.SyntaxKind.Parameter) ||
+        (node.parent && is(node.parent, ts.SyntaxKind.ObjectBindingPattern, ts.SyntaxKind.ArrayBindingPattern))
+      )
+        usageFlags += UsageFlag.WRITE;
       this.registerUsageIfMissing(declarationName, usageFlags);
-
     } else if (declarationName.kind === ts.SyntaxKind.ArrayBindingPattern) {
       declarationName.elements.forEach(element => {
         if (element.kind === ts.SyntaxKind.BindingElement) {
           this.addVariable(element);
         }
       });
-
     } else if (declarationName.kind === ts.SyntaxKind.ObjectBindingPattern) {
       declarationName.elements.forEach(element => {
         this.addVariable(element);

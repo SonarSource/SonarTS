@@ -38,7 +38,7 @@ let { dstruct1, dstruct2 = 42 } = {dstruct1: 1};
 
 let [ arrDStruct1, _, , arrDStruct2 = 4] = [1, 2, 3, 4];
 
-export let exported = 42; // I have not yet found a way to intercept this
+export let exported = 42;
 
 import { imported1, imported2 } from "some_lib";
 import * as importedNS from "some_other_lib";
@@ -66,5 +66,11 @@ let rw = 0;
 rw++;
 rw--;
 
-let obj42 = {trololo: 3};
-console.log(obj42.trololo);
+let objWithProp = {prop: 3};
+console.log(objWithProp.prop);
+objWithProp.prop = 42;
+
+let a, b, d, e, rest;
+({a, b = 1, c:d = 42, f:e, ...rest} 
+                           = {a: 1, b: 2, c: 3, f:4});
+[a, b = 1, , d, ...rest] = [1, 2, 3, 4];
