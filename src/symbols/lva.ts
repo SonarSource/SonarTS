@@ -19,7 +19,7 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import { descendants, FUNCTION_LIKE, is, isAssignment, retrievePureIdentifier } from "../utils/navigation";
+import { ancestorsChain, isAssignment, retrievePureIdentifier } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
@@ -78,8 +78,7 @@ export class LiveVariableAnalyzer {
   }
 
   private isUsedInNestedFunctions(symbol: ts.Symbol): boolean {
-    const nestedFunctions = descendants(this.root).filter(descendant => is(descendant, ...FUNCTION_LIKE));
-    return !!this.symbols.allUsages(symbol).find(usage => !!nestedFunctions.find(func => usage.isUsedInside(func)));
+    return !!this.symbols.allUsages(symbol).find(usage => !ancestorsChain(usage.node).includes(this.root));
   }
 
   private collectAvailableReads(block: CfgBlock) {
