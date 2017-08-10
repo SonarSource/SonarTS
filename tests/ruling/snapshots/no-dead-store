@@ -8,7 +8,7 @@ src/TypeScript/src/compiler/binder.ts: 2095,2095,2095,2095
 src/TypeScript/src/compiler/checker.ts: 2616,14647,21407,22217,23314,23317,2616,14647,21407,22217,23314,23317,2616,14647,21407,22217,23314,23317,2616,14647,21407,22217,23314,23317
 src/TypeScript/src/compiler/transformers/generators.ts: 1787,1787,1787,1787
 src/TypeScript/src/compiler/tsc.ts: 192
-src/TypeScript/src/services/services.ts: 124,1058,124,1058,124,1058
+src/TypeScript/src/services/services.ts: 124,124,124
 src/TypeScript/src/server/editorServices.ts: 860,860
 src/TypeScript/src/harness/projectsRunner.ts: 379
 src/TypeScript/src/harness/unittests/services/patternMatcher.ts: 471
@@ -16,9 +16,10 @@ src/angular/aio/src/app/documents/document.service.spec.ts: 181
 src/angular/packages/animations/browser/test/engine/dom_animation_engine_spec.ts: 519
 src/angular/packages/core/testing/src/fake_async.ts: 125
 src/angular/packages/core/testing/src/test_bed.ts: 318,319,320,321
+src/angular/packages/benchpress/test/metric/user_metric_spec.ts: 21
 src/angular/packages/benchpress/test/webdriver/chrome_driver_extension_spec.ts: 23,24
 src/angular/packages/compiler/src/expression_parser/parser.ts: 718
-src/angular/packages/compiler/src/i18n/digest.ts: 178,179
+src/angular/packages/compiler/src/i18n/digest.ts: 178,179,180
 src/angular/packages/compiler/src/provider_analyzer.ts: 287
 src/angular/packages/compiler/src/directive_normalizer.ts: 68
 src/angular/packages/compiler/src/metadata_resolver.ts: 872
@@ -158,6 +159,7 @@ src/vscode/src/vs/base/common/diff/diff2.ts: 266
 src/vscode/src/vs/base/parts/tree/test/browser/treeModel.test.ts: 1467,1545
 src/vscode/src/vs/base/test/browser/builder.test.ts: 935
 src/vscode/src/vs/base/test/common/event.test.ts: 156
+src/vscode/src/vs/platform/configuration/node/configurationService.ts: 42
 src/vscode/src/vs/editor/common/model/wordHelper.ts: 68
 src/vscode/src/vs/editor/common/config/editorOptions.ts: 1451,1453,1462,1464
 src/vscode/src/vs/editor/common/model/textModelSearch.ts: 221,237
@@ -173,6 +175,7 @@ src/vscode/src/vs/editor/test/browser/services/decorationRenderOptions.test.ts: 
 src/vscode/src/vs/editor/test/common/model/textModelSearch.test.ts: 515,520,525
 src/vscode/src/vs/platform/extensionManagement/test/common/extensionEnablementService.test.ts: 24
 src/vscode/src/vs/workbench/services/keybinding/common/macLinuxKeyboardMapper.ts: 801
+src/vscode/src/vs/workbench/services/keybinding/electron-browser/keybindingService.ts: 453
 src/vscode/src/vs/workbench/electron-browser/actions.ts: 378
 src/vscode/src/vs/workbench/parts/files/browser/views/explorerViewer.ts: 734
 src/vscode/src/vs/workbench/parts/debug/electron-browser/debugHover.ts: 141,159
