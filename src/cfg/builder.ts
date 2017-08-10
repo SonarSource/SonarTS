@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { retrievePureIdentifier } from "../utils/navigation";
+import { getIdentifier } from "../utils/navigation";
 import { CfgBlock, CfgBranchingBlock, CfgEndBlock, CfgGenericBlock, ControlFlowGraph } from "./cfg";
 
 const { SyntaxKind } = ts;
@@ -660,7 +660,7 @@ export class CfgBuilder {
         return this.buildExpression(branching, expression.left);
       }
       case SyntaxKind.EqualsToken: {
-        if (retrievePureIdentifier(expression.left)) {
+        if (getIdentifier(expression.left)) {
           current.addElement(expression);
           return this.buildExpression(current, expression.right);
         }

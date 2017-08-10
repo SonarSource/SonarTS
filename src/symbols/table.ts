@@ -61,7 +61,7 @@ export class Usage {
   }
 
   public isUsedInside(node: ts.Node) {
-    return ancestorsChain(this.node, [ts.SyntaxKind.SourceFile]).includes(node);
+    return ancestorsChain(this.node, ts.SyntaxKind.SourceFile).includes(node);
   }
 }
 

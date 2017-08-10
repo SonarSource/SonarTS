@@ -36,11 +36,13 @@ function objecsAndArrays() {
 class AClass {
   constructor(private x: number = 0, y: number) {
     this.x = 1; // OK, we ignore fields
-    y = 3; // NOK, we are ignoring parameters right now
+    y = 3;
+//  ^ {{Remove this useless assignment to local variable "y".}}
   }
 
   aMethod(x: number) {
-    x = 3; // NOK, we are ignoring parameters right now
+    x = 3;
+//  ^ {{Remove this useless assignment to local variable "x".}}    
   }
 }
 

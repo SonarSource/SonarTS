@@ -19,38 +19,43 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import { ancestorsChain, isAssignment, retrievePureIdentifier } from "../utils/navigation";
-import { SymbolTable, Usage, UsageFlag } from "./table";
+import { firstLocalAncestor, FUNCTION_LIKE, getIdentifier, is, isAssignment } from "../utils/navigation";
+import { SymbolTable, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
-  private blocksReads: Map<CfgBlock, Map<ts.Symbol, Usage>>;
-  private root: ts.Block;
+  private liveIn: Map<CfgBlock, Set<ts.Symbol>>;
+  private root: ts.FunctionLikeDeclaration;
 
   constructor(private readonly symbols: SymbolTable) {}
 
-  public analyze(root: ts.Block) {
-    const cfg = ControlFlowGraph.fromStatements(root.statements);
+  public analyze(root: ts.FunctionLikeDeclaration) {
+    if (!is(root.body, ts.SyntaxKind.Block)) {
+      return;
+    }
+    const cfg = ControlFlowGraph.fromStatements((root.body as ts.Block).statements);
     if (!cfg) return;
     this.root = root;
-    this.blocksReads = new Map<CfgBlock, Map<ts.Symbol, Usage>>();
+    // symbols which value will be read after entering this block (aka live symbols)
+    this.liveIn = new Map<CfgBlock, Set<ts.Symbol>>();
     const blocks = cfg.getBlocks().concat(cfg.end);
     while (blocks.length > 0) {
       const block = blocks.pop()!;
-      const newLive = this.analyzeBlock(block);
-      const oldLive = this.blocksReads.get(block);
-      if (!this.sameSymbols(newLive, oldLive)) {
+      // live-in symbols from previous iteration of the algorithm for this block
+      const oldLive = this.liveIn.get(block);
+      const newLive = this.computeSymbolsWithAvailableReads(block);
+      if (!this.same(newLive, oldLive)) {
         if (block instanceof CfgBlockWithPredecessors) {
           blocks.unshift(...block.predecessors);
         }
       }
-      this.blocksReads.set(block, newLive);
+      this.liveIn.set(block, newLive);
     }
   }
 
-  private analyzeBlock(block: CfgBlock) {
-    const availableReads = this.collectAvailableReads(block);
-    [...block.getElements()].reverse().forEach(node => {
-      const usage = this.symbols.getUsage(nodeOrAssignmentIdentifier(node));
+  private computeSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
+    const availableReads = this.successorSymbolsWithAvailableReads(block);
+    [...block.getElements()].reverse().forEach(element => {
+      const usage = this.symbols.getUsage(usageNode(element));
       if (usage && !this.isUsedInNestedFunctions(usage.symbol)) {
         if (usage.is(UsageFlag.WRITE)) {
           if (availableReads.has(usage.symbol)) {
@@ -61,46 +66,46 @@ export class LiveVariableAnalyzer {
           }
         }
         if (usage.is(UsageFlag.READ)) {
-          availableReads.set(usage.symbol, usage);
+          availableReads.add(usage.symbol);
         }
       }
     });
     return availableReads;
 
-    function nodeOrAssignmentIdentifier(node: ts.Node): ts.Node | ts.Identifier {
+    function usageNode(node: ts.Node): ts.Node | ts.Identifier {
       if (isAssignment(node)) {
-        const identifier = retrievePureIdentifier(node.left);
+        const identifier = getIdentifier(node.left);
         if (identifier) return identifier;
       }
       return node;
     }
-
   }
 
   private isUsedInNestedFunctions(symbol: ts.Symbol): boolean {
-    return !!this.symbols.allUsages(symbol).find(usage => !ancestorsChain(usage.node).includes(this.root));
+    return this.symbols
+      .allUsages(symbol)
+      .some(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) !== this.root);
   }
 
-  private collectAvailableReads(block: CfgBlock) {
-    const availableReads = new Map<ts.Symbol, Usage>();
+  private successorSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
+    const availableReads = new Set<ts.Symbol>();
     block.getSuccessors().forEach(successor => {
-      const availableReadsInSuccessor = this.blocksReads.get(successor);
+      const availableReadsInSuccessor = this.liveIn.get(successor);
       if (availableReadsInSuccessor) {
-        availableReadsInSuccessor.forEach((usage, symbol) => availableReads.set(symbol, usage));
+        availableReadsInSuccessor.forEach(symbol => availableReads.add(symbol));
       }
     });
     return availableReads;
   }
 
-  private sameSymbols(newLive: Map<ts.Symbol, Usage>, oldLive: Map<ts.Symbol, Usage> | undefined) {
-    if (oldLive === undefined) return false;
+  private same(newLive: Set<ts.Symbol>, oldLive?: Set<ts.Symbol>) {
+    if (!oldLive) return false;
     if (oldLive.size !== newLive.size) return false;
-    for (const symbol of newLive.keys()) {
+    for (const symbol of newLive) {
       if (!oldLive.has(symbol)) {
         return false;
       }
     }
     return true;
   }
-
 }

@@ -82,7 +82,7 @@ it("ignore symbols used in nested functions", () => {
 
 function liveVariableAnalysis(functionName: string) {
   const func = findFunction(functionName);
-  new LiveVariableAnalyzer(symbols).analyze((func.body as ts.Block));
+  new LiveVariableAnalyzer(symbols).analyze(func);
   return func;
 }
 

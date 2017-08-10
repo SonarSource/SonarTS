@@ -63,7 +63,7 @@ class Walker extends tslint.RuleWalker {
     const cfg = this.buildCfg(node);
     if (!cfg) return;
     const keyword = nav.keyword(node);
-    const loop = nav.firstAncestor(node, nav.LOOP_STATEMENTS);
+    const loop = nav.firstLocalAncestor(node, ...nav.LOOP_STATEMENTS);
     if (!loop) return;
     if (node.kind === ts.SyntaxKind.ContinueStatement) {
       this.raiseIssue(keyword);
@@ -79,7 +79,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private isConditional(node: ts.Node): boolean {
-    const parents = nav.ancestorsChain(node).map(p => p.kind);
+    const parents = nav.localAncestorsChain(node).map(p => p.kind);
     const conditionalsAndLoops = parents.filter(kind =>
       nav.LOOP_STATEMENTS.concat(nav.CONDITIONAL_STATEMENTS).includes(kind),
     );
@@ -87,17 +87,17 @@ class Walker extends tslint.RuleWalker {
   }
 
   private isInsideForIn(node: ts.BreakStatement): boolean {
-    const parentLoop = nav.firstAncestor(node, nav.LOOP_STATEMENTS);
+    const parentLoop = nav.firstLocalAncestor(node, ...nav.LOOP_STATEMENTS);
     return !!parentLoop && parentLoop.kind === ts.SyntaxKind.ForInStatement;
   }
 
   private isInsideForOf(node: ts.ReturnStatement): boolean {
-    const parentLoop = nav.firstAncestor(node, nav.LOOP_STATEMENTS);
+    const parentLoop = nav.firstLocalAncestor(node, ...nav.LOOP_STATEMENTS);
     return !!parentLoop && parentLoop.kind === ts.SyntaxKind.ForOfStatement;
   }
 
   private buildCfg(node: ts.Node): ControlFlowGraph | void {
-    const wrappingFunction = nav.firstAncestor(node, nav.FUNCTION_LIKE) as ts.FunctionLikeDeclaration | undefined;
+    const wrappingFunction = nav.firstLocalAncestor(node, ...nav.FUNCTION_LIKE) as ts.FunctionLikeDeclaration | undefined;
     if (wrappingFunction && wrappingFunction.body) {
       if (wrappingFunction.body.kind === ts.SyntaxKind.Block) {
         return ControlFlowGraph.fromStatements((wrappingFunction.body as ts.Block).statements);
