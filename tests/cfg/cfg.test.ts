@@ -52,6 +52,10 @@ it("assignment", () => {
   expect(buildVisFromSource("x = 'something'")).toMatchSnapshot();
 });
 
+it("assignment and binary", () => {
+  expect(buildVisFromSource("x = 2 + 1")).toMatchSnapshot();
+});
+
 it("conditional expression", () => {
   expect(buildVisFromSource("a ? b : c")).toMatchSnapshot();
 });
@@ -242,7 +246,7 @@ it("block", () => {
 });
 
 it("for loop", () => {
-  expect(buildVisFromSource("for(;x;) {a;}")).toMatchSnapshot();
+  expect(buildVisFromSource("let x=0; for(;x;) {a;}")).toMatchSnapshot();
 });
 
 it("complete for loop", () => {
@@ -254,12 +258,12 @@ it("infinite for loop", () => {
 });
 
 it("while loop", () => {
-  expect(buildVisFromSource("while(x) {a;}")).toMatchSnapshot();
+  expect(buildVisFromSource("let x = 0; while(x) {a;}")).toMatchSnapshot();
   expect(buildVisFromSource("while(true) {a;}")).toMatchSnapshot();
 });
 
 it("do while loop", () => {
-  expect(buildVisFromSource("do {a;} while (x)")).toMatchSnapshot();
+  expect(buildVisFromSource("let x =0; do {a;} while (x)")).toMatchSnapshot();
 });
 
 it("for in loop", () => {
@@ -320,9 +324,9 @@ it("'throw' statement", () => {
 
 it("continue statement", () => {
   // while
-  expect(buildVisFromSource("while(a) { if (b) continue; c}")).toMatchSnapshot();
+  expect(buildVisFromSource("let b = x; while(a) { if (b) continue; c}")).toMatchSnapshot();
   expect(buildVisFromSource("foo: while(a) { if (b) continue; c}")).toMatchSnapshot();
-  expect(buildVisFromSource("foo: while(a) { if (b) continue foo; c}")).toMatchSnapshot();
+  expect(buildVisFromSource("let b = x; foo: while(a) { if (b) continue foo; c}")).toMatchSnapshot();
 
   // do-while
   expect(buildVisFromSource("do { if (b) continue; c} while (a);")).toMatchSnapshot();
@@ -338,7 +342,7 @@ it("continue statement", () => {
 
   // for-each
   expect(buildVisFromSource("for (elem of obj) { if (subcond) continue; stmt; }")).toMatchSnapshot();
-  expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue; stmt; }")).toMatchSnapshot();
+  expect(buildVisFromSource("let x = 1; foo: for (elem in obj) { if (subcond) continue; stmt; }")).toMatchSnapshot();
   expect(buildVisFromSource("foo: for (elem of obj) { if (subcond) continue foo; stmt; }")).toMatchSnapshot();
 });
 

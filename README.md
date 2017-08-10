@@ -14,7 +14,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
-* Variables should not be self-assigned ([`no-self-assignment`])
+* Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
@@ -23,6 +23,8 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
 * `delete` should not be used on arrays ([`no-array-delete`])
+* `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
+*  Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 
 [`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
@@ -42,6 +44,7 @@ Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
 [`no-empty-nested-blocks`]: ./docs/rules/no-empty-nested-blocks.md
 [`no-multiline-string-literals`]: ./docs/rules/no-multiline-string-literals.md
 [`no-array-delete`]: ./docs/rules/no-array-delete.md
+[`no-dead-store`]: ./docs/rules/no-dead-store.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 

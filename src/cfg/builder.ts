@@ -18,6 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
+import { getIdentifier } from "../utils/navigation";
 import { CfgBlock, CfgBranchingBlock, CfgEndBlock, CfgGenericBlock, ControlFlowGraph } from "./cfg";
 
 const { SyntaxKind } = ts;
@@ -230,7 +231,7 @@ export class CfgBuilder {
     whileConditionStartBlockPlaceholder.addSuccessor(whileConditionStartBlock);
     whileConditionStartBlock.loopingStatement = doWhileLoop;
     this.breakables.pop();
-    return doBlockStart;
+    return this.createBlockPredecessorOf(doBlockStart);
   }
 
   private buildWhileStatement(current: CfgBlock, whileLoop: ts.WhileStatement): CfgBlock {
@@ -246,7 +247,7 @@ export class CfgBuilder {
     loopBottom.addSuccessor(loopStartPlaceholder);
     loopStartPlaceholder.loopingStatement = whileLoop;
     this.breakables.pop();
-    return loopStartPlaceholder;
+    return this.createBlockPredecessorOf(loopStartPlaceholder);
   }
 
   private createWhileRootBlock(
@@ -320,7 +321,7 @@ export class CfgBuilder {
     }
 
     this.breakables.pop();
-    return loopStart;
+    return this.createBlockPredecessorOf(loopStart);
   }
 
   private buildIfStatement(current: CfgBlock, ifStatement: ts.IfStatement): CfgBlock {
@@ -385,12 +386,12 @@ export class CfgBuilder {
 
   private buildVariableDeclarationList(current: CfgBlock, variableDeclarations: ts.VariableDeclarationList): CfgBlock {
     [...variableDeclarations.declarations].reverse().forEach(variableDeclaration => {
-      current = this.buildBindingName(current, variableDeclaration.name);
       if (variableDeclaration.initializer) {
+        current.addElement(variableDeclaration);
         current = this.buildExpression(current, variableDeclaration.initializer);
       }
+      current = this.buildBindingName(current, variableDeclaration.name);
     });
-
     return current;
   }
 
@@ -657,6 +658,12 @@ export class CfgBuilder {
         whenFalse = this.buildExpression(whenFalse, expression.right);
         const branching = this.createBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
         return this.buildExpression(branching, expression.left);
+      }
+      case SyntaxKind.EqualsToken: {
+        if (getIdentifier(expression.left)) {
+          current.addElement(expression);
+          return this.buildExpression(current, expression.right);
+        }
       }
     }
 

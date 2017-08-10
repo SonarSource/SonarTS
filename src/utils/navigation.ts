@@ -25,6 +25,20 @@ export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | 
   return node.getFirstToken();
 }
 
+export function isAssignment(node: ts.Node | undefined): node is ts.BinaryExpression {
+  return (
+    !!node &&
+    node.kind === ts.SyntaxKind.BinaryExpression &&
+    (node as ts.BinaryExpression).operatorToken.kind === ts.SyntaxKind.EqualsToken
+  );
+}
+
+export function getIdentifier(node: ts.Node): ts.Identifier | undefined {
+  node = drillDownThroughParenthesis(node);
+  if (node.kind === ts.SyntaxKind.Identifier) return node as ts.Identifier;
+  return undefined;
+}
+
 export function getComments(node: ts.Node): ts.CommentRange[] {
   return [...getCommentsBefore(node), ...getCommentsAfter(node)];
 }
@@ -67,7 +81,8 @@ export function lineAndCharacter(pos: number, file: ts.SourceFile): ts.LineAndCh
   return file.getLineAndCharacterOfPosition(pos);
 }
 
-export function is(node: ts.Node, ...kinds: ts.SyntaxKind[]): boolean {
+export function is(node: ts.Node | undefined, ...kinds: ts.SyntaxKind[]): boolean {
+  if (!node) return false;
   for (const kind of kinds) {
     if (node.kind === kind) {
       return true;
@@ -80,7 +95,11 @@ function isToken(node: ts.Node): boolean {
   return node.kind <= ts.SyntaxKind.OfKeyword;
 }
 
-export function ancestorsChain(node: ts.Node, boundary = FUNCTION_LIKE): ts.Node[] {
+export function localAncestorsChain(node: ts.Node): ts.Node[] {
+  return ancestorsChain(node, ...FUNCTION_LIKE);
+}
+
+export function ancestorsChain(node: ts.Node, ...boundary: ts.SyntaxKind[]) {
   const chain: ts.Node[] = [];
   for (let parent = node.parent; !!parent; parent = parent.parent) {
     chain.push(parent);
@@ -89,12 +108,30 @@ export function ancestorsChain(node: ts.Node, boundary = FUNCTION_LIKE): ts.Node
   return chain;
 }
 
+export function firstLocalAncestor(node: ts.Node, ...targetAncestor: ts.SyntaxKind[]) {
+  return firstAncestor(node, targetAncestor, ...FUNCTION_LIKE);
+}
+
 export function firstAncestor(
   node: ts.Node,
   targetAncestor: ts.SyntaxKind[],
-  boundary = FUNCTION_LIKE,
+  ...boundary: ts.SyntaxKind[],
 ): ts.Node | undefined {
-  return ancestorsChain(node, boundary).find(ancestor => targetAncestor.includes(ancestor.kind));
+  return ancestorsChain(node, ...boundary).find(ancestor => targetAncestor.includes(ancestor.kind));
+}
+
+export function floatToTopParenthesis(node: ts.Node): ts.Node {
+  if (is(node, ts.SyntaxKind.ParenthesizedExpression)) {
+    if (node.parent) return floatToTopParenthesis(node.parent);
+    return node;
+  }
+  return node;
+}
+
+export function drillDownThroughParenthesis(node: ts.Node): ts.Node {
+  if (is(node, ts.SyntaxKind.ParenthesizedExpression))
+    return drillDownThroughParenthesis((node as ts.ParenthesizedExpression).expression);
+  return node;
 }
 
 export function descendants(node: ts.Node): ts.Node[] {
