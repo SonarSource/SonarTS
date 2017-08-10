@@ -89,3 +89,11 @@ function exceptions() {
 //^ {{Remove this useless assignment to local variable "x".}}
 }
 
+class MyClass {
+
+  public globalVariables() {
+    console = new Console();
+  }
+
+}
+

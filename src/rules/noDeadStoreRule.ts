@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { LiveVariableAnalyzer } from "../symbols/lva";
-import { SymbolTable, Usage } from "../symbols/table";
+import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
 import { descendants, floatToTopParenthesis, FUNCTION_LIKE, is } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -79,6 +79,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private isException(usage: Usage) {
+    if (!this.symbols.allUsages(usage.symbol).some(u => (u.flags & UsageFlag.DECLARATION) > 0)) return true;
     const parent = floatToTopParenthesis(usage.node).parent;
     if (is(parent, ts.SyntaxKind.BindingElement, ts.SyntaxKind.VariableDeclaration)) {
       return isBasicValue((parent as ts.BindingElement | ts.VariableDeclaration).initializer);
