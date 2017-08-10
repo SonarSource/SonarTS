@@ -23,7 +23,7 @@ import { firstLocalAncestor, FUNCTION_LIKE, getIdentifier, is, isAssignment } fr
 import { SymbolTable, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
-  private liveIn: Map<CfgBlock, Set<ts.Symbol>>;
+  private blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
   private root: ts.FunctionLikeDeclaration;
 
   constructor(private readonly symbols: SymbolTable) {}
@@ -35,20 +35,20 @@ export class LiveVariableAnalyzer {
     const cfg = ControlFlowGraph.fromStatements((root.body as ts.Block).statements);
     if (!cfg) return;
     this.root = root;
-    // symbols which value will be read after entering this block (aka live symbols)
-    this.liveIn = new Map<CfgBlock, Set<ts.Symbol>>();
+    // symbols whose value will be read after entering a block (aka live symbols)
+    this.blockAvailableReads = new Map<CfgBlock, Set<ts.Symbol>>();
     const blocks = cfg.getBlocks().concat(cfg.end);
     while (blocks.length > 0) {
       const block = blocks.pop()!;
       // live-in symbols from previous iteration of the algorithm for this block
-      const oldLive = this.liveIn.get(block);
-      const newLive = this.computeSymbolsWithAvailableReads(block);
-      if (!this.same(newLive, oldLive)) {
+      const oldBlockReads = this.blockAvailableReads.get(block);
+      const newBlockReads = this.computeSymbolsWithAvailableReads(block);
+      if (!this.same(newBlockReads, oldBlockReads)) {
         if (block instanceof CfgBlockWithPredecessors) {
           blocks.unshift(...block.predecessors);
         }
       }
-      this.liveIn.set(block, newLive);
+      this.blockAvailableReads.set(block, newBlockReads);
     }
   }
 
@@ -90,7 +90,7 @@ export class LiveVariableAnalyzer {
   private successorSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
     const availableReads = new Set<ts.Symbol>();
     block.getSuccessors().forEach(successor => {
-      const availableReadsInSuccessor = this.liveIn.get(successor);
+      const availableReadsInSuccessor = this.blockAvailableReads.get(successor);
       if (availableReadsInSuccessor) {
         availableReadsInSuccessor.forEach(symbol => availableReads.add(symbol));
       }
@@ -98,11 +98,11 @@ export class LiveVariableAnalyzer {
     return availableReads;
   }
 
-  private same(newLive: Set<ts.Symbol>, oldLive?: Set<ts.Symbol>) {
-    if (!oldLive) return false;
-    if (oldLive.size !== newLive.size) return false;
-    for (const symbol of newLive) {
-      if (!oldLive.has(symbol)) {
+  private same(newAvailableReads: Set<ts.Symbol>, oldAvailableReads?: Set<ts.Symbol>) {
+    if (!oldAvailableReads) return false;
+    if (oldAvailableReads.size !== newAvailableReads.size) return false;
+    for (const symbol of newAvailableReads) {
+      if (!oldAvailableReads.has(symbol)) {
         return false;
       }
     }

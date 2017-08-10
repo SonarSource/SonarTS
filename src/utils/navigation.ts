@@ -34,9 +34,8 @@ export function isAssignment(node: ts.Node | undefined): node is ts.BinaryExpres
 }
 
 export function getIdentifier(node: ts.Node): ts.Identifier | undefined {
+  node = drillDownThroughParenthesis(node);
   if (node.kind === ts.SyntaxKind.Identifier) return node as ts.Identifier;
-  if (node.kind === ts.SyntaxKind.ParenthesizedExpression)
-    return getIdentifier((node as ts.ParenthesizedExpression).expression);
   return undefined;
 }
 
