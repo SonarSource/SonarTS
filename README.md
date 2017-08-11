@@ -1,7 +1,11 @@
-# SonarTS [![Build Status](https://travis-ci.org/SonarSource/SonarTS.svg?branch=master)](https://travis-ci.org/SonarSource/SonarTS) [![NPM version](https://badge.fury.io/js/tslint-sonarts.svg)](http://badge.fury.io/js/tslint-sonarts)
-SonarSource's code analyzer for TypeScript.
+# SonarTS [![Build Status](https://travis-ci.org/SonarSource/SonarTS.svg?branch=master)](https://travis-ci.org/SonarSource/SonarTS) [![NPM version](https://badge.fury.io/js/tslint-sonarts.svg)](http://badge.fury.io/js/tslint-sonarts) [![Quality Gate](https://next.sonarqube.com/sonarqube/api/badges/gate?key=TypeScript_Ecosystem)](https://next.sonarqube.com/sonarqube/dashboard?id=TypeScript_Ecosystem) [![Coverage](https://next.sonarqube.com/sonarqube/api/badges/measure?key=TypeScript_Ecosystem&metric=coverage)](https://next.sonarqube.com/sonarqube/component_measures/domain/Coverage?id=TypeScript_Ecosystem)
+Static code analyzer for TypeScript detecting bugs and suspicious patterns in your code.
 
-Currently available as a [TSLint](https://github.com/palantir/tslint) plugin.
+How does it work?
+* The [TypeScript compiler](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) provides [**AST**](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and **type** information
+* On top of it we build the **symbol model** and the [**control flow**](https://en.wikipedia.org/wiki/Control_flow_graph) model
+* Some rules are based on AST equivalence (like [no-all-duplicated-branches][`no-all-duplicated-branches`] or [no-identical-expressions][`no-identical-expressions`]).
+* And finally we use **live variable analysis** to detect [dead stores][`no-dead-store`]
 
 ## Rules
 
@@ -66,6 +70,18 @@ npm install tslint-sonarts -g   # or install globally
 ```
 tslint --type-check --project tsconfig.json -c tslint.json 'src/**/*.ts'
 ```
+
+## Use in SonarQube
+SonarTS is available as plugin for SonarQube. [SonarQube](https://www.sonarqube.org/) is an open source platform for continuous inspection of code quality. 
+Thanks to the platform, SonarTS provides additional features:
+* Code coverage import
+* Duplication detection
+* Different metrics
+* More rules
+
+See full documentation [here](https://docs.sonarqube.org/display/PLUG/SonarTS).
+
+> Also available online on :cloud: [sonarcloud.io](https://sonarcloud.io/)
 
 ## Contribution
 
