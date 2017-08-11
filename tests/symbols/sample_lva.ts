@@ -71,3 +71,10 @@ class SomeClass {
 
   }
 }
+
+function destructuring() {
+  let x = 0;
+  let y = 0;
+  [x, y] = [x, y];
+  read(x, y);
+}
