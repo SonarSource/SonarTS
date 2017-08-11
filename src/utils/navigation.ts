@@ -39,6 +39,34 @@ export function getIdentifier(node: ts.Node): ts.Identifier | undefined {
   return undefined;
 }
 
+export function getIdentifiers(node: ts.Node): ts.Identifier[] {
+  const identifiers: ts.Identifier[] = [];
+  collectIdentifiers(node, identifiers);
+  return identifiers;
+
+  function collectIdentifiers(node: ts.Node, identifiers: ts.Identifier[]) {
+    if (node.kind === ts.SyntaxKind.Identifier) {
+      identifiers.push(node as ts.Identifier);
+    } else if (node.kind === ts.SyntaxKind.ObjectLiteralExpression) {
+      (node as ts.ObjectLiteralExpression).properties.forEach(property => {
+        collectIdentifiers(property, identifiers);
+      });
+    } else if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
+      (node as ts.ArrayLiteralExpression).elements.forEach(element => {
+        collectIdentifiers(element, identifiers);
+      });
+    } else if (is(node, ts.SyntaxKind.PropertyAssignment)) {
+      collectIdentifiers((node as ts.PropertyAssignment).initializer, identifiers);
+    } else if (is(node, ts.SyntaxKind.ShorthandPropertyAssignment)) {
+      collectIdentifiers((node as ts.ShorthandPropertyAssignment).name, identifiers);
+    } else if (is(node, ts.SyntaxKind.SpreadAssignment, ts.SyntaxKind.SpreadElement)) {
+      collectIdentifiers((node as ts.SpreadAssignment).expression, identifiers);
+    } else if (is(node, ts.SyntaxKind.BinaryExpression)) {
+      collectIdentifiers((node as ts.BinaryExpression).left, identifiers);
+    }
+  }
+}
+
 export function getComments(node: ts.Node): ts.CommentRange[] {
   return [...getCommentsBefore(node), ...getCommentsAfter(node)];
 }
