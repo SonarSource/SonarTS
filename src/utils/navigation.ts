@@ -39,30 +39,41 @@ export function getIdentifier(node: ts.Node): ts.Identifier | undefined {
   return undefined;
 }
 
-export function getIdentifiers(node: ts.Node): ts.Identifier[] {
+export function siftIdentifiers(node: ts.Node): { identifiers: ts.Identifier[], nonIdentifiers: ts.Expression[]} {
   const identifiers: ts.Identifier[] = [];
-  collectIdentifiers(node, identifiers);
-  return identifiers;
+  const nonIdentifiers: ts.Expression[] = [];
+  collectIdentifiersAndNonIdentifiers(node, identifiers, nonIdentifiers);
+  identifiers.reverse();
+  nonIdentifiers.reverse();
+  return { identifiers, nonIdentifiers };
 
-  function collectIdentifiers(node: ts.Node, identifiers: ts.Identifier[]) {
+  function collectIdentifiersAndNonIdentifiers(node: ts.Node, identifiers: ts.Identifier[], nonIdentifiers: ts.Expression[]) {
+    node = drillDownThroughParenthesis(node);
     if (node.kind === ts.SyntaxKind.Identifier) {
       identifiers.push(node as ts.Identifier);
     } else if (node.kind === ts.SyntaxKind.ObjectLiteralExpression) {
       (node as ts.ObjectLiteralExpression).properties.forEach(property => {
-        collectIdentifiers(property, identifiers);
+        collectIdentifiersAndNonIdentifiers(property, identifiers, nonIdentifiers);
       });
     } else if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
       (node as ts.ArrayLiteralExpression).elements.forEach(element => {
-        collectIdentifiers(element, identifiers);
+        collectIdentifiersAndNonIdentifiers(element, identifiers, nonIdentifiers);
       });
     } else if (is(node, ts.SyntaxKind.PropertyAssignment)) {
-      collectIdentifiers((node as ts.PropertyAssignment).initializer, identifiers);
+      collectIdentifiersAndNonIdentifiers((node as ts.PropertyAssignment).initializer, identifiers, nonIdentifiers);
     } else if (is(node, ts.SyntaxKind.ShorthandPropertyAssignment)) {
-      collectIdentifiers((node as ts.ShorthandPropertyAssignment).name, identifiers);
+      const propertyAssignment = node as ts.ShorthandPropertyAssignment;
+      collectIdentifiersAndNonIdentifiers(propertyAssignment.name, identifiers, nonIdentifiers);
+      if (propertyAssignment.objectAssignmentInitializer) {
+        nonIdentifiers.push(propertyAssignment.objectAssignmentInitializer);
+      }
     } else if (is(node, ts.SyntaxKind.SpreadAssignment, ts.SyntaxKind.SpreadElement)) {
-      collectIdentifiers((node as ts.SpreadAssignment).expression, identifiers);
+      collectIdentifiersAndNonIdentifiers((node as ts.SpreadAssignment).expression, identifiers, nonIdentifiers);
     } else if (is(node, ts.SyntaxKind.BinaryExpression)) {
-      collectIdentifiers((node as ts.BinaryExpression).left, identifiers);
+      collectIdentifiersAndNonIdentifiers((node as ts.BinaryExpression).left, identifiers, nonIdentifiers);
+      nonIdentifiers.push((node as ts.BinaryExpression).right);
+    } else {
+      nonIdentifiers.push(node as ts.Expression);
     }
   }
 }

@@ -19,7 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import { getIdentifiers, is, isAssignment } from "../utils/navigation";
+import { is, isAssignment, siftIdentifiers } from "../utils/navigation";
 import { SymbolTable, UsageFlag } from "./table";
 
 export class SymbolTableBuilder extends tslint.SyntaxWalker {
@@ -47,7 +47,7 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
   }
 
   private registerWriteUsageForAssignment(node: ts.Node) {
-    getIdentifiers(node).forEach(identifier => this.registerUsageIfMissing(identifier, UsageFlag.WRITE));
+    siftIdentifiers(node).identifiers.forEach(identifier => this.registerUsageIfMissing(identifier, UsageFlag.WRITE));
   }
 
   protected visitVariableDeclaration(node: ts.VariableDeclaration) {

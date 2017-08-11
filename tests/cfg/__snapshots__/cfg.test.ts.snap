@@ -5398,32 +5398,22 @@ Object {
     Object {
       "id": 1,
       "label": "START
-a
-b
+x
+y
+x + y
+(x + y)
 42
-locVarName1
-locVarName
-(locVarName)
-42
-locVarName2 = 42
-{
-    a,
-    b = 42,
-    propName1: locVarName1,
-    propName2: (locVarName),
-    propName3: locVarName2 = 42
-  }
 obj
 {
     a,
-    b = 42,
+    b = (x + y),
     propName1: locVarName1,
     propName2: (locVarName),
     propName3: locVarName2 = 42
   } = obj
 ({
     a,
-    b = 42,
+    b = (x + y),
     propName1: locVarName1,
     propName2: (locVarName),
     propName3: locVarName2 = 42

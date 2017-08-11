@@ -200,7 +200,7 @@ it("object destructuring assignment", () => {
   expect(
     buildVisFromSource(`({
     a,
-    b = 42,
+    b = (x + y),
     propName1: locVarName1,
     propName2: (locVarName),
     propName3: locVarName2 = 42
