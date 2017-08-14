@@ -77,4 +77,8 @@ function destructuring() {
   let y = 0;
   [x, y] = [x, y];
   read(x, y);
+
+  let a, b, c, d;
+  ({a, b, prop1: c, prop2: d = 1} = obj); // 'c' and 'd' are written but not read
+  read(a, b);
 }

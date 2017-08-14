@@ -39,7 +39,7 @@ export function getIdentifier(node: ts.Node): ts.Identifier | undefined {
   return undefined;
 }
 
-export function siftIdentifiers(node: ts.Node): { identifiers: ts.Identifier[], nonIdentifiers: ts.Expression[]} {
+export function siftIdentifiers(node: ts.Node): { identifiers: ts.Identifier[]; nonIdentifiers: ts.Expression[] } {
   const identifiers: ts.Identifier[] = [];
   const nonIdentifiers: ts.Expression[] = [];
   collectIdentifiersAndNonIdentifiers(node, identifiers, nonIdentifiers);
@@ -47,7 +47,11 @@ export function siftIdentifiers(node: ts.Node): { identifiers: ts.Identifier[], 
   nonIdentifiers.reverse();
   return { identifiers, nonIdentifiers };
 
-  function collectIdentifiersAndNonIdentifiers(node: ts.Node, identifiers: ts.Identifier[], nonIdentifiers: ts.Expression[]) {
+  function collectIdentifiersAndNonIdentifiers(
+    node: ts.Node,
+    identifiers: ts.Identifier[],
+    nonIdentifiers: ts.Expression[],
+  ) {
     node = drillDownThroughParenthesis(node);
     if (node.kind === ts.SyntaxKind.Identifier) {
       identifiers.push(node as ts.Identifier);

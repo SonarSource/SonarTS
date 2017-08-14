@@ -19,8 +19,8 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import { firstLocalAncestor, FUNCTION_LIKE, getIdentifier, is, isAssignment } from "../utils/navigation";
-import { SymbolTable, UsageFlag } from "./table";
+import { firstLocalAncestor, FUNCTION_LIKE, is, isAssignment, siftIdentifiers } from "../utils/navigation";
+import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
   private blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
@@ -55,36 +55,35 @@ export class LiveVariableAnalyzer {
   private computeSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
     const availableReads = this.successorSymbolsWithAvailableReads(block);
     [...block.getElements()].reverse().forEach(element => {
-      const usage = this.symbols.getUsage(usageNode(element));
-      if (usage && !this.isUsedInNestedFunctions(usage.symbol)) {
-        if (usage.is(UsageFlag.WRITE)) {
-          if (availableReads.has(usage.symbol)) {
-            usage.dead = false;
-            availableReads.delete(usage.symbol);
-          } else {
-            usage.dead = true;
-          }
-        }
-        if (usage.is(UsageFlag.READ)) {
-          availableReads.add(usage.symbol);
-        }
+      if (isAssignment(element)) {
+        siftIdentifiers((element as ts.BinaryExpression).left).identifiers.forEach(identifier => {
+          this.trackUsage(this.symbols.getUsage(identifier), availableReads);
+        });
+      } else {
+        this.trackUsage(this.symbols.getUsage(element), availableReads);
       }
     });
     return availableReads;
+  }
 
-    function usageNode(node: ts.Node): ts.Node | ts.Identifier {
-      if (isAssignment(node)) {
-        const identifier = getIdentifier(node.left);
-        if (identifier) return identifier;
+  private trackUsage(usage: Usage | undefined, availableReads: Set<ts.Symbol>) {
+    if (usage && !this.isUsedInNestedFunctions(usage.symbol)) {
+      if (usage.is(UsageFlag.WRITE)) {
+        if (availableReads.has(usage.symbol)) {
+          usage.dead = false;
+          availableReads.delete(usage.symbol);
+        } else {
+          usage.dead = true;
+        }
       }
-      return node;
+      if (usage.is(UsageFlag.READ)) {
+        availableReads.add(usage.symbol);
+      }
     }
   }
 
   private isUsedInNestedFunctions(symbol: ts.Symbol): boolean {
-    return this.symbols
-      .allUsages(symbol)
-      .some(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) !== this.root);
+    return this.symbols.allUsages(symbol).some(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) !== this.root);
   }
 
   private successorSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
