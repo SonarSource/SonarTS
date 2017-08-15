@@ -19,7 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import { is, isAssignment, collectLeftHandIdentifiers } from "../utils/navigation";
+import { collectLeftHandIdentifiers, is, isAssignment } from "../utils/navigation";
 import { SymbolTable, UsageFlag } from "./table";
 
 export class SymbolTableBuilder extends tslint.SyntaxWalker {
