@@ -19,7 +19,7 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import { firstLocalAncestor, FUNCTION_LIKE, is, isAssignment, siftIdentifiers } from "../utils/navigation";
+import { collectLeftHandIdentifiers, firstLocalAncestor, FUNCTION_LIKE, is, isAssignment } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
@@ -56,7 +56,7 @@ export class LiveVariableAnalyzer {
     const availableReads = this.successorSymbolsWithAvailableReads(block);
     [...block.getElements()].reverse().forEach(element => {
       if (isAssignment(element)) {
-        siftIdentifiers((element as ts.BinaryExpression).left).identifiers.forEach(identifier => {
+        collectLeftHandIdentifiers((element as ts.BinaryExpression).left).identifiers.forEach(identifier => {
           this.trackUsage(this.symbols.getUsage(identifier), availableReads);
         });
       } else {
