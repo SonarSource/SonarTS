@@ -23,7 +23,6 @@ How does it work?
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
-* `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
 * `delete` should not be used on arrays ([`no-array-delete`])
