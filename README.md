@@ -80,7 +80,7 @@ Thanks to the platform, SonarTS provides additional features:
 
 See full documentation [here](https://docs.sonarqube.org/display/PLUG/SonarTS).
 
-> Also available online on :cloud: [sonarcloud.io](https://sonarcloud.io/)
+Also available online on :cloud: [sonarcloud.io](https://sonarcloud.io/) starting from 25.08.2017
 
 ## Contribution
 
