@@ -51,7 +51,7 @@ How does it work?
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
-## Installation
+## Use in TSLint
 * If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).
 * Install `tslint-sonarts`
 ```sh
