@@ -23,7 +23,6 @@ How does it work?
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
-* `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
 * `delete` should not be used on arrays ([`no-array-delete`])
@@ -52,7 +51,7 @@ How does it work?
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
-## Installation
+## Use in TSLint
 * If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).
 * Install `tslint-sonarts`
 ```sh
@@ -81,7 +80,7 @@ Thanks to the platform, SonarTS provides additional features:
 
 See full documentation [here](https://docs.sonarqube.org/display/PLUG/SonarTS).
 
-> Also available online on :cloud: [sonarcloud.io](https://sonarcloud.io/)
+Also available online on :cloud: [sonarcloud.io](https://sonarcloud.io/) starting from 25.08.2017
 
 ## Contribution
 
