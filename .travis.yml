@@ -8,7 +8,6 @@ script:
   - yarn test -- --coverage
   - node scripts/analyse.js
   - yarn ruling
-  - yarn lint
   - yarn license-check
 
 cache: yarn

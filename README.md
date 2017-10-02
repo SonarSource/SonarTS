@@ -137,5 +137,4 @@ yarn ruling -- --rule <RuleFileName> --update # it is possible to combine both o
 
 ### Tools we use
 * Visual Studio Code
-* TSLint (and its extension for VSCode)
 * Prettier (and its extension for VSCode)
