@@ -80,6 +80,13 @@ it("ignore symbols used in nested functions", () => {
   expect(symbols.getUsage(getNode(func, "z")).dead).toBe(false);
 });
 
+it("destructuring", () => {
+  const func = liveVariableAnalysis("destructuring");
+  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
+  expect(symbols.getUsage(getNode(func, "c", 82)).dead).toBe(true);
+  expect(symbols.getUsage(getNode(func, "d", 82)).dead).toBe(true);
+});
+
 function liveVariableAnalysis(functionName: string) {
   const func = findFunction(functionName);
   new LiveVariableAnalyzer(symbols).analyze(func);

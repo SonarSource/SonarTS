@@ -19,7 +19,7 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import { is, isAssignment } from "../utils/navigation";
+import { collectLeftHandIdentifiers, is, isAssignment } from "../utils/navigation";
 import { SymbolTable, UsageFlag } from "./table";
 
 export class SymbolTableBuilder extends tslint.SyntaxWalker {
@@ -47,25 +47,7 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
   }
 
   private registerWriteUsageForAssignment(node: ts.Node) {
-    if (node.kind === ts.SyntaxKind.Identifier) {
-      this.registerUsageIfMissing(node as ts.Identifier, UsageFlag.WRITE);
-    } else if (node.kind === ts.SyntaxKind.ObjectLiteralExpression) {
-      (node as ts.ObjectLiteralExpression).properties.forEach(property => {
-        this.registerWriteUsageForAssignment(property);
-      });
-    } else if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
-      (node as ts.ArrayLiteralExpression).elements.forEach(element => {
-        this.registerWriteUsageForAssignment(element);
-      });
-    } else if (is(node, ts.SyntaxKind.PropertyAssignment)) {
-      this.registerWriteUsageForAssignment((node as ts.PropertyAssignment).initializer);
-    } else if (is(node, ts.SyntaxKind.ShorthandPropertyAssignment)) {
-      this.registerWriteUsageForAssignment((node as ts.ShorthandPropertyAssignment).name);
-    } else if (is(node, ts.SyntaxKind.SpreadAssignment, ts.SyntaxKind.SpreadElement)) {
-      this.registerWriteUsageForAssignment((node as ts.SpreadAssignment).expression);
-    } else if (is(node, ts.SyntaxKind.BinaryExpression)) {
-      this.registerWriteUsageForAssignment((node as ts.BinaryExpression).left);
-    }
+    collectLeftHandIdentifiers(node).identifiers.forEach(identifier => this.registerUsageIfMissing(identifier, UsageFlag.WRITE));
   }
 
   protected visitVariableDeclaration(node: ts.VariableDeclaration) {

@@ -19,7 +19,6 @@ src/angular/packages/core/testing/src/test_bed.ts: 318,319,320,321
 src/angular/packages/benchpress/test/metric/user_metric_spec.ts: 21
 src/angular/packages/benchpress/test/webdriver/chrome_driver_extension_spec.ts: 23,24
 src/angular/packages/compiler/src/expression_parser/parser.ts: 718
-src/angular/packages/compiler/src/i18n/digest.ts: 178,179,180
 src/angular/packages/compiler/src/provider_analyzer.ts: 287
 src/angular/packages/compiler/src/directive_normalizer.ts: 68
 src/angular/packages/compiler/src/metadata_resolver.ts: 872
