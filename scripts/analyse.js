@@ -33,7 +33,7 @@ if (branch === "master" && pullRequest === "false") {
       options: {
         // project under development (thus to be released next)
         // is bigger than the one in package.json (that one corresponds to the last released)
-        "sonar.projectVersion": "1.1",
+        "sonar.projectVersion": "1.1.0",
         "sonar.sources": "src",
         "sonar.tests": "tests",
         "sonar.typescript.lcov.reportPaths": "coverage/lcov.info",
