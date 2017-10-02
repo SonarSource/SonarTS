@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/SonarSource/SonarTS",
   "peerDependencies": {
+    "tslint": "^5.1.0",
     "typescript": "^2.2"
   },
   "devDependencies": {
