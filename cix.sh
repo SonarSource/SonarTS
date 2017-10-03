@@ -4,6 +4,7 @@ echo "Running $TEST with SQ=$SQ_VERSION"
 
 case "$TEST" in
   ci)
+  cd sonarts-sq-plugin
   # only verify build
   mvn verify -B -e -V
   exit 0;
