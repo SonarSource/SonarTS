@@ -10,7 +10,7 @@
     "watch-cfg-viewer": "node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "clear": "rm -rf lib/*",
     "prepublishOnly": "yarn build",
-    "build": "yarn clear && tsc -p . && yarn build-cfg && webpack",
+    "build": "yarn clear && yarn && tsc -p . && yarn build-cfg && webpack",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer/",
     "test": "jest --forceExit",
     "ruling": "ts-node tests/ruling/index.ts",
