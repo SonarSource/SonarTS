@@ -68,7 +68,7 @@
   </ciManagement>
 
   <properties>
-    <gitRepositoryName>SonarTS-Plugin</gitRepositoryName>
+    <gitRepositoryName>SonarTS</gitRepositoryName>
     <license.title>SonarTS</license.title>
 
     <assertj.version>3.6.2</assertj.version>
