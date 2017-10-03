@@ -1,9 +1,0 @@
-<div fxLayout="column" style="height: 100%;">
-  <app-header [authenticated]="auth.authenticated"
-              [userInfo]="auth.userInfo"
-              (signOut)="signOut($event)"></app-header>
-
-  <main class="main" fxFlex>
-    <router-outlet></router-outlet>
-  </main>
-</div>

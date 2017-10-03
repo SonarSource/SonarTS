@@ -1,7 +1,0 @@
-out/
-dist/
-node_modules/
-npm-debug.log
-app/node_modules/
-.DS_Store
-.awcache

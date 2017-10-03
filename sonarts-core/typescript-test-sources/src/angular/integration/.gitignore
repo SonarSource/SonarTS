@@ -1,9 +1,0 @@
-built/
-dist/
-vendor/
-*/src/*.d.ts
-*/src/*.js
-**/*.ngfactory.ts
-**/*.ngsummary.json
-*/yarn*
-*/.yarn_local_cache*

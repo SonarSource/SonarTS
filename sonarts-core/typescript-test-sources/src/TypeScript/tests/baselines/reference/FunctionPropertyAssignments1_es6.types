@@ -1,6 +1,0 @@
-=== tests/cases/conformance/es6/functionPropertyAssignments/FunctionPropertyAssignments1_es6.ts ===
-var v = { *foo() { } }
->v : { foo(): IterableIterator<any>; }
->{ *foo() { } } : { foo(): IterableIterator<any>; }
->foo : () => IterableIterator<any>
-

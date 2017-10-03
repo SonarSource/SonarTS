@@ -1,2 +1,0 @@
-# PostGraphQL GraphiQL
-TODO

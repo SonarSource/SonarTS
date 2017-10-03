@@ -1,4 +1,0 @@
-export default {
-    SHOW_POPUP: 'POPUP_SHOW_POPUP',
-    CLOSE_POPUP: 'POPUP_CLOSE_POPUP',
-}
