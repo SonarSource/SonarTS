@@ -1,0 +1,56 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+.root {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid $grey2;
+  width: 100%;
+  cursor: pointer;
+  cursor: hand;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &:hover {
+    background-color: $grey2;
+  }
+
+  svg {
+    margin-left: 24px;
+    fill: $grey4;
+
+    &:hover {
+      fill: $grey5;
+    }
+  }
+}
+
+.content {
+  display: inline-flex;
+  flex-direction: column;
+  width: calc(100% - 43px);
+
+  .name {
+    font-weight: 600;
+
+    input {
+      width: 100%;
+      border: 0;
+      background-color: transparent;
+    }
+    
+    .hint {
+      color: $grey4;
+      font-size: 12px;
+      margin-left: 6px;
+    }
+  }
+
+  .token {
+    margin-top: 6px;
+    font-family: monospace;
+    word-wrap: break-word;
+    width: 100%;
+  }
+}

@@ -1,0 +1,42 @@
+/* Main applet */
+
+@joust-background: #1d3657;
+@joust-foreground: white;
+@joust-background-current-player: #154b69;
+@joust-player-border-color: lighten(@joust-background, 10%);
+@joust-current-player-border-color: lighten(@joust-background-current-player, 30%);
+
+/* Scrubber */
+
+@scrubber-height: 35px;
+@scrubber-background-color: lighten(@joust-background, 5%);
+@scrubber-inactive-border-color: @joust-current-player-border-color	;
+@scrubber-inactive-border-width: 1px;
+@scrubber-active-border-color: @scrubber-inactive-border-color;
+@scrubber-active-border-width: 4px;
+@scrubber-seeker-width: 2px;
+@scrubber-margin-top: 8px;
+@scrubber-component-margin: 8px;
+@scrubber-turn-font-size: 0.8em;
+@scrubber-turn-padding-top: 1px;
+@scrubber-mulligan-padding-left: 2px;
+@scrubber-seeker-color: white;
+@scrubber-tooltip-color: white;
+@scrubber-tooltip-background-color: rgba(0, 0, 0, 0.8);
+@scrubber-tooltip-border: 1px rgba(255, 255, 255, 0.25) solid;
+@scrubber-tooltip-border-radius: 4px;
+
+@scrubber-settings-background-color: @scrubber-tooltip-background-color;
+@scrubber-settings-border: @scrubber-tooltip-border;
+@scrubber-settings-border-radius: 4px;
+@scrubber-settings-padding: 8px;
+
+/* Log */
+
+@log-width: 33%;
+@log-margin-left: 12px;
+
+/* Fonts */
+
+@serif-font: "belwe_fsextrabold", serif;
+@sans-serif-font: "franklin_gothic_fsMdCn", sans-serif;

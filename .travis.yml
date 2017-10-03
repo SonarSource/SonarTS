@@ -1,16 +1,21 @@
-language: node_js
+language: generic
 
 node_js:
   - "8"
 
-script:
-  - yarn build
-  - yarn test -- --coverage
-  - node scripts/analyse.js
-  - yarn ruling
-  - yarn license-check
+jdk:
+  - oraclejdk8
 
-cache: yarn
+script:
+  - ./sonarts-core/travis.sh
+  - ./sonarts-sq-plugin/travis.sh
+
+cache: # yarn
+  directories:
+    - '$HOME/.m2/repository'
+  before_cache:
+    - rm -rf $HOME/.m2/repository/org/sonarsource/typescript
+    - find $HOME/.m2 -name resolver-status.properties -exec rm {} \;
 
 notifications:
   email: false

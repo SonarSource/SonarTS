@@ -1,0 +1,62 @@
+.joust-log {
+	position: relative;
+	width: @log-width;
+	display: inline-flex;
+	flex-direction: column;
+	overflow: hidden;
+	margin-left: 8px;
+	height: 100%;
+	z-index: 1000;
+	background-color: @scrubber-background-color;
+	border: solid 1px @joust-current-player-border-color;
+	font-size: 1.76vh;
+	font-family: @sans-serif-font;
+	.line {
+		position: relative;
+		margin-left: 8px;
+		> * {
+			display: inline;
+		}
+		&.inactive {
+			opacity: 0.3;
+		}
+		&.header {
+			margin-left: 0;
+			margin-top: 10px;
+			margin-bottom: 5px;
+			border-top: solid 1px @joust-current-player-border-color;
+			border-bottom: solid 1px @joust-current-player-border-color;
+			font-weight: bold;
+			text-align: center;
+			background-color: lighten(@scrubber-background-color, 5%);
+		}
+		&.indent {
+			margin-left: 1.8em;
+		}
+		> pre {
+			position: fixed;
+			left: -100%;
+			top: -100%;
+			border: 0;
+		}
+	}
+
+	.entity {
+		&.common, &.free {
+			color: #e0e0e0;
+		}
+		&.rare {
+			color: lighten(#0070dd, 10%);
+		}
+		&.epic {
+			color: lighten(#a335ee, 10%);
+		}
+		&.legendary {
+			color: lighten(#ff8000, 10%);
+		}
+		&.special {
+			color: lighten(#e6cc80, 10%);
+		}
+	}
+
+}

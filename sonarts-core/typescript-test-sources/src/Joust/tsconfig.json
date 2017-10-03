@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"declaration": false,
+		"jsx": "react",
+		"moduleResolution": "node",
+		"noImplicitAny": false,
+		"noLib": false,
+		"removeComments": true,
+		"sourceMap": true,
+		"suppressImplicitAnyIndexErrors": true,
+		"allowSyntheticDefaultImports": true,
+		"target": "es6"
+	}
+}

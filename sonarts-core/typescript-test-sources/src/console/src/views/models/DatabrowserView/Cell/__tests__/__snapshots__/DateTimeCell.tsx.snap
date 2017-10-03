@@ -1,0 +1,12 @@
+exports[`test DateTimeCell renders 1`] = `
+<DatePicker
+  active={true}
+  applyImmediately={false}
+  className="datepicker"
+  defaultOpen={true}
+  defaultValue={2016-10-15T18:09:46.000Z}
+  onCancel={[Function]}
+  onChange={[Function]}
+  onClickOutside={[Function]}
+  onKeyDown={[Function]} />
+`;

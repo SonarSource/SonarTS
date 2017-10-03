@@ -1,0 +1,1 @@
+throw "Some error message";

@@ -1,0 +1,136 @@
+.toc-container {
+    width: 18%;
+    position: fixed;
+    top: 96px;
+    right: 0;
+    bottom: 32px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    @media (max-width: 800px) {
+      display: none;
+      width: 0;
+    }
+}
+
+aio-toc {
+  &.embedded {
+    @media (min-width: 801px) {
+      display: none;
+    }
+  }
+
+  &:not(.embedded) {
+    @media (max-width: 800px) {
+      display: none;
+    }
+  }
+
+}
+
+aio-toc > div {
+  border-left: 4px solid #4285f4;
+  font-size: 13px;
+  overflow-y: visible;
+  padding: 4px 0 0 10px;
+
+  .toc-heading p {
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-heading.secondary {
+    padding-bottom: 0;
+    position: relative;
+    top: -8px;
+
+    &:hover {
+      color: $accentblue;
+    }
+  }
+
+  button.toc-show-all,
+  button.toc-more-items {
+    display: inline-block;
+    background: 0;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    color: $mediumgray;
+    padding: 0;
+
+    &:hover {
+      color: $accentblue;
+    }
+    &:focus {
+      outline: none;
+    }
+  }
+
+  button.toc-show-all {
+    min-width: 34px;
+    position: absolute;
+    top: 0;
+  }
+
+  button.toc-show-all::after {
+    content: 'expand_less';
+  }
+
+  button.toc-show-all.closed::after {
+    content: 'expand_more';
+  }
+
+  button.toc-more-items {
+    top: 10px;
+    position: relative;
+  }
+
+  button.toc-more-items::after {
+    content: 'expand_less';
+  }
+
+  button.toc-more-items.closed::after {
+    content: 'more_horiz';
+  }
+
+  ul.toc-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    @media (max-width: 800px) {
+      width: auto;
+    }
+
+  }
+
+  ul.toc-list li {
+    font-size: 12px;
+    line-height: 16px;
+    margin: 6px 0;
+    padding: 0;
+    position: relative;
+    transition: all 0.3 ease-in-out;
+
+    a {
+      font-size: 12px;
+      color: lighten($darkgray, 10);
+      display:table-cell;
+      overflow: visible;
+
+      &:hover {
+        color: $accentblue;
+      }
+    }
+  }
+
+  ul.toc-list li.h3 {
+    margin-left: 15px;
+  }
+}
+
+aio-toc.embedded > div.closed li.secondary {
+    display: none;
+}

@@ -1,0 +1,8 @@
+exports[`test JsonCell renders 1`] = `
+<textarea
+  autoFocus={true}
+  defaultValue="{}"
+  onBlur={[Function]}
+  onKeyDown={[Function]}
+  type="text" />
+`;

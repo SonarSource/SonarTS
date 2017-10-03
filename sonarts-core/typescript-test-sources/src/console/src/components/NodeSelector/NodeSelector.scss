@@ -1,0 +1,17 @@
+@import '~styles/variables';
+
+.row {
+  cursor: pointer;
+  width: 300px;
+  font-size: 12px;
+  padding: 6px 10px;
+
+  &.highlighted {
+    background: $accent-shade;
+  }
+}
+
+.wrapper {
+  width: 100%;
+  position: relative;
+}

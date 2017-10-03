@@ -1,0 +1,144 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+.root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding-top: $headerHeight;
+}
+
+.category {
+  margin-left: 34px;
+  margin-top: 25px;
+
+  .title {
+    font-weight: 600;
+    font-size: 14px;
+    color: $grey5;
+  }
+
+  .field {
+    width: 70%;
+    padding: 9px 18px;
+    margin-top: 12px;
+    border: 1px solid $grey3;
+    border-radius: 4px;
+    font-size: 14px;
+    color: $grey5;
+  }
+}
+
+.saveChanges {
+  margin: 37px 0 0;
+  color: #fff;
+  background: $accent;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  border: 1px solid $accent;
+  border-radius: 4px;
+  padding: 9px 19px;
+  display: inline-block;
+
+  &:hover {
+    background: #fff;
+    color: $accent;
+  }
+}
+
+.input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #D3D4D5;
+  padding: 34px;
+  font-size: 18px;
+
+  @include placeholder {
+    color: #dadee2;
+  }
+}
+
+.copy {
+  color: #70738C;
+  margin: 34px 34px;
+
+  .copyWrapper {
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 7px 10px;
+    background: $accent;
+    color: #fff;
+  }
+
+  .projectId {
+    font-size: 12px;
+    background: #e6e6f6;
+    padding: 7px 12px;
+  }
+}
+
+.tokens {
+  width: 100%;
+  max-width: 500px;
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.button {
+  @include button;
+  display: inline-block;
+  margin-left: 10px;
+
+  span {
+    margin-left: 0;
+  }
+
+  &.reset {
+    margin-left: 0;
+  }
+
+  &.red {
+    border-color: rgb(200, 31, 0);
+    color: rgb(200, 31, 0);
+    background: #fff;
+
+    &:hover {
+      background: rgb(200, 31, 0);
+      color: #fff;
+
+      svg {
+        fill: #fff;
+      }
+    }
+
+    svg {
+      fill: rgb(200, 31, 0);
+    }
+  }
+
+  &.green {
+    border-color: $accent;
+    color: $accent;
+    background: #fff;
+
+    &:hover {
+      background: $accent;
+      color: #fff;
+
+      svg {
+        fill: #fff;
+      }
+    }
+
+    svg {
+      fill: $accent;
+    }
+  }
+}

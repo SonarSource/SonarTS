@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="0" width="0">
+	<clipPath id="inhand-minion-clip" clipPathUnits="objectBoundingBox">
+		<ellipse cx="0.5" cy="0.5" rx="0.36" ry="0.47" />
+	</clipPath>
+	<clipPath id="inhand-spell-clip" clipPathUnits="objectBoundingBox">
+		<rect x="0" y="0.08" width="1" height="0.88" />
+	</clipPath>
+	<clipPath id="inhand-weapon-clip" clipPathUnits="objectBoundingBox">
+		<circle cx="0.5" cy="0.5" r="0.5" />
+	</clipPath>
+	<clipPath id="inplay-minion-clip" clipPathUnits="objectBoundingBox">
+		<ellipse cx="0.51" cy="0.5" rx="0.35" ry="0.46" />
+	</clipPath>
+	<clipPath id="hero-clip" clipPathUnits="objectBoundingBox">
+		<polygon points="0 1, 0 0.4, 0.2 0.1, 0.3 0.03, 0.5 0, 0.7 0.03, 0.8 0.1, 1 0.4, 1 1" />
+	</clipPath>
+	<clipPath id="hero-power-clip" clipPathUnits="objectBoundingBox">
+		<circle cx="0.5" cy="0.5" r="0.6" />
+	</clipPath>
+	<clipPath id="hero-weapon-clip" clipPathUnits="objectBoundingBox">
+		<circle cx="0.5" cy="0.5" r="0.5" />
+	</clipPath>
+	<clipPath id="rank-clip" clipPathUnits="objectBoundingBox">
+		<polygon points="0.5 0, 0.9 0.25, 0.9 0.75, 0.5 1, 0.1 0.75, 0.1 0.25" />
+	</clipPath>
+</svg>

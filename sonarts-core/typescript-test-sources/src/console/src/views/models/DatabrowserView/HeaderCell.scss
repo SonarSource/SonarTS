@@ -1,0 +1,129 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+.root {
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+
+  svg {
+    fill: $grey3;
+  }
+
+  input {
+    width: 100%;
+    border: 1px solid $grey2;
+    border-radius: 4px;
+    font-weight: 400;
+    font-size: 11px;
+    color: $grey4;
+    padding: 9px 15px;
+
+    @include placeholder {
+      color: $grey3;
+    }
+
+    &:focus {
+      border-color: $grey3;
+    }
+  }
+
+  select {
+    appearance: none;
+    width: 100%;
+    height: 35px;
+    border: 1px solid $grey2;
+    border-radius: 4px;
+    color: $grey4;
+    padding: 0 15px;
+    font-size: 11px;
+    background: none;
+  }
+
+  &:hover {
+    .sort {
+      opacity: 1;
+    }
+  }
+
+  .noFilter {
+    text-align: center;
+    font-size: 12px;
+    color: $grey3;
+    font-style: italic;
+  }
+}
+
+.fieldName {
+  font-size: 14px;
+  font-weight: 600;
+  color: $grey4;
+  display: flex;
+  align-items: center;
+  width: 90%;
+
+  &.nonsystem:hover {
+    .edit {
+      display: inline-block;
+    }
+  }
+
+  .type {
+    font-size: 14px;
+    font-weight: 300;
+    color: $grey3;
+    margin-left: 6px;
+    border-radius: 2px;
+    padding: 4px 5px 2px 5px;
+    background-color: rgba(0,0,0,.05);
+    font-family: Consolas, monospace;
+  }
+
+  .edit {
+    background: #fafafa;
+    box-shadow: 0 0 6px 3px #fafafa;
+    padding: 2px;
+    border-radius: 100%;
+    display: none;
+
+    &:hover {
+      svg {
+        fill: $grey4;
+      }
+    }
+
+    svg {
+      fill: $grey3;
+    }
+  }
+}
+
+.sort {
+  opacity: 0;
+  box-sizing: border-box;
+  padding: 10px;
+  cursor: pointer;
+
+  &:hover {
+    svg {
+      fill: $grey4;
+    }
+  }
+
+  svg {
+    fill: $grey3;
+  }
+
+  &.active {
+    opacity: 1;
+  }
+}

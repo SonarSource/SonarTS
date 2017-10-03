@@ -1,0 +1,11 @@
+.container {
+  position: relative;
+  font-size: 13px;
+  font-weight: 400;
+  color: #fff;
+
+  & > div {
+    position: absolute;
+    width: 500px;
+  }
+}

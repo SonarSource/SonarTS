@@ -1,0 +1,180 @@
+exports[`test ScalarListCell renders 1`] = `
+<Modal
+  ariaHideApp={true}
+  closeTimeoutMS={0}
+  contentLabel="Edit scalar list"
+  isOpen={true}
+  onRequestClose={[Function]}
+  parentSelector={[Function]}
+  portalClassName="ReactModalPortal"
+  shouldCloseOnOverlayClick={true}
+  style={
+    Object {
+      "content": Object {
+        "background": "white",
+        "border": "none",
+        "borderRadius": 2,
+        "bottom": "initial",
+        "boxShadow": "0 1px 7px rgba(0,0,0,.2)",
+        "height": "auto",
+        "left": "initial",
+        "overflow": "visible",
+        "padding": 0,
+        "position": "relative",
+        "right": "initial",
+        "top": "initial",
+        "width": 400,
+      },
+      "overlay": Object {
+        "alignItems": "center",
+        "background": "rgba(255,255,255,.4)",
+        "backgroundColor": "rgba(255,255,255,.9)",
+        "display": "flex",
+        "justifyContent": "center",
+        "zIndex": 100,
+      },
+    }
+  }>
+  <style
+    global={true}
+    jsx={true}>
+    
+              .scalar-list-cell {
+                .add-icon {
+                  @p: .bgBlue, .br100, .pointer;
+                }
+              }
+    
+              .scalar-list-cell .remove-icon {
+                @p: .bgrRed, .br100, .flex, .itemsCenter, .justifyCenter, .pointer;
+                padding: 8px;
+                height: 30px;
+                width: 30px;
+              }
+            
+  </style>
+  <style
+    jsx={true}>
+    
+              input {
+                background: transparent;
+              }
+            
+  </style>
+  <div
+    className="scalar-list-cell">
+    <div
+      className="bgWhite flex flexColumn relative">
+      <div
+        className="header">
+        <div
+          className="filter">
+          <Icon
+            color="rgba(42,126,210,1)"
+            height={30}
+            src="test-file-stub"
+            width={30} />
+          <input
+            onChange={[Function]}
+            placeholder="Filter..."
+            type="text"
+            value="" />
+          <Icon
+            color="rgba(242,92,84,1)"
+            height={30}
+            onClick={[Function]}
+            src="test-file-stub"
+            width={30} />
+        </div>
+      </div>
+      <div
+        className="flexAuto">
+        <div
+          className="f14 flex flexRow justifyBetween black50 bb bBlack10 pa25 itemsCenter"
+          onClick={[Function]}>
+          <span
+            className="addNewText">
+            Add new item ...
+          </span>
+          <Icon
+            className="add-icon disabled"
+            color="#fff"
+            height={30}
+            onClick={[Function]}
+            src="test-file-stub"
+            stroke={true}
+            strokeWidth={2.5}
+            width={30} />
+        </div>
+        <div
+          className="overflowYScroll flexAuto"
+          style={
+            Object {
+              "maxHeight": "calc(100vh - 294px)",
+            }
+          }>
+          <styled.div
+            className="f14 flex flexRow justifyBetween black50 bb bBlack10 pa25 itemsCenter"
+            onClick={[Function]}>
+            <div>
+              1
+            </div>
+            <Icon
+              className="remove-icon"
+              color="#fff"
+              height={30}
+              onClick={[Function]}
+              src="test-file-stub"
+              stroke={true}
+              strokeWidth={4}
+              width={30} />
+          </styled.div>
+          <styled.div
+            className="f14 flex flexRow justifyBetween black50 bb bBlack10 pa25 itemsCenter"
+            onClick={[Function]}>
+            <div>
+              2
+            </div>
+            <Icon
+              className="remove-icon"
+              color="#fff"
+              height={30}
+              onClick={[Function]}
+              src="test-file-stub"
+              stroke={true}
+              strokeWidth={4}
+              width={30} />
+          </styled.div>
+          <styled.div
+            className="f14 flex flexRow justifyBetween black50 bb bBlack10 pa25 itemsCenter"
+            onClick={[Function]}>
+            <div>
+              3
+            </div>
+            <Icon
+              className="remove-icon"
+              color="#fff"
+              height={30}
+              onClick={[Function]}
+              src="test-file-stub"
+              stroke={true}
+              strokeWidth={4}
+              width={30} />
+          </styled.div>
+        </div>
+      </div>
+      <div
+        className="bgBlack04 pa25 flex flexRow justifyBetween itemsCenter">
+        <styled.button
+          onClick={[Function]}>
+          Cancel
+        </styled.button>
+        <styled.button
+          onClick={[Function]}>
+          Save
+        </styled.button>
+      </div>
+    </div>
+  </div>
+</Modal>
+`;

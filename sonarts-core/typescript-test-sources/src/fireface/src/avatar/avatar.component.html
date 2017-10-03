@@ -1,0 +1,11 @@
+<div id="avatar" class="avatar-component">
+  <div class="avatar-color"
+       [ngStyle]="{'background-color': model.color}"
+       *ngIf="model.color != null"></div>
+
+  <div class="avatar-asset" *ngFor="let key of setsKeys">
+    <img class="avatar-image"
+         *ngIf="model[key] != null"
+         [src]="'../assets/images/' + model[key]" />
+  </div>
+</div>

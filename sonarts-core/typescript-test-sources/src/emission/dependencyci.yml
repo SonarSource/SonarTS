@@ -1,0 +1,18 @@
+platforms:
+  rubygems:
+    colored:
+      tests:
+        unmaintained: skip
+  NPM:
+    jade:
+      tests:
+        deprecated: skip
+    firebase:
+      tests:
+        unlicensed: skip
+    isarray:
+      tests:
+        deprecated: skip
+    lodash.assign:
+      tests:
+        deprecated: skip

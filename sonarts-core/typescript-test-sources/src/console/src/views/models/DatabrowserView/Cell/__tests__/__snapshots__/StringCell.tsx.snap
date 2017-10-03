@@ -1,0 +1,9 @@
+exports[`test StringCell renders 1`] = `
+<input
+  autoFocus={true}
+  onBlur={[Function]}
+  onChange={[Function]}
+  onKeyDown={[Function]}
+  type="text"
+  value="some string" />
+`;

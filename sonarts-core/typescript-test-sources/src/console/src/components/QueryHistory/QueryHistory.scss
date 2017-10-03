@@ -1,0 +1,56 @@
+.root {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border: 1px solid #f0f0f9;
+  float: left;
+}
+
+.list {
+  float: left;
+  width: 40%;
+  max-height: 400px;
+  border-right: 1px solid #f0f0f9;
+  overflow-y: scroll;
+}
+
+.query {
+  padding: 10px 20px;
+  border-bottom: 1px solid #f0f0f9;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.querySelected {
+  background-color: #f0f0f9;
+}
+
+.queryDate {
+  font-size: 11px;
+}
+
+.queryText {
+  padding-top: 5px;
+  font-size: 11px;
+  font-family: Consolas, Inconsolata, 'Droid Sans Mono', Monaco, monospace;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.details {
+  float: left;
+  width: 60%;
+  padding: 20px;
+  cursor: pointer;
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.detailsQuery {
+  font-family: Consolas, Inconsolata, 'Droid Sans Mono', Monaco, monospace;
+  white-space: pre-wrap;
+  font-size: 14px;
+}

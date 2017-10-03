@@ -1,0 +1,52 @@
+.selector {
+  appearance: none;
+  width: auto;
+  border: none;
+  padding: 12px;
+
+  option {
+    margin:40px;
+    background: rgba(255,255,255,1);
+    color: black;
+  }
+
+  &.modelselector {
+    background-color: rgba(228, 228, 244, 0.5);
+    color: #4A90E2;
+    border-radius: 0;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+
+    &.selected {
+      color: #8E96A3;
+    }
+  }
+
+  &.typeselector {
+    background-color: #8E96A3;
+    color: #FFFFFF;
+    border-radius: 0;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    &.selecting {
+      background-color: #4A90E2;
+    }
+
+    &.green {
+      color: #27AE60;
+      background: rgba(184, 233, 134, 0.5);
+    }
+
+    &.blue {
+      color: #4A90E2;
+      background: rgba(74, 144, 225, 0.2);
+    }
+
+    &.red {
+      color: #D0021B;
+      background: rgba(208, 2, 27, 0.2);
+    }
+  }
+}
+

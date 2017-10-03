@@ -1,0 +1,11 @@
+service firebase.storage {
+  match /b/fireface-67069.appspot.com/o {
+    match /public/{allPaths=**} {
+      allow read;
+    }
+    // Files look like: "users/<UID>/path/to/file.txt"
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if request.auth.uid == userId;
+    }
+  }
+}

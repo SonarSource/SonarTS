@@ -1,0 +1,98 @@
+{
+  "name": "postgraphql",
+  "version": "3.2.0",
+  "description": "A GraphQL schema created by reflection over a PostgreSQL schema 🐘",
+  "author": "Caleb Meredith <calebmeredith8@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/calebmer/postgraphql#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/calebmer/postgraphql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/calebmer/postgraphql/issues"
+  },
+  "keywords": [
+    "graphql",
+    "postgres",
+    "schema",
+    "reflection",
+    "server",
+    "relay",
+    "connection"
+  ],
+  "main": "build/index.js",
+  "bin": {
+    "postgraphql": "build/postgraphql/cli.js"
+  },
+  "scripts": {
+    "build": "./scripts/build",
+    "dev": "./scripts/dev",
+    "lint": "./scripts/lint",
+    "test": "./scripts/test"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "chalk": "1.1.3",
+    "change-case": "^3.0.0",
+    "commander": "2.9.0",
+    "dataloader": "^1.2.0",
+    "debug": "^2.3.3",
+    "finalhandler": "^0.5.1",
+    "graphql": ">=0.6.0 <1.0.0",
+    "http-errors": "^1.5.1",
+    "jsonwebtoken": "^7.1.9",
+    "parseurl": "^1.3.1",
+    "pg": "^6.1.0",
+    "pg-connection-string": "^0.1.3",
+    "pg-minify": "^0.4.1",
+    "pluralize": "^3.0.0",
+    "postgres-interval": "^1.0.2",
+    "send": "^0.14.1",
+    "tslib": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/chalk": "^0.4.30",
+    "@types/change-case": "0.0.29",
+    "@types/commander": "^2.3.30",
+    "@types/debug": "0.0.29",
+    "@types/graphql": "^0.8.2",
+    "@types/jest": "^0.9.30",
+    "@types/jsonwebtoken": "^7.1.33",
+    "@types/node": "^6.0.38",
+    "@types/pluralize": "0.0.26",
+    "connect": "^3.5.0",
+    "express": "^4.14.0",
+    "graphiql": "0.9.1",
+    "graphql": "^0.9.3",
+    "jest": "^18.1.0",
+    "koa": "^2.0.0",
+    "nodemon": "^1.11.0",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-scripts": "0.7.0",
+    "source-map-support": "^0.4.6",
+    "supertest": "^2.0.1",
+    "ts-node": "^2.0.0",
+    "tslint": "^4.2.0",
+    "typescript": "2.1.5"
+  },
+  "jest": {
+    "transform": {
+      ".*": "<rootDir>/resources/jest-preprocessor.js"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "setupFiles": [
+      "<rootDir>/resources/jest-setup.js"
+    ],
+    "browser": false,
+    "testEnvironment": "node",
+    "testPathDirs": [
+      "<rootDir>/src"
+    ],
+    "testRegex": "/__tests__/[^.]+-test.(t|j)s$"
+  }
+}

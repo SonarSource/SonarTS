@@ -1,0 +1,68 @@
+@mixin crossBrowser($property, $val) {
+  -webkit-#{$property}: $val;
+  -moz-#{$property}: $val;
+  -o-#{$property}: $val;
+  #{$property}: $val;
+}
+
+@mixin __icon_font($size) {
+  font-weight: normal;
+  font-style: normal;
+  font-size: $size;
+  // Preferred icon size
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  @include crossBrowser(font-feature-settings, 'liga');
+  // Custom added for GMP
+  user-select: none;
+}
+
+@mixin material-icon($size) {
+  @include __icon_font($size);
+  font-family: 'Material Icons Extended';
+}
+
+.material-icons {
+  @include material_icon(24px);
+}
+
+[md-button],
+[md-icon-button] {
+  background: transparent;
+  text-transform: uppercase;
+}
+
+.hidden {
+  display: none;
+}
+
+html, body {
+  height: 100vh;
+  margin: 0;
+  color: rgba(0, 0, 0, 0.87);
+  background: white;
+  position: relative;
+  overflow: hidden;
+
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+main {
+  margin: 0;
+  box-sizing: border-box;
+  height: 100%;
+  position: relative;
+}
+
+.cdk-overlay-container {
+  .md-tooltip {
+    transform: scale(1.5) !important;
+  }
+}

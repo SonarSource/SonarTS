@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "jsx": "preserve",
+    "target": "es6",
+    "lib": [
+      "dom",
+      "es7"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

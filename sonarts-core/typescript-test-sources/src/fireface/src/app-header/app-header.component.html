@@ -1,0 +1,28 @@
+<md-toolbar color="primary" class="md-elevation-z6">
+  <div>
+    <a href="/" fxLayout="row" fxLayoutAlign="start center">
+      <md-icon class="app-icon">face</md-icon>
+      <span class="app-title">Fireface</span>
+    </a>
+  </div>
+
+  <div fxFlex></div>
+
+  <div class="app-user" [ngSwitch]="authenticated">
+    <!-- USER IS SIGNED OUT -->
+    <!--
+    <div class="user-inactive" *ngSwitchCase="false" fxLayout="row" fxLayoutAlign="end center">
+      <a class="user-action" md-button href="/login">Sign In</a>
+    </div>
+    -->
+
+    <!-- USER IS SIGNED IN -->
+    <div class="user-active" *ngSwitchCase="true" fxLayout="row" fxLayoutAlign="end center">
+      <a md-icon-button href="/gallery" mdTooltip="Gallery">
+        <md-icon>apps</md-icon>
+      </a>
+      <img class="user-image" [src]="userInfo.photoURL" [mdTooltip]="userInfo.displayName" mdTooltipPosition="below" />
+      <button class="user-action" md-button (click)="triggerSignOut($event)">Sign Out</button>
+    </div>
+  </div>
+</md-toolbar>

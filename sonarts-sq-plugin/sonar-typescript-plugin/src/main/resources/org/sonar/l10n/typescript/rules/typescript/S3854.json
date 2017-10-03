@@ -1,0 +1,13 @@
+{
+  "title": "\"super()\" should only be invoked once",
+  "type": "BUG",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    
+  ],
+  "defaultSeverity": "Critical"
+}

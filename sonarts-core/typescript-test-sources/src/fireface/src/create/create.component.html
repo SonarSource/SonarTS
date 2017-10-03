@@ -1,0 +1,85 @@
+<div id="picker-wrapper" fxFlex fxLayout="row">
+  <aside class="picker md-elevation-z3" fxFlex="30" fxLayout="column">
+    <div class="picker-gender" fxLayout="row" fxLayoutAlign="center center">
+      <button md-button attr.aria-label="Male Set" (click)="setSelectedGender('male')">
+        <md-icon svgIcon="avatar:svg-1" [ngClass]="{'selected': selectedGender=='male'}"></md-icon>
+      </button>
+      <button md-button attr.aria-label="Female Set" (click)="setSelectedGender('female')">
+        <md-icon svgIcon="avatar:svg-6" [ngClass]="{'selected': selectedGender=='female'}"></md-icon>
+      </button>
+    </div>
+
+    <div class="tabs-wrapper" fxFlex>
+      <md-tab-group [selectedIndex]="selectedTabIndex" md-dynamic-height md-border-bottom md-autoselect>
+        <md-tab label="Colors">
+          <div class="demo-tab tab" style="padding: 25px; text-align: center;">
+            <md-grid-list cols="3" gutterSize="12px">
+              <md-grid-tile class="tile-border tile-background"
+                            *ngFor="let color of colors"
+                            rowspan="1" colspan="1">
+                <button md-button class="asset-button" (click)="setConfigValue('color', color.value)"
+                        attr.aria-label="{{ color.title }}" [ngStyle]="{'background-color': color.value}">
+
+                </button>
+                <md-grid-tile-footer *ngIf="currentAvatar.color==color.value" fxLayout="row" fxLayoutAlign="center center">
+                  <md-icon class="selected-icon">check_circle</md-icon>
+                </md-grid-tile-footer>
+              </md-grid-tile>
+            </md-grid-list>
+          </div>
+        </md-tab>
+
+        <md-tab label="{{ sets[key].title }}"
+                *ngFor="let key of setsKeys"
+                [ngClass]="{'hidden': (selectedGender=='female' && key=='facialhair')}">
+          <div class="demo-tab tab{{ $index % 4 }}" style="padding: 25px; text-align: center;">
+            <md-grid-list cols="3" gutterSize="12px">
+              <md-grid-tile class="tile-border tile-background"
+                            *ngFor="let asset of sets[key][selectedGender]"
+                            rowspan="1" colspan="1">
+
+                <button md-button class="asset-button"
+                        [attr.aria-label]="sets[key].title"
+                        (click)="setConfigValue(key, asset)">
+                  <img class="asset-icon" *ngIf="asset!=null" [src]="'../assets/images/'+asset" />
+                  <md-icon class="asset-icon-none" *ngIf="asset==null">not_interested</md-icon>
+                </button>
+
+                <md-grid-tile-footer *ngIf="currentAvatar[key]==asset" fxLayout="row" fxLayoutAlign="center center">
+                  <md-icon class="selected-icon" style="color: white">check_circle</md-icon>
+                </md-grid-tile-footer>
+              </md-grid-tile>
+            </md-grid-list>
+          </div>
+        </md-tab>
+      </md-tab-group>
+    </div>
+  </aside>
+
+  <article class="output" fxFlex fxLayout="column" fxLayoutAlign="center center">
+    <!--
+    <div id="avatar">
+      <div class="avatar-color" [ngStyle]="{'background-color': currentAvatar.color}" *ngIf="currentAvatar.color!=null"></div>
+
+      <div class="avatar-asset" *ngFor="let key of setsKeys">
+        <img class="avatar-image"
+             *ngIf="currentAvatar[key]!=null"
+             [src]="'../assets/images/'+currentAvatar[key]" />
+      </div>
+    </div>
+    -->
+    <avatar [model]="currentAvatar"></avatar>
+
+    <div id="avatar-actions" fxLayout="row">
+      <a md-button id="save" attr.aria-label="Save" download="avatar.png" [href]="image">
+        <md-icon>save</md-icon> Save
+      </a>
+      <a md-button id="upload" attr.aria-label="Upload" (click)="uploadAvatar($event)">
+        <md-icon>cloud_upload</md-icon> Upload
+      </a>
+      <button md-button id="repeat" attr.aria-label="Shuffle" (click)="renderRandom()">
+        <md-icon>shuffle</md-icon> Shuffle
+      </button>
+    </div>
+  </article>
+</div>

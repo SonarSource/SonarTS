@@ -1,0 +1,18 @@
+{
+  "title": "Dead stores should be removed",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "15min"
+  },
+  "tags": [
+    "cwe",
+    "cert",
+    "unused"
+  ],
+  "standards": [
+    "CWE"
+  ],
+  "defaultSeverity": "Major"
+}

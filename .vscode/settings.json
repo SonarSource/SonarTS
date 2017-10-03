@@ -1,9 +1,0 @@
-// Place your settings in this file to overwrite default and user settings.
-{
-  "editor.rulers": [
-    120
-  ],
-  "prettier.printWidth": 120,
-  "prettier.singleQuote": false,
-  "prettier.trailingComma": "all"
-}

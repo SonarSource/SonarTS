@@ -1,0 +1,21 @@
+cache: yarn
+
+language: node_js
+node_js:
+  - "6.7"
+
+script:
+  - yarn ci
+  - yarn danger
+
+deploy:
+  provider: script
+  script: scripts/deploy_apphub.sh
+  on:
+    branch: master
+
+cache:
+  yarn: true
+  directories:
+    - node_modules
+    - .jest/cache

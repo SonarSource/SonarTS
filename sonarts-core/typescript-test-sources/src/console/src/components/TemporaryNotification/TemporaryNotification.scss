@@ -1,0 +1,36 @@
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fadeOut {
+  animation: fadeOut 1.4s ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  70% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  85% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(10);
+  }
+}

@@ -1,0 +1,54 @@
+@import '~styles/variables';
+
+.root {
+  position: absolute;
+  background: #fff;
+  z-index: 9;
+  border-radius: 4px;
+  box-shadow: 0 0 5px $grey3;
+  display: flex;
+  align-items: center;
+  top: 30px;
+  right: 10px;
+  color: $grey4;
+
+  .endpoints {
+    display: flex;
+    background: $grey2;
+    padding: 15px;
+    align-items: center;
+
+    select {
+      appearance: none;
+      border: none;
+      font-size: 13px;
+      background: none;
+      padding-right: 10px;
+      cursor: pointer;
+    }
+
+    svg {
+      fill: $grey4;
+    }
+  }
+
+  .url {
+    font-size: 11px;
+    font-family: Monaco, monospace;
+    padding: 0 18px;
+  }
+
+  .copy {
+    font-size: 11px;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-right: 15px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid $grey3;
+
+    &:hover {
+      background: $grey1;
+    }
+  }
+}

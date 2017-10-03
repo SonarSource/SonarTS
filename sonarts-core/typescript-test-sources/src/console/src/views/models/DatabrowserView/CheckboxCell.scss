@@ -1,0 +1,29 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  .border {
+    border: 1px solid rgba(0,0,0,.2);
+    height: 15px;
+    width: 15px;
+    border-radius: 8px;
+  }
+
+  .dot {
+    background-color: #4A90E2;
+    height: 15px;
+    width: 15px;
+    border-radius: 8px;
+    opacity: 0;
+  }
+
+  .active {
+    opacity: 1;
+  }
+}

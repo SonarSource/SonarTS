@@ -1,0 +1,15 @@
+{
+  "title": "Variables should not be shadowed",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "10min"
+  },
+  "tags": [
+    "misra",
+    "cert",
+    "suspicious"
+  ],
+  "defaultSeverity": "Critical"
+}

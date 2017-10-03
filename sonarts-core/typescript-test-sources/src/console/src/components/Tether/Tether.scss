@@ -1,0 +1,12 @@
+@import '~styles/variables';
+
+.title {
+  padding: 12px 16px;
+  font-weight: 800;
+}
+
+.description {
+  padding: 12px 16px;
+  background-color: $accent;
+  color: rgba(23, 26, 31, 0.5)
+}

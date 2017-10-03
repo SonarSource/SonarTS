@@ -1,0 +1,8 @@
+{
+  "name": "typescript-test-sources",
+  "version": "0.0.1",
+  "dependencies": {
+    "tslint": "^5.2.0",
+    "typescript": "^2.3.2"
+  }
+}

@@ -1,0 +1,33 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+.red {
+  color: rgb(208, 2, 27);
+
+  svg {
+    fill: rgb(208, 2, 27);
+  }
+}
+
+.button {
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-right: 8px;
+  padding: 7px;
+  border-radius: 2px;
+  cursor: pointer;
+
+  color: rgba(0,0,0,.4);
+
+  &.red {
+    border-color: rgb(208, 2, 27);
+    color: #fff;
+    background: rgb(208, 2, 27);
+
+    svg {
+      fill: rgb(208, 2, 27);
+    }
+  }
+}
+

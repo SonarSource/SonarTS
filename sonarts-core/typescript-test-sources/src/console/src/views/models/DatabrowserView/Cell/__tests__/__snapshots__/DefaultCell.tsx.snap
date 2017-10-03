@@ -1,0 +1,8 @@
+exports[`test DefaultCell renders 1`] = `
+<input
+  autoFocus={true}
+  defaultValue="some string"
+  onBlur={[Function]}
+  onKeyDown={[Function]}
+  type="text" />
+`;

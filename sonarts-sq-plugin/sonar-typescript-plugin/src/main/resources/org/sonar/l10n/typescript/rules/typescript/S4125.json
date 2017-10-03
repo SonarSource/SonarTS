@@ -1,0 +1,13 @@
+{
+  "title": "\"typeof\" expressions should only be compared to valid values",
+  "type": "BUG",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    
+  ],
+  "defaultSeverity": "Critical"
+}

@@ -1,0 +1,15 @@
+{
+  "title": "Strings should not be thrown",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "20min"
+  },
+  "tags": [
+    "error-handling",
+    "api-design",
+    "misra"
+  ],
+  "defaultSeverity": "Major"
+}

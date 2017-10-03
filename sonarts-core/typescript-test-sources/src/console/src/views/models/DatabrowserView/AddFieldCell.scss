@@ -1,0 +1,26 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+.root {
+  width: 250px;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+
+  a {
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    padding: 9px 19px;
+    display: inline-block;
+    background: $grey1;
+    color: $grey3;
+
+    &:hover {
+      color: $grey4;
+      border-color: $grey4;
+    }
+  }
+}

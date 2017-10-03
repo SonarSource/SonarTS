@@ -1,0 +1,93 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+.root {
+  display: flex;
+  box-shadow: 0 2px 4px 0px rgba(0,0,0,.1);
+  &.loading {
+    pointer-events: none;
+    input {
+      color: rgba(0,0,0,0.5)
+    }
+  }
+}
+
+.empty {
+  width: 40px;
+  @include cellborder($grey2);
+}
+
+.buttons {
+  width: 80px;
+  height: 47px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  padding-left: 8px;
+  text-transform: uppercase;
+  position: absolute;
+  right: 170px;
+  background-color: rgba(0,0,0,.05);
+
+  button {
+    border: none;
+    background: transparent;
+    padding: 5px;
+    cursor: pointer;
+    color: $grey3;
+
+    &:first-child {
+      font-weight: 600;
+      color: $grey4;
+    }
+
+    &:hover {
+      color: $grey5;
+    }
+
+    &:focus {
+      color: $accent;
+    }
+
+    .cancel {
+      svg {
+        fill: rgba(0,0,0,.2)
+      }
+      &:hover {
+        svg {
+          fill: rgba(0,0,0,.1)
+        }
+      }
+    }
+
+    .add {
+      svg {
+        fill: rgba(126,211,33,1)
+      }
+      &:hover {
+        svg {
+          fill: rgba(126,211,33,0.8)
+        }
+      }
+    }
+  }
+
+  &.loading {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: auto;
+
+    button {
+      .add {
+        svg {
+          fill: rgba(0,0,0,.2)
+        }
+        &:hover {
+          svg {
+            fill: rgba(0,0,0,.2)
+          }
+        }
+      }
+    }
+  }
+}

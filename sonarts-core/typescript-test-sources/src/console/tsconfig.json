@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "jsx": "preserve",
+    "pretty": true,
+    "sourceMap": true,
+    "target": "es2015",
+    "outDir": "lib",
+    "moduleResolution": "node",
+    "allowJs": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./custom.d.ts"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "useCache": true,
+    "useBabel": true
+  }
+}

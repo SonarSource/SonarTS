@@ -1,0 +1,52 @@
+.sign-in-wrapper {
+  background-color: #EFEFEF;
+  height: 100%;
+  box-sizing: border-box;
+
+  .sign-in {
+    margin: 0 auto;
+    max-width: 248px;
+
+    h1 {
+      margin: 0;
+      padding-top: 90px;
+      padding-bottom: 36px;
+      font-size: 24px;
+      font-weight: 300;
+      text-align: center;
+      color: rgba(0, 0, 0, .54);
+    }
+
+    button {
+      margin-bottom: 10px;
+      padding: 6px 24px;
+      width: 100%;
+      text-align: left;
+      font-weight: 600;
+
+      &.auth-google {
+        background-color: #ffffff;
+        color: #727272;
+      }
+
+      &.auth-facebook {
+        background-color: #3b5998;
+        color: #ffffff;
+      }
+
+      &.auth-twitter {
+        background-color: #55acee;
+        color: #ffffff;
+      }
+
+      &.auth-github {
+        background-color: #333333;
+        color: #ffffff;
+      }
+
+      md-icon {
+        margin-right: 12px;
+      }
+    }
+  }
+}

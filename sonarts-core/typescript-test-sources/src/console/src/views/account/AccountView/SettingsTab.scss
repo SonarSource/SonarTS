@@ -1,0 +1,48 @@
+@import '~styles/variables';
+
+.root {
+  padding: 20px 40px;
+  height: calc(100% - 102px);
+  overflow-y: scroll;
+
+  .category {
+    margin-top: 25px;
+    width: 400px;
+
+    .title {
+      font-weight: 600;
+      font-size: 14px;
+      color: $grey5;
+    }
+
+    .field {
+      width: 100%;
+      padding: 9px 18px;
+      margin-top: 12px;
+      border: 1px solid $grey3;
+      border-radius: 4px;
+      font-size: 14px;
+      color: $grey5;
+    }
+  }
+
+  .saveChanges {
+    margin: 37px 0 0;
+    color: #fff;
+    background: $accent;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    border: 1px solid $accent;
+    border-radius: 4px;
+    padding: 9px 19px;
+    display: inline-block;
+
+    &:hover {
+      background: #fff;
+      color: $accent;
+    }
+  }
+
+}

@@ -1,0 +1,13 @@
+{
+  "title": "\"arguments.callee\" should not be used",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "30min"
+  },
+  "tags": [
+    "obsolete"
+  ],
+  "defaultSeverity": "Major"
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="37px" height="37px" viewBox="0 0 37 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 40.1 (33804) - http://www.bohemiancoding.com/sketch -->
+    <title>Page 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" opacity="0.5" stroke-linejoin="round">
+        <g id="Artboard" transform="translate(-746.000000, -796.000000)" stroke="#000000">
+            <g id="Group-11" transform="translate(594.000000, 120.000000)">
+                <g id="Group-2" transform="translate(153.000000, 663.000000)">
+                    <g id="Group-3">
+                        <g id="Page-1" transform="translate(0.000000, 13.000000)">
+                            <path d="M0,18.4 L24,18.4" id="Stroke-1"></path>
+                            <polyline id="Stroke-3" points="17.6 12 24 18.4 17.6 24.8"></polyline>
+                            <path d="M1.57184,11.12112 C4.33984,5.03312 10.47584,0.79952 17.60064,0.79952 C27.32064,0.79952 35.20064,8.67952 35.20064,18.39952 C35.20064,28.11952 27.32064,35.99952 17.60064,35.99952 C10.44384,35.99952 4.28384,31.72912 1.53344,25.59632" id="Stroke-4"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
