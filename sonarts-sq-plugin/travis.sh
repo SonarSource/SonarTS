@@ -1,5 +1,4 @@
 #!/bin/bash
-cd sonarts-sq-plugin
 
 set -euo pipefail
 
@@ -10,10 +9,9 @@ function configureTravis {
 }
 configureTravis
 
-cd sonar-typescript-plugin/sonarts-core
-npm install sonarts-core/tslint-sonarts-*.tgz
-cd ../../
+cd sonarts-sq-plugin/sonar-typescript-plugin/sonarts-core
+npm install ../../../sonarts-core/tslint-sonarts-*.tgz
 
 export DEPLOY_PULL_REQUEST=true
 regular_mvn_build_deploy_analyze
-cd ..
+cd ../../../
