@@ -5,6 +5,7 @@
 TEST:
   - ci
   - plugin
+  - ruling
 
 SQ_VERSION:
   - DEV
@@ -19,4 +20,12 @@ exclude:
   - SLAVE: windows
     SQ_VERSION: DEV
   - SLAVE: windows
+    SQ_VERSION: LTS
+
+# limit Ruling test to Linux/LATEST_RELEASE only    
+  - TEST: ruling
+    SLAVE: windows
+  - TEST: ruling
+    SQ_VERSION: DEV
+  - TEST: ruling
     SQ_VERSION: LTS

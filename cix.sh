@@ -11,8 +11,13 @@ case "$TEST" in
   ;;
 
   plugin)
-  cd sonarts-sq-plugin/its
+  cd sonarts-sq-plugin/its/plugin
   mvn -B -e -Dsonar.runtimeVersion="$SQ_VERSION" -Dmaven.test.redirectTestOutputToFile=false package
+  ;;
+
+  ruling)
+  cd sonarts-sq-plugin/its/ruling
+  mvn -B -e package
   ;;
 
   *)
