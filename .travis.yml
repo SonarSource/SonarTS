@@ -8,7 +8,7 @@ jdk:
 
 script:
   - ./sonarts-core/travis.sh
-  - . ./sonarts-sq-plugin/travis.sh
+  - ./sonarts-sq-plugin/travis.sh
 
 cache: # yarn
   directories:
