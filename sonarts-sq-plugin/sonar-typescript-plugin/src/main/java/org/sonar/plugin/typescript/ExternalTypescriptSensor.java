@@ -179,7 +179,7 @@ public class ExternalTypescriptSensor implements Sensor {
     String commandLine = sonarCommand.toCommandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
     String[] filepaths = Iterables.toArray(Iterables.transform(inputFiles, InputFile::absolutePath), String.class);
-    LOG.debug("Starting external process `%s` with %d files", commandLine, filepaths.length);
+    LOG.debug(String.format("Starting external process `%s` with %d files", commandLine, filepaths.length));
     InputStreamReader inputStreamReader;
     try {
       Process process = processBuilder.start();
