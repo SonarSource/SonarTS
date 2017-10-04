@@ -9,9 +9,9 @@ case "$TEST" in
   mvn verify -B -e -V
   exit 0;
   ;;
-  plugin)
 
-  cd its
+  plugin)
+  cd sonarts-sq-plugin/its
   mvn -B -e -Dsonar.runtimeVersion="$SQ_VERSION" -Dmaven.test.redirectTestOutputToFile=false package
   ;;
 
