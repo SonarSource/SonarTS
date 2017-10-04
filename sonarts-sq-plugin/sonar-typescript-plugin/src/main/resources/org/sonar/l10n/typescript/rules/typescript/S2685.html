@@ -1,0 +1,19 @@
+<p>The <code>arguments.callee</code> property holds the current function. It could be useful in an anonymous function, but its usage would make quite
+a few optimizations impossible so it was deprecated in the latest versions of JavaScript. In fact, EcmaScript 5 forbids its use in <code>strict</code>
+mode, according to the docs:</p>
+<blockquote>
+  Arguments objects for strict mode functions define non-configurable accessor properties named "caller" and "callee" which throw a TypeError
+  exception on access.
+</blockquote>
+<p>This rule raises an issue when <code>arguments.callee</code> is used.</p>
+<h2>Noncompliant Code Example</h2>
+<pre>
+[1, 2, 3, 4, 5].map(function(n) {
+  if (n === 0) {
+    return 1;
+  } else {
+    return arguments.callee(n - 1) * n;
+  }
+});
+</pre>
+

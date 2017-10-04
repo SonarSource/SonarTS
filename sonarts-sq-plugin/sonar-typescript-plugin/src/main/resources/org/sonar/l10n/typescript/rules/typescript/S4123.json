@@ -1,0 +1,13 @@
+{
+  "title": "\"await\" should only be used with promises",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "1min"
+  },
+  "tags": [
+    "confusing"
+  ],
+  "defaultSeverity": "Critical"
+}

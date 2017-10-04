@@ -1,0 +1,13 @@
+{
+  "title": "Identical expressions should not be used on both sides of a binary operator",
+  "type": "BUG",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "2min"
+  },
+  "tags": [
+    "cert"
+  ],
+  "defaultSeverity": "Major"
+}

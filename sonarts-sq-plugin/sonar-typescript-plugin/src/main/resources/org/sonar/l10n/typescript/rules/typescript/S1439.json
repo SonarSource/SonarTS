@@ -1,0 +1,13 @@
+{
+  "title": "Only \"while\", \"do\", \"for\" and \"switch\" statements should be labelled",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "20min"
+  },
+  "tags": [
+    "pitfall"
+  ],
+  "defaultSeverity": "Major"
+}

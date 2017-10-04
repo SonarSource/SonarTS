@@ -1,0 +1,14 @@
+{
+  "title": "Primitive types should be omitted from initialized or defaulted declarations",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "1min"
+  },
+  "tags": [
+    "finding",
+    "clumsy"
+  ],
+  "defaultSeverity": "Minor"
+}

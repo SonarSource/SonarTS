@@ -1,0 +1,14 @@
+{
+  "title": "Two branches in a conditional structure should not have exactly the same implementation",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "10min"
+  },
+  "tags": [
+    "design",
+    "suspicious"
+  ],
+  "defaultSeverity": "Major"
+}
