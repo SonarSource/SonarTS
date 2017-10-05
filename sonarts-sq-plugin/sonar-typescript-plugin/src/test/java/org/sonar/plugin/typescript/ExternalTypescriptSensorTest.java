@@ -110,7 +110,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), testInputFile.absolutePath())
-      .tsRules(node, resourceScript("/mockTsLint.js"), testInputFile.absolutePath()));
+      .tsRules(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath()));
 
     sensor.execute(sensorContext);
 
@@ -151,7 +151,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), testInputFile.absolutePath())
-      .tsRules(node, resourceScript("/mockTsLintFileLevel.js"), testInputFile.absolutePath()));
+      .tsRules(node, resourceScript("/mockSonarTSFileLevelIssue.js"), testInputFile.absolutePath()));
 
     sensor.execute(sensorContext);
 
@@ -161,7 +161,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_when_empty_tslint_out() throws Exception {
+  public void should_log_when_empty_sonarts_out() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -181,7 +181,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "foo/bar/file.ts");
 
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), testInputFile.absolutePath())
-      .tsRules(node, resourceScript("/mockTsLint.js"), testInputFile.absolutePath()));
+      .tsRules(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath()));
 
     sensor.execute(sensorContext);
 
@@ -240,7 +240,7 @@ public class ExternalTypescriptSensorTest {
     String testFile = new File(BASE_DIR, "not_exists.ts").getAbsolutePath();
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory()
       .tsMetrics(node, resourceScript("/mockTsMetrics.js"), "some/path/file.ts")
-      .tsRules(node, resourceScript("/mockTsLint.js"), testFile));
+      .tsRules(node, resourceScript("/mockSonarTS.js"), testFile));
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
     sensor.execute(sensorContext);

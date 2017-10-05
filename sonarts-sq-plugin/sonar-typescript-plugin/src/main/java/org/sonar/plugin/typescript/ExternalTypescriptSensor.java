@@ -29,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -221,17 +222,17 @@ public class ExternalTypescriptSensor implements Sensor {
       inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
 
     } catch (Exception e) {
-      LOG.error(String.format("Failed to run external process `%s`. As a result, NO METRICS WERE GENERATED, run with -X for more information", commandLine), e);
+      LOG.error(String.format("Failed to run external process `%s`", commandLine), e);
       return new Failure[0];
     }
 
-    Failure[] responses = new Gson().fromJson(inputStreamReader, Failure[].class);
+    SonarTSResponsePerFile[] responses = new Gson().fromJson(inputStreamReader, SonarTSResponsePerFile[].class);
     if (responses == null) {
-      LOG.error(String.format("External process `%s` returned an empty response. As a result, NO METRICS WERE GENERATED, run with -X for more information", commandLine));
+      LOG.error(String.format("External process `%s` returned an empty output. Run with -X for more information", commandLine));
 
       return new Failure[0];
     }
-    return responses;
+    return Arrays.stream(responses).flatMap(response -> Arrays.stream(response.issues)).toArray(Failure[]::new);
 
   }
 
@@ -355,6 +356,11 @@ public class ExternalTypescriptSensor implements Sensor {
     }
 
     return null;
+  }
+
+  private static class SonarTSResponsePerFile {
+    String filepath;
+    Failure[] issues;
   }
 
   private static class Failure {

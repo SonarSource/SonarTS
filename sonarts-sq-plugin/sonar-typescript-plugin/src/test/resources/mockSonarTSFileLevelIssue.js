@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+var testFile = process.argv[2];
 
 var result = [{
     "filepath": process.argv[2],
@@ -6,9 +7,9 @@ var result = [{
         {
             failure: "some message",
             startPosition: {line: 1, character: 5},
-            endPosition: {line: 1, character: 6},
+            endPosition: {line: 1, character: 5},
             name: testFile,
-            ruleName: "no-unconditional-jump"
+            ruleName: "eofline"
         }
     ]
 }];
