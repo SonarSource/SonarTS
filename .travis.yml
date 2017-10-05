@@ -6,6 +6,9 @@ node_js:
 jdk:
   - oraclejdk8
 
+git:
+  submodules: false
+
 script:
   - ./sonarts-core/travis.sh
   - ./sonarts-sq-plugin/travis.sh
