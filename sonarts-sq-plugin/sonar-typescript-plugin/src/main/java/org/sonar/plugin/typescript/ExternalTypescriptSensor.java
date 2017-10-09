@@ -222,8 +222,7 @@ public class ExternalTypescriptSensor implements Sensor {
       inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
 
     } catch (Exception e) {
-      LOG.error(String.format("Failed to run external process `%s`", commandLine), e);
-      return new Failure[0];
+      throw new IllegalStateException(String.format("Failed to run external process `%s`", commandLine), e);
     }
 
     SonarTSResponsePerFile[] responses = new Gson().fromJson(inputStreamReader, SonarTSResponsePerFile[].class);
