@@ -207,10 +207,12 @@ public class ExternalTypescriptSensorTest {
   @Test
   public void should_log_when_failed_ts_metrics_process() throws Exception {
     TestBundleFactory testBundle = new TestBundleFactory().tsMetrics("non_existent_command", "arg1").tsRules(node, "-e", "console.log('[]');");
+
+    thrown.expect(IllegalStateException.class);
+    thrown.expectMessage("Failed to run external process `non_existent_command arg1`");
+
     SensorContextTester sensorContext = createSensorContext();
     createSensor(testBundle).execute(sensorContext);
-
-    assertThat(logTester.logs()).contains("Failed to run external process `non_existent_command arg1`. As a result, NO METRICS WERE GENERATED, run with -X for more information");
   }
 
   @Test
@@ -220,7 +222,7 @@ public class ExternalTypescriptSensorTest {
     createSensor(testBundle).execute(sensorContext);
 
     assertThat(logTester.logs()).contains("External process `" + node
-      + " -e console.log('');` returned an empty response. As a result, NO METRICS WERE GENERATED, run with -X for more information");
+      + " -e console.log('');` returned an empty output. Run with -X for more information");
   }
 
   @Test
@@ -346,7 +348,7 @@ public class ExternalTypescriptSensorTest {
       }
 
       @Override
-      public Command getTslintCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
+      public Command getRuleRunnerCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
         Command command = Command.create(ruleCheckCommand[0]);
         command.addArguments(Arrays.copyOfRange(ruleCheckCommand, 1, ruleCheckCommand.length));
         return command;

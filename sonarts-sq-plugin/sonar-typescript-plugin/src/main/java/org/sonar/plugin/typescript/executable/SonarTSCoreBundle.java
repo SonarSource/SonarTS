@@ -89,7 +89,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    * Builds command to run tslint
    */
   @Override
-  public Command getTslintCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
+  public Command getRuleRunnerCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
     File sonartsCoreDir = new File(deployDestination, "sonarts-core");
 
     Command command = Command.create("node");

@@ -26,7 +26,7 @@ import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 public interface ExecutableBundle {
 
-  Command getTslintCommand(String tsconfigPath, Collection<InputFile> inputFiles);
+  Command getRuleRunnerCommand(String tsconfigPath, Collection<InputFile> inputFiles);
 
   Command getTsMetricsCommand();
 

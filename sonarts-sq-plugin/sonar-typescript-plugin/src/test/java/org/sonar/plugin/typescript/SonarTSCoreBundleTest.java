@@ -63,7 +63,7 @@ public class SonarTSCoreBundleTest {
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
     DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
-    Command ruleCommand = bundle.getTslintCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2));
+    Command ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2));
 
 
     String tslint = new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint/bin/tslint").getAbsolutePath();
