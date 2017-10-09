@@ -172,6 +172,7 @@ public class ExternalTypescriptSensor implements Sensor {
     String commandLine = command.toCommandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
     setNodePath(typescriptLocation, processBuilder);
+    processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
     String[] filepaths = Iterables.toArray(Iterables.transform(inputFiles, InputFile::absolutePath), String.class);
     LOG.debug(String.format("Starting external process `%s` with %d files", commandLine, filepaths.length));
     InputStreamReader inputStreamReader;
