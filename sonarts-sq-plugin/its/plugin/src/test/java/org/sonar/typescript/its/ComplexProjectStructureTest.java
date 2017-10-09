@@ -31,9 +31,9 @@ import org.sonarqube.ws.client.issue.SearchWsRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.typescript.its.Tests.newWsClient;
 
-public class MultiConfigTest {
+public class ComplexProjectStructureTest {
 
-  private static final String PROJECT_KEY = "multi-tsconfig-test-project";
+  private static final String PROJECT_KEY = "complex-structure-test-project";
 
   @ClassRule
   public static Orchestrator orchestrator = Tests.ORCHESTRATOR;
@@ -47,12 +47,15 @@ public class MultiConfigTest {
   public void test() {
     orchestrator.executeBuild(
       Tests.createScanner("projects/" + PROJECT_KEY, PROJECT_KEY)
+        .setSourceDirs("")
+        .setProperty("sonar.modules", "module1")
+        .setProperty("module1.sonar.sources", "nestedDir/src")
         .setProfile("test-profile"));
 
     SearchWsRequest request = new SearchWsRequest();
     request.setProjectKeys(Collections.singletonList(PROJECT_KEY));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
-    assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(3, 4);
+    assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(3);
   }
 
 }
