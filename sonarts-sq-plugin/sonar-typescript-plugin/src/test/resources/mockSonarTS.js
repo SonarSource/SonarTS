@@ -2,7 +2,7 @@
 var testFile = process.argv[2];
 
 var result = [{
-    "filepath": process.argv[2],
+    "filepath": testFile,
     "issues": [
         {
             failure: "some message",

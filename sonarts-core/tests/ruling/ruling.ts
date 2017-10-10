@@ -54,7 +54,7 @@ export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: stri
     files.forEach(file => {
       rules.forEach(Rule => {
         const rule = initRule(Rule);
-        const errorLines = runRuleOnProjectFile(rule, file, program);
+        const errorLines = runRuleOnProjectFile(rule, file, program).map(failure => failure.getStartPosition().getLineAndCharacter().line + 1);
         const ruleName = (Rule as any).metadata.ruleName;
         results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);
       });
@@ -135,15 +135,11 @@ function getProgramFiles(program: ts.Program): ts.SourceFile[] {
 }
 
 function runRuleOnProjectFile(rule: any, sourceFile: ts.SourceFile, program: ts.Program) {
-  let failures: tslint.RuleFailure[];
-
   if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
-    failures = rule.applyWithProgram(sourceFile, program);
+    return rule.applyWithProgram(sourceFile, program);
   } else {
-    failures = rule.apply(sourceFile);
+    return rule.apply(sourceFile);
   }
-
-  return failures.map(failure => failure.getStartPosition().getLineAndCharacter().line + 1);
 }
 
 function addErrorsToResults(results: Results, ruleName: string, fileName: string, errorLines: number[]): Results {

@@ -17,21 +17,29 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-jest.mock("fs", () => ({
-  readFileSync: () => "function x(){}",
-}));
-
 import * as path from "path";
 import * as ts from "typescript";
-import { processRequest } from "../../src/runner/tsmetrics";
+import { processRequest } from "../../src/runner/tsrunner";
 import { parseString } from "../../src/utils/parser";
 
 it("should process input", () => {
-  const filepath = path.join(__dirname, "file.ts");
-  const result = processRequest(`{"filepaths": ["${filepath}"]}`);
+  const filepath = path.join(__dirname, "./fixtures/runner_project/sample.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
+  const result = processRequest(`{"filepaths": ["${filepath}"], "rules": [{"ruleName": "no-empty"}], "tsconfig": "${tsconfig}"}`);
   expect(result).toEqual([
     {
       filepath,
+      issues: [
+        {
+            failure: "block is empty",
+            startPosition: {line: 0, character: 12, "position": 12},
+            endPosition: {line: 0, character: 14, "position": 14},
+            name: filepath,
+            ruleName: "no-empty",
+            fix: undefined,
+            ruleSeverity: "ERROR"
+        }
+      ],
       highlights: [{ startLine: 1, startCol: 0, endLine: 1, endCol: 8, textType: "keyword" }],
       cpdTokens: [
         { startLine: 1, startCol: 0, endLine: 1, endCol: 8, image: "function" },
