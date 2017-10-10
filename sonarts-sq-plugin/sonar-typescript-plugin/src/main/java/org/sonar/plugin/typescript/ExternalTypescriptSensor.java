@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -95,6 +97,8 @@ public class ExternalTypescriptSensor implements Sensor {
   @Override
   public void execute(SensorContext sensorContext) {
     File deployDestination = sensorContext.fileSystem().workDir();
+    File typescriptLocation = getTypescriptLocation(sensorContext.fileSystem().baseDir());
+
     ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination);
 
     FileSystem fileSystem = sensorContext.fileSystem();
@@ -110,11 +114,11 @@ public class ExternalTypescriptSensor implements Sensor {
     LOG.info("Rules execution");
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     executableBundle.activateRules(typeScriptRules);
-    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, deployDestination);
+    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, deployDestination, typescriptLocation);
 
   }
 
-  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, File deployDestination) {
+  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, File deployDestination, @Nullable File typescriptLocation) {
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
     Multimap<String, InputFile> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
@@ -123,7 +127,7 @@ public class ExternalTypescriptSensor implements Sensor {
       Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
 
       Command command = executableBundle.getTslintCommand(tsconfigPath, inputFilesForThisConfig);
-      Failure[] failures = runRulesProcess(command, deployDestination, inputFilesForThisConfig);
+      Failure[] failures = runRulesProcess(command, deployDestination, inputFilesForThisConfig, typescriptLocation);
       saveFailures(sensorContext, failures, typeScriptRules);
     }
   }
@@ -207,9 +211,16 @@ public class ExternalTypescriptSensor implements Sensor {
 
   }
 
-  private static Failure[] runRulesProcess(Command ruleCommand, File tmpDir, Collection<InputFile> inputFilesForThisConfig) {
+  private static Failure[] runRulesProcess(Command ruleCommand, File tmpDir, Collection<InputFile> inputFilesForThisConfig, @Nullable File typescriptLocation) {
     List<String> commandComponents = decomposeToComponents(ruleCommand);
     ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
+
+    if (typescriptLocation != null) {
+      Map<String, String> environment = processBuilder.environment();
+      LOG.info("Setting 'NODE_PATH' to " + typescriptLocation);
+      environment.put("NODE_PATH", typescriptLocation.getAbsolutePath());
+    }
+
     String commandLine = ruleCommand.toCommandLine();
     LOG.info(String.format("Running rule analysis for `%s` with %s files", commandComponents.get(commandComponents.indexOf("--project") + 1), inputFilesForThisConfig.size()));
     try {
@@ -326,6 +337,37 @@ public class ExternalTypescriptSensor implements Sensor {
         TypeOfText.valueOf(highlight.textType.toUpperCase(Locale.ENGLISH)));
     }
     highlighting.save();
+  }
+
+
+  @Nullable
+  private static File getTypescriptLocation(File topDir) {
+    File node_modules = getDir(topDir, "node_modules");
+    if (node_modules != null && getDir(node_modules, "typescript") != null) {
+      return node_modules;
+    }
+
+    for (File file : topDir.listFiles()) {
+      if (file.isDirectory()) {
+        File typescriptLocationForNestedDir = getTypescriptLocation(file);
+        if (typescriptLocationForNestedDir != null) {
+          return typescriptLocationForNestedDir;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  @Nullable
+  private static File getDir(File topDir, String name) {
+    for (File file : topDir.listFiles()) {
+      if (file.isDirectory() && file.getName().equals(name)) {
+        return file;
+      }
+    }
+
+    return null;
   }
 
   private static class Failure {
