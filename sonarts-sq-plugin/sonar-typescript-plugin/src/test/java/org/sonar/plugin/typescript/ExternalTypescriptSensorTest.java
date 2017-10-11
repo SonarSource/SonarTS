@@ -171,7 +171,7 @@ public class ExternalTypescriptSensorTest {
     sensor.execute(sensorContext);
 
     assertThat(sensorContext.allIssues()).hasSize(0);
-    assertThat(logTester.logs().get(5)).contains("empty output");
+    assertThat(logTester.logs().get(6)).contains("empty output");
     assertThat(logTester.logs().get(logTester.logs().size() - 1)).contains("foo/file.ts");
   }
 

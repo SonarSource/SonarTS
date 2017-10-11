@@ -107,7 +107,7 @@ public class ExternalTypescriptSensor implements Sensor {
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
 
     LOG.info("Metrics calculation");
-    runMetrics(inputFiles, sensorContext, executableBundle);
+    runMetrics(inputFiles, sensorContext, executableBundle, typescriptLocation);
 
 
     LOG.info("Rules execution");
@@ -158,9 +158,9 @@ public class ExternalTypescriptSensor implements Sensor {
     return null;
   }
 
-  private void runMetrics(Iterable<InputFile> inputFiles, SensorContext sensorContext, ExecutableBundle executableBundle) {
+  private void runMetrics(Iterable<InputFile> inputFiles, SensorContext sensorContext, ExecutableBundle executableBundle, @Nullable File typescriptLocation) {
 
-    TsMetricsPerFileResponse[] tsMetricsPerFileResponses = runMetricsProcess(executableBundle, inputFiles);
+    TsMetricsPerFileResponse[] tsMetricsPerFileResponses = runMetricsProcess(executableBundle, inputFiles, typescriptLocation);
 
     for (TsMetricsPerFileResponse tsMetricsPerFileResponse : tsMetricsPerFileResponses) {
       FileSystem fileSystem = sensorContext.fileSystem();
@@ -176,11 +176,12 @@ public class ExternalTypescriptSensor implements Sensor {
   }
 
 
-  private static TsMetricsPerFileResponse[] runMetricsProcess(ExecutableBundle executableBundle, Iterable<InputFile> inputFiles) {
+  private static TsMetricsPerFileResponse[] runMetricsProcess(ExecutableBundle executableBundle, Iterable<InputFile> inputFiles, File typescriptLocation) {
     Command sonarCommand = executableBundle.getTsMetricsCommand();
     List<String> commandComponents = decomposeToComponents(sonarCommand);
     String commandLine = sonarCommand.toCommandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
+    setNodePath(typescriptLocation, processBuilder);
     String[] filepaths = Iterables.toArray(Iterables.transform(inputFiles, InputFile::absolutePath), String.class);
     LOG.debug(String.format("Starting external process `%s` with %d files", commandLine, filepaths.length));
     InputStreamReader inputStreamReader;
@@ -214,11 +215,7 @@ public class ExternalTypescriptSensor implements Sensor {
     List<String> commandComponents = decomposeToComponents(ruleCommand);
     ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
 
-    if (typescriptLocation != null) {
-      Map<String, String> environment = processBuilder.environment();
-      LOG.info("Setting 'NODE_PATH' to " + typescriptLocation);
-      environment.put("NODE_PATH", typescriptLocation.getAbsolutePath());
-    }
+    setNodePath(typescriptLocation, processBuilder);
 
     String commandLine = ruleCommand.toCommandLine();
     LOG.info(String.format("Running rule analysis for `%s` with %s files", commandComponents.get(commandComponents.indexOf("--project") + 1), inputFilesForThisConfig.size()));
@@ -253,6 +250,14 @@ public class ExternalTypescriptSensor implements Sensor {
       throw new IllegalStateException(String.format("Failed to run external process `%s`", commandLine), e);
     }
 
+  }
+
+  private static void setNodePath(@Nullable File typescriptLocation, ProcessBuilder processBuilder) {
+    if (typescriptLocation != null) {
+      Map<String, String> environment = processBuilder.environment();
+      LOG.info("Setting 'NODE_PATH' to " + typescriptLocation);
+      environment.put("NODE_PATH", typescriptLocation.getAbsolutePath());
+    }
   }
 
   private void saveCpd(SensorContext sensorContext, CpdToken[] cpdTokens, InputFile file) {

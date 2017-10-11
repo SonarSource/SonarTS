@@ -56,6 +56,11 @@ public class ComplexProjectStructureTest {
     request.setProjectKeys(Collections.singletonList(PROJECT_KEY));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
     assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(3);
+
+    assertThat(getProjectMeasureAsDouble("ncloc")).isEqualTo(3);
   }
 
+  private Double getProjectMeasureAsDouble(String metric) {
+    return Tests.getProjectMeasureAsDouble(metric, PROJECT_KEY);
+  }
 }
