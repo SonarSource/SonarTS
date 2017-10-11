@@ -17,15 +17,18 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import * as path from "path";
 import * as ts from "typescript";
 import * as tslint from "tslint";
 
-export function run(
+const SONARTS_RULES_FOLDER = path.join(__dirname, "../../lib/rules");
+
+export function getIssues(
   ruleConfigs: tslint.IOptions[],
   program: ts.Program,
   filepath: string
 ): { issues: any[] } {
-  const rules = tslint.loadRules(ruleConfigs);
+  const rules = tslint.loadRules(ruleConfigs, SONARTS_RULES_FOLDER);
   const sourceFile = program.getSourceFile(filepath);
   if (sourceFile) {
     let issues: tslint.RuleFailure[] = [];
