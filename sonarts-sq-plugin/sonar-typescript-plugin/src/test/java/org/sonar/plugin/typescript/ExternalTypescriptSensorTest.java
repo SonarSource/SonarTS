@@ -142,7 +142,7 @@ public class ExternalTypescriptSensorTest {
     assertThat(cpd.get(0).getStartLine()).isEqualTo(2);
     assertThat(cpd.get(0).getValue()).isEqualTo("foobar");
 
-    assertThat(logTester.logs()).contains(String.format("Setting 'NODE_PATH' to %s/foo/node_modules", BASE_DIR.getAbsoluteFile()));
+    assertThat(logTester.logs()).contains(String.format("Setting 'NODE_PATH' to %s%sfoo%snode_modules", BASE_DIR.getAbsoluteFile(), File.separator, File.separator));
   }
 
   @Test

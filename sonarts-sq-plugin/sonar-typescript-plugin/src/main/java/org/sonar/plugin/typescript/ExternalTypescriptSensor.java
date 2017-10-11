@@ -27,7 +27,6 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -342,9 +341,9 @@ public class ExternalTypescriptSensor implements Sensor {
 
   @Nullable
   private static File getTypescriptLocation(File topDir) {
-    File node_modules = getDir(topDir, "node_modules");
-    if (node_modules != null && getDir(node_modules, "typescript") != null) {
-      return node_modules;
+    File nodeModules = getDir(topDir, "node_modules");
+    if (nodeModules != null && getDir(nodeModules, "typescript") != null) {
+      return nodeModules;
     }
 
     for (File file : topDir.listFiles()) {
