@@ -31,15 +31,14 @@ if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; 
   # if there are not enough commits in the Git repository (even if Travis executed git clone --depth 50).
   # For this reason errors are ignored with "|| true"
   git fetch --unshallow || true
-
+  
+  cd sonarts-sq-plugin
+  export MAVEN_OPTS="-Xmx1536m -Xms128m"
   # Analyze with SNAPSHOT version as long as SQ does not correctly handle
   # purge of release data
   CURRENT_VERSION=`maven_expression "project.version"`
 
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
-  
-  export MAVEN_OPTS="-Xmx1536m -Xms128m"
-  cd sonarts-sq-plugin
   mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
       -Pcoverage-per-test,deploy-sonarsource,release \
       -Dmaven.test.redirectTestOutputToFile=false \
@@ -71,9 +70,10 @@ elif [[ "${TRAVIS_BRANCH}" == "branch-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "fals
   CURRENT_VERSION=`maven_expression "project.version"`
   
   echo "======= Found SNAPSHOT version ======="
+  cd sonarts-sq-plugin
   # Do not deploy a SNAPSHOT version but the release version related to this build
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
-  cd sonarts-sq-plugin
+
   mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
     $MAVEN_ARGS \
     -Pdeploy-sonarsource,release \
@@ -91,9 +91,7 @@ elif [[ "${TRAVIS_BRANCH}" == "branch-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "fals
 
 elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   echo '======= Build and analyze pull request'
-  
-  # Do not deploy a SNAPSHOT version but the release version related to this build and PR
-  . set_maven_build_version $TRAVIS_BUILD_NUMBER
+
 
   # No need for Maven phase "install" as the generated JAR files do not need to be installed
   # in Maven local repository. Phase "verify" is enough.
@@ -102,6 +100,10 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
 
   echo '======= with deploy'
   cd sonarts-sq-plugin
+
+  # Do not deploy a SNAPSHOT version but the release version related to this build and PR
+  . set_maven_build_version $TRAVIS_BUILD_NUMBER
+
   mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
     -Pdeploy-sonarsource \
     -Dmaven.test.redirectTestOutputToFile=false \
