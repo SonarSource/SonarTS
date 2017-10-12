@@ -99,7 +99,7 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dmaven.test.redirectTestOutputToFile=false \
     -B -e -V $*
 
-  sonar-scanner-cli-3.0.3.778-linux/bin/sonar-scanner \
+  sonar-scanner \
     -Dsonar.analysis.mode=issues \
     -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
     -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
