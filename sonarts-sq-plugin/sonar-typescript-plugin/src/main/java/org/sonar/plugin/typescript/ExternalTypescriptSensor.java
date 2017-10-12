@@ -20,7 +20,6 @@
 package org.sonar.plugin.typescript;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -116,7 +115,7 @@ public class ExternalTypescriptSensor implements Sensor {
       Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
 
       SonarTSRunnerCommand command = executableBundle.getRuleRunnerCommand(tsconfigPath, inputFilesForThisConfig);
-      Failure[] failures = Arrays.stream(executeExternalRunner(command, inputFilesForThisConfig, typescriptLocation)).flatMap(response -> Arrays.stream(response.issues)).toArray(Failure[]::new);
+      Failure[] failures = Arrays.stream(executeExternalRunner(command, typescriptLocation)).flatMap(response -> Arrays.stream(response.issues)).toArray(Failure[]::new);
       saveFailures(sensorContext, failures, typeScriptRules);
     }
   }
@@ -149,8 +148,8 @@ public class ExternalTypescriptSensor implements Sensor {
   }
 
   private void runMetrics(Iterable<InputFile> inputFiles, SensorContext sensorContext, ExecutableBundle executableBundle, @Nullable File typescriptLocation) {
-
-    SonarTSRunnerResponse[] sonarTSRunnerResponses = executeExternalRunner(executableBundle.getTsMetricsCommand(), inputFiles, typescriptLocation);
+    SonarTSRunnerCommand command = executableBundle.createMetricsCommand(inputFiles);
+    SonarTSRunnerResponse[] sonarTSRunnerResponses = executeExternalRunner(command, typescriptLocation);
 
     for (SonarTSRunnerResponse sonarTSRunnerResponse : sonarTSRunnerResponses) {
       FileSystem fileSystem = sensorContext.fileSystem();
@@ -165,22 +164,18 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private static SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, Iterable<InputFile> inputFiles, File typescriptLocation) {
+  private static SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, @Nullable File typescriptLocation) {
     String commandLine = command.commandLine();
-    ProcessBuilder processBuilder = new ProcessBuilder(command.components());
+    ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens());
     setNodePath(typescriptLocation, processBuilder);
     processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
-    String[] filepaths = Iterables.toArray(Iterables.transform(inputFiles, InputFile::absolutePath), String.class);
-    LOG.debug(String.format("Starting external process `%s` with %d files", commandLine, filepaths.length));
+    LOG.debug(String.format("Starting external process `%s`", commandLine));
     InputStreamReader inputStreamReader;
     try {
       Process process = processBuilder.start();
       OutputStreamWriter writerToSonar = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
-      SonarTSRequest requestToRunner = new SonarTSRequest(filepaths);
-      String json = new Gson().toJson(requestToRunner);
-      writerToSonar.write(json);
+      writerToSonar.write(command.toJsonRequest());
       writerToSonar.close();
-
       inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
 
     } catch (Exception e) {
@@ -356,11 +351,4 @@ public class ExternalTypescriptSensor implements Sensor {
     String image;
   }
 
-  private static class SonarTSRequest {
-    final String[] filepaths;
-
-    SonarTSRequest(String[] filepaths) {
-      this.filepaths = filepaths;
-    }
-  }
 }

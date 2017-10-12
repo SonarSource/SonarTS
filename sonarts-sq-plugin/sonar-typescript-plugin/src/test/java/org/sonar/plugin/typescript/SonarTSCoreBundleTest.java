@@ -62,13 +62,22 @@ public class SonarTSCoreBundleTest {
     File projectBaseDir = new File("/myProject");
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
-    DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
-    SonarTSRunnerCommand ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2));
-    assertThat(ruleCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
-    SonarTSRunnerCommand sonarCommand = bundle.getTsMetricsCommand();
-    assertThat(sonarCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
-  }
+    DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file2.ts").build();
 
+    SonarTSRunnerCommand ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2));
+    String ruleCommandContent = ruleCommand.toJsonRequest();
+    assertThat(ruleCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
+    assertThat(ruleCommandContent).contains("file1.ts");
+    assertThat(ruleCommandContent).contains("file2.ts");
+    assertThat(ruleCommandContent).contains("tsconfig.json");
+    assertThat(ruleCommandContent).contains("rule1");
+
+    SonarTSRunnerCommand sonarCommand = bundle.createMetricsCommand(Lists.newArrayList(file1, file2));
+    String metricsCommandContent = sonarCommand.toJsonRequest();
+    assertThat(sonarCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
+    assertThat(metricsCommandContent).contains("file1.ts");
+    assertThat(metricsCommandContent).contains("file2.ts");
+  }
 
   @Test
   public void should_fail_when_bad_zip() throws Exception {

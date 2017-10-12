@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -85,18 +84,19 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    * Builds command to run rules with tsrunner
    */
   @Override
-  public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
-    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand("node", this.tsMetricsExecutable.getAbsolutePath());
+  public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles) {
+    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, "node", this.tsMetricsExecutable.getAbsolutePath());
+    runnerCommand.setRules(tsconfigPath);
     return runnerCommand;
   }
 
   /**
    * Builds command to run "sonar", which is making side information calculation (metrics, highlighting etc.)
+   * @param inputFiles
    */
   @Override
-  public SonarTSRunnerCommand getTsMetricsCommand() {
-    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand("node", this.tsMetricsExecutable.getAbsolutePath());
-    return runnerCommand;
+  public SonarTSRunnerCommand createMetricsCommand(Iterable<InputFile> inputFiles) {
+    return new SonarTSRunnerCommand(inputFiles, "node", this.tsMetricsExecutable.getAbsolutePath());
   }
 
   private File copyTo(File targetPath) throws IOException {
