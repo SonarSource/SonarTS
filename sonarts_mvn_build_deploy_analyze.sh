@@ -39,10 +39,12 @@ if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; 
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
   
   export MAVEN_OPTS="-Xmx1536m -Xms128m"
+  cd sonarts-sq-plugin
   mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
       -Pcoverage-per-test,deploy-sonarsource,release \
       -Dmaven.test.redirectTestOutputToFile=false \
       -B -e -V $*
+  cd ..
 
   sonar-scanner \
       -Dsonar.host.url=$SONAR_HOST_URL \
@@ -71,10 +73,12 @@ elif [[ "${TRAVIS_BRANCH}" == "branch-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "fals
   echo "======= Found SNAPSHOT version ======="
   # Do not deploy a SNAPSHOT version but the release version related to this build
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
+  cd sonarts-sq-plugin
   mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
     $MAVEN_ARGS \
     -Pdeploy-sonarsource,release \
     -B -e -V $*
+  cd ..
 
   sonar-scanner \
       -Dsonar.host.url=$SONAR_HOST_URL \
@@ -97,10 +101,12 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   export MAVEN_OPTS="-Xmx1G -Xms128m"
 
   echo '======= with deploy'
+  cd sonarts-sq-plugin
   mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
     -Pdeploy-sonarsource \
     -Dmaven.test.redirectTestOutputToFile=false \
     -B -e -V $*
+  cd ..
 
   sonar-scanner \
     -Dsonar.analysis.mode=issues \
@@ -116,7 +122,9 @@ else
   # No need for Maven phase "install" as the generated JAR files do not need to be installed
   # in Maven local repository. Phase "verify" is enough.
 
+  cd sonarts-sq-plugin
   mvn verify \
       -Dmaven.test.redirectTestOutputToFile=false \
       -B -e -V $*
+  cd ..
 fi
