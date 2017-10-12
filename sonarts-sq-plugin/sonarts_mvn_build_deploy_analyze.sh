@@ -12,19 +12,15 @@
 set -euo pipefail
 
 #install sonar-scanner
-if [ ! -d "sonar-scanner-cli-3.0.3.778-linux" ]; then
+pushd ~ > /dev/null
+if [ ! -d "sonar-scanner-3.0.3.778-linux" ]; then
   wget -O sonar-scanner.zip https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip
   unzip sonar-scanner.zip
   rm sonar-scanner.zip
 fi
-echo ############# PWD ##############
-  pwd
-  echo ################################
-  ls -alh
-export PATH=$PATH:~/sonar-scanner-cli-3.0.3.778-linux/bin
-echo #############################
-echo PATH=$PATH
-echo #############################
+export PATH=$PATH:~/sonar-scanner-3.0.3.778-linux/bin
+popd > /dev/null
+
 
 if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   echo '======= Build, deploy and analyze master'
