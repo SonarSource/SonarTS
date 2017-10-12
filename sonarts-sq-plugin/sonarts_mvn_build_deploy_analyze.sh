@@ -10,9 +10,14 @@
 # - ARTIFACTORY_DEPLOY_PASSWORD: password to deploy to $ARTIFACTORY_DEPLOY_REPO
 
 set -euo pipefail
-wget -O sonar-scanner.zip https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip
-unzip sonar-scanner.zip
-export PATH=$PATH:sonar-scanner-cli-3.0.3.778-linux/bin
+
+#install sonar-scanner
+if [ ! -d "jdk1.8.0_144" ]; then
+  wget -O sonar-scanner.zip https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip
+  unzip sonar-scanner.zip
+  rm sonar-scanner.zip
+fi
+export PATH=$PATH:~/sonar-scanner-cli-3.0.3.778-linux/bin
 
 if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   echo '======= Build, deploy and analyze master'
