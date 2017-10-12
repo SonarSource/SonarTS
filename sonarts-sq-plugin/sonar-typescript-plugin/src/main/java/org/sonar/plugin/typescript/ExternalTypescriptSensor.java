@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -95,6 +96,8 @@ public class ExternalTypescriptSensor implements Sensor {
   @Override
   public void execute(SensorContext sensorContext) {
     File deployDestination = sensorContext.fileSystem().workDir();
+    File typescriptLocation = getTypescriptLocation(sensorContext.fileSystem().baseDir());
+
     ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination);
 
     FileSystem fileSystem = sensorContext.fileSystem();
@@ -104,17 +107,17 @@ public class ExternalTypescriptSensor implements Sensor {
     Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
 
     LOG.info("Metrics calculation");
-    runMetrics(inputFiles, sensorContext, executableBundle);
+    runMetrics(inputFiles, sensorContext, executableBundle, typescriptLocation);
 
 
     LOG.info("Rules execution");
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     executableBundle.activateRules(typeScriptRules);
-    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, deployDestination);
+    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, deployDestination, typescriptLocation);
 
   }
 
-  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, File deployDestination) {
+  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, File deployDestination, @Nullable File typescriptLocation) {
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
     Multimap<String, InputFile> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
@@ -123,7 +126,7 @@ public class ExternalTypescriptSensor implements Sensor {
       Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
 
       Command command = executableBundle.getTslintCommand(tsconfigPath, inputFilesForThisConfig);
-      Failure[] failures = runRulesProcess(command, deployDestination, inputFilesForThisConfig);
+      Failure[] failures = runRulesProcess(command, deployDestination, inputFilesForThisConfig, typescriptLocation);
       saveFailures(sensorContext, failures, typeScriptRules);
     }
   }
@@ -155,9 +158,9 @@ public class ExternalTypescriptSensor implements Sensor {
     return null;
   }
 
-  private void runMetrics(Iterable<InputFile> inputFiles, SensorContext sensorContext, ExecutableBundle executableBundle) {
+  private void runMetrics(Iterable<InputFile> inputFiles, SensorContext sensorContext, ExecutableBundle executableBundle, @Nullable File typescriptLocation) {
 
-    TsMetricsPerFileResponse[] tsMetricsPerFileResponses = runMetricsProcess(executableBundle, inputFiles);
+    TsMetricsPerFileResponse[] tsMetricsPerFileResponses = runMetricsProcess(executableBundle, inputFiles, typescriptLocation);
 
     for (TsMetricsPerFileResponse tsMetricsPerFileResponse : tsMetricsPerFileResponses) {
       FileSystem fileSystem = sensorContext.fileSystem();
@@ -173,11 +176,12 @@ public class ExternalTypescriptSensor implements Sensor {
   }
 
 
-  private static TsMetricsPerFileResponse[] runMetricsProcess(ExecutableBundle executableBundle, Iterable<InputFile> inputFiles) {
+  private static TsMetricsPerFileResponse[] runMetricsProcess(ExecutableBundle executableBundle, Iterable<InputFile> inputFiles, File typescriptLocation) {
     Command sonarCommand = executableBundle.getTsMetricsCommand();
     List<String> commandComponents = decomposeToComponents(sonarCommand);
     String commandLine = sonarCommand.toCommandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
+    setNodePath(typescriptLocation, processBuilder);
     String[] filepaths = Iterables.toArray(Iterables.transform(inputFiles, InputFile::absolutePath), String.class);
     LOG.debug(String.format("Starting external process `%s` with %d files", commandLine, filepaths.length));
     InputStreamReader inputStreamReader;
@@ -207,9 +211,12 @@ public class ExternalTypescriptSensor implements Sensor {
 
   }
 
-  private static Failure[] runRulesProcess(Command ruleCommand, File tmpDir, Collection<InputFile> inputFilesForThisConfig) {
+  private static Failure[] runRulesProcess(Command ruleCommand, File tmpDir, Collection<InputFile> inputFilesForThisConfig, @Nullable File typescriptLocation) {
     List<String> commandComponents = decomposeToComponents(ruleCommand);
     ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
+
+    setNodePath(typescriptLocation, processBuilder);
+
     String commandLine = ruleCommand.toCommandLine();
     LOG.info(String.format("Running rule analysis for `%s` with %s files", commandComponents.get(commandComponents.indexOf("--project") + 1), inputFilesForThisConfig.size()));
     try {
@@ -243,6 +250,14 @@ public class ExternalTypescriptSensor implements Sensor {
       throw new IllegalStateException(String.format("Failed to run external process `%s`", commandLine), e);
     }
 
+  }
+
+  private static void setNodePath(@Nullable File typescriptLocation, ProcessBuilder processBuilder) {
+    if (typescriptLocation != null) {
+      Map<String, String> environment = processBuilder.environment();
+      LOG.info("Setting 'NODE_PATH' to " + typescriptLocation);
+      environment.put("NODE_PATH", typescriptLocation.getAbsolutePath());
+    }
   }
 
   private void saveCpd(SensorContext sensorContext, CpdToken[] cpdTokens, InputFile file) {
@@ -326,6 +341,37 @@ public class ExternalTypescriptSensor implements Sensor {
         TypeOfText.valueOf(highlight.textType.toUpperCase(Locale.ENGLISH)));
     }
     highlighting.save();
+  }
+
+
+  @Nullable
+  private static File getTypescriptLocation(File currentDirectory) {
+    File nodeModules = getChildDirectoryByName(currentDirectory, "node_modules");
+    if (nodeModules != null && getChildDirectoryByName(nodeModules, "typescript") != null) {
+      return nodeModules;
+    }
+
+    for (File file : currentDirectory.listFiles()) {
+      if (file.isDirectory()) {
+        File typescriptLocationForNestedDir = getTypescriptLocation(file);
+        if (typescriptLocationForNestedDir != null) {
+          return typescriptLocationForNestedDir;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  @Nullable
+  private static File getChildDirectoryByName(File directory, String name) {
+    for (File file : directory.listFiles()) {
+      if (file.isDirectory() && file.getName().equals(name)) {
+        return file;
+      }
+    }
+
+    return null;
   }
 
   private static class Failure {

@@ -141,6 +141,8 @@ public class ExternalTypescriptSensorTest {
     assertThat(cpd).hasSize(1);
     assertThat(cpd.get(0).getStartLine()).isEqualTo(2);
     assertThat(cpd.get(0).getValue()).isEqualTo("foobar");
+
+    assertThat(logTester.logs()).contains(String.format("Setting 'NODE_PATH' to %s%sfoo%snode_modules", BASE_DIR.getAbsoluteFile(), File.separator, File.separator));
   }
 
   @Test
@@ -169,7 +171,7 @@ public class ExternalTypescriptSensorTest {
     sensor.execute(sensorContext);
 
     assertThat(sensorContext.allIssues()).hasSize(0);
-    assertThat(logTester.logs().get(4)).contains("empty output");
+    assertThat(logTester.logs().get(6)).contains("empty output");
     assertThat(logTester.logs().get(logTester.logs().size() - 1)).contains("foo/file.ts");
   }
 

@@ -85,7 +85,7 @@
                                             <overWrite>true</overWrite>
                                         </artifactItem>
                                     </artifactItems>
-                                    <outputDirectory>../sonar-typescript-plugin/target</outputDirectory>
+                                    <outputDirectory>../../sonar-typescript-plugin/target</outputDirectory>
                                     <overWriteReleases>true</overWriteReleases>
                                     <overWriteSnapshots>true</overWriteSnapshots>
                                 </configuration>
