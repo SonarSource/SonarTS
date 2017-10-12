@@ -16,6 +16,7 @@ script:
 cache: # yarn
   directories:
     - '$HOME/.m2/repository'    
+    - '$HOME/sonar-scanner-3.0.3.778-linux'   
   before_cache:
     - rm -rf $HOME/.m2/repository/org/sonarsource/typescript
     - find $HOME/.m2 -name resolver-status.properties -exec rm {} \;
