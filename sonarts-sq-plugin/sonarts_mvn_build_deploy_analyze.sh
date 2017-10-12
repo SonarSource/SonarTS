@@ -12,7 +12,7 @@
 set -euo pipefail
 wget -O sonar-scanner.zip https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip
 unzip sonar-scanner.zip
-export PATH=$PATH:sonar-scanner/bin
+export PATH=$PATH:sonar-scanner-cli-3.0.3.778-linux/bin
 
 if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   echo '======= Build, deploy and analyze master'
