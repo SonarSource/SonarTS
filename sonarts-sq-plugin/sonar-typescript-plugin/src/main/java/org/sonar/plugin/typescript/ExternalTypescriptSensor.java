@@ -345,13 +345,13 @@ public class ExternalTypescriptSensor implements Sensor {
 
 
   @Nullable
-  private static File getTypescriptLocation(File topDir) {
-    File nodeModules = getDir(topDir, "node_modules");
-    if (nodeModules != null && getDir(nodeModules, "typescript") != null) {
+  private static File getTypescriptLocation(File currentDirectory) {
+    File nodeModules = getChildDirectoryByName(currentDirectory, "node_modules");
+    if (nodeModules != null && getChildDirectoryByName(nodeModules, "typescript") != null) {
       return nodeModules;
     }
 
-    for (File file : topDir.listFiles()) {
+    for (File file : currentDirectory.listFiles()) {
       if (file.isDirectory()) {
         File typescriptLocationForNestedDir = getTypescriptLocation(file);
         if (typescriptLocationForNestedDir != null) {
@@ -364,8 +364,8 @@ public class ExternalTypescriptSensor implements Sensor {
   }
 
   @Nullable
-  private static File getDir(File topDir, String name) {
-    for (File file : topDir.listFiles()) {
+  private static File getChildDirectoryByName(File directory, String name) {
+    for (File file : directory.listFiles()) {
       if (file.isDirectory() && file.getName().equals(name)) {
         return file;
       }
