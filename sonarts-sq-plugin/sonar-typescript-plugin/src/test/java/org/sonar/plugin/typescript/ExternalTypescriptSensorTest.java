@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -45,11 +44,11 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
-import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -337,10 +336,8 @@ public class ExternalTypescriptSensorTest {
     private class TestBundle implements ExecutableBundle {
 
       @Override
-      public Command getTsMetricsCommand() {
-        Command command = Command.create(sonarCommand[0]);
-        command.addArguments(Arrays.copyOfRange(sonarCommand, 1, sonarCommand.length));
-        return command;
+      public SonarTSRunnerCommand getTsMetricsCommand() {
+        return new SonarTSRunnerCommand(sonarCommand);
       }
 
       @Override
@@ -348,10 +345,8 @@ public class ExternalTypescriptSensorTest {
       }
 
       @Override
-      public Command getRuleRunnerCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
-        Command command = Command.create(ruleCheckCommand[0]);
-        command.addArguments(Arrays.copyOfRange(ruleCheckCommand, 1, ruleCheckCommand.length));
-        return command;
+      public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
+        return new SonarTSRunnerCommand(ruleCheckCommand);
       }
     }
   }

@@ -28,10 +28,8 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.annotation.Nullable;
@@ -53,11 +51,11 @@ import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 public class ExternalTypescriptSensor implements Sensor {
@@ -117,7 +115,7 @@ public class ExternalTypescriptSensor implements Sensor {
     for (String tsconfigPath : inputFileByTsconfig.keySet()) {
       Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
 
-      Command command = executableBundle.getRuleRunnerCommand(tsconfigPath, inputFilesForThisConfig);
+      SonarTSRunnerCommand command = executableBundle.getRuleRunnerCommand(tsconfigPath, inputFilesForThisConfig);
       Failure[] failures = Arrays.stream(executeExternalRunner(command, inputFilesForThisConfig, typescriptLocation)).flatMap(response -> Arrays.stream(response.issues)).toArray(Failure[]::new);
       saveFailures(sensorContext, failures, typeScriptRules);
     }
@@ -167,10 +165,9 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private static SonarTSRunnerResponse[] executeExternalRunner(Command command, Iterable<InputFile> inputFiles, File typescriptLocation) {
-    List<String> commandComponents = decomposeToComponents(command);
-    String commandLine = command.toCommandLine();
-    ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
+  private static SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, Iterable<InputFile> inputFiles, File typescriptLocation) {
+    String commandLine = command.commandLine();
+    ProcessBuilder processBuilder = new ProcessBuilder(command.components());
     setNodePath(typescriptLocation, processBuilder);
     processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
     String[] filepaths = Iterables.toArray(Iterables.transform(inputFiles, InputFile::absolutePath), String.class);
@@ -244,13 +241,6 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private static void saveMetric(SensorContext sensorContext, InputFile inputFile, Metric<Integer> metric, int value) {
     sensorContext.<Integer>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();
-  }
-
-  private static List<String> decomposeToComponents(Command sonarCommand) {
-    List<String> commandComponents = new ArrayList<>();
-    commandComponents.add(sonarCommand.getExecutable());
-    sonarCommand.getArguments().forEach(commandComponents::add);
-    return commandComponents;
   }
 
   private void saveFailures(SensorContext sensorContext, Failure[] failures, TypeScriptRules typeScriptRules) {

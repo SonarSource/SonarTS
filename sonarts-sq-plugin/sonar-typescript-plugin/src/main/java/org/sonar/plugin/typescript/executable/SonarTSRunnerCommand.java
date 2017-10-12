@@ -19,16 +19,24 @@
  */
 package org.sonar.plugin.typescript.executable;
 
-import java.util.Collection;
-import org.sonar.api.batch.fs.InputFile;
-import org.sonar.plugin.typescript.rules.TypeScriptRules;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public interface ExecutableBundle {
+public class SonarTSRunnerCommand {
+  private final List<String> commandLineTokens;
 
-  SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Collection<InputFile> inputFiles);
+  public SonarTSRunnerCommand(String... commandLineTokens) {
+    this.commandLineTokens = Arrays.asList(commandLineTokens);
+  }
 
-  SonarTSRunnerCommand getTsMetricsCommand();
+  public String commandLine() {
+    return String.join(" ", commandLineTokens);
+  }
 
-  void activateRules(TypeScriptRules typeScriptRules);
-
+  public List<String> components() {
+    List<String> list = new ArrayList<>();
+    list.addAll(commandLineTokens);
+    return list;
+  }
 }

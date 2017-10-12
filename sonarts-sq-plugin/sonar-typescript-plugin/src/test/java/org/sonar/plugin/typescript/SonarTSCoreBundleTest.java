@@ -34,9 +34,9 @@ import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.internal.apachecommons.lang.StringUtils;
-import org.sonar.api.utils.command.Command;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,17 +63,10 @@ public class SonarTSCoreBundleTest {
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
     DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
-    Command ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2));
-
-
-    String tslint = new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint/bin/tslint").getAbsolutePath();
-    String config = new File(DEPLOY_DESTINATION, "sonarts-core/tslint.json").getAbsolutePath();
-
-    assertThat(ruleCommand.toCommandLine()).isEqualTo("node " + tslint + " --config " + config + " --format json --force --type-check --project "
-      + tsconfig.getAbsolutePath() + " " + file1.absolutePath() + " " + file2.absolutePath());
-
-    Command sonarCommand = bundle.getTsMetricsCommand();
-    assertThat(sonarCommand.toCommandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsmetrics").getAbsolutePath());
+    SonarTSRunnerCommand ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2));
+    assertThat(ruleCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
+    SonarTSRunnerCommand sonarCommand = bundle.getTsMetricsCommand();
+    assertThat(sonarCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
   }
 
 

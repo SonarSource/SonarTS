@@ -142,7 +142,7 @@
                 <configuration>
                     <workingDirectory>sonarts-core</workingDirectory>
                     <installDirectory>target</installDirectory>
-                    <nodeVersion>v8.1.2</nodeVersion>
+                    <nodeVersion>v8.7.0</nodeVersion>
                     <npmVersion>5.3.0</npmVersion>
                 </configuration>
                 <executions>
