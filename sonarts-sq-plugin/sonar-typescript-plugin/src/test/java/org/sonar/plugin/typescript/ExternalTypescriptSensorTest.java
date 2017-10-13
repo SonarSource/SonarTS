@@ -344,7 +344,7 @@ public class ExternalTypescriptSensorTest {
       }
 
       @Override
-      public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles) {
+      public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
         return new SonarTSRunnerCommand(inputFiles, ruleCheckCommand);
       }
     }

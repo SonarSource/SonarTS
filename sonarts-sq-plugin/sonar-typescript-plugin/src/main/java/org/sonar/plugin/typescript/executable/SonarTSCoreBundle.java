@@ -47,7 +47,6 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   private String bundleLocation;
   private File tsMetricsExecutable;
 
-
   private SonarTSCoreBundle(String bundleLocation, File deployDestination) {
     this.bundleLocation = bundleLocation;
     this.deployDestination = deployDestination;
@@ -84,9 +83,14 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    * Builds command to run rules with tsrunner
    */
   @Override
-  public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles) {
+  public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
     SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, "node", this.tsMetricsExecutable.getAbsolutePath());
-    runnerCommand.setRules(tsconfigPath);
+    runnerCommand.setTsConfigPath(tsconfigPath);
+    typeScriptRules.forEach(rule -> {
+      if(rule.isEnabled()) {
+        runnerCommand.addRule(rule.tsLintKey(), rule.configuration());
+      }
+    });
     return runnerCommand;
   }
 

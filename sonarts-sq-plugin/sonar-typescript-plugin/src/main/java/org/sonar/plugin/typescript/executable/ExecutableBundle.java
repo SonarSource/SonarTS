@@ -24,7 +24,7 @@ import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 public interface ExecutableBundle {
 
-  SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles);
+  SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules);
 
   SonarTSRunnerCommand createMetricsCommand(Iterable<InputFile> inputFiles);
 

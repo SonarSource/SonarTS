@@ -28,6 +28,9 @@ it("should run sonarts rules", () => {
   const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.ts");
   const program = tslint.Linter.createProgram(tsconfig)
   
-  const issues = getIssues([{"ruleName": "no-identical-expressions"}], program, sampleFile);
-  expect(issues.issues.length).toBe(1);
+  const issues = getIssues([
+    {"ruleName": "no-identical-expressions","ruleArguments":true},
+    {"ruleName":"no-dead-store","ruleArguments":true}
+  ], program, sampleFile);
+  expect(issues.issues.length).toBe(2);
 });

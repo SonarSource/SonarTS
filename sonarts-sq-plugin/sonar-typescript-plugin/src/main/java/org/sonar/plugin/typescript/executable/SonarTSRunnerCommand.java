@@ -21,6 +21,7 @@ package org.sonar.plugin.typescript.executable;
 
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +31,7 @@ public class SonarTSRunnerCommand {
   private final List<String> commandLineTokens;
   private final Iterable<InputFile> files;
   private String tsconfig;
+  private List<RuleToExecute> rules = new ArrayList<>();
 
   public SonarTSRunnerCommand(Iterable<InputFile> files, String... commandLineTokens) {
     this.files = files;
@@ -51,20 +53,36 @@ public class SonarTSRunnerCommand {
     SonarTSRequest requestToRunner = new SonarTSRequest(filepaths);
     if (tsconfig != null) {
       requestToRunner.tsconfig = this.tsconfig;
+      rules.forEach(rule -> requestToRunner.rules.add(rule));
     }
     return new Gson().toJson(requestToRunner);
   }
 
-  public void setRules(String tsconfig) {
+  public void setTsConfigPath(String tsconfig) {
     this.tsconfig = tsconfig;
+  }
+
+  public void addRule(String ruleKey, JsonElement configuration) {
+    this.rules.add(new RuleToExecute(ruleKey, configuration));
   }
 
   private static class SonarTSRequest {
     final String[] filepaths;
-    public String tsconfig;
+    String tsconfig;
+    public List<RuleToExecute> rules = new ArrayList<>();
 
     SonarTSRequest(String[] filepaths) {
       this.filepaths = filepaths;
+    }
+  }
+
+  private class RuleToExecute {
+    final String ruleName;
+    final JsonElement ruleArguments;
+
+    public RuleToExecute(String ruleName, JsonElement ruleArguments) {
+      this.ruleName = ruleName;
+      this.ruleArguments = ruleArguments;
     }
   }
 }

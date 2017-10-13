@@ -32,6 +32,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
+import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.internal.apachecommons.lang.StringUtils;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
@@ -64,13 +65,16 @@ public class SonarTSCoreBundleTest {
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
     DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file2.ts").build();
 
-    SonarTSRunnerCommand ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2));
+    ActiveRules activeRules = new TestActiveRules("S1854"); // no-dead-store
+    TypeScriptRules typeScriptRules = new TypeScriptRules(new CheckFactory(activeRules));
+
+    SonarTSRunnerCommand ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), typeScriptRules);
     String ruleCommandContent = ruleCommand.toJsonRequest();
     assertThat(ruleCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
     assertThat(ruleCommandContent).contains("file1.ts");
     assertThat(ruleCommandContent).contains("file2.ts");
     assertThat(ruleCommandContent).contains("tsconfig.json");
-    assertThat(ruleCommandContent).contains("rule1");
+    assertThat(ruleCommandContent).contains("no-dead-store");
 
     SonarTSRunnerCommand sonarCommand = bundle.createMetricsCommand(Lists.newArrayList(file1, file2));
     String metricsCommandContent = sonarCommand.toJsonRequest();

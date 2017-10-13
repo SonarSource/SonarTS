@@ -19,7 +19,6 @@
  */
 package org.sonar.plugin.typescript.rules;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -36,8 +35,7 @@ public abstract class TypeScriptRule {
     enabled = true;
   }
 
-  @VisibleForTesting
-  boolean isEnabled() {
+  public boolean isEnabled() {
     return enabled;
   }
 

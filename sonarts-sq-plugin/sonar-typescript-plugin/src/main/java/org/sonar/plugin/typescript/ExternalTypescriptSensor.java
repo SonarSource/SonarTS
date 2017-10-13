@@ -103,7 +103,6 @@ public class ExternalTypescriptSensor implements Sensor {
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     executableBundle.activateRules(typeScriptRules);
     runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, deployDestination, typescriptLocation);
-
   }
 
   private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, File deployDestination, @Nullable File typescriptLocation) {
@@ -114,7 +113,7 @@ public class ExternalTypescriptSensor implements Sensor {
     for (String tsconfigPath : inputFileByTsconfig.keySet()) {
       Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
 
-      SonarTSRunnerCommand command = executableBundle.getRuleRunnerCommand(tsconfigPath, inputFilesForThisConfig);
+      SonarTSRunnerCommand command = executableBundle.getRuleRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
       Failure[] failures = Arrays.stream(executeExternalRunner(command, typescriptLocation)).flatMap(response -> Arrays.stream(response.issues)).toArray(Failure[]::new);
       saveFailures(sensorContext, failures, typeScriptRules);
     }
