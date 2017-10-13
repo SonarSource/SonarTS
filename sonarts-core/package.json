@@ -4,7 +4,7 @@
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
   "bin": {
-    "tsmetrics": "./bin/tsmetrics"
+    "tsrunner": "./bin/tsrunner"
   },
   "scripts": {
     "watch-cfg-viewer": "node_modules/webpack-dev-server/bin/webpack-dev-server.js",

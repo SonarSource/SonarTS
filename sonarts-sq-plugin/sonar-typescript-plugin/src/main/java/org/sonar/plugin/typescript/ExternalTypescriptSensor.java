@@ -102,10 +102,10 @@ public class ExternalTypescriptSensor implements Sensor {
     LOG.info("Rules execution");
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     executableBundle.activateRules(typeScriptRules);
-    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, deployDestination, typescriptLocation);
+    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, typescriptLocation);
   }
 
-  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, File deployDestination, @Nullable File typescriptLocation) {
+  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, @Nullable File typescriptLocation) {
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
     Multimap<String, InputFile> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
