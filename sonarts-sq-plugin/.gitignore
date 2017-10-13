@@ -33,3 +33,7 @@ Desktop.ini
 
 # ---- Sonar
 .sonar
+
+
+# ---- dependencies used for SQ analysis
+dependencies
