@@ -136,7 +136,7 @@ function getProgramFiles(program: ts.Program): ts.SourceFile[] {
   return program.getSourceFiles().filter(file => !file.isDeclarationFile);
 }
 
-function runRuleOnProjectFile(rule: any, sourceFile: ts.SourceFile, program: ts.Program) {
+function runRuleOnProjectFile(rule: any, sourceFile: ts.SourceFile, program: ts.Program) : tslint.RuleFailure[] {
   if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
     return rule.applyWithProgram(sourceFile, program);
   } else {
