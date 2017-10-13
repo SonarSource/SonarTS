@@ -21,6 +21,7 @@ import * as fs from "fs";
 import * as glob from "glob";
 import * as lodash from "lodash";
 import * as path from "path";
+import { executeRule } from "../../src/runner/rules";
 import * as tslint from "tslint";
 import * as ts from "typescript";
 
@@ -54,7 +55,7 @@ export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: stri
     files.forEach(file => {
       rules.forEach(Rule => {
         const rule = initRule(Rule);
-        const errorLines = runRuleOnProjectFile(rule, file, program).map(
+        const errorLines = executeRule(rule, file, program).map(
           failure => failure.getStartPosition().getLineAndCharacter().line + 1,
         );
         const ruleName = (Rule as any).metadata.ruleName;
@@ -134,14 +135,6 @@ function getProgram(tsConfigFile: string): ts.Program {
 
 function getProgramFiles(program: ts.Program): ts.SourceFile[] {
   return program.getSourceFiles().filter(file => !file.isDeclarationFile);
-}
-
-function runRuleOnProjectFile(rule: any, sourceFile: ts.SourceFile, program: ts.Program) : tslint.RuleFailure[] {
-  if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
-    return rule.applyWithProgram(sourceFile, program);
-  } else {
-    return rule.apply(sourceFile);
-  }
 }
 
 function addErrorsToResults(results: Results, ruleName: string, fileName: string, errorLines: number[]): Results {

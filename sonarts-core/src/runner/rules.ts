@@ -36,7 +36,7 @@ export function getIssues(ruleConfigs: tslint.IOptions[], program: ts.Program, f
   }
 }
 
-function executeRule(rule: tslint.IRule, sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
+export function executeRule(rule: tslint.IRule, sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
   try {
     if (isTypedRule(rule)) {
       return rule.applyWithProgram(sourceFile, program);
