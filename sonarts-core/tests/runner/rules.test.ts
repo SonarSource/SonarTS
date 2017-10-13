@@ -17,21 +17,21 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as fs from "fs";
 import * as path from "path";
-import { Utils } from "tslint";
+import * as ts from "typescript";
+import * as tslint from "tslint";
+import { getIssues } from "../../src/runner/rules";
+import { parseString } from "../../src/utils/parser";
 
-it("should contain all implemented rules", () => {
-  const rulesPath = path.join(__dirname, "../../src/rules");
-  const profileFilePath = path.join(__dirname, "../../tslint-sonarts.json");
-  const profile = JSON.parse(fs.readFileSync(profileFilePath, "utf8"));
-  const configuredRules = Object.keys(profile.rules)
-    .map((key, _) => key)
-    .map(Utils.camelize)
-    .sort();
-  const existingRules = fs
-    .readdirSync(rulesPath)
-    .map(file => file.substring(0, file.indexOf("Rule.ts")))
-    .sort();
-  expect(existingRules).toEqual(configuredRules);
+it("should run sonarts rules", () => {
+  const sampleFile = path.join(__dirname, "./fixtures/runner_project/identical_expressions_and_deadstore.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
+  const program = tslint.Linter.createProgram(tsconfig);
+
+  const issues = getIssues(
+    [{ ruleName: "no-identical-expressions", ruleArguments: true }, { ruleName: "no-dead-store", ruleArguments: true }],
+    program,
+    sampleFile,
+  );
+  expect(issues.issues.length).toBe(2);
 });

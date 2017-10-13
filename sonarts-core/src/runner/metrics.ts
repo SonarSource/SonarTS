@@ -74,7 +74,12 @@ export function findCommentLines(sourceFile: ts.SourceFile): { commentLines: num
 
   function processComment(comment: ts.CommentRange) {
     const content = getText(comment, sourceFile).substr(2);
-    if (content.trim().toUpperCase().startsWith("NOSONAR")) {
+    if (
+      content
+        .trim()
+        .toUpperCase()
+        .startsWith("NOSONAR")
+    ) {
       addLines(comment.pos, comment.end, nosonarLines, sourceFile);
     }
     addLines(comment.pos, comment.end, commentLines, sourceFile);

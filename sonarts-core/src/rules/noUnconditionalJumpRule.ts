@@ -97,7 +97,9 @@ class Walker extends tslint.RuleWalker {
   }
 
   private buildCfg(node: ts.Node): ControlFlowGraph | void {
-    const wrappingFunction = nav.firstLocalAncestor(node, ...nav.FUNCTION_LIKE) as ts.FunctionLikeDeclaration | undefined;
+    const wrappingFunction = nav.firstLocalAncestor(node, ...nav.FUNCTION_LIKE) as
+      | ts.FunctionLikeDeclaration
+      | undefined;
     if (wrappingFunction && wrappingFunction.body) {
       if (wrappingFunction.body.kind === ts.SyntaxKind.Block) {
         return ControlFlowGraph.fromStatements((wrappingFunction.body as ts.Block).statements);

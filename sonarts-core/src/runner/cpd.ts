@@ -21,7 +21,7 @@ import * as ts from "typescript";
 import { lineAndCharacter, toTokens } from "../utils/navigation";
 import { toSonarLine } from "./sonar-utils";
 
-export default function getCpdTokens(sourceFile: ts.SourceFile): {cpdTokens: CpdToken[]} {
+export default function getCpdTokens(sourceFile: ts.SourceFile): { cpdTokens: CpdToken[] } {
   const cpdTokens: CpdToken[] = [];
   const tokens = toTokens(sourceFile);
 
@@ -33,7 +33,7 @@ export default function getCpdTokens(sourceFile: ts.SourceFile): {cpdTokens: Cpd
       return;
     }
 
-    if (text.startsWith("\"") || text.startsWith("'") || text.startsWith("`")) {
+    if (text.startsWith('"') || text.startsWith("'") || text.startsWith("`")) {
       text = "LITERAL";
     }
 

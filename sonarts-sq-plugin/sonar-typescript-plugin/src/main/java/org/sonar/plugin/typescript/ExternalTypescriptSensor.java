@@ -19,28 +19,19 @@
  */
 package org.sonar.plugin.typescript;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -59,11 +50,11 @@ import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 public class ExternalTypescriptSensor implements Sensor {
@@ -80,8 +71,7 @@ public class ExternalTypescriptSensor implements Sensor {
    */
   public ExternalTypescriptSensor(
     ExecutableBundleFactory executableBundleFactory, NoSonarFilter noSonarFilter, FileLinesContextFactory fileLinesContextFactory,
-    CheckFactory checkFactory
-  ) {
+    CheckFactory checkFactory) {
     this.executableBundleFactory = executableBundleFactory;
     this.noSonarFilter = noSonarFilter;
     this.fileLinesContextFactory = fileLinesContextFactory;
@@ -109,15 +99,13 @@ public class ExternalTypescriptSensor implements Sensor {
     LOG.info("Metrics calculation");
     runMetrics(inputFiles, sensorContext, executableBundle, typescriptLocation);
 
-
     LOG.info("Rules execution");
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     executableBundle.activateRules(typeScriptRules);
-    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, deployDestination, typescriptLocation);
-
+    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, typescriptLocation);
   }
 
-  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, File deployDestination, @Nullable File typescriptLocation) {
+  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, @Nullable File typescriptLocation) {
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
     Multimap<String, InputFile> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
@@ -125,8 +113,8 @@ public class ExternalTypescriptSensor implements Sensor {
     for (String tsconfigPath : inputFileByTsconfig.keySet()) {
       Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
 
-      Command command = executableBundle.getTslintCommand(tsconfigPath, inputFilesForThisConfig);
-      Failure[] failures = runRulesProcess(command, deployDestination, inputFilesForThisConfig, typescriptLocation);
+      SonarTSRunnerCommand command = executableBundle.getRuleRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
+      Failure[] failures = Arrays.stream(executeExternalRunner(command, typescriptLocation)).flatMap(response -> Arrays.stream(response.issues)).toArray(Failure[]::new);
       saveFailures(sensorContext, failures, typeScriptRules);
     }
   }
@@ -159,96 +147,47 @@ public class ExternalTypescriptSensor implements Sensor {
   }
 
   private void runMetrics(Iterable<InputFile> inputFiles, SensorContext sensorContext, ExecutableBundle executableBundle, @Nullable File typescriptLocation) {
+    SonarTSRunnerCommand command = executableBundle.createMetricsCommand(inputFiles);
+    SonarTSRunnerResponse[] sonarTSRunnerResponses = executeExternalRunner(command, typescriptLocation);
 
-    TsMetricsPerFileResponse[] tsMetricsPerFileResponses = runMetricsProcess(executableBundle, inputFiles, typescriptLocation);
-
-    for (TsMetricsPerFileResponse tsMetricsPerFileResponse : tsMetricsPerFileResponses) {
+    for (SonarTSRunnerResponse sonarTSRunnerResponse : sonarTSRunnerResponses) {
       FileSystem fileSystem = sensorContext.fileSystem();
-      InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(tsMetricsPerFileResponse.filepath));
+      InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(sonarTSRunnerResponse.filepath));
       if (inputFile != null) {
-        saveHighlights(sensorContext, tsMetricsPerFileResponse.highlights, inputFile);
-        saveMetrics(sensorContext, tsMetricsPerFileResponse, inputFile);
-        saveCpd(sensorContext, tsMetricsPerFileResponse.cpdTokens, inputFile);
+        saveHighlights(sensorContext, sonarTSRunnerResponse.highlights, inputFile);
+        saveMetrics(sensorContext, sonarTSRunnerResponse, inputFile);
+        saveCpd(sensorContext, sonarTSRunnerResponse.cpdTokens, inputFile);
       } else {
-        LOG.error("Failed to find input file for path `" + tsMetricsPerFileResponse.filepath + "`");
+        LOG.error("Failed to find input file for path `" + sonarTSRunnerResponse.filepath + "`");
       }
     }
   }
 
-
-  private static TsMetricsPerFileResponse[] runMetricsProcess(ExecutableBundle executableBundle, Iterable<InputFile> inputFiles, File typescriptLocation) {
-    Command sonarCommand = executableBundle.getTsMetricsCommand();
-    List<String> commandComponents = decomposeToComponents(sonarCommand);
-    String commandLine = sonarCommand.toCommandLine();
-    ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
+  private static SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, @Nullable File typescriptLocation) {
+    String commandLine = command.commandLine();
+    ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens());
     setNodePath(typescriptLocation, processBuilder);
-    String[] filepaths = Iterables.toArray(Iterables.transform(inputFiles, InputFile::absolutePath), String.class);
-    LOG.debug(String.format("Starting external process `%s` with %d files", commandLine, filepaths.length));
+    processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
+    LOG.debug(String.format("Starting external process `%s`", commandLine));
     InputStreamReader inputStreamReader;
     try {
       Process process = processBuilder.start();
       OutputStreamWriter writerToSonar = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
-
-      TsMetricsRequest requestToSonar = new TsMetricsRequest(filepaths);
-      String json = new Gson().toJson(requestToSonar);
-      writerToSonar.write(json);
+      writerToSonar.write(command.toJsonRequest());
       writerToSonar.close();
-
       inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
 
     } catch (Exception e) {
-      LOG.error(String.format("Failed to run external process `%s`. As a result, NO METRICS WERE GENERATED, run with -X for more information", commandLine), e);
-      return new TsMetricsPerFileResponse[0];
+      throw new IllegalStateException(String.format("Failed to run external process `%s`. Run with -X for more information", commandLine), e);
     }
 
-    TsMetricsPerFileResponse[] responses = new Gson().fromJson(inputStreamReader, TsMetricsPerFileResponse[].class);
+    SonarTSRunnerResponse[] responses = new Gson().fromJson(inputStreamReader, SonarTSRunnerResponse[].class);
     if (responses == null) {
-      LOG.error(String.format("External process `%s` returned an empty response. As a result, NO METRICS WERE GENERATED, run with -X for more information", commandLine));
+      LOG.error(String.format("External process `%s` returned an empty output. Run with -X for more information", commandLine));
 
-      return new TsMetricsPerFileResponse[0];
+      return new SonarTSRunnerResponse[0];
     }
     return responses;
-
-  }
-
-  private static Failure[] runRulesProcess(Command ruleCommand, File tmpDir, Collection<InputFile> inputFilesForThisConfig, @Nullable File typescriptLocation) {
-    List<String> commandComponents = decomposeToComponents(ruleCommand);
-    ProcessBuilder processBuilder = new ProcessBuilder(commandComponents);
-
-    setNodePath(typescriptLocation, processBuilder);
-
-    String commandLine = ruleCommand.toCommandLine();
-    LOG.info(String.format("Running rule analysis for `%s` with %s files", commandComponents.get(commandComponents.indexOf("--project") + 1), inputFilesForThisConfig.size()));
-    try {
-      File outFile = new File(tmpDir, "sonartsRules.out");
-      processBuilder.redirectOutput(outFile);
-      Process process = processBuilder.start();
-      process.waitFor();
-
-      Failure[] failures = new Gson().fromJson(new InputStreamReader(new FileInputStream(outFile), Charsets.UTF_8), Failure[].class);
-
-      if (failures == null) {
-        // output is empty if some problem happened during linting
-        InputStream errorStream = process.getErrorStream();
-        String errors = IOUtils.toString(errorStream, Charset.defaultCharset());
-        LOG.error(String.format("External process failed with empty output: `%s`", commandLine));
-        if (!errors.isEmpty()) {
-          Pattern pattern = Pattern.compile(".*Invalid source file: (\\S+?)\\. Ensure.*", Pattern.DOTALL);
-          Matcher matcher = pattern.matcher(errors);
-          if (matcher.matches()) {
-            LOG.error(String.format("Probably `%s` is excluded in your tsconfig.json, in this case exclude it from SonarQube analysis as well. " +
-              "SonarQube configuration should always match your tsconfig.json configuration", matcher.group(1)));
-          }
-          LOG.debug(errors);
-        }
-        inputFilesForThisConfig.stream().map(InputFile::absolutePath).forEach(path -> LOG.error("Not analyzed due to a previous error : " + path));
-        return new Failure[0];
-      }
-      return failures;
-
-    } catch (Exception e) {
-      throw new IllegalStateException(String.format("Failed to run external process `%s`", commandLine), e);
-    }
 
   }
 
@@ -269,25 +208,25 @@ public class ExternalTypescriptSensor implements Sensor {
     newCpdTokens.save();
   }
 
-  private void saveMetrics(SensorContext sensorContext, TsMetricsPerFileResponse tsMetricsPerFileResponse, InputFile inputFile) {
-    saveMetric(sensorContext, inputFile, CoreMetrics.FUNCTIONS, tsMetricsPerFileResponse.functions);
-    saveMetric(sensorContext, inputFile, CoreMetrics.CLASSES, tsMetricsPerFileResponse.classes);
-    saveMetric(sensorContext, inputFile, CoreMetrics.STATEMENTS, tsMetricsPerFileResponse.statements);
-    saveMetric(sensorContext, inputFile, CoreMetrics.NCLOC, tsMetricsPerFileResponse.ncloc.length);
-    saveMetric(sensorContext, inputFile, CoreMetrics.COMMENT_LINES, tsMetricsPerFileResponse.commentLines.length);
+  private void saveMetrics(SensorContext sensorContext, SonarTSRunnerResponse sonarTSRunnerResponse, InputFile inputFile) {
+    saveMetric(sensorContext, inputFile, CoreMetrics.FUNCTIONS, sonarTSRunnerResponse.functions);
+    saveMetric(sensorContext, inputFile, CoreMetrics.CLASSES, sonarTSRunnerResponse.classes);
+    saveMetric(sensorContext, inputFile, CoreMetrics.STATEMENTS, sonarTSRunnerResponse.statements);
+    saveMetric(sensorContext, inputFile, CoreMetrics.NCLOC, sonarTSRunnerResponse.ncloc.length);
+    saveMetric(sensorContext, inputFile, CoreMetrics.COMMENT_LINES, sonarTSRunnerResponse.commentLines.length);
 
-    noSonarFilter.noSonarInFile(inputFile, Sets.newHashSet(tsMetricsPerFileResponse.nosonarLines));
+    noSonarFilter.noSonarInFile(inputFile, Sets.newHashSet(sonarTSRunnerResponse.nosonarLines));
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(inputFile);
-    for (int line : tsMetricsPerFileResponse.ncloc) {
+    for (int line : sonarTSRunnerResponse.ncloc) {
       fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1);
     }
 
-    for (int line : tsMetricsPerFileResponse.commentLines) {
+    for (int line : sonarTSRunnerResponse.commentLines) {
       fileLinesContext.setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, line, 1);
     }
 
-    for (int line : tsMetricsPerFileResponse.executableLines) {
+    for (int line : sonarTSRunnerResponse.executableLines) {
       fileLinesContext.setIntValue(CoreMetrics.EXECUTABLE_LINES_DATA_KEY, line, 1);
     }
 
@@ -296,13 +235,6 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private static void saveMetric(SensorContext sensorContext, InputFile inputFile, Metric<Integer> metric, int value) {
     sensorContext.<Integer>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();
-  }
-
-  private static List<String> decomposeToComponents(Command sonarCommand) {
-    List<String> commandComponents = new ArrayList<>();
-    commandComponents.add(sonarCommand.getExecutable());
-    sonarCommand.getArguments().forEach(commandComponents::add);
-    return commandComponents;
   }
 
   private void saveFailures(SensorContext sensorContext, Failure[] failures, TypeScriptRules typeScriptRules) {
@@ -375,20 +307,22 @@ public class ExternalTypescriptSensor implements Sensor {
   }
 
   private static class Failure {
+
     String failure;
     Position startPosition;
     Position endPosition;
     String name;
     String ruleName;
   }
-
   private static class Position {
+
     Integer line;
     Integer character;
   }
+  private static class SonarTSRunnerResponse {
 
-  private static class TsMetricsPerFileResponse {
     String filepath;
+    Failure[] issues;
     Highlight[] highlights;
     CpdToken[] cpdTokens;
     int[] ncloc;
@@ -416,11 +350,4 @@ public class ExternalTypescriptSensor implements Sensor {
     String image;
   }
 
-  private static class TsMetricsRequest {
-    final String[] filepaths;
-
-    TsMetricsRequest(String[] filepaths) {
-      this.filepaths = filepaths;
-    }
-  }
 }

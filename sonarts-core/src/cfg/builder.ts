@@ -662,7 +662,9 @@ export class CfgBuilder {
       case SyntaxKind.EqualsToken: {
         current.addElement(expression);
         current = this.buildExpression(current, expression.right);
-        collectLeftHandIdentifiers(expression.left).nonIdentifiers.forEach(node => current = this.buildExpression(current, node));
+        collectLeftHandIdentifiers(expression.left).nonIdentifiers.forEach(
+          node => (current = this.buildExpression(current, node)),
+        );
         return current;
       }
     }

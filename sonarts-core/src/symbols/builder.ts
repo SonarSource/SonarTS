@@ -47,7 +47,9 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
   }
 
   private registerWriteUsageForAssignment(node: ts.Node) {
-    collectLeftHandIdentifiers(node).identifiers.forEach(identifier => this.registerUsageIfMissing(identifier, UsageFlag.WRITE));
+    collectLeftHandIdentifiers(node).identifiers.forEach(identifier =>
+      this.registerUsageIfMissing(identifier, UsageFlag.WRITE),
+    );
   }
 
   protected visitVariableDeclaration(node: ts.VariableDeclaration) {

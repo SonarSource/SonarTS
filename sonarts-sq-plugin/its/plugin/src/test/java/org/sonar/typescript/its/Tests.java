@@ -46,7 +46,8 @@ import static java.util.Collections.singletonList;
   TsxTest.class,
   ProfileTest.class,
   CoverageTest.class,
-  FutureSyntaxTest.class
+  FutureSyntaxTest.class,
+  ComplexProjectStructureTest.class
 })
 public class Tests {
 
@@ -92,9 +93,14 @@ public class Tests {
   }
 
   public static SonarScanner createScanner(String location, String projectKey) {
-    File projectDir = FileLocation.of(location).getFile();
+    return createScanner(location, projectKey, location);
+  }
 
-    Tests.runNPMInstall(projectDir);
+  public static SonarScanner createScanner(String location, String projectKey, String nodeProjectLocation) {
+    File projectDir = FileLocation.of(location).getFile();
+    File nodeProjectDir = FileLocation.of(nodeProjectLocation).getFile();
+
+    Tests.runNPMInstall(nodeProjectDir);
 
     return SonarScanner.create()
       .setSourceEncoding("UTF-8")

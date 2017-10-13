@@ -15,7 +15,7 @@ cd sonar-typescript-plugin/sonarts-core
 npm install ../../../sonarts-core/tslint-sonarts-*.tgz
 cd ../../
 
-mvn clean install
+mvn clean install -B -e -V
 
 cd ..
 

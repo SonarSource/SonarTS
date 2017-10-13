@@ -32,11 +32,12 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
+import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.internal.apachecommons.lang.StringUtils;
-import org.sonar.api.utils.command.Command;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,20 +63,25 @@ public class SonarTSCoreBundleTest {
     File projectBaseDir = new File("/myProject");
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
-    DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
-    Command ruleCommand = bundle.getTslintCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2));
+    DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file2.ts").build();
 
+    ActiveRules activeRules = new TestActiveRules("S1854"); // no-dead-store
+    TypeScriptRules typeScriptRules = new TypeScriptRules(new CheckFactory(activeRules));
 
-    String tslint = new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint/bin/tslint").getAbsolutePath();
-    String config = new File(DEPLOY_DESTINATION, "sonarts-core/tslint.json").getAbsolutePath();
+    SonarTSRunnerCommand ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), typeScriptRules);
+    String ruleCommandContent = ruleCommand.toJsonRequest();
+    assertThat(ruleCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
+    assertThat(ruleCommandContent).contains("file1.ts");
+    assertThat(ruleCommandContent).contains("file2.ts");
+    assertThat(ruleCommandContent).contains("tsconfig.json");
+    assertThat(ruleCommandContent).contains("no-dead-store");
 
-    assertThat(ruleCommand.toCommandLine()).isEqualTo("node " + tslint + " --config " + config + " --format json --force --type-check --project "
-      + tsconfig.getAbsolutePath() + " " + file1.absolutePath() + " " + file2.absolutePath());
-
-    Command sonarCommand = bundle.getTsMetricsCommand();
-    assertThat(sonarCommand.toCommandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsmetrics").getAbsolutePath());
+    SonarTSRunnerCommand sonarCommand = bundle.createMetricsCommand(Lists.newArrayList(file1, file2));
+    String metricsCommandContent = sonarCommand.toJsonRequest();
+    assertThat(sonarCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
+    assertThat(metricsCommandContent).contains("file1.ts");
+    assertThat(metricsCommandContent).contains("file2.ts");
   }
-
 
   @Test
   public void should_fail_when_bad_zip() throws Exception {

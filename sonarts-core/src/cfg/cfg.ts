@@ -136,7 +136,9 @@ export abstract class CfgBlockWithElements extends CfgBlockWithPredecessors {
   }
 
   public getLabel(): string {
-    return this.getElements().map(element => element.getText()).join("\n");
+    return this.getElements()
+      .map(element => element.getText())
+      .join("\n");
   }
 }
 

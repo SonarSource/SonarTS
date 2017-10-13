@@ -77,7 +77,7 @@ multiline string
 it("should replace strings", () => {
   expect(actual("'string'")[0].image).toBe("LITERAL");
   expect(actual("`string`")[0].image).toBe("LITERAL");
-  expect(actual("\"string\"")[0].image).toBe("LITERAL");
+  expect(actual('"string"')[0].image).toBe("LITERAL");
   expect(actual("42")[0].image).toBe("42");
   expect(actual("true")[0].image).toBe("true");
 });
@@ -112,13 +112,7 @@ it("should process JSX syntax with not empty text elements", () => {
   expect(result).toContainEqual(token(2, 10, 2, 11, "<"));
 });
 
-function token(
-  startLine: number,
-  startCol: number,
-  endLine: number,
-  endCol: number,
-  image: string,
-): CpdToken {
+function token(startLine: number, startCol: number, endLine: number, endCol: number, image: string): CpdToken {
   return {
     startLine,
     startCol,

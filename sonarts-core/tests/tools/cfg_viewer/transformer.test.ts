@@ -112,13 +112,11 @@ function createGraph(...blocks: cfg.CfgBlock[]) {
 
 function addElements(block: cfg.CfgBlock, ...elements: string[]) {
   [...elements].reverse().forEach(e =>
-    block.addElement(
-      {
-        getText() {
-          return e;
-        },
-      } as any,
-    ),
+    block.addElement({
+      getText() {
+        return e;
+      },
+    } as any),
   );
 }
 

@@ -21,6 +21,7 @@ import * as fs from "fs";
 import * as glob from "glob";
 import * as lodash from "lodash";
 import * as path from "path";
+import { executeRule } from "../../src/runner/rules";
 import * as tslint from "tslint";
 import * as ts from "typescript";
 
@@ -54,7 +55,9 @@ export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: stri
     files.forEach(file => {
       rules.forEach(Rule => {
         const rule = initRule(Rule);
-        const errorLines = runRuleOnProjectFile(rule, file, program);
+        const errorLines = executeRule(rule, file, program).map(
+          failure => failure.getStartPosition().getLineAndCharacter().line + 1,
+        );
         const ruleName = (Rule as any).metadata.ruleName;
         results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);
       });
@@ -134,18 +137,6 @@ function getProgramFiles(program: ts.Program): ts.SourceFile[] {
   return program.getSourceFiles().filter(file => !file.isDeclarationFile);
 }
 
-function runRuleOnProjectFile(rule: any, sourceFile: ts.SourceFile, program: ts.Program) {
-  let failures: tslint.RuleFailure[];
-
-  if ((rule as tslint.Rules.TypedRule).applyWithProgram) {
-    failures = rule.applyWithProgram(sourceFile, program);
-  } else {
-    failures = rule.apply(sourceFile);
-  }
-
-  return failures.map(failure => failure.getStartPosition().getLineAndCharacter().line + 1);
-}
-
 function addErrorsToResults(results: Results, ruleName: string, fileName: string, errorLines: number[]): Results {
   if (errorLines.length > 0) {
     const nextResults = { ...results };
@@ -188,7 +179,10 @@ function readSnapshots(rules: string[]): Results {
       const colonIndex = line.indexOf(":");
       if (colonIndex !== -1) {
         const file = line.substring(0, colonIndex);
-        const lines = line.substr(colonIndex + 1).split(",").map(s => parseInt(s, 10));
+        const lines = line
+          .substr(colonIndex + 1)
+          .split(",")
+          .map(s => parseInt(s, 10));
         results[rule][file] = lines;
       }
     });

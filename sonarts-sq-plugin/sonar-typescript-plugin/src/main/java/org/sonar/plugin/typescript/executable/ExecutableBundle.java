@@ -19,16 +19,14 @@
  */
 package org.sonar.plugin.typescript.executable;
 
-import java.util.Collection;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.utils.command.Command;
 import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 public interface ExecutableBundle {
 
-  Command getTslintCommand(String tsconfigPath, Collection<InputFile> inputFiles);
+  SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules);
 
-  Command getTsMetricsCommand();
+  SonarTSRunnerCommand createMetricsCommand(Iterable<InputFile> inputFiles);
 
   void activateRules(TypeScriptRules typeScriptRules);
 

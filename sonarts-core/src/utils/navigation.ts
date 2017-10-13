@@ -39,7 +39,9 @@ export function getIdentifier(node: ts.Node): ts.Identifier | undefined {
   return undefined;
 }
 
-export function collectLeftHandIdentifiers(node: ts.Node): { identifiers: ts.Identifier[]; nonIdentifiers: ts.Expression[] } {
+export function collectLeftHandIdentifiers(
+  node: ts.Node,
+): { identifiers: ts.Identifier[]; nonIdentifiers: ts.Expression[] } {
   const identifiers: ts.Identifier[] = [];
   const nonIdentifiers: ts.Expression[] = [];
   collectIdentifiersAndNonIdentifiers(node);
@@ -47,9 +49,7 @@ export function collectLeftHandIdentifiers(node: ts.Node): { identifiers: ts.Ide
   nonIdentifiers.reverse();
   return { identifiers, nonIdentifiers };
 
-  function collectIdentifiersAndNonIdentifiers(
-    node: ts.Node,
-  ) {
+  function collectIdentifiersAndNonIdentifiers(node: ts.Node) {
     node = drillDownThroughParenthesis(node);
     if (node.kind === ts.SyntaxKind.Identifier) {
       identifiers.push(node as ts.Identifier);
@@ -156,7 +156,7 @@ export function firstLocalAncestor(node: ts.Node, ...targetAncestor: ts.SyntaxKi
 export function firstAncestor(
   node: ts.Node,
   targetAncestor: ts.SyntaxKind[],
-  ...boundary: ts.SyntaxKind[],
+  ...boundary: ts.SyntaxKind[]
 ): ts.Node | undefined {
   return ancestorsChain(node, ...boundary).find(ancestor => targetAncestor.includes(ancestor.kind));
 }

@@ -45,8 +45,9 @@ public class ComplexProjectStructureTest {
 
   @Test
   public void test() {
+    String projectLocation = "projects/" + PROJECT_KEY;
     orchestrator.executeBuild(
-      Tests.createScanner("projects/" + PROJECT_KEY, PROJECT_KEY)
+      Tests.createScanner(projectLocation, PROJECT_KEY, projectLocation + "/module1/nestedDir" )
         .setSourceDirs("")
         .setProperty("sonar.modules", "module1")
         .setProperty("module1.sonar.sources", "nestedDir/src")

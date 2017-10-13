@@ -24,8 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -45,11 +43,11 @@ import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
-import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -110,7 +108,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), testInputFile.absolutePath())
-      .tslint(node, resourceScript("/mockTsLint.js"), testInputFile.absolutePath()));
+      .tsRules(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath()));
 
     sensor.execute(sensorContext);
 
@@ -151,7 +149,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), testInputFile.absolutePath())
-      .tslint(node, resourceScript("/mockTsLintFileLevel.js"), testInputFile.absolutePath()));
+      .tsRules(node, resourceScript("/mockSonarTSFileLevelIssue.js"), testInputFile.absolutePath()));
 
     sensor.execute(sensorContext);
 
@@ -161,12 +159,12 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_when_empty_tslint_out() throws Exception {
+  public void should_log_when_empty_sonarts_out() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), testInputFile.absolutePath())
-      .tslint(node, resourceScript("/mockEmptyTsLint.js"), testInputFile.absolutePath()));
+      .tsRules(node, resourceScript("/mockEmptyTsLint.js"), testInputFile.absolutePath()));
 
     sensor.execute(sensorContext);
 
@@ -181,7 +179,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "foo/bar/file.ts");
 
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), testInputFile.absolutePath())
-      .tslint(node, resourceScript("/mockTsLint.js"), testInputFile.absolutePath()));
+      .tsRules(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath()));
 
     sensor.execute(sensorContext);
 
@@ -194,7 +192,7 @@ public class ExternalTypescriptSensorTest {
 
   @Test
   public void should_fail_when_failed_tslint_process() throws Exception {
-    TestBundleFactory testBundle = new TestBundleFactory().tslint("non_existent_command", "arg1").tsMetrics(node, resourceScript("/mockTsMetrics.js"), "some/path/file.ts");
+    TestBundleFactory testBundle = new TestBundleFactory().tsRules("non_existent_command", "arg1").tsMetrics(node, resourceScript("/mockTsMetrics.js"), "some/path/file.ts");
 
     thrown.expect(IllegalStateException.class);
     thrown.expectMessage("Failed to run external process `non_existent_command arg1`");
@@ -206,22 +204,23 @@ public class ExternalTypescriptSensorTest {
 
   @Test
   public void should_log_when_failed_ts_metrics_process() throws Exception {
-    TestBundleFactory testBundle = new TestBundleFactory().tsMetrics("non_existent_command", "arg1").tslint(node, "-e", "console.log('[]');");
+    TestBundleFactory testBundle = new TestBundleFactory().tsMetrics("non_existent_command", "arg1").tsRules(node, "-e", "console.log('[]');");
+
+    thrown.expect(IllegalStateException.class);
+    thrown.expectMessage("Failed to run external process `non_existent_command arg1`");
+
     SensorContextTester sensorContext = createSensorContext();
     createSensor(testBundle).execute(sensorContext);
-
-    assertThat(logTester.logs()).contains("Failed to run external process `non_existent_command arg1`. As a result, NO METRICS WERE GENERATED, run with -X for more information");
   }
-
 
   @Test
   public void should_log_when_empty_metrics_process_output() throws Exception {
-    TestBundleFactory testBundle = new TestBundleFactory().tsMetrics(node, "-e", "console.log('');").tslint(node, "-e", "console.log('[]');");
+    TestBundleFactory testBundle = new TestBundleFactory().tsMetrics(node, "-e", "console.log('');").tsRules(node, "-e", "console.log('[]');");
     SensorContextTester sensorContext = createSensorContext();
     createSensor(testBundle).execute(sensorContext);
 
     assertThat(logTester.logs()).contains("External process `" + node
-      + " -e console.log('');` returned an empty response. As a result, NO METRICS WERE GENERATED, run with -X for more information");
+      + " -e console.log('');` returned an empty output. Run with -X for more information");
   }
 
   @Test
@@ -229,7 +228,7 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     // "file.ts" is in resources directory, where there is no tsconfig.json
     DefaultInputFile inputFile = createTestInputFile(sensorContext, "file.ts");
-    TestBundleFactory testBundle = new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), inputFile.absolutePath()).tslint(node, "-e", "console.log('[]');");
+    TestBundleFactory testBundle = new TestBundleFactory().tsMetrics(node, resourceScript("/mockTsMetrics.js"), inputFile.absolutePath()).tsRules(node, "-e", "console.log('[]');");
 
     createSensor(testBundle).execute(sensorContext);
 
@@ -241,7 +240,7 @@ public class ExternalTypescriptSensorTest {
     String testFile = new File(BASE_DIR, "not_exists.ts").getAbsolutePath();
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory()
       .tsMetrics(node, resourceScript("/mockTsMetrics.js"), "some/path/file.ts")
-      .tslint(node, resourceScript("/mockTsLint.js"), testFile));
+      .tsRules(node, resourceScript("/mockSonarTS.js"), testFile));
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
     sensor.execute(sensorContext);
@@ -250,8 +249,18 @@ public class ExternalTypescriptSensorTest {
 
   @Test
   public void should_not_fail_when_stdErr_tslint_is_not_empty() throws Exception {
-    TestBundleFactory testBundle = new TestBundleFactory().tslint("cat", "not_existing_file").tsMetrics(node, resourceScript("/mockTsMetrics.js"), "some/path/file.ts");
+    TestBundleFactory testBundle = new TestBundleFactory().tsRules("cat", "not_existing_file").tsMetrics(node, resourceScript("/mockTsMetrics.js"), "some/path/file.ts");
     SensorContextTester sensorContext = createSensorContext();
+    createSensor(testBundle).execute(sensorContext);
+
+    assertThat(sensorContext.allIssues()).hasSize(0);
+  }
+
+  @Test(timeout = 2000)
+  public void should_not_deadlock_with_large_stdErr() throws Exception {
+    TestBundleFactory testBundle = new TestBundleFactory().tsRules(node, resourceScript("/rulesDeadlock.js")).tsMetrics(node, resourceScript("/mockTsMetrics.js"), "some/path/file.ts");
+    SensorContextTester sensorContext = createSensorContext();
+    createTestInputFile(sensorContext);
     createSensor(testBundle).execute(sensorContext);
 
     assertThat(sensorContext.allIssues()).hasSize(0);
@@ -308,7 +317,7 @@ public class ExternalTypescriptSensorTest {
     private String[] ruleCheckCommand;
     private String[] sonarCommand;
 
-    public TestBundleFactory tslint(String... ruleCheckCommmand) {
+    public TestBundleFactory tsRules(String... ruleCheckCommmand) {
       this.ruleCheckCommand = ruleCheckCommmand;
       return this;
     }
@@ -326,10 +335,8 @@ public class ExternalTypescriptSensorTest {
     private class TestBundle implements ExecutableBundle {
 
       @Override
-      public Command getTsMetricsCommand() {
-        Command command = Command.create(sonarCommand[0]);
-        command.addArguments(Arrays.copyOfRange(sonarCommand, 1, sonarCommand.length));
-        return command;
+      public SonarTSRunnerCommand createMetricsCommand(Iterable<InputFile> inputFiles) {
+        return new SonarTSRunnerCommand(inputFiles, sonarCommand);
       }
 
       @Override
@@ -337,10 +344,8 @@ public class ExternalTypescriptSensorTest {
       }
 
       @Override
-      public Command getTslintCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
-        Command command = Command.create(ruleCheckCommand[0]);
-        command.addArguments(Arrays.copyOfRange(ruleCheckCommand, 1, ruleCheckCommand.length));
-        return command;
+      public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
+        return new SonarTSRunnerCommand(inputFiles, ruleCheckCommand);
       }
     }
   }

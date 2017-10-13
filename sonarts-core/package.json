@@ -4,7 +4,7 @@
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
   "bin": {
-    "tsmetrics": "./bin/tsmetrics"
+    "tsrunner": "./bin/tsrunner"
   },
   "scripts": {
     "watch-cfg-viewer": "node_modules/webpack-dev-server/bin/webpack-dev-server.js",
@@ -49,7 +49,7 @@
     "license-check": "^1.1.5",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
-    "prettier": "1.5.3",
+    "prettier": "1.7.4",
     "sonarqube-scanner": "1.3.0",
     "source-map-support": "^0.4.15",
     "ts-jest": "20.0.7",

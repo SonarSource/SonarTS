@@ -26,14 +26,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.rules.TypeScriptRules;
@@ -43,14 +41,11 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   private static final Logger LOG = Loggers.get(SonarTSCoreBundle.class);
 
   // relative location inside sonarts-core bundle
-  private static final String TSLINT_LOCATION = "node_modules/tslint/bin/tslint";
-  private static final String SONAR_LOCATION = "node_modules/tslint-sonarts/bin/tsmetrics";
+  private static final String SONAR_LOCATION = "node_modules/tslint-sonarts/bin/tsrunner";
 
   private File deployDestination;
   private String bundleLocation;
-  private File tslintExecutable;
   private File tsMetricsExecutable;
-
 
   private SonarTSCoreBundle(String bundleLocation, File deployDestination) {
     this.bundleLocation = bundleLocation;
@@ -58,7 +53,6 @@ public class SonarTSCoreBundle implements ExecutableBundle {
 
     File sonartsCoreDir = new File(deployDestination, "sonarts-core");
 
-    this.tslintExecutable = new File(sonartsCoreDir, TSLINT_LOCATION);
     this.tsMetricsExecutable = new File(sonartsCoreDir, SONAR_LOCATION);
   }
 
@@ -86,38 +80,27 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   }
 
   /**
-   * Builds command to run tslint
+   * Builds command to run rules with tsrunner
    */
   @Override
-  public Command getTslintCommand(String tsconfigPath, Collection<InputFile> inputFiles) {
-    File sonartsCoreDir = new File(deployDestination, "sonarts-core");
-
-    Command command = Command.create("node");
-    command.addArgument(tslintExecutable.getAbsolutePath());
-    command.addArgument("--config").addArgument(new File(sonartsCoreDir, "tslint.json").getAbsolutePath());
-    command.addArgument("--format").addArgument("json");
-    // "--force" parameter will force execution of the rules even in case of compilation error
-    command.addArgument("--force");
-
-    command.addArgument("--type-check")
-      .addArgument("--project")
-      .addArgument(tsconfigPath);
-
-    for (InputFile inputFile : inputFiles) {
-      command.addArgument(inputFile.absolutePath());
-    }
-
-    return command;
+  public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
+    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, "node", this.tsMetricsExecutable.getAbsolutePath());
+    runnerCommand.setTsConfigPath(tsconfigPath);
+    typeScriptRules.forEach(rule -> {
+      if(rule.isEnabled()) {
+        runnerCommand.addRule(rule.tsLintKey(), rule.configuration());
+      }
+    });
+    return runnerCommand;
   }
 
   /**
    * Builds command to run "sonar", which is making side information calculation (metrics, highlighting etc.)
+   * @param inputFiles
    */
   @Override
-  public Command getTsMetricsCommand() {
-    Command command = Command.create("node");
-    command.addArgument(this.tsMetricsExecutable.getAbsolutePath());
-    return command;
+  public SonarTSRunnerCommand createMetricsCommand(Iterable<InputFile> inputFiles) {
+    return new SonarTSRunnerCommand(inputFiles, "node", this.tsMetricsExecutable.getAbsolutePath());
   }
 
   private File copyTo(File targetPath) throws IOException {

@@ -23,6 +23,9 @@ import { parseString } from "../utils/parser";
 import getCpdTokens from "./cpd";
 import getHighlighting from "./highlighter";
 import getMetrics from "./metrics";
+import * as rules from "./rules";
+import * as tslint from "tslint";
+
 const chunks: string[] = [];
 
 process.stdin.resume();
@@ -53,12 +56,20 @@ process.stdin.on("end", () => {
 
 export function processRequest(inputString: string): object[] {
   const input = JSON.parse(inputString);
-  return input.filepaths.map((filepath: string) => {
+  let program: ts.Program | null = null;
+  if (input.tsconfig) {
+    program = tslint.Linter.createProgram(input.tsconfig);
+  }
+  let output = input.filepaths.map((filepath: string) => {
     const scriptKind = filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
     const fileContent = fs.readFileSync(filepath, "utf8");
     const sourceFile = parseString(fileContent, scriptKind);
     const output: object = { filepath };
     sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
+    if (program) {
+      Object.assign(output, rules.getIssues(input.rules, program, filepath));
+    }
     return output;
   });
+  return output;
 }
