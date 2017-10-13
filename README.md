@@ -1,4 +1,4 @@
-# SonarTS [![Build Status](https://travis-ci.org/SonarSource/SonarTS.svg?branch=master)](https://travis-ci.org/SonarSource/SonarTS) [![NPM version](https://badge.fury.io/js/tslint-sonarts.svg)](http://badge.fury.io/js/tslint-sonarts) [![Quality Gate](https://next.sonarqube.com/sonarqube/api/badges/gate?key=TypeScript_Ecosystem)](https://next.sonarqube.com/sonarqube/dashboard?id=TypeScript_Ecosystem) [![Coverage](https://next.sonarqube.com/sonarqube/api/badges/measure?key=TypeScript_Ecosystem&metric=coverage)](https://next.sonarqube.com/sonarqube/component_measures/domain/Coverage?id=TypeScript_Ecosystem)
+# SonarTS [![Build Status](https://travis-ci.org/SonarSource/SonarTS.svg?branch=master)](https://travis-ci.org/SonarSource/SonarTS) [![NPM version](https://badge.fury.io/js/tslint-sonarts.svg)](http://badge.fury.io/js/tslint-sonarts) [![Quality Gate](https://next.sonarqube.com/sonarqube/api/badges/gate?key=sonarts)](https://next.sonarqube.com/sonarqube/dashboard?id=sonarts) [![Coverage](https://next.sonarqube.com/sonarqube/api/badges/measure?key=sonarts&metric=coverage)](https://next.sonarqube.com/sonarqube/component_measures/domain/Coverage?id=sonarts)
 Static code analyzer for TypeScript detecting bugs and suspicious patterns in your code.
 
 How does it work?
@@ -102,20 +102,34 @@ to enable TypeScript support.
 
 To run unit tests:
 ```
+cd sonarts-code
 yarn test
 ```
 
 To run unit tests in watch mode:
 ```
+cd sonarts-code
 yarn test -- --watch
 ```
 
 And finally to run unit tests with coverage:
 ```
+cd sonarts-code
 yarn test -- --coverage
 ```
 When you run tests with coverage, the `coverage/` directory will be created at the root. You can
 open the web version of the coverage report `coverage/lcov-report/index.html` to see which lines are covered by tests.
+
+To run unit tests for SQ plugin part of the project
+```
+cd sonarts-sq-plugin
+mvn clean install
+```
+
+To build SQ plugin part of the project
+```
+./build.sh
+```
 
 ### <a name="ruling"></a>Ruling
 
@@ -129,6 +143,7 @@ To have this code base locally:
 
 To run the ruling test:
 ```
+cd sonarts-code
 yarn ruling
 yarn ruling -- --rule <RuleFileName> # to run ruling for a single rule
 yarn ruling -- --update # to update the snapshots
