@@ -4,3 +4,6 @@
 .scannerwork/
 .idea/
 .vscode/
+
+# ---- NPM pack
+*/**/tslint-sonarts-*.tgz

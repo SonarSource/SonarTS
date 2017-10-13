@@ -36,6 +36,3 @@ Desktop.ini
 
 # ---- dependencies used for SQ analysis
 dependencies
-
-# ---- NPM pack
-*/**/tslint-sonarts-*.tgz
