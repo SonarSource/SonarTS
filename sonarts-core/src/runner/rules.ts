@@ -31,8 +31,7 @@ export function getIssues(ruleConfigs: tslint.IOptions[], program: ts.Program, f
     rules.forEach(rule => (issues = issues.concat(executeRule(rule, sourceFile, program))));
     return { issues: issues.map(issue => issue.toJson()) };
   } else {
-    // TODO LOG THIS BETTER
-    console.log("Unknown source file : " + filepath);
+    console.error("Missing source file : " + filepath);
     return { issues: [] };
   }
 }
@@ -45,8 +44,7 @@ function executeRule(rule: tslint.IRule, sourceFile: ts.SourceFile, program: ts.
       return rule.apply(sourceFile);
     }
   } catch (error) {
-    // TODO LOG THIS BETTER
-    console.error(error);
+    console.error("Rule error during analysis of : " + sourceFile.fileName, error);
     return [];
   }
 }
