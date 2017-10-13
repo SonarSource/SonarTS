@@ -30,7 +30,7 @@ let symbols: SymbolTable;
 let sourceFile: ts.SourceFile;
 
 beforeEach(() => {
-  ({ symbols, sourceFile } = buildSymbolTable("sample_lva.ts"));
+  ({ symbols, sourceFile } = buildSymbolTable("sample_lva.lint.ts"));
 });
 
 it("linear", () => {

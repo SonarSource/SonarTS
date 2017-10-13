@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { buildSymbolTable, getNode } from "./test_utils";
 
-const { symbols, sourceFile } = buildSymbolTable("sample_symbols.ts");
+const { symbols, sourceFile } = buildSymbolTable("sample_symbols.lint.ts");
 
 it("variable declarations", () => {
   expect(symbols.getUsage(getNode(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);
