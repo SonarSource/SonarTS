@@ -15,4 +15,7 @@ cd sonar-typescript-plugin/sonarts-core
 npm install ../../../sonarts-core/tslint-sonarts-*.tgz
 cd ../../
 
+# save dependencies for future SQ analysis of Java code
+mvn dependency:copy-dependencies -DoutputDirectory=dependencies
+
 cd ..
