@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -80,10 +79,10 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   }
 
   /**
-   * Builds command to run rules with tsrunner
+   * Builds command to run rules and calculate metrics with tsrunner
    */
   @Override
-  public SonarTSRunnerCommand getRuleRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
+  public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
     SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, "node", this.tsMetricsExecutable.getAbsolutePath());
     runnerCommand.setTsConfigPath(tsconfigPath);
     typeScriptRules.forEach(rule -> {
@@ -92,15 +91,6 @@ public class SonarTSCoreBundle implements ExecutableBundle {
       }
     });
     return runnerCommand;
-  }
-
-  /**
-   * Builds command to run "sonar", which is making side information calculation (metrics, highlighting etc.)
-   * @param inputFiles
-   */
-  @Override
-  public SonarTSRunnerCommand createMetricsCommand(Iterable<InputFile> inputFiles) {
-    return new SonarTSRunnerCommand(inputFiles, "node", this.tsMetricsExecutable.getAbsolutePath());
   }
 
   private File copyTo(File targetPath) throws IOException {
@@ -132,14 +122,4 @@ public class SonarTSCoreBundle implements ExecutableBundle {
     }
   }
 
-  @Override
-  public void activateRules(TypeScriptRules typeScriptRules) {
-    TsLintConfig config = new TsLintConfig();
-    typeScriptRules.forEach(config::addRule);
-    config.save(getTsLintConfigPath());
-  }
-
-  private Path getTsLintConfigPath() {
-    return deployDestination.toPath().resolve("sonarts-core/tslint.json");
-  }
 }

@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -90,22 +89,13 @@ public class ExternalTypescriptSensor implements Sensor {
 
     ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination);
 
-    FileSystem fileSystem = sensorContext.fileSystem();
-    FilePredicate mainFilePredicate = sensorContext.fileSystem().predicates().and(
-      fileSystem.predicates().hasType(InputFile.Type.MAIN),
-      fileSystem.predicates().hasLanguage(TypeScriptLanguage.KEY));
-    Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
+    Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
 
-    LOG.info("Metrics calculation");
-    runMetrics(inputFiles, sensorContext, executableBundle, typescriptLocation);
-
-    LOG.info("Rules execution");
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
-    executableBundle.activateRules(typeScriptRules);
-    runRules(inputFiles, executableBundle, sensorContext, typeScriptRules, typescriptLocation);
+    analyze(inputFiles, sensorContext, typeScriptRules, executableBundle, typescriptLocation);
   }
 
-  private void runRules(Iterable<InputFile> inputFiles, ExecutableBundle executableBundle, SensorContext sensorContext, TypeScriptRules typeScriptRules, @Nullable File typescriptLocation) {
+  private void analyze(Iterable<InputFile> inputFiles, SensorContext sensorContext, TypeScriptRules typeScriptRules, ExecutableBundle executableBundle, @Nullable File typescriptLocation) {
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
     Multimap<String, InputFile> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
@@ -113,10 +103,30 @@ public class ExternalTypescriptSensor implements Sensor {
     for (String tsconfigPath : inputFileByTsconfig.keySet()) {
       Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
 
-      SonarTSRunnerCommand command = executableBundle.getRuleRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
-      Failure[] failures = Arrays.stream(executeExternalRunner(command, typescriptLocation)).flatMap(response -> Arrays.stream(response.issues)).toArray(Failure[]::new);
-      saveFailures(sensorContext, failures, typeScriptRules);
+      SonarTSRunnerCommand command = executableBundle.getSonarTsRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
+      SonarTSRunnerResponse[] responses = executeExternalRunner(command, typescriptLocation);
+
+      for (SonarTSRunnerResponse response : responses) {
+        FileSystem fileSystem = sensorContext.fileSystem();
+        InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(response.filepath));
+        if (inputFile != null) {
+          saveHighlights(sensorContext, response.highlights, inputFile);
+          saveMetrics(sensorContext, response, inputFile);
+          saveCpd(sensorContext, response.cpdTokens, inputFile);
+          saveFailures(sensorContext, response.issues, typeScriptRules);
+        } else {
+          LOG.error("Failed to find input file for path `" + response.filepath + "`");
+        }
+      }
     }
+  }
+
+  private static Iterable<InputFile> getInputFiles(SensorContext sensorContext) {
+    FileSystem fileSystem = sensorContext.fileSystem();
+    FilePredicate mainFilePredicate = sensorContext.fileSystem().predicates().and(
+      fileSystem.predicates().hasType(InputFile.Type.MAIN),
+      fileSystem.predicates().hasLanguage(TypeScriptLanguage.KEY));
+    return fileSystem.inputFiles(mainFilePredicate);
   }
 
   private static Multimap<String, InputFile> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
@@ -144,23 +154,6 @@ public class ExternalTypescriptSensor implements Sensor {
       }
     } while (!currentDirectory.getAbsolutePath().equals(projectBaseDir.getAbsolutePath()));
     return null;
-  }
-
-  private void runMetrics(Iterable<InputFile> inputFiles, SensorContext sensorContext, ExecutableBundle executableBundle, @Nullable File typescriptLocation) {
-    SonarTSRunnerCommand command = executableBundle.createMetricsCommand(inputFiles);
-    SonarTSRunnerResponse[] sonarTSRunnerResponses = executeExternalRunner(command, typescriptLocation);
-
-    for (SonarTSRunnerResponse sonarTSRunnerResponse : sonarTSRunnerResponses) {
-      FileSystem fileSystem = sensorContext.fileSystem();
-      InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(sonarTSRunnerResponse.filepath));
-      if (inputFile != null) {
-        saveHighlights(sensorContext, sonarTSRunnerResponse.highlights, inputFile);
-        saveMetrics(sensorContext, sonarTSRunnerResponse, inputFile);
-        saveCpd(sensorContext, sonarTSRunnerResponse.cpdTokens, inputFile);
-      } else {
-        LOG.error("Failed to find input file for path `" + sonarTSRunnerResponse.filepath + "`");
-      }
-    }
   }
 
   private static SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, @Nullable File typescriptLocation) {

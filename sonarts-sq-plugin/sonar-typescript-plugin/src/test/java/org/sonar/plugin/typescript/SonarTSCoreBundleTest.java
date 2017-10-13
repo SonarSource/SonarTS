@@ -19,11 +19,7 @@
  */
 package org.sonar.plugin.typescript;
 
-import com.google.common.io.Files;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Rule;
@@ -34,7 +30,6 @@ import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.CheckFactory;
-import org.sonar.api.internal.apachecommons.lang.StringUtils;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
 import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
@@ -68,19 +63,13 @@ public class SonarTSCoreBundleTest {
     ActiveRules activeRules = new TestActiveRules("S1854"); // no-dead-store
     TypeScriptRules typeScriptRules = new TypeScriptRules(new CheckFactory(activeRules));
 
-    SonarTSRunnerCommand ruleCommand = bundle.getRuleRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), typeScriptRules);
+    SonarTSRunnerCommand ruleCommand = bundle.getSonarTsRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), typeScriptRules);
     String ruleCommandContent = ruleCommand.toJsonRequest();
     assertThat(ruleCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
     assertThat(ruleCommandContent).contains("file1.ts");
     assertThat(ruleCommandContent).contains("file2.ts");
     assertThat(ruleCommandContent).contains("tsconfig.json");
     assertThat(ruleCommandContent).contains("no-dead-store");
-
-    SonarTSRunnerCommand sonarCommand = bundle.createMetricsCommand(Lists.newArrayList(file1, file2));
-    String metricsCommandContent = sonarCommand.toJsonRequest();
-    assertThat(sonarCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-core/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
-    assertThat(metricsCommandContent).contains("file1.ts");
-    assertThat(metricsCommandContent).contains("file2.ts");
   }
 
   @Test
@@ -88,19 +77,6 @@ public class SonarTSCoreBundleTest {
     expectedException.expect(IllegalStateException.class);
     expectedException.expectMessage("Failed to deploy SonarTS bundle (with classpath '/badZip.zip')");
     new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION);
-  }
-
-  @Test
-  public void should_activate_rules() throws Exception {
-    ExecutableBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION);
-    TypeScriptRules typeScriptRules = new TypeScriptRules(new CheckFactory(new TestActiveRules("S1751")));
-    bundle.activateRules(typeScriptRules);
-    List<String> strings = Files.readLines(new File(DEPLOY_DESTINATION, "sonarts-core/tslint.json"), StandardCharsets.UTF_8);
-    String json = strings.stream().collect(Collectors.joining()).replaceAll("\\s+","");
-    assertThat(json).contains("\"extends\":[\"tslint-sonarts\"]");
-    assertThat(json).contains("\"no-unconditional-jump\":true");
-    // only one occurrence of true
-    assertThat(StringUtils.countMatches(json, "true")).isEqualTo(1);
   }
 
 }

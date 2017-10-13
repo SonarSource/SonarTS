@@ -61,29 +61,3 @@ it("should process full input", () => {
     },
   ]);
 });
-
-it("should process metrics-only input", () => {
-  const filepath = path.join(__dirname, "./fixtures/runner_project/sample.lint.ts");
-  const result = processRequest(`{"filepaths": ["${filepath}"]}`);
-  expect(result).toEqual([
-    {
-      filepath,
-      highlights: [{ startLine: 1, startCol: 0, endLine: 1, endCol: 8, textType: "keyword" }],
-      cpdTokens: [
-        { startLine: 1, startCol: 0, endLine: 1, endCol: 8, image: "function" },
-        { startLine: 1, startCol: 9, endLine: 1, endCol: 10, image: "x" },
-        { startLine: 1, startCol: 10, endLine: 1, endCol: 11, image: "(" },
-        { startLine: 1, startCol: 11, endLine: 1, endCol: 12, image: ")" },
-        { startLine: 1, startCol: 12, endLine: 1, endCol: 13, image: "{" },
-        { startLine: 1, startCol: 13, endLine: 1, endCol: 14, image: "}" },
-      ],
-      ncloc: [1],
-      commentLines: [],
-      nosonarLines: [],
-      executableLines: [],
-      statements: 0,
-      functions: 1,
-      classes: 0,
-    },
-  ]);
-});
