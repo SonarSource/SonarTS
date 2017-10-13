@@ -54,7 +54,9 @@ export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: stri
     files.forEach(file => {
       rules.forEach(Rule => {
         const rule = initRule(Rule);
-        const errorLines = runRuleOnProjectFile(rule, file, program).map(failure => failure.getStartPosition().getLineAndCharacter().line + 1);
+        const errorLines = runRuleOnProjectFile(rule, file, program).map(
+          failure => failure.getStartPosition().getLineAndCharacter().line + 1,
+        );
         const ruleName = (Rule as any).metadata.ruleName;
         results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);
       });
@@ -184,7 +186,10 @@ function readSnapshots(rules: string[]): Results {
       const colonIndex = line.indexOf(":");
       if (colonIndex !== -1) {
         const file = line.substring(0, colonIndex);
-        const lines = line.substr(colonIndex + 1).split(",").map(s => parseInt(s, 10));
+        const lines = line
+          .substr(colonIndex + 1)
+          .split(",")
+          .map(s => parseInt(s, 10));
         results[rule][file] = lines;
       }
     });

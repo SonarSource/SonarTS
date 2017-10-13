@@ -25,7 +25,13 @@ it("should contain all implemented rules", () => {
   const rulesPath = path.join(__dirname, "../../src/rules");
   const profileFilePath = path.join(__dirname, "../../tslint-sonarts.json");
   const profile = JSON.parse(fs.readFileSync(profileFilePath, "utf8"));
-  const configuredRules = Object.keys(profile.rules).map((key, _) => key).map(Utils.camelize).sort();
-  const existingRules = fs.readdirSync(rulesPath).map(file => file.substring(0, file.indexOf("Rule.ts"))).sort();
+  const configuredRules = Object.keys(profile.rules)
+    .map((key, _) => key)
+    .map(Utils.camelize)
+    .sort();
+  const existingRules = fs
+    .readdirSync(rulesPath)
+    .map(file => file.substring(0, file.indexOf("Rule.ts")))
+    .sort();
   expect(existingRules).toEqual(configuredRules);
 });

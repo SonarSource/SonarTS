@@ -58,7 +58,7 @@ export function processRequest(inputString: string): object[] {
   const input = JSON.parse(inputString);
   let program: ts.Program | null = null;
   if (input.tsconfig) {
-     program = tslint.Linter.createProgram(input.tsconfig);
+    program = tslint.Linter.createProgram(input.tsconfig);
   }
   let output = input.filepaths.map((filepath: string) => {
     const scriptKind = filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;

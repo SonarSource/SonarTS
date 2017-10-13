@@ -23,22 +23,24 @@ import { processRequest } from "../../src/runner/tsrunner";
 import { parseString } from "../../src/utils/parser";
 
 it("should process full input", () => {
-  const filepath = path.join(__dirname, "./fixtures/runner_project/sample.ts");
+  const filepath = path.join(__dirname, "./fixtures/runner_project/sample.lint.ts");
   const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
-  const result = processRequest(`{"filepaths": ["${filepath}"], "rules": [{"ruleName": "no-empty"}], "tsconfig": "${tsconfig}"}`);
+  const result = processRequest(
+    `{"filepaths": ["${filepath}"], "rules": [{"ruleName": "no-empty"}], "tsconfig": "${tsconfig}"}`,
+  );
   expect(result).toEqual([
     {
       filepath,
       issues: [
         {
-            failure: "block is empty",
-            startPosition: {line: 0, character: 12, "position": 12},
-            endPosition: {line: 0, character: 14, "position": 14},
-            name: filepath,
-            ruleName: "no-empty",
-            fix: undefined,
-            ruleSeverity: "ERROR"
-        }
+          failure: "block is empty",
+          startPosition: { line: 0, character: 12, position: 12 },
+          endPosition: { line: 0, character: 14, position: 14 },
+          name: filepath,
+          ruleName: "no-empty",
+          fix: undefined,
+          ruleSeverity: "ERROR",
+        },
       ],
       highlights: [{ startLine: 1, startCol: 0, endLine: 1, endCol: 8, textType: "keyword" }],
       cpdTokens: [
@@ -61,7 +63,7 @@ it("should process full input", () => {
 });
 
 it("should process metrics-only input", () => {
-  const filepath = path.join(__dirname, "./fixtures/runner_project/sample.ts");
+  const filepath = path.join(__dirname, "./fixtures/runner_project/sample.lint.ts");
   const result = processRequest(`{"filepaths": ["${filepath}"]}`);
   expect(result).toEqual([
     {

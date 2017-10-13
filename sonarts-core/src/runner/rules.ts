@@ -23,16 +23,12 @@ import * as tslint from "tslint";
 
 const SONARTS_RULES_FOLDER = path.join(__dirname, "../../lib/rules");
 
-export function getIssues(
-  ruleConfigs: tslint.IOptions[],
-  program: ts.Program,
-  filepath: string
-): { issues: any[] } {
+export function getIssues(ruleConfigs: tslint.IOptions[], program: ts.Program, filepath: string): { issues: any[] } {
   const rules = tslint.loadRules(ruleConfigs, SONARTS_RULES_FOLDER);
   const sourceFile = program.getSourceFile(filepath);
   if (sourceFile) {
     let issues: tslint.RuleFailure[] = [];
-    rules.forEach(rule => issues = issues.concat(executeRule(rule, sourceFile, program)));
+    rules.forEach(rule => (issues = issues.concat(executeRule(rule, sourceFile, program))));
     return { issues: issues.map(issue => issue.toJson()) };
   } else {
     // TODO LOG THIS BETTER
@@ -41,11 +37,7 @@ export function getIssues(
   }
 }
 
-function executeRule(
-  rule: tslint.IRule,
-  sourceFile: ts.SourceFile,
-  program: ts.Program
-): tslint.RuleFailure[] {
+function executeRule(rule: tslint.IRule, sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
   try {
     if (isTypedRule(rule)) {
       return rule.applyWithProgram(sourceFile, program);

@@ -24,13 +24,14 @@ import { getIssues } from "../../src/runner/rules";
 import { parseString } from "../../src/utils/parser";
 
 it("should run sonarts rules", () => {
-  const sampleFile = path.join(__dirname, "./fixtures/runner_project/identical_expressions.ts");
-  const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.ts");
-  const program = tslint.Linter.createProgram(tsconfig)
-  
-  const issues = getIssues([
-    {"ruleName": "no-identical-expressions","ruleArguments":true},
-    {"ruleName":"no-dead-store","ruleArguments":true}
-  ], program, sampleFile);
+  const sampleFile = path.join(__dirname, "./fixtures/runner_project/identical_expressions_and_deadstore.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
+  const program = tslint.Linter.createProgram(tsconfig);
+
+  const issues = getIssues(
+    [{ ruleName: "no-identical-expressions", ruleArguments: true }, { ruleName: "no-dead-store", ruleArguments: true }],
+    program,
+    sampleFile,
+  );
   expect(issues.issues.length).toBe(2);
 });

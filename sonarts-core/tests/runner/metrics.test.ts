@@ -58,7 +58,7 @@ it("should return NOSONAR lines", () => {
 
 it("should return executable lines", () => {
   // executable lines simply have trailling comments in the fixture file
-  const sourceFile = parseString(fs.readFileSync(path.join(__dirname, "./fixtures/executable-lines.ts"), "utf-8"));
+  const sourceFile = parseString(fs.readFileSync(path.join(__dirname, "./fixtures/executable-lines.lint.ts"), "utf-8"));
   expect(metrics.findExecutableLines(sourceFile)).toEqual(metrics.findCommentLines(sourceFile).commentLines);
 });
 
