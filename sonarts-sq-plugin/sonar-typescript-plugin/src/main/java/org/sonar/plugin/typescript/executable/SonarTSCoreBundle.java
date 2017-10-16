@@ -50,7 +50,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
     this.bundleLocation = bundleLocation;
     this.deployDestination = deployDestination;
 
-    File sonartsCoreDir = new File(deployDestination, "sonarts-core");
+    File sonartsCoreDir = new File(deployDestination, "sonarts-bundle");
 
     this.tsMetricsExecutable = new File(sonartsCoreDir, SONAR_LOCATION);
   }
