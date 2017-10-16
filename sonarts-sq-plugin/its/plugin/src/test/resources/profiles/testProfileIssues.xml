@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile>
+  <name>test-profile-issues</name>
+  <language>ts</language>
+  <rules>
+    <rule>
+      <repositoryKey>typescript</repositoryKey>
+      <key>S103</key>
+      <priority>INFO</priority>
+    </rule>
+  </rules>
+</profile>
+

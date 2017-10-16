@@ -47,7 +47,8 @@ import static java.util.Collections.singletonList;
   ProfileTest.class,
   CoverageTest.class,
   FutureSyntaxTest.class,
-  ComplexProjectStructureTest.class
+  ComplexProjectStructureTest.class,
+  IssuesTest.class
 })
 public class Tests {
 
@@ -57,6 +58,7 @@ public class Tests {
   @ClassRule
   public static final Orchestrator ORCHESTRATOR = Orchestrator.builderEnv()
     .restoreProfileAtStartup(FileLocation.ofClasspath("/profiles/testProfile.xml"))
+    .restoreProfileAtStartup(FileLocation.ofClasspath("/profiles/testProfileIssues.xml"))
     .addPlugin(PLUGIN_LOCATION)
     .build();
 
