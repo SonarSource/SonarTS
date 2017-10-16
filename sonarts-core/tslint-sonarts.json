@@ -19,6 +19,7 @@
     "no-empty-nested-blocks": false,
     "no-multiline-string-literals": true,
     "no-array-delete": true,
-    "no-dead-store": true
+    "no-dead-store": true,
+    "no-unthrown-error": true
   }
 }
