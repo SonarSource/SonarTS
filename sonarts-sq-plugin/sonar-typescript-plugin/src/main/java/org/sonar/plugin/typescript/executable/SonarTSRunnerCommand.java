@@ -69,7 +69,7 @@ public class SonarTSRunnerCommand {
   private static class SonarTSRequest {
     final String[] filepaths;
     String tsconfig;
-    public List<RuleToExecute> rules = new ArrayList<>();
+    List<RuleToExecute> rules = new ArrayList<>();
 
     SonarTSRequest(String[] filepaths) {
       this.filepaths = filepaths;
