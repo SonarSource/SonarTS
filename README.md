@@ -21,6 +21,7 @@ How does it work?
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
+* Conditionals should start on new lines ([`no-same-line-conditional`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
@@ -43,6 +44,7 @@ How does it work?
 [`no-inconsistent-return`]: ./docs/rules/no-inconsistent-return.md
 [`no-useless-increment`]: ./docs/rules/no-useless-increment.md
 [`no-unconditional-jump`]: ./docs/rules/no-unconditional-jump.md
+[`no-same-line-conditional`]: ./docs/rules/no-same-line-conditional.md
 [`no-misleading-array-reverse`]: ./docs/rules/no-misleading-array-reverse.md
 [`no-empty-nested-blocks`]: ./docs/rules/no-empty-nested-blocks.md
 [`no-multiline-string-literals`]: ./docs/rules/no-multiline-string-literals.md

@@ -16,6 +16,7 @@
     "no-inconsistent-return": false,
     "no-unconditional-jump": true,
     "no-misleading-array-reverse": true,
+    "no-same-line-conditional": true,
     "no-empty-nested-blocks": false,
     "no-multiline-string-literals": true,
     "no-array-delete": true,
