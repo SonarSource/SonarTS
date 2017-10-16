@@ -21,14 +21,13 @@ package org.sonar.plugin.typescript.rules;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 
 public abstract class TypeScriptRule {
 
   private boolean enabled;
 
   public JsonElement configuration() {
-    return new JsonPrimitive(enabled);
+    return ruleConfiguration();
   }
 
   void enable() {
@@ -43,8 +42,6 @@ public abstract class TypeScriptRule {
 
   JsonArray ruleConfiguration(Object... params) {
     JsonArray configuration = new JsonArray();
-    // enable rule
-    configuration.add(enabled);
     for (Object param : params) {
       if (param instanceof Number) {
         configuration.add((Number) param);

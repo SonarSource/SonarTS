@@ -27,12 +27,10 @@ import com.google.common.reflect.ClassPath.ClassInfo;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
@@ -42,7 +40,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.booleanThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -72,7 +69,7 @@ public class TypeScriptRulesTest {
     TypeScriptRules rules = new TypeScriptRules(mockCheckFactory());
     TypeScriptRule rule = Iterables.getOnlyElement(Iterables.filter(rules, TypeScriptRule::isEnabled));
     assertThat(rule.tsLintKey()).isEqualTo("test-rule");
-    assertThat(new Gson().toJson(rule.configuration())).isEqualTo("[true,\"test\",1,true,\"x\",[]]");
+    assertThat(new Gson().toJson(rule.configuration())).isEqualTo("[\"test\",1,true,\"x\",[]]");
   }
 
   @Test

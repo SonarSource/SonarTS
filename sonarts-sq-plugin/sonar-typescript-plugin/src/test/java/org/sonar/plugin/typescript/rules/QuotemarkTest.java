@@ -31,7 +31,7 @@ public class QuotemarkTest {
     Quotemark quotemark = new Quotemark();
     quotemark.enable();
     String configuration = new Gson().toJson(quotemark.configuration());
-    assertThat(configuration).isEqualTo("[true,\"single\",\"jsx-double\"]");
+    assertThat(configuration).isEqualTo("[\"single\",\"jsx-double\"]");
   }
 
   @Test
@@ -40,7 +40,7 @@ public class QuotemarkTest {
     quotemark.enable();
     quotemark.singleQuotes = false;
     String configuration = new Gson().toJson(quotemark.configuration());
-    assertThat(configuration).isEqualTo("[true,\"double\",\"jsx-double\"]");
+    assertThat(configuration).isEqualTo("[\"double\",\"jsx-double\"]");
   }
 
 }

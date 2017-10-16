@@ -31,7 +31,7 @@ public class MaxLineLengthTest {
     MaxLineLength maxLineLength = new MaxLineLength();
     maxLineLength.enable();
     String configuration = new Gson().toJson(maxLineLength.configuration());
-    assertThat(configuration).isEqualTo("[true,180]");
+    assertThat(configuration).isEqualTo("[180]");
   }
 
   @Test
@@ -40,7 +40,7 @@ public class MaxLineLengthTest {
     maxLineLength.enable();
     maxLineLength.maximumLineLength = 120;
     String configuration = new Gson().toJson(maxLineLength.configuration());
-    assertThat(configuration).isEqualTo("[true,120]");
+    assertThat(configuration).isEqualTo("[120]");
   }
 
 }
