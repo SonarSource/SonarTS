@@ -31,7 +31,7 @@ public class NoUnusedExpressionTest {
     NoUnusedExpression noUnusedExpression = new NoUnusedExpression();
     noUnusedExpression.enable();
     String configuration = new Gson().toJson(noUnusedExpression.configuration());
-    assertThat(configuration).isEqualTo("[true,\"allow-fast-null-checks\",\"allow-new\",\"allow-tagged-template\"]");
+    assertThat(configuration).isEqualTo("[\"allow-fast-null-checks\",\"allow-new\",\"allow-tagged-template\"]");
   }
 
 }

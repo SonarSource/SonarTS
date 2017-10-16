@@ -31,7 +31,7 @@ public class NoDuplicateVariableTest {
     NoDuplicateVariable noDuplicateVariable = new NoDuplicateVariable();
     noDuplicateVariable.enable();
     String configuration = new Gson().toJson(noDuplicateVariable.configuration());
-    assertThat(configuration).isEqualTo("[true,\"check-parameters\"]");
+    assertThat(configuration).isEqualTo("[\"check-parameters\"]");
   }
 
 }

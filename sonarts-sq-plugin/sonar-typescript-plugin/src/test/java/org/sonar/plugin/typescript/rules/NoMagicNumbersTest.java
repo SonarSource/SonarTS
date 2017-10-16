@@ -32,6 +32,6 @@ public class NoMagicNumbersTest {
     NoMagicNumbers noMagicNumbers = new NoMagicNumbers();
     noMagicNumbers.enable();
     String configuration = new Gson().toJson(noMagicNumbers.configuration());
-    assertThat(configuration).isEqualTo("[true,1,0,-1]");
+    assertThat(configuration).isEqualTo("[1,0,-1]");
   }
 }

@@ -31,7 +31,7 @@ public class CyclomaticComplexityTest {
     CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity();
     cyclomaticComplexity.enable();
     String configuration = new Gson().toJson(cyclomaticComplexity.configuration());
-    assertThat(configuration).isEqualTo("[true,10]");
+    assertThat(configuration).isEqualTo("[10]");
   }
 
   @Test
@@ -40,6 +40,6 @@ public class CyclomaticComplexityTest {
     cyclomaticComplexity.enable();
     cyclomaticComplexity.threshold = 5;
     String configuration = new Gson().toJson(cyclomaticComplexity.configuration());
-    assertThat(configuration).isEqualTo("[true,5]");
+    assertThat(configuration).isEqualTo("[5]");
   }
 }
