@@ -8,7 +8,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>sonarts-core</directory>
+            <directory>sonarts-bundle</directory>
             <includes>
                 <include>**/*</include>
             </includes>

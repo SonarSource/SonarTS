@@ -140,7 +140,7 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.4</version>
                 <configuration>
-                    <workingDirectory>sonarts-core</workingDirectory>
+                    <workingDirectory>sonarts-bundle</workingDirectory>
                     <installDirectory>target</installDirectory>
                     <nodeVersion>v8.1.2</nodeVersion>
                     <npmVersion>5.3.0</npmVersion>
@@ -169,7 +169,7 @@
                         <descriptor>src/sonarts-assembly.xml</descriptor>
                     </descriptors>
                     <outputDirectory>target/classes</outputDirectory>
-                    <finalName>sonarts-core</finalName>
+                    <finalName>sonarts-bundle</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>

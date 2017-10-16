@@ -1,7 +1,7 @@
 {
-  "name": "sonarts-tslint-sonarts",
+  "name": "sonarts-bundle",
   "version": "1.0.0",
-  "description": "tslint-sonarts bundle for the SonarTS-Plugin",
+  "description": "bundle for the SonarTS-Plugin",
   "license": "LGPL-3.0",
   "devDependencies": {
     "tslint": "5.4.2",
