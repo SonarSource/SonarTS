@@ -1,26 +1,26 @@
 {
   "rulesDirectory": "./lib/rules",
   "rules": {
-    "no-collection-size-mischeck": true,
     "no-all-duplicated-branches": true,
+    "no-array-delete": true,
+    "no-collection-size-mischeck": true,
+    "no-dead-store": true,
     "no-duplicated-branches": true,
     "no-empty-destructuring": true,
-    "no-use-of-empty-return-value": true,
+    "no-empty-nested-blocks": false,
     "no-identical-conditions": true,
     "no-identical-expressions": true,
-    "no-useless-increment": true,
     "no-ignored-return": true,
-    "no-self-assignment": true,
-    "no-variable-usage-before-declaration": true,
-    "no-misspelled-operator": true,
     "no-inconsistent-return": false,
-    "no-unconditional-jump": true,
     "no-misleading-array-reverse": true,
-    "no-same-line-conditional": true,
-    "no-empty-nested-blocks": false,
+    "no-misspelled-operator": true,
     "no-multiline-string-literals": true,
-    "no-array-delete": true,
-    "no-dead-store": true,
-    "no-unthrown-error": true
+    "no-same-line-conditional": true,
+    "no-self-assignment": true,
+    "no-unconditional-jump": true,
+    "no-unthrown-error": true,
+    "no-use-of-empty-return-value": true,
+    "no-useless-increment": true,
+    "no-variable-usage-before-declaration": true
   }
 }

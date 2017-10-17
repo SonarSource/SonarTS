@@ -9,49 +9,49 @@ How does it work?
 
 ## Rules
 
-* Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
+* `delete` should not be used on arrays ([`no-array-delete`])
+* Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
+* Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
+* Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
-* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
-* Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
-* Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
-* Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
-* Conditionals should start on new lines ([`no-same-line-conditional`])
-* Values should not be uselessly incremented ([`no-useless-increment`])
-* Jump statements should not be used unconditionally ([`no-unconditional-jump`])
-* Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
-* Multiline string literals should not be used ([`no-multiline-string-literals`])
-* `delete` should not be used on arrays ([`no-array-delete`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
-* Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
+* Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
+* Multiline string literals should not be used ([`no-multiline-string-literals`])
+* Conditionals should start on new lines ([`no-same-line-conditional`])
+* Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
+* Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
+* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
+* Values should not be uselessly incremented ([`no-useless-increment`])
+* Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 
-[`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
-[`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
-[`no-duplicated-branches`]: ./docs/rules/no-duplicated-branches.md
-[`no-empty-destructuring`]: ./docs/rules/no-empty-destructuring.md
-[`no-identical-conditions`]: ./docs/rules/no-identical-conditions.md
-[`no-identical-expressions`]: ./docs/rules/no-identical-expressions.md
-[`no-ignored-return`]: ./docs/rules/no-ignored-return.md
-[`no-use-of-empty-return-value`]: ./docs/rules/no-use-of-empty-return-value.md
-[`no-variable-usage-before-declaration`]: ./docs/rules/no-variable-usage-before-declaration.md
-[`no-self-assignment`]: ./docs/rules/no-self-assignment.md
-[`no-misspelled-operator`]: ./docs/rules/no-misspelled-operator.md
-[`no-inconsistent-return`]: ./docs/rules/no-inconsistent-return.md
-[`no-useless-increment`]: ./docs/rules/no-useless-increment.md
-[`no-unconditional-jump`]: ./docs/rules/no-unconditional-jump.md
-[`no-same-line-conditional`]: ./docs/rules/no-same-line-conditional.md
-[`no-misleading-array-reverse`]: ./docs/rules/no-misleading-array-reverse.md
-[`no-empty-nested-blocks`]: ./docs/rules/no-empty-nested-blocks.md
-[`no-multiline-string-literals`]: ./docs/rules/no-multiline-string-literals.md
-[`no-array-delete`]: ./docs/rules/no-array-delete.md
-[`no-dead-store`]: ./docs/rules/no-dead-store.md
+[`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
+[`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
+[`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
+[`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md
+[`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
+[`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
+[`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
+[`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
+[`no-identical-expressions`]: ./sonarts-core/docs/rules/no-identical-expressions.md
+[`no-ignored-return`]: ./sonarts-core/docs/rules/no-ignored-return.md
+[`no-inconsistent-return`]: ./sonarts-core/docs/rules/no-inconsistent-return.md
+[`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
+[`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
+[`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
+[`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
+[`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
+[`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
+[`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
+[`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
+[`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
