@@ -41,6 +41,10 @@ export class SymbolTable {
   public allUsages(symbol: ts.Symbol): Usage[] {
     return this.usagesBySymbol.has(symbol) ? this.usagesBySymbol.get(symbol)! : [];
   }
+
+  public getSymbols(): ts.Symbol[] {
+    return Array.from(this.usagesBySymbol.keys());
+  }
 }
 
 export class Usage {

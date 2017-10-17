@@ -163,6 +163,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoUnsafeFinally.class)
       .add(NoUnusedExpression.class)
       .add(NoUnthrownError.class)
+      .add(NoUnusedArray.class)
       .add(NoUselessIncrement.class)
       .add(NoUseOfEmptyReturnValue.class)
       .add(NoVarKeyword.class)

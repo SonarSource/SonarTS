@@ -199,3 +199,18 @@ export const LOOP_STATEMENTS = [
   Kind.WhileStatement,
   Kind.DoStatement,
 ];
+
+export const COMPOUND_ASSIGNMENTS = [
+  Kind.PlusEqualsToken,
+  Kind.MinusEqualsToken,
+  Kind.AsteriskAsteriskEqualsToken,
+  Kind.AsteriskEqualsToken,
+  Kind.SlashEqualsToken,
+  Kind.PercentEqualsToken,
+  Kind.AmpersandEqualsToken,
+  Kind.BarEqualsToken,
+  Kind.CaretEqualsToken,
+  Kind.LessThanLessThanEqualsToken,
+  Kind.GreaterThanGreaterThanGreaterThanEqualsToken,
+  Kind.GreaterThanGreaterThanEqualsToken,
+];
