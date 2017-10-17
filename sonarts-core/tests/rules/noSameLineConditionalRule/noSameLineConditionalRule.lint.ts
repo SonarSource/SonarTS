@@ -21,4 +21,8 @@ function foo() {
   } if (x.length) {
 //  ^^ {{Move this "if" to a new line or add the missing "else".}}
   }
+
+  if (x.length) console.log("one stmt"); if (x.length) {
+//                                       ^^ {{Move this "if" to a new line or add the missing "else".}}
+  }
 }
