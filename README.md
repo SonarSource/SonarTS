@@ -27,7 +27,8 @@ How does it work?
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
 * `delete` should not be used on arrays ([`no-array-delete`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
-*  Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
+* Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
+* Errors should not be created without being thrown ([`no-unthrown-error`])
 
 [`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
 [`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
@@ -48,6 +49,7 @@ How does it work?
 [`no-multiline-string-literals`]: ./docs/rules/no-multiline-string-literals.md
 [`no-array-delete`]: ./docs/rules/no-array-delete.md
 [`no-dead-store`]: ./docs/rules/no-dead-store.md
+[`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 

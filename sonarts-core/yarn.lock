@@ -40,9 +40,9 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/jest@^19.2.3":
-  version "19.2.4"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-19.2.4.tgz#543651712535962b7dc615e18e4a381fc2687442"
+"@types/jest@^21.1.2":
+  version "21.1.2"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-21.1.2.tgz#05ebfa64817b626694ced56745a7949281981048"
 
 "@types/lodash@^4.14.64":
   version "4.14.65"
