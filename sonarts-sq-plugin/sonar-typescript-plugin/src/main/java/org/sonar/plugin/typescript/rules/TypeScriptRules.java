@@ -153,6 +153,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoMultilineStringLiterals.class)
       .add(NoNonNullAssertion.class)
       .add(NoRequireImports.class)
+      .add(NoSameLineConditional.class)
       .add(NoSelfAssignment.class)
       .add(NoShadowedVariable.class)
       .add(NoSparseArrays.class)
