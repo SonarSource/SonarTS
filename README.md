@@ -31,26 +31,26 @@ How does it work?
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
 
-[`no-collection-size-mischeck`]: ./docs/rules/no-collection-size-mischeck.md
-[`no-all-duplicated-branches`]: ./docs/rules/no-all-duplicated-branches.md
-[`no-duplicated-branches`]: ./docs/rules/no-duplicated-branches.md
-[`no-empty-destructuring`]: ./docs/rules/no-empty-destructuring.md
-[`no-identical-conditions`]: ./docs/rules/no-identical-conditions.md
-[`no-identical-expressions`]: ./docs/rules/no-identical-expressions.md
-[`no-ignored-return`]: ./docs/rules/no-ignored-return.md
-[`no-use-of-empty-return-value`]: ./docs/rules/no-use-of-empty-return-value.md
-[`no-variable-usage-before-declaration`]: ./docs/rules/no-variable-usage-before-declaration.md
-[`no-self-assignment`]: ./docs/rules/no-self-assignment.md
-[`no-misspelled-operator`]: ./docs/rules/no-misspelled-operator.md
-[`no-inconsistent-return`]: ./docs/rules/no-inconsistent-return.md
-[`no-useless-increment`]: ./docs/rules/no-useless-increment.md
-[`no-unconditional-jump`]: ./docs/rules/no-unconditional-jump.md
-[`no-same-line-conditional`]: ./docs/rules/no-same-line-conditional.md
-[`no-misleading-array-reverse`]: ./docs/rules/no-misleading-array-reverse.md
-[`no-empty-nested-blocks`]: ./docs/rules/no-empty-nested-blocks.md
-[`no-multiline-string-literals`]: ./docs/rules/no-multiline-string-literals.md
-[`no-array-delete`]: ./docs/rules/no-array-delete.md
-[`no-dead-store`]: ./docs/rules/no-dead-store.md
+[`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
+[`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
+[`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
+[`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
+[`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
+[`no-identical-expressions`]: ./sonarts-core/docs/rules/no-identical-expressions.md
+[`no-ignored-return`]: ./sonarts-core/docs/rules/no-ignored-return.md
+[`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
+[`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
+[`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
+[`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
+[`no-inconsistent-return`]: ./sonarts-core/docs/rules/no-inconsistent-return.md
+[`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
+[`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
+[`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
+[`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
+[`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
+[`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
+[`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
+[`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
