@@ -30,7 +30,7 @@ public abstract class TypeScriptRule {
     return ruleConfiguration();
   }
 
-  void enable() {
+  public void enable() {
     enabled = true;
   }
 

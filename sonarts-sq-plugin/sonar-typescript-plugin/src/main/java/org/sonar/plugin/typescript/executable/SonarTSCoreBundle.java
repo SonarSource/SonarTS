@@ -33,7 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonar.plugin.typescript.rules.TypeScriptRules;
+import org.sonar.plugin.typescript.TypeScriptRules;
 
 public class SonarTSCoreBundle implements ExecutableBundle {
 

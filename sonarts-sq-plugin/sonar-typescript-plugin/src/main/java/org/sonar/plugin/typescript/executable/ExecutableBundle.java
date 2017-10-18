@@ -20,7 +20,7 @@
 package org.sonar.plugin.typescript.executable;
 
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.plugin.typescript.rules.TypeScriptRules;
+import org.sonar.plugin.typescript.TypeScriptRules;
 
 public interface ExecutableBundle {
 
