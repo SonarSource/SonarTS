@@ -36,11 +36,9 @@ export class Rule extends tslint.Rules.AbstractRule {
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
   }
-
 }
 
 class Walker extends tslint.RuleWalker {
-
   protected visitBlock(node: ts.Block): void {
     this.visitStatements(node.statements);
     super.visitBlock(node);
@@ -66,33 +64,45 @@ class Walker extends tslint.RuleWalker {
         if (this.areAdjacent(positions)) {
           this.raiseAdjacenceIssue(unenclosedConsecutives);
         } else if (this.haveSameIndentation(positions, unenclosedConsecutives)) {
-          this.raiseBlockIssue(unenclosedConsecutives, this.countStatementsInTheSamePile(unenclosedConsecutives.prev, statements));
+          this.raiseBlockIssue(
+            unenclosedConsecutives,
+            this.countStatementsInTheSamePile(unenclosedConsecutives.prev, statements),
+          );
         } else if (this.areInlinedAndIndented(positions, unenclosedConsecutives)) {
           this.raiseInlinedAndIndentedIssue(unenclosedConsecutives);
         }
       });
   }
 
-  private chain(statements: ts.Statement[]) : ChainedStatements[] {
+  private chain(statements: ts.Statement[]): ChainedStatements[] {
     return statements
       .reduce((result, statement, i, array) => {
         if (i < array.length - 1) {
           if (this.isConditionOrLoop(statement)) {
-            result.push({prev:statement, next:array[i + 1]})
+            result.push({ prev: statement, next: array[i + 1] });
           }
         }
         return result;
-      }, new Array<{prev:ConditionOrLoop, next:ts.Statement}>())
-      .map(pair => {return {topStatement: pair.prev, prev:this.extractLastBody(pair.prev), next:pair.next}})
+      }, new Array<{ prev: ConditionOrLoop; next: ts.Statement }>())
+      .map(pair => {
+        return { topStatement: pair.prev, prev: this.extractLastBody(pair.prev), next: pair.next };
+      });
   }
 
   private isConditionOrLoop(statement: ts.Statement): statement is ConditionOrLoop {
-    return is(statement,ts.SyntaxKind.IfStatement, ts.SyntaxKind.ForStatement, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement, ts.SyntaxKind.WhileStatement);
+    return is(
+      statement,
+      ts.SyntaxKind.IfStatement,
+      ts.SyntaxKind.ForStatement,
+      ts.SyntaxKind.ForInStatement,
+      ts.SyntaxKind.ForOfStatement,
+      ts.SyntaxKind.WhileStatement,
+    );
   }
 
   private extractLastBody(statement: ConditionOrLoop): ts.Statement {
     if (statement.kind === ts.SyntaxKind.IfStatement) {
-      if(!statement.elseStatement) {
+      if (!statement.elseStatement) {
         return statement.thenStatement;
       } else {
         return statement.elseStatement;
@@ -102,16 +112,16 @@ class Walker extends tslint.RuleWalker {
     }
   }
 
-  private endAndStartPositions(pair: {prev: ts.Statement, next: ts.Statement}) : Positions {
+  private endAndStartPositions(pair: { prev: ts.Statement; next: ts.Statement }): Positions {
     return {
-      prevStart : this.getLineAndCharacterOfPosition(pair.prev.getStart()),
-      prevEnd : this.getLineAndCharacterOfPosition(pair.prev.getEnd()),
-      nextStart : this.getLineAndCharacterOfPosition(pair.next.getStart()),
-      nextEnd : this.getLineAndCharacterOfPosition(pair.next.getEnd())
+      prevStart: this.getLineAndCharacterOfPosition(pair.prev.getStart()),
+      prevEnd: this.getLineAndCharacterOfPosition(pair.prev.getEnd()),
+      nextStart: this.getLineAndCharacterOfPosition(pair.next.getStart()),
+      nextEnd: this.getLineAndCharacterOfPosition(pair.next.getEnd()),
     };
   }
 
-  private areAdjacent(positions: Positions) : boolean {
+  private areAdjacent(positions: Positions): boolean {
     return positions.prevEnd.line === positions.nextStart.line;
   }
 
@@ -120,36 +130,39 @@ class Walker extends tslint.RuleWalker {
     this.addFailureAtNode(
       adjacentStatements.next,
       `This statement will not be executed ${conditional ? "conditionally" : "in a loop"}; ` +
-      `only the first statement will be. The rest will execute ${conditional ? "unconditionally" : "only once"}.`
+        `only the first statement will be. The rest will execute ${conditional ? "unconditionally" : "only once"}.`,
     );
   }
 
-  private haveSameIndentation(positions: Positions, chainedStatements: ChainedStatements) : boolean {
-    return positions.prevStart.character === positions.nextStart.character && this.areMoreIndentedThanTopStatement(chainedStatements);
+  private haveSameIndentation(positions: Positions, chainedStatements: ChainedStatements): boolean {
+    return (
+      positions.prevStart.character === positions.nextStart.character &&
+      this.areMoreIndentedThanTopStatement(chainedStatements)
+    );
   }
 
-  private areMoreIndentedThanTopStatement(chainedStatements: ChainedStatements) : boolean {
+  private areMoreIndentedThanTopStatement(chainedStatements: ChainedStatements): boolean {
     const rootIndentation = this.getLineAndCharacterOfPosition(chainedStatements.topStatement.getStart()).character;
     const prevIndentation = this.getLineAndCharacterOfPosition(chainedStatements.prev.getStart()).character;
     return prevIndentation > rootIndentation;
   }
 
-  private countStatementsInTheSamePile(reference: ts.Statement, statements: ts.Statement[]) : number {
+  private countStatementsInTheSamePile(reference: ts.Statement, statements: ts.Statement[]): number {
     let startOfPile = this.getLineAndCharacterOfPosition(reference.getStart());
     let lastLineOfPile = startOfPile.line;
-    for(let i = 0; i < statements.length; i++) {
+    for (let i = 0; i < statements.length; i++) {
       const statement = statements[i];
       const currentLine = this.getLineAndCharacterOfPosition(statement.getEnd()).line;
       const currentIndentation = this.getLineAndCharacterOfPosition(statement.getStart()).character;
       if (currentLine > startOfPile.line) {
         if (currentIndentation === startOfPile.character) {
-          lastLineOfPile = this.getLineAndCharacterOfPosition(statement.getEnd()).line
+          lastLineOfPile = this.getLineAndCharacterOfPosition(statement.getEnd()).line;
         } else {
           break;
         }
       }
     }
-    return  lastLineOfPile - startOfPile.line + 1;
+    return lastLineOfPile - startOfPile.line + 1;
   }
 
   private raiseBlockIssue(piledStatements: ChainedStatements, sizeOfPile: number) {
@@ -157,14 +170,18 @@ class Walker extends tslint.RuleWalker {
     this.addFailureAtNode(
       piledStatements.next,
       `This line will not be executed ${conditional ? "conditionally" : "in a loop"}; ` +
-      `only the first line of this ${sizeOfPile}-line block will be. The rest will execute ${conditional ? "unconditionally" : "only once"}.`
+        `only the first line of this ${sizeOfPile}-line block will be. The rest will execute ${conditional
+          ? "unconditionally"
+          : "only once"}.`,
     );
   }
 
   private areInlinedAndIndented(positions: Positions, chainedStatements: ChainedStatements) {
     const topStatementEnd = this.getLineAndCharacterOfPosition(chainedStatements.topStatement.getEnd());
     const topStatementStart = this.getLineAndCharacterOfPosition(chainedStatements.topStatement.getStart());
-    return positions.prevStart.line === topStatementEnd.line && positions.nextStart.character > topStatementStart.character;
+    return (
+      positions.prevStart.line === topStatementEnd.line && positions.nextStart.character > topStatementStart.character
+    );
   }
 
   private raiseInlinedAndIndentedIssue(chainedStatements: ChainedStatements) {
@@ -172,22 +189,22 @@ class Walker extends tslint.RuleWalker {
     this.addFailureAtNode(
       chainedStatements.next,
       `This line will not be executed ${conditional ? "conditionally" : "in a loop"}; ` +
-      `only the first statement will be. The rest will execute ${conditional ? "unconditionally" : "only once"}.`
+        `only the first statement will be. The rest will execute ${conditional ? "unconditionally" : "only once"}.`,
     );
   }
 }
 
 type ChainedStatements = {
-  topStatement: ConditionOrLoop,
-  prev: ts.Statement,
-  next: ts.Statement
-}
+  topStatement: ConditionOrLoop;
+  prev: ts.Statement;
+  next: ts.Statement;
+};
 
 type Positions = {
-  prevStart : ts.LineAndCharacter,
-  prevEnd : ts.LineAndCharacter,
-  nextStart : ts.LineAndCharacter,
-  nextEnd : ts.LineAndCharacter
-}
+  prevStart: ts.LineAndCharacter;
+  prevEnd: ts.LineAndCharacter;
+  nextStart: ts.LineAndCharacter;
+  nextEnd: ts.LineAndCharacter;
+};
 
 type ConditionOrLoop = ts.IfStatement | ts.ForStatement | ts.ForInStatement | ts.ForOfStatement | ts.WhileStatement;

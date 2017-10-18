@@ -26,6 +26,5 @@ it("should contain all rules listed in extension", () => {
   const profile = JSON.parse(fs.readFileSync(profileFilePath, "utf8"));
   const readmeFilePath = path.join(__dirname, "../../../README.md");
   const readme = fs.readFileSync(readmeFilePath, "utf8");
-  const configuredRules = Object.keys(profile.rules)
-    .forEach((ruleName, _) => expect(readme).toContain(ruleName));
+  const configuredRules = Object.keys(profile.rules).forEach((ruleName, _) => expect(readme).toContain(ruleName));
 });
