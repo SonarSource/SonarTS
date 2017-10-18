@@ -35,55 +35,59 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  private static writeArrayPatterns: ((statement: ts.ExpressionStatement, usage: Usage) => boolean)[] = [
+  private static readonly WRITE_ARRAY_PATTERNS: ((statement: ts.ExpressionStatement, usage: Usage) => boolean)[] = [
     Rule.isElementWrite,
     Rule.isVariableWrite,
     Rule.isWritingMethodCall,
   ];
 
-  public static MESSAGE = "Either use this array's contents or remove the array.";
+  private static readonly MESSAGE = "Either use this array's contents or remove the array.";
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
 
     // walker is created to only save issues
     const walker = new tslint.RuleWalker(sourceFile, this.getOptions());
-    const symbolDeclarations = new Map();
 
+    // prettier-ignore
     symbols
       .getSymbols()
+
       // get only symbols storing arrays
       .filter(symbol => Rule.hasArrayType(symbol, program.getTypeChecker(), symbols))
+
       // filter out unused symbols
       .filter(symbol => symbols.allUsages(symbol).length > 1)
+      
+      // map to pair symbol-declaration
+      .map(symbol => ({ declaration: Rule.findDeclarationNode(symbol, symbols), symbol}))
+      
       // filter out symbols without declaration
-      .filter(symbol => {
-        const declaration = Rule.getDeclaration(symbol, symbols);
-        if (declaration) {
-          symbolDeclarations.set(symbol, declaration);
-        }
-        return declaration;
-      })
+      .filter(symbolAndDeclaration => symbolAndDeclaration.declaration)
+      .map(symbolAndDeclaration => symbolAndDeclaration as {declaration: ts.Node, symbol: ts.Symbol})      
+
       // filter out parameters and exported/imported symbols
       .filter(
-        symbol =>
-          !firstAncestor(symbolDeclarations.get(symbol), [ts.SyntaxKind.Parameter, ts.SyntaxKind.ImportDeclaration]) &&
-          !Rule.isExported(symbolDeclarations.get(symbol)),
+        symbolAndDeclaration =>
+          !firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.Parameter, ts.SyntaxKind.ImportDeclaration]) &&
+          !Rule.isExported(symbolAndDeclaration.declaration),
       )
+      
       // keep only symbols initialized to array literal or not initialized at all
-      .filter(symbol => {
-        const varDeclaration = firstAncestor(symbolDeclarations.get(symbol), [
-          ts.SyntaxKind.VariableDeclaration,
-        ]) as ts.VariableDeclaration;
+      .filter(symbolAndDeclaration => {
+        // prettier-ignore
+        const varDeclaration = firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.VariableDeclaration]) as ts.VariableDeclaration;
         if (varDeclaration) {
           return !varDeclaration.initializer || Rule.isArrayLiteral(varDeclaration.initializer);
         }
         return true;
       })
+      
       // filter out symbols with at least one read usage
-      .filter(symbol => !symbols.allUsages(symbol).some(usage => Rule.isReadUsage(usage)))
+      .filter(symbolAndDeclaration => !symbols.allUsages(symbolAndDeclaration.symbol).some(usage => Rule.isReadUsage(usage)))
+      
       // raise issue
-      .forEach(symbol => walker.addFailureAtNode(symbolDeclarations.get(symbol), Rule.MESSAGE));
+      .forEach(symbolAndDeclaration => walker.addFailureAtNode(symbolAndDeclaration.declaration, Rule.MESSAGE));
 
     return walker.getFailures();
   }
@@ -98,11 +102,11 @@ export class Rule extends tslint.Rules.TypedRule {
       return false;
     }
 
-    const expressionStatement = firstAncestor(usage.node, [
-      ts.SyntaxKind.ExpressionStatement,
-    ]) as ts.ExpressionStatement;
+    // prettier-ignore
+    const expressionStatement = firstAncestor(usage.node, [ts.SyntaxKind.ExpressionStatement]) as ts.ExpressionStatement;
+
     if (expressionStatement) {
-      return !Rule.writeArrayPatterns.some(pattern => pattern(expressionStatement, usage));
+      return !Rule.WRITE_ARRAY_PATTERNS.some(pattern => pattern(expressionStatement, usage));
     }
     return true;
   }
@@ -162,7 +166,7 @@ export class Rule extends tslint.Rules.TypedRule {
     return false;
   }
 
-  private static getDeclaration(symbol: ts.Symbol, symbols: SymbolTable): ts.Node | null {
+  private static findDeclarationNode(symbol: ts.Symbol, symbols: SymbolTable): ts.Node | null {
     const declarationUsage = symbols.allUsages(symbol).find(usage => usage.is(UsageFlag.DECLARATION));
     if (!declarationUsage) {
       return null;
