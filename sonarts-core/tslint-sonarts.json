@@ -1,6 +1,7 @@
 {
   "rulesDirectory": "./lib/rules",
   "rules": {
+    "no-accessor-field-mismatch": true,
     "no-all-duplicated-branches": true,
     "no-array-delete": true,
     "no-collection-size-mischeck": true,

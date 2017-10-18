@@ -81,3 +81,14 @@ function objectLiteralShorthand() {
   const x = 41;
   return {x};
 }
+
+class A {
+
+  private propertyDeclaration;
+
+  constructor(private propertyDeclarationInConstructor: number) {}
+
+  method1() {
+    return this.propertyDeclaration;
+  }
+}
