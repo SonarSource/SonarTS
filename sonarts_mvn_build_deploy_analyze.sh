@@ -75,7 +75,6 @@ elif [[ "${TRAVIS_BRANCH}" == "branch-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "fals
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
 
   mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
-    $MAVEN_ARGS \
     -Pdeploy-sonarsource,release \
     -B -e -V $*
   cd ..
@@ -111,12 +110,22 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   cd ..
 
   sonar-scanner \
-    -Dsonar.analysis.mode=issues \
-    -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
-    -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
-    -Dsonar.github.oauth=$GITHUB_TOKEN \
     -Dsonar.host.url=$SONAR_HOST_URL \
     -Dsonar.login=$SONAR_TOKEN \
+    -Dsonar.analysis.mode=preview \
+    -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
+    -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
+    -Dsonar.github.oauth=$GITHUB_TOKEN
+
+  sonar-scanner \
+    -Dsonar.host.url=$SONAR_HOST_URL \
+    -Dsonar.login=$SONAR_TOKEN \
+    -Dsonar.branch.name=$TRAVIS_PULL_REQUEST_BRANCH \
+    -Dsonar.branch.target=$TRAVIS_BRANCH \
+    -Dsonar.analysis.buildNumber=$TRAVIS_BUILD_NUMBER \
+    -Dsonar.analysis.pipeline=$TRAVIS_BUILD_NUMBER \
+    -Dsonar.analysis.sha1=$TRAVIS_COMMIT \
+    -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG
 
 else
   echo '======= Build, no analysis, no deploy'
