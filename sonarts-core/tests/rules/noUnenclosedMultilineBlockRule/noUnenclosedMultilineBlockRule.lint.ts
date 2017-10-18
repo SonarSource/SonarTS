@@ -71,11 +71,6 @@ while (condition) {
   action2();
 }
 
-while (condition)
-  action1();
-  action2();
-//^^^^^^^^^^ {{This line will not be executed in a loop; only the first line of this 2-line block will be. The rest will execute only once.}}
-
 function foo() {
   if (condition) {
     action1();
@@ -87,6 +82,11 @@ function foo() {
     action2();
 //  ^^^^^^^^^^ {{This line will not be executed conditionally; only the first line of this 2-line block will be. The rest will execute unconditionally.}}
 }
+
+while (condition)
+  action1();
+  action2();
+//^^^^^^^^^^ {{This line will not be executed in a loop; only the first line of this 2-line block will be. The rest will execute only once.}}
 
 namespace A {
   if (condition)
