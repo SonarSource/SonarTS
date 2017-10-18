@@ -182,6 +182,15 @@ export function descendants(node: ts.Node): ts.Node[] {
   return collectedDescendants;
 }
 
+export function getChild(node: ts.Node, kind: ts.SyntaxKind): ts.Node {
+  const child = node.getChildren().find(child => is(child, kind));
+  if (child) {
+    return child;
+  } else {
+    throw new Error("Not found child with kind " + ts.SyntaxKind[kind]);
+  }
+}
+
 export const FUNCTION_LIKE = [
   Kind.FunctionDeclaration,
   Kind.FunctionExpression,

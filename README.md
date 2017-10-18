@@ -18,6 +18,7 @@ How does it work?
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
+* Functions should not have identical implementations ([`no-identical-functions`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
@@ -42,6 +43,7 @@ How does it work?
 [`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
 [`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./sonarts-core/docs/rules/no-identical-expressions.md
+[`no-identical-functions`]: ./sonarts-core/docs/rules/no-identical-functions.md
 [`no-ignored-return`]: ./sonarts-core/docs/rules/no-ignored-return.md
 [`no-inconsistent-return`]: ./sonarts-core/docs/rules/no-inconsistent-return.md
 [`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
