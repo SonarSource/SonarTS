@@ -26,3 +26,17 @@ function foo() {
 //                                       ^^ {{Move this "if" to a new line or add the missing "else".}}
   }
 }
+
+namespace A {
+  if (x.length) {
+  } if (x.length) {
+//  ^^ {{Move this "if" to a new line or add the missing "else".}}
+  }
+}
+
+module B {
+  if (x.length) {
+  } if (x.length) {
+//  ^^ {{Move this "if" to a new line or add the missing "else".}}
+  }
+}
