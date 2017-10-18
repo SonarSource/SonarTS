@@ -26,7 +26,6 @@ import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.Param;
 import org.sonar.api.server.rule.RulesDefinition.Repository;
 import org.sonar.api.server.rule.RulesDefinition.Rule;
-import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

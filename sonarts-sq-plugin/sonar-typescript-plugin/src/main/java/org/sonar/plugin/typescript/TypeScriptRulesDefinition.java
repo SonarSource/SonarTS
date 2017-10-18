@@ -20,7 +20,6 @@
 package org.sonar.plugin.typescript;
 
 import org.sonar.api.server.rule.RulesDefinition;
-import org.sonar.plugin.typescript.rules.TypeScriptRules;
 
 
 public class TypeScriptRulesDefinition implements RulesDefinition {

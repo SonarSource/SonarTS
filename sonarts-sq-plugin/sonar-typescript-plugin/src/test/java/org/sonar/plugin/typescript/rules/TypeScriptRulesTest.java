@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.plugin.typescript.TestActiveRules;
+import org.sonar.plugin.typescript.TypeScriptRules;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
