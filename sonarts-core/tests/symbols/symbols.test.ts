@@ -41,12 +41,12 @@ it("other declarations", () => {
   expect(symbols.getUsage(getNode(sourceFile, "varEl1")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "Interface")).flags).toBe(UsageFlag.DECLARATION);
   expect(symbols.getUsage(getNode(sourceFile, "importEquals")).flags).toBe(UsageFlag.DECLARATION);
+  expect(symbols.getUsage(getNode(sourceFile, "propertyDeclaration")).flags).toBe(UsageFlag.DECLARATION);
   /*
     Maybe implement some day :
     TypeAliasDeclaration
     IndexSignatureDeclaration
     MethodDeclaration
-    PropertyDeclaration
     ConstructorDeclaration
   */
 });
@@ -102,6 +102,7 @@ it("read-writes", () => {
   expect(symbols.getUsage(getNode(sourceFile, "rw", 65)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "rw", 66)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "rw", 67)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "propertyDeclarationInConstructor")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
 });
 
 it("same symbol for shorthand property", () => {

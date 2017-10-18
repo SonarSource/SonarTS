@@ -1,0 +1,11 @@
+src/Joust/ts/Entity.ts: 189
+src/ag-grid/src/ts/filter/dateFilter.ts: 125,130
+src/vscode/src/vs/base/browser/ui/inputbox/inputBox.ts: 202
+src/vscode/src/vs/editor/common/model/textModel.ts: 509
+src/vscode/src/vs/editor/browser/controller/textAreaHandler.ts: 45
+src/vscode/src/vs/editor/contrib/codelens/browser/codelens.ts: 165
+src/vscode/src/vs/editor/contrib/hover/browser/hoverWidgets.ts: 81
+src/vscode/src/vs/workbench/common/editor/untitledEditorModel.ts: 115
+src/vscode/src/vs/workbench/api/electron-browser/mainThreadEditor.ts: 208
+src/vscode/src/vs/workbench/parts/files/common/explorerViewModel.ts: 296
+src/vscode/src/vs/workbench/parts/output/browser/outputServices.ts: 160
