@@ -118,6 +118,16 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.host.url=$SONAR_HOST_URL \
     -Dsonar.login=$SONAR_TOKEN \
 
+  sonar-scanner \    
+    -Dsonar.host.url=$SONAR_HOST_URL \
+    -Dsonar.login=$SONAR_TOKEN \
+    -Dsonar.analysis.buildNumber=$TRAVIS_BUILD_NUMBER \
+    -Dsonar.analysis.pipeline=$TRAVIS_BUILD_NUMBER \
+    -Dsonar.analysis.sha1=$TRAVIS_COMMIT  \
+    -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG \
+    -Dsonar.branch.name=$TRAVIS_PULL_REQUEST_BRANCH \
+    -Dsonar.branch.target=$TRAVIS_BRANCH
+
 else
   echo '======= Build, no analysis, no deploy'
 
