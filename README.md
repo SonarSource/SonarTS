@@ -28,6 +28,7 @@ How does it work?
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
+* Array contents should be used ([`no-unused-array`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
@@ -51,6 +52,7 @@ How does it work?
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
 [`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
+[`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md
 [`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
