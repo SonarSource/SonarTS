@@ -41,14 +41,21 @@ export class Rule extends Lint.Rules.AbstractRule {
 class Walker extends Lint.RuleWalker {
   private static readonly MESSAGE = 'Move this "if" to a new line or add the missing "else".';
 
-  public visitSourceFile(node: ts.SourceFile): void {
+  protected visitSourceFile(node: ts.SourceFile): void {
     this.checkStatements(node.statements);
     super.visitSourceFile(node);
   }
 
-  public visitBlock(node: ts.Block): void {
+  protected visitBlock(node: ts.Block): void {
     this.checkStatements(node.statements);
     super.visitBlock(node);
+  }
+
+  protected visitModuleDeclaration(node: ts.ModuleDeclaration): void {
+    if (node.body && node.body.kind === ts.SyntaxKind.ModuleBlock) {
+      this.checkStatements(node.body.statements);
+    }
+    super.visitModuleDeclaration(node);
   }
 
   private checkStatements(statements: ts.NodeArray<ts.Statement>): void {
