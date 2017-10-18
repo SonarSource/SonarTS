@@ -56,7 +56,11 @@ export default function runRule(Rule: any, testFileName: string): RuleRunResult 
   const source = fs.readFileSync(lintFileName, "utf-8");
   const actualErrors = runRuleOnFile(Rule, lintFileName);
   const expectedErrors = parseErrorsFromMarkup(source);
-  return { actualErrors, expectedErrors };
+  return { actualErrors: actualErrors.sort(byLine), expectedErrors: expectedErrors.sort(byLine) };
+}
+
+function byLine(e1: LintError, e2: LintError) {
+  return e1.startPos.line - e2.startPos.line;
 }
 
 // used for unit test
