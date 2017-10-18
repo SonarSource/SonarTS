@@ -58,17 +58,16 @@ class Walker extends tslint.RuleWalker {
 
   private visitStatements(statements: ts.Statement[]) {
     this.chain(statements)
-      .filter(chainedStatements => chainedStatements.prev.kind !== ts.SyntaxKind.Block)
+      .filter(chainedStatements => chainedStatements.areUnenclosed())
       .forEach(unenclosedConsecutives => {
-        const positions = this.endAndStartPositions(unenclosedConsecutives);
-        if (this.areAdjacent(positions)) {
+        if (unenclosedConsecutives.areAdjacent()) {
           this.raiseAdjacenceIssue(unenclosedConsecutives);
-        } else if (this.haveSameIndentation(positions, unenclosedConsecutives)) {
+        } else if (unenclosedConsecutives.areBothIndented()) {
           this.raiseBlockIssue(
             unenclosedConsecutives,
             this.countStatementsInTheSamePile(unenclosedConsecutives.prev, statements),
           );
-        } else if (this.areInlinedAndIndented(positions, unenclosedConsecutives)) {
+        } else if (unenclosedConsecutives.areInlinedAndIndented()) {
           this.raiseInlinedAndIndentedIssue(unenclosedConsecutives);
         }
       });
@@ -85,7 +84,7 @@ class Walker extends tslint.RuleWalker {
         return result;
       }, new Array<{ prev: ConditionOrLoop; next: ts.Statement }>())
       .map(pair => {
-        return { topStatement: pair.prev, prev: this.extractLastBody(pair.prev), next: pair.next };
+        return new ChainedStatements(pair.prev, this.extractLastBody(pair.prev), pair.next, this);
       });
   }
 
@@ -112,46 +111,10 @@ class Walker extends tslint.RuleWalker {
     }
   }
 
-  private endAndStartPositions(pair: { prev: ts.Statement; next: ts.Statement }): Positions {
-    return {
-      prevStart: this.getLineAndCharacterOfPosition(pair.prev.getStart()),
-      prevEnd: this.getLineAndCharacterOfPosition(pair.prev.getEnd()),
-      nextStart: this.getLineAndCharacterOfPosition(pair.next.getStart()),
-      nextEnd: this.getLineAndCharacterOfPosition(pair.next.getEnd()),
-    };
-  }
-
-  private areAdjacent(positions: Positions): boolean {
-    return positions.prevEnd.line === positions.nextStart.line;
-  }
-
-  private raiseAdjacenceIssue(adjacentStatements: ChainedStatements) {
-    const conditional = adjacentStatements.topStatement.kind === ts.SyntaxKind.IfStatement;
-    this.addFailureAtNode(
-      adjacentStatements.next,
-      `This statement will not be executed ${conditional ? "conditionally" : "in a loop"}; ` +
-        `only the first statement will be. The rest will execute ${conditional ? "unconditionally" : "only once"}.`,
-    );
-  }
-
-  private haveSameIndentation(positions: Positions, chainedStatements: ChainedStatements): boolean {
-    return (
-      positions.prevStart.character === positions.nextStart.character &&
-      this.areMoreIndentedThanTopStatement(chainedStatements)
-    );
-  }
-
-  private areMoreIndentedThanTopStatement(chainedStatements: ChainedStatements): boolean {
-    const rootIndentation = this.getLineAndCharacterOfPosition(chainedStatements.topStatement.getStart()).character;
-    const prevIndentation = this.getLineAndCharacterOfPosition(chainedStatements.prev.getStart()).character;
-    return prevIndentation > rootIndentation;
-  }
-
   private countStatementsInTheSamePile(reference: ts.Statement, statements: ts.Statement[]): number {
     let startOfPile = this.getLineAndCharacterOfPosition(reference.getStart());
     let lastLineOfPile = startOfPile.line;
-    for (let i = 0; i < statements.length; i++) {
-      const statement = statements[i];
+    for (const statement of statements) {
       const currentLine = this.getLineAndCharacterOfPosition(statement.getEnd()).line;
       const currentIndentation = this.getLineAndCharacterOfPosition(statement.getStart()).character;
       if (currentLine > startOfPile.line) {
@@ -165,42 +128,85 @@ class Walker extends tslint.RuleWalker {
     return lastLineOfPile - startOfPile.line + 1;
   }
 
-  private raiseBlockIssue(piledStatements: ChainedStatements, sizeOfPile: number) {
-    const conditional = piledStatements.topStatement.kind === ts.SyntaxKind.IfStatement;
+  private raiseAdjacenceIssue(adjacentStatements: ChainedStatements) {
     this.addFailureAtNode(
-      piledStatements.next,
-      `This line will not be executed ${conditional ? "conditionally" : "in a loop"}; ` +
-        `only the first line of this ${sizeOfPile}-line block will be. The rest will execute ${conditional
-          ? "unconditionally"
-          : "only once"}.`,
+      adjacentStatements.next,
+      `This statement will not be executed ${adjacentStatements.includedStatementQualifier()}; ` +
+        `only the first statement will be. The rest will execute ${adjacentStatements.excludedStatementsQualifier()}.`,
     );
   }
 
-  private areInlinedAndIndented(positions: Positions, chainedStatements: ChainedStatements) {
-    const topStatementEnd = this.getLineAndCharacterOfPosition(chainedStatements.topStatement.getEnd());
-    const topStatementStart = this.getLineAndCharacterOfPosition(chainedStatements.topStatement.getStart());
-    return (
-      positions.prevStart.line === topStatementEnd.line && positions.nextStart.character > topStatementStart.character
+  private raiseBlockIssue(piledStatements: ChainedStatements, sizeOfPile: number) {
+    this.addFailureAtNode(
+      piledStatements.next,
+      `This line will not be executed ${piledStatements.includedStatementQualifier()}; ` +
+        `only the first line of this ${sizeOfPile}-line block will be. The rest will execute ${piledStatements.excludedStatementsQualifier()}.`,
     );
   }
 
   private raiseInlinedAndIndentedIssue(chainedStatements: ChainedStatements) {
-    const conditional = chainedStatements.topStatement.kind === ts.SyntaxKind.IfStatement;
     this.addFailureAtNode(
       chainedStatements.next,
-      `This line will not be executed ${conditional ? "conditionally" : "in a loop"}; ` +
-        `only the first statement will be. The rest will execute ${conditional ? "unconditionally" : "only once"}.`,
+      `This line will not be executed ${chainedStatements.includedStatementQualifier()}; ` +
+        `only the first statement will be. The rest will execute ${chainedStatements.excludedStatementsQualifier()}.`,
     );
   }
 }
 
-type ChainedStatements = {
-  topStatement: ConditionOrLoop;
-  prev: ts.Statement;
-  next: ts.Statement;
-};
+class ChainedStatements {
+  private readonly positions: Positions;
+
+  constructor(
+    readonly topStatement: ConditionOrLoop,
+    readonly prev: ts.Statement,
+    readonly next: ts.Statement,
+    walker: Walker,
+  ) {
+    this.positions = {
+      prevTopStart: walker.getLineAndCharacterOfPosition(this.topStatement.getStart()),
+      prevTopEnd: walker.getLineAndCharacterOfPosition(this.topStatement.getEnd()),
+      prevStart: walker.getLineAndCharacterOfPosition(this.prev.getStart()),
+      prevEnd: walker.getLineAndCharacterOfPosition(this.prev.getEnd()),
+      nextStart: walker.getLineAndCharacterOfPosition(this.next.getStart()),
+      nextEnd: walker.getLineAndCharacterOfPosition(this.next.getEnd()),
+    };
+  }
+
+  public areUnenclosed(): boolean {
+    return this.prev.kind !== ts.SyntaxKind.Block;
+  }
+
+  public areAdjacent(): boolean {
+    return this.positions.prevEnd.line === this.positions.nextStart.line;
+  }
+
+  public areBothIndented(): boolean {
+    return this.positions.prevStart.character === this.positions.nextStart.character && this.prevIsIndented();
+  }
+
+  public areInlinedAndIndented(): boolean {
+    return (
+      this.positions.prevStart.line === this.positions.prevTopEnd.line &&
+      this.positions.nextStart.character > this.positions.prevTopStart.character
+    );
+  }
+
+  public includedStatementQualifier(): string {
+    return this.topStatement.kind === ts.SyntaxKind.IfStatement ? "conditionally" : "in a loop";
+  }
+
+  public excludedStatementsQualifier(): string {
+    return this.topStatement.kind === ts.SyntaxKind.IfStatement ? "unconditionally" : "only once";
+  }
+
+  private prevIsIndented(): boolean {
+    return this.positions.prevStart.character > this.positions.prevTopStart.character;
+  }
+}
 
 type Positions = {
+  prevTopStart: ts.LineAndCharacter;
+  prevTopEnd: ts.LineAndCharacter;
   prevStart: ts.LineAndCharacter;
   prevEnd: ts.LineAndCharacter;
   nextStart: ts.LineAndCharacter;
