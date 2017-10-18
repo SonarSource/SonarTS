@@ -26,6 +26,7 @@ How does it work?
 * Conditionals should start on new lines ([`no-same-line-conditional`])
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
+* Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
@@ -48,6 +49,7 @@ How does it work?
 [`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
+[`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
 [`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md

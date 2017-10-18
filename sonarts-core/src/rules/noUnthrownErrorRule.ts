@@ -35,11 +35,9 @@ export class Rule extends tslint.Rules.AbstractRule {
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
   }
-
 }
 
 class Walker extends tslint.RuleWalker {
-
   protected visitNewExpression(node: ts.NewExpression): void {
     super.visitNewExpression(node);
     if (this.isWithinExpressionStatement(node) && this.looksLikeAnError(node.expression)) {
@@ -55,5 +53,4 @@ class Walker extends tslint.RuleWalker {
     const text = expression.getText();
     return text.endsWith("Error") || text.endsWith("Exception");
   }
-
 }
