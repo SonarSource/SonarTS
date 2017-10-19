@@ -105,5 +105,24 @@ function ok10() {
     x.push(1);
 }
 
+function ok11() {
+    const foo = [ [1, 2],  [3, 4]];
+    for (const bar of foo) {
+        bar.push(42);
+    }
+
+    return foo;
+}
+
+function ok12() {
+    const foo = [ [1, 2],  [3, 4]];
+    let bar: number[];
+    for (bar of foo) {
+        bar.push(42);
+    }
+    return foo;
+}
+
+
 export const EXPORTED_ARRAY: any[] = [];
 import { IMPORTED_ARRAY } from "./dep";

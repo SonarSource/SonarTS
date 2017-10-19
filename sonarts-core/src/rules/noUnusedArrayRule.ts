@@ -78,6 +78,9 @@ export class Rule extends tslint.Rules.TypedRule {
         // prettier-ignore
         const varDeclaration = firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.VariableDeclaration]) as ts.VariableDeclaration;
         if (varDeclaration) {
+          if (is(varDeclaration.parent!.parent, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement)) {
+            return false;
+          }
           return !varDeclaration.initializer || Rule.isArrayLiteral(varDeclaration.initializer);
         }
         return true;
