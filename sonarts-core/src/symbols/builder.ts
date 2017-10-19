@@ -57,6 +57,11 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     super.visitVariableDeclaration(node);
   }
 
+  protected visitPropertyDeclaration(node: ts.PropertyDeclaration) {
+    this.addVariable(node);
+    super.visitPropertyDeclaration(node);
+  }
+
   protected visitParameterDeclaration(node: ts.ParameterDeclaration) {
     this.addVariable(node);
     super.visitParameterDeclaration(node);
@@ -112,12 +117,13 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
   protected visitPostfixUnaryExpression(node: ts.PostfixUnaryExpression) {
     this.registerUsageIfMissing(node.operand, UsageFlag.READ | UsageFlag.WRITE);
   }
+
   protected visitModuleDeclaration(node: ts.ModuleDeclaration) {
     this.registerUsageIfMissing(node.name, UsageFlag.DECLARATION);
     super.visitModuleDeclaration(node);
   }
 
-  private addVariable(node: ts.VariableDeclaration | ts.ParameterDeclaration | ts.BindingElement) {
+  private addVariable(node: ts.VariableDeclaration | ts.ParameterDeclaration | ts.BindingElement | ts.PropertyDeclaration) {
     const declarationName = node.name;
     if (declarationName.kind === ts.SyntaxKind.Identifier) {
       let usageFlags = UsageFlag.DECLARATION;
@@ -125,8 +131,7 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
         node.initializer ||
         is(node, ts.SyntaxKind.Parameter) ||
         (node.parent && is(node.parent, ts.SyntaxKind.ObjectBindingPattern, ts.SyntaxKind.ArrayBindingPattern))
-      )
-        usageFlags += UsageFlag.WRITE;
+      ) usageFlags += UsageFlag.WRITE;
       this.registerUsageIfMissing(declarationName, usageFlags);
     } else if (declarationName.kind === ts.SyntaxKind.ArrayBindingPattern) {
       declarationName.elements.forEach(element => {
