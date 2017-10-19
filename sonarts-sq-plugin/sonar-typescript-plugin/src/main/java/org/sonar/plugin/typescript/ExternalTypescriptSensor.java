@@ -85,6 +85,13 @@ public class ExternalTypescriptSensor implements Sensor {
   public void execute(SensorContext sensorContext) {
     File deployDestination = sensorContext.fileSystem().workDir();
     File typescriptLocation = getTypescriptLocation(sensorContext.fileSystem().baseDir());
+    if (typescriptLocation != null) {
+      LOG.debug("TypeScript compiler is found in this directory " + typescriptLocation.getAbsolutePath());
+      LOG.debug("It will be used for analysis of typescript files");
+    } else {
+      LOG.error("No TypeScript compiler found in your project, analysis of typescript files is aborted");
+      return;
+    }
 
     ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination);
 
@@ -94,13 +101,15 @@ public class ExternalTypescriptSensor implements Sensor {
     analyze(inputFiles, sensorContext, typeScriptRules, executableBundle, typescriptLocation);
   }
 
-  private void analyze(Iterable<InputFile> inputFiles, SensorContext sensorContext, TypeScriptRules typeScriptRules, ExecutableBundle executableBundle, @Nullable File typescriptLocation) {
+  private void analyze(
+    Iterable<InputFile> inputFiles, SensorContext sensorContext, TypeScriptRules typeScriptRules, ExecutableBundle executableBundle, File typescriptLocation) {
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
     Multimap<String, InputFile> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
 
     for (String tsconfigPath : inputFileByTsconfig.keySet()) {
       Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
+      LOG.debug(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
 
       SonarTSRunnerCommand command = executableBundle.getSonarTsRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
       SonarTSRunnerResponse[] responses = executeExternalRunner(command, typescriptLocation);
@@ -155,7 +164,7 @@ public class ExternalTypescriptSensor implements Sensor {
     return null;
   }
 
-  private static SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, @Nullable File typescriptLocation) {
+  private static SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, File typescriptLocation) {
     String commandLine = command.commandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens());
     setNodePath(typescriptLocation, processBuilder);
@@ -183,12 +192,10 @@ public class ExternalTypescriptSensor implements Sensor {
 
   }
 
-  private static void setNodePath(@Nullable File typescriptLocation, ProcessBuilder processBuilder) {
-    if (typescriptLocation != null) {
-      Map<String, String> environment = processBuilder.environment();
-      LOG.info("Setting 'NODE_PATH' to " + typescriptLocation);
-      environment.put("NODE_PATH", typescriptLocation.getAbsolutePath());
-    }
+  private static void setNodePath(File typescriptLocation, ProcessBuilder processBuilder) {
+    Map<String, String> environment = processBuilder.environment();
+    LOG.debug("Setting 'NODE_PATH' to " + typescriptLocation);
+    environment.put("NODE_PATH", typescriptLocation.getAbsolutePath());
   }
 
   private void saveCpd(SensorContext sensorContext, CpdToken[] cpdTokens, InputFile file) {
