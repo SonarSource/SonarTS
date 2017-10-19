@@ -123,7 +123,9 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     super.visitModuleDeclaration(node);
   }
 
-  private addVariable(node: ts.VariableDeclaration | ts.ParameterDeclaration | ts.BindingElement | ts.PropertyDeclaration) {
+  private addVariable(
+    node: ts.VariableDeclaration | ts.ParameterDeclaration | ts.BindingElement | ts.PropertyDeclaration,
+  ) {
     const declarationName = node.name;
     if (declarationName.kind === ts.SyntaxKind.Identifier) {
       let usageFlags = UsageFlag.DECLARATION;
@@ -131,7 +133,8 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
         node.initializer ||
         is(node, ts.SyntaxKind.Parameter) ||
         (node.parent && is(node.parent, ts.SyntaxKind.ObjectBindingPattern, ts.SyntaxKind.ArrayBindingPattern))
-      ) usageFlags += UsageFlag.WRITE;
+      )
+        usageFlags += UsageFlag.WRITE;
       this.registerUsageIfMissing(declarationName, usageFlags);
     } else if (declarationName.kind === ts.SyntaxKind.ArrayBindingPattern) {
       declarationName.elements.forEach(element => {

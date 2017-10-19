@@ -192,7 +192,7 @@ export function findChild(node: ts.Node, kind: ts.SyntaxKind): ts.Node {
 }
 
 export function accessModifier(declaration: ts.MethodDeclaration | ts.ParameterDeclaration | ts.AccessorDeclaration): ts.Modifier | undefined {
-  if(declaration.modifiers) {
+  if (declaration.modifiers) {
     return declaration.modifiers.find(modifier => is(modifier, ...ACCESS_MODIFIERS));
   } else {
     return;
@@ -200,14 +200,14 @@ export function accessModifier(declaration: ts.MethodDeclaration | ts.ParameterD
 }
 
 export function isReadonly(declaration: ts.MethodDeclaration | ts.ParameterDeclaration): ts.Modifier | undefined {
-  if(declaration.modifiers) {
+  if (declaration.modifiers) {
     return declaration.modifiers.find(modifier => is(modifier, ts.SyntaxKind.ReadonlyKeyword));
   } else {
     return;
   }
 }
 
-export function constructorOf(clazz : ts.ClassDeclaration | ts.ClassExpression): ts.ConstructorDeclaration | undefined {
+export function constructorOf(clazz: ts.ClassDeclaration | ts.ClassExpression): ts.ConstructorDeclaration | undefined {
   return clazz.members.find(member => member.kind === ts.SyntaxKind.Constructor) as ts.ConstructorDeclaration;
 }
 
@@ -244,8 +244,4 @@ export const COMPOUND_ASSIGNMENTS = [
   Kind.GreaterThanGreaterThanEqualsToken,
 ];
 
-export const ACCESS_MODIFIERS = [
-  Kind.PublicKeyword,
-  Kind.PrivateKeyword,
-  Kind.ProtectedKeyword
-];
+export const ACCESS_MODIFIERS = [Kind.PublicKeyword, Kind.PrivateKeyword, Kind.ProtectedKeyword];

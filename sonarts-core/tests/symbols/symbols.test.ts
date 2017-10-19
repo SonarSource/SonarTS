@@ -102,7 +102,9 @@ it("read-writes", () => {
   expect(symbols.getUsage(getNode(sourceFile, "rw", 65)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "rw", 66)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
   expect(symbols.getUsage(getNode(sourceFile, "rw", 67)).flags).toBe(UsageFlag.READ | UsageFlag.WRITE);
-  expect(symbols.getUsage(getNode(sourceFile, "propertyDeclarationInConstructor")).flags).toBe(UsageFlag.DECLARATION | UsageFlag.WRITE);
+  expect(symbols.getUsage(getNode(sourceFile, "propertyDeclarationInConstructor")).flags).toBe(
+    UsageFlag.DECLARATION | UsageFlag.WRITE,
+  );
 });
 
 it("same symbol for shorthand property", () => {
