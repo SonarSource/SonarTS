@@ -68,6 +68,7 @@ import org.sonar.plugin.typescript.rules.NoEval;
 import org.sonar.plugin.typescript.rules.NoForInArray;
 import org.sonar.plugin.typescript.rules.NoIdenticalConditions;
 import org.sonar.plugin.typescript.rules.NoIdenticalExpressions;
+import org.sonar.plugin.typescript.rules.NoIdenticalFunctions;
 import org.sonar.plugin.typescript.rules.NoIgnoredReturn;
 import org.sonar.plugin.typescript.rules.NoInconsistentReturn;
 import org.sonar.plugin.typescript.rules.NoInferrableTypes;
@@ -212,6 +213,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoForInArray.class)
       .add(NoIdenticalConditions.class)
       .add(NoIdenticalExpressions.class)
+      .add(NoIdenticalFunctions.class)
       .add(NoInferrableTypes.class)
       .add(NoIgnoredReturn.class)
       .add(NoInconsistentReturn.class)

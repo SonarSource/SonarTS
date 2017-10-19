@@ -10,6 +10,7 @@
     "no-empty-nested-blocks": false,
     "no-identical-conditions": true,
     "no-identical-expressions": true,
+    "no-identical-functions": true,
     "no-ignored-return": true,
     "no-inconsistent-return": false,
     "no-misleading-array-reverse": true,
