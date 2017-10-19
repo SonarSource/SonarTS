@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { is, FUNCTION_LIKE, lineAndCharacter, getChild } from "../utils/navigation";
+import { is, FUNCTION_LIKE, lineAndCharacter, findChild } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -66,15 +66,15 @@ export class Rule extends tslint.Rules.AbstractRule {
 
   private static issueNode(functionNode: ts.FunctionLikeDeclaration) {
     if (is(functionNode, ts.SyntaxKind.FunctionExpression, ts.SyntaxKind.FunctionDeclaration)) {
-      return getChild(functionNode, ts.SyntaxKind.FunctionKeyword);
+      return findChild(functionNode, ts.SyntaxKind.FunctionKeyword);
     }
 
     if (is(functionNode, ts.SyntaxKind.MethodDeclaration, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor)) {
-      return getChild(functionNode, ts.SyntaxKind.Identifier);
+      return findChild(functionNode, ts.SyntaxKind.Identifier);
     }
 
     if (is(functionNode, ts.SyntaxKind.Constructor)) {
-      return getChild(functionNode, ts.SyntaxKind.ConstructorKeyword);
+      return findChild(functionNode, ts.SyntaxKind.ConstructorKeyword);
     }
 
     if (is(functionNode, ts.SyntaxKind.ArrowFunction)) {

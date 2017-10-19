@@ -182,7 +182,7 @@ export function descendants(node: ts.Node): ts.Node[] {
   return collectedDescendants;
 }
 
-export function getChild(node: ts.Node, kind: ts.SyntaxKind): ts.Node {
+export function findChild(node: ts.Node, kind: ts.SyntaxKind): ts.Node {
   const child = node.getChildren().find(child => is(child, kind));
   if (child) {
     return child;
