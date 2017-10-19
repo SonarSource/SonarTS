@@ -231,6 +231,16 @@ public class ExternalTypescriptSensorTest {
     assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
+  @Test
+  public void should_stop_analysis_if_no_typescript_found() throws Exception {
+    SensorContextTester sensorContext = SensorContextTester.create(new File(BASE_DIR, "dirWithoutTypeScript"));
+    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot());
+    TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"));
+    createSensor(testBundle).execute(sensorContext);
+
+    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("No TypeScript compiler found in your project, analysis of typescript files is aborted");
+  }
+
   @Test(timeout = 2000)
   public void should_not_deadlock_with_large_stdErr() throws Exception {
     TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/rulesDeadlock.js"));
