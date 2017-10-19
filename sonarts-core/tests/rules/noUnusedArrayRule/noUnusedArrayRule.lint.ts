@@ -1,6 +1,6 @@
 function nok() {
     let x = [1, 2];
-//      ^ {{Either use this array's contents or remove the array.}}
+//      ^ {{Either use this collection's contents or remove the collection.}}
 
 
     x = [];
@@ -13,24 +13,41 @@ function nok() {
 
 function nok2() {
     let arrayConstructor = new Array();
-//      ^^^^^^^^^^^^^^^^ {{Either use this array's contents or remove the array.}}
+//      ^^^^^^^^^^^^^^^^ {{Either use this collection's contents or remove the collection.}}
 
     arrayConstructor[1] = 42;
 }
 
 function nok3() {
     let arrayWithoutNew = Array();
-//      ^^^^^^^^^^^^^^^ {{Either use this array's contents or remove the array.}}
+//      ^^^^^^^^^^^^^^^ {{Either use this collection's contents or remove the collection.}}
 
     arrayWithoutNew[1] = 42;
 }
 
 function nok4() {
     let x: number[];
-//      ^ {{Either use this array's contents or remove the array.}}
+//      ^ {{Either use this collection's contents or remove the collection.}}
     x = new Array();
     x[1] = 42;
 }
+
+function nok5() {
+    let myMap = new Map();
+//      ^^^^^ {{Either use this collection's contents or remove the collection.}}
+    myMap.set(1, "foo1");
+    myMap.clear();
+}
+
+function nok6() {
+    let mySet = new Set();
+//      ^^^^^ {{Either use this collection's contents or remove the collection.}}
+    mySet.add("foo1");
+    mySet.delete("foo1");
+    mySet = new Set();
+}
+
+
 
 // OK
 
