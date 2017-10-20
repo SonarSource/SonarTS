@@ -66,10 +66,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     super.visitGetAccessor(accessor);
   }
 
-  private visitAccessor(
-    accessor: ts.MethodDeclaration | ts.AccessorDeclaration,
-    setterOrGetter: { type: string; name: string } | undefined,
-  ) {
+  private visitAccessor(accessor: ts.MethodDeclaration | ts.AccessorDeclaration, setterOrGetter: { type: string; name: string } | undefined) {
     if (!setterOrGetter) {
       return;
     }
@@ -91,16 +88,8 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     return accessor.name.getText().toLowerCase();
   }
 
-  private setterOrGetter(
-    method: ts.MethodDeclaration | ts.AccessorDeclaration,
-  ): { type: string; name: string } | undefined {
+  private setterOrGetter(method: ts.MethodDeclaration): { type: string; name: string } | undefined {
     const name = method.name.getText().toLowerCase();
-    if (method.kind === ts.SyntaxKind.SetAccessor) {
-      return { type: "setter", name };
-    }
-    if (method.kind === ts.SyntaxKind.GetAccessor) {
-      return { type: "getter", name };
-    }
     if (name.startsWith("set") || name.startsWith("Set")) {
       if (method.parameters.length === 1) {
         return { type: "setter", name: name.substring(3) };
