@@ -88,7 +88,7 @@ Thanks to the platform, SonarTS provides additional features:
 * Different metrics
 * More rules
 
-See full documentation [here](https://docs.sonarqube.org/display/PLUG/SonarTS).
+See the documentation [here](https://docs.sonarqube.org/display/PLUG/SonarTS) and example project [here](https://github.com/SonarSource/SonarTS-example/).
 
 Also available online on :cloud: [sonarcloud.io](https://sonarcloud.io/)
 
