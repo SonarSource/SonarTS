@@ -191,7 +191,9 @@ export function findChild(node: ts.Node, kind: ts.SyntaxKind): ts.Node {
   }
 }
 
-export function accessModifier(declaration: ts.MethodDeclaration | ts.ParameterDeclaration | ts.AccessorDeclaration): ts.Modifier | undefined {
+export function accessModifier(
+  declaration: ts.MethodDeclaration | ts.ParameterDeclaration | ts.AccessorDeclaration,
+): ts.Modifier | undefined {
   if (declaration.modifiers) {
     return declaration.modifiers.find(modifier => is(modifier, ...ACCESS_MODIFIERS));
   } else {

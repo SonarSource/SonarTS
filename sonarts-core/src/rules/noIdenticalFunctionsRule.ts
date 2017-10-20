@@ -50,7 +50,10 @@ export class Rule extends tslint.Rules.AbstractRule {
         const originalFunctionBlock = functionBlocks[j];
 
         if (areEquivalent(duplicatingFunctionBlock, originalFunctionBlock)) {
-          walker.addFailureAtNode(Rule.issueNode(duplicatingFunctionBlock.parent as ts.FunctionLikeDeclaration), Rule.message(originalFunctionBlock));
+          walker.addFailureAtNode(
+            Rule.issueNode(duplicatingFunctionBlock.parent as ts.FunctionLikeDeclaration),
+            Rule.message(originalFunctionBlock),
+          );
           break;
         }
       }
@@ -60,7 +63,8 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 
   private static message(functionBlock: ts.Block): string {
-    const lineOfOriginalFunction = lineAndCharacter(functionBlock.parent!.getStart(), functionBlock.getSourceFile()).line + 1;
+    const lineOfOriginalFunction =
+      lineAndCharacter(functionBlock.parent!.getStart(), functionBlock.getSourceFile()).line + 1;
     return `Update this function so that its implementation is not identical to the one on line ${lineOfOriginalFunction}.`;
   }
 
@@ -102,7 +106,8 @@ class Walker extends tslint.RuleWalker {
   private static isBigEnough(block: ts.Block) {
     if (block.statements.length > 0) {
       const firstLine = lineAndCharacter(block.statements[0].getStart(), block.getSourceFile()).line;
-      const lastLine = lineAndCharacter(block.statements[block.statements.length - 1].getEnd(), block.getSourceFile()).line;
+      const lastLine = lineAndCharacter(block.statements[block.statements.length - 1].getEnd(), block.getSourceFile())
+        .line;
       return lastLine - firstLine > 1;
     }
 

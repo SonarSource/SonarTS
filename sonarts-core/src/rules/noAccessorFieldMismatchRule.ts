@@ -92,7 +92,13 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       );
       accessorIsPublic = Walker.isPublic(accessor);
     }
-    if (accessorIsPublic && accessor.body && matchingField && Walker.bodyIsSimple(accessor.body, setterOrGetter.type) && !this.fieldIsUsed(accessor, matchingField)) {
+    if (
+      accessorIsPublic &&
+      accessor.body &&
+      matchingField &&
+      Walker.bodyIsSimple(accessor.body, setterOrGetter.type) &&
+      !this.fieldIsUsed(accessor, matchingField)
+    ) {
       this.addFailureAtNode(
         accessor.name,
         `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${matchingField.name!.getText()}'`,
@@ -170,7 +176,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       }
       return false;
     } else {
-      if(statement.kind === ts.SyntaxKind.ReturnStatement) {
+      if (statement.kind === ts.SyntaxKind.ReturnStatement) {
         const expression = (statement as ts.ReturnStatement).expression;
         if (expression) {
           return !!expression.getText().startsWith("this.");
