@@ -54,7 +54,7 @@ class NOK {
 
   public get y(): number {
 //           ^  {{Refactor this getter so that it actually refers to the property '_y'}}
-    return 1;
+    return this.z;
   }
 
   public set y(y: number) {
@@ -63,7 +63,7 @@ class NOK {
 
   public getY(): number {
 //       ^^^^  {{Refactor this getter so that it actually refers to the property '_y'}}
-    return 1;
+    return this.z;
   }
 
   public SetZ(z: string) {
@@ -83,11 +83,27 @@ class NOK {
 
 }
 
+const nokObj = {
+  x : 3,
+  _y : 1,
+
+  get y() {
+//    ^  {{Refactor this getter so that it actually refers to the property '_y'}}
+    return this.x;
+  },
+
+  setX(x: number) {
+//^^^^  {{Refactor this setter so that it actually refers to the property 'x'}}
+    this._y = x;
+  }
+
+}
+
 class Exceptions {
   private x: string;
   private y = "hello";
 
-  constructor(private z: number) {
+  constructor(private z: number, private _v: number) {
     
   }
 
@@ -110,62 +126,29 @@ class Exceptions {
   public setZ(y: string, someParam: number) { // Compliant, not a one-parameters setter
     this.z = 3;
   }
+
   public setY(x: string) // Compliant, overload
   public setY(y: string) {
     this.y = y;
   }
-}
 
+  public getZ() { // Compliant, does not match "return this.?;" pattern
+    this.setZ("",1);
+  }
 
-export class FilterOptions {
-  
-    private _filterErrors: boolean = false;
-    private _filterWarnings: boolean = false;
-    private _filterInfos: boolean = false;
-    private _filter: string = '';
-    private _completeFilter: string = '';
-  
-    constructor(filter: string = '') {
-      if (filter) {
-        this.parse(filter);
-      }
-    }
-  
-    public get filterErrors(): boolean {
-      return this._filterErrors;
-    }
-  
-    public get filterWarnings(): boolean {
-      return this._filterWarnings;
-    }
-  
-    public get filterInfos(): boolean {
-      return this._filterInfos;
-    }
-  
-    public get filter(): string {
-      return this._filter;
-    }
-  
-    public get completeFilter(): string {
-      return this._completeFilter;
-    }
-  
-    public hasFilters(): boolean {
-      return !!this._filter;
-    }
-  
-    private parse(filter: string) {
-      this._completeFilter = filter;
-      this._filter = filter.trim();
-      this._filterErrors = this.matches(this._filter, "Messages.MARKERS_PANEL_FILTER_ERRORS");
-      this._filterWarnings = this.matches(this._filter, "Messages.MARKERS_PANEL_FILTER_WARNINGS");
-      this._filterInfos = this.matches(this._filter, "Messages.MARKERS_PANEL_FILTER_INFOS");
-    }
-  
-    private matches(prefix: string, word: string): boolean {
-      let result = "";
-      return result && result.length > 0;
+  public set v(z:number) { // Compliant, does not match "this.? =" pattern
+    this.x;
+  }
+
+  public get v() { // Compliant, not a single return statement
+    if (this.z) {
+      return 1;
+    } else {
+      return this.z;
     }
   }
-  
+
+  public getV() { // Compliant, not a single return statement
+    return `v is ${this.z}`;
+  }
+}

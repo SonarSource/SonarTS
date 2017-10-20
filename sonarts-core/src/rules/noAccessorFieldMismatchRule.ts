@@ -66,22 +66,43 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     super.visitGetAccessor(accessor);
   }
 
-  private visitAccessor(accessor: ts.MethodDeclaration | ts.AccessorDeclaration, setterOrGetter: { type: string; name: string } | undefined) {
+  private visitAccessor(
+    accessor: ts.MethodDeclaration | ts.AccessorDeclaration,
+    setterOrGetter: { type: string; name: string } | undefined,
+  ) {
     if (!setterOrGetter) {
       return;
     }
-    const matchingField = Walker.matchingField(accessor, setterOrGetter.name);
-    if (Walker.isPublic(accessor) && accessor.body && matchingField && !this.fieldIsUsed(accessor, matchingField)) {
+
+    const containingStructure = nav.firstAncestor(accessor, [
+      ts.SyntaxKind.ClassDeclaration,
+      ts.SyntaxKind.ClassExpression,
+      ts.SyntaxKind.ObjectLiteralExpression,
+    ]) as ts.ClassDeclaration | ts.ClassExpression | ts.ObjectLiteralExpression;
+    let matchingField: Field | undefined;
+    let accessorIsPublic: boolean;
+    if (containingStructure.kind === ts.SyntaxKind.ObjectLiteralExpression) {
+      matchingField = Walker.matchingField(containingStructure.properties, [], setterOrGetter.name);
+      accessorIsPublic = true;
+    } else {
+      matchingField = Walker.matchingField(
+        containingStructure.members,
+        Walker.fieldsDeclaredInConstructorParameters(containingStructure),
+        setterOrGetter.name,
+      );
+      accessorIsPublic = Walker.isPublic(accessor);
+    }
+    if (accessorIsPublic && accessor.body && matchingField && Walker.bodyIsSimple(accessor.body, setterOrGetter.type) && !this.fieldIsUsed(accessor, matchingField)) {
       this.addFailureAtNode(
         accessor.name,
-        `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${matchingField.name.getText()}'`,
+        `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${matchingField.name!.getText()}'`,
       );
     }
   }
 
-  private static isPublic(method: ts.MethodDeclaration | ts.AccessorDeclaration) {
+  private static isPublic(method: ts.MethodDeclaration | ts.AccessorDeclaration): boolean {
     const modifier = nav.accessModifier(method);
-    return modifier && modifier.kind === ts.SyntaxKind.PublicKeyword;
+    return !!modifier && modifier.kind === ts.SyntaxKind.PublicKeyword;
   }
 
   private static getName(accessor: ts.AccessorDeclaration) {
@@ -103,19 +124,21 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private static matchingField(
-    method: ts.MethodDeclaration | ts.AccessorDeclaration,
+    members: Array<ts.ClassElement | ts.ObjectLiteralElement>,
+    constructorDeclaredParameters: Array<ts.ParameterDeclaration>,
     targetName: string,
-  ): ts.PropertyDeclaration | ts.ParameterDeclaration | undefined {
-    const containingClass = nav.firstAncestor(method, [
-      ts.SyntaxKind.ClassDeclaration,
-      ts.SyntaxKind.ClassExpression,
-    ]) as ts.ClassDeclaration | ts.ClassExpression;
-    if (!containingClass) return;
-    return containingClass.members
-      .filter(element => element.kind === ts.SyntaxKind.PropertyDeclaration)
-      .map(element => element as ts.PropertyDeclaration | ts.ParameterDeclaration)
-      .concat(Walker.fieldsDeclaredInConstructorParameters(containingClass))
-      .find(element => Walker.fieldNameMatches(element.name.getText(), targetName));
+  ): Field | undefined {
+    return members
+      .filter(
+        element =>
+          element.kind === ts.SyntaxKind.PropertyDeclaration ||
+          element.kind === ts.SyntaxKind.PropertyAssignment ||
+          element.kind === ts.SyntaxKind.ShorthandPropertyAssignment ||
+          element.kind === ts.SyntaxKind.JsxAttribute,
+      )
+      .map(element => element as Field)
+      .concat(constructorDeclaredParameters)
+      .find(element => !!element.name && Walker.fieldNameMatches(element.name.getText(), targetName));
   }
 
   private static fieldNameMatches(fieldName: string, targetName: string): boolean {
@@ -133,12 +156,33 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
   }
 
-  private fieldIsUsed(
-    method: ts.MethodDeclaration | ts.AccessorDeclaration,
-    field: ts.PropertyDeclaration | ts.ParameterDeclaration,
-  ): boolean {
+  private static bodyIsSimple(body: ts.Block, type: string): boolean {
+    if (body.statements.length > 1) {
+      return false;
+    }
+    if (body.statements.length == 0) {
+      return true;
+    }
+    const statement = body.statements[0];
+    if (type === "setter") {
+      if (statement.kind === ts.SyntaxKind.ExpressionStatement) {
+        return (statement as ts.ExpressionStatement).expression.kind === ts.SyntaxKind.BinaryExpression;
+      }
+      return false;
+    } else {
+      if(statement.kind === ts.SyntaxKind.ReturnStatement) {
+        const expression = (statement as ts.ReturnStatement).expression;
+        if (expression) {
+          return !!expression.getText().startsWith("this.");
+        }
+      }
+      return false;
+    }
+  }
+
+  private fieldIsUsed(method: ts.MethodDeclaration | ts.AccessorDeclaration, field: Field): boolean {
     const body = method.body;
-    const usage = this.symbols.getUsage(field.name);
+    const usage = this.symbols.getUsage(field.name!);
     if (usage && body) {
       return !!this.symbols.allUsages(usage.symbol).find(usage => usage.isUsedInside(body));
     } else {
@@ -146,3 +190,5 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
   }
 }
+
+type Field = ts.PropertyDeclaration | ts.ParameterDeclaration | ts.ObjectLiteralElement;
