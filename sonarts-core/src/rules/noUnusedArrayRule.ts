@@ -41,7 +41,7 @@ export class Rule extends tslint.Rules.TypedRule {
     Rule.isWritingMethodCall,
   ];
 
-  private static readonly MESSAGE = "Either use this array's contents or remove the array.";
+  private static readonly MESSAGE = "Either use this collection's contents or remove the collection.";
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
@@ -54,7 +54,7 @@ export class Rule extends tslint.Rules.TypedRule {
       .getSymbols()
 
       // get only symbols storing arrays
-      .filter(symbol => Rule.hasArrayType(symbol, program.getTypeChecker(), symbols))
+      .filter(symbol => Rule.hasCollectionType(symbol, program.getTypeChecker(), symbols))
 
       // filter out unused symbols
       .filter(symbol => symbols.allUsages(symbol).length > 1)
@@ -78,7 +78,10 @@ export class Rule extends tslint.Rules.TypedRule {
         // prettier-ignore
         const varDeclaration = firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.VariableDeclaration]) as ts.VariableDeclaration;
         if (varDeclaration) {
-          return !varDeclaration.initializer || Rule.isArrayLiteral(varDeclaration.initializer);
+          if (is(varDeclaration.parent!.parent, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement)) {
+            return false;
+          }
+          return !varDeclaration.initializer || Rule.isNewCollectionCreation(varDeclaration.initializer);
         }
         return true;
       })
@@ -118,7 +121,7 @@ export class Rule extends tslint.Rules.TypedRule {
       return (
         is(binaryExpression.operatorToken, ts.SyntaxKind.EqualsToken) &&
         binaryExpression.left === usage.node &&
-        Rule.isArrayLiteral(binaryExpression.right)
+        Rule.isNewCollectionCreation(binaryExpression.right)
       );
     }
 
@@ -153,6 +156,10 @@ export class Rule extends tslint.Rules.TypedRule {
       "sort",
       "splice",
       "unshift",
+      "clear",
+      "delete",
+      "set",
+      "add",
     ]);
 
     if (is(statement.expression, ts.SyntaxKind.CallExpression)) {
@@ -175,13 +182,17 @@ export class Rule extends tslint.Rules.TypedRule {
     return declarationUsage.node;
   }
 
-  private static hasArrayType(symbol: ts.Symbol, typeChecker: ts.TypeChecker, symbols: SymbolTable): boolean {
+  private static hasCollectionType(symbol: ts.Symbol, typeChecker: ts.TypeChecker, symbols: SymbolTable): boolean {
     const usage = symbols.allUsages(symbol)[0];
     const type = typeChecker.getTypeAtLocation(usage.node);
-    return !!type.symbol && type.symbol.name === "Array";
+    if (type.symbol) {
+      const typeName = type.symbol.name;
+      return Rule.isCollectionName(typeName);
+    }
+    return false;
   }
 
-  private static isArrayLiteral(node: ts.Node): boolean {
+  private static isNewCollectionCreation(node: ts.Node): boolean {
     if (is(node, ts.SyntaxKind.ArrayLiteralExpression)) {
       return true;
     }
@@ -191,9 +202,30 @@ export class Rule extends tslint.Rules.TypedRule {
     }
 
     if (is(node, ts.SyntaxKind.NewExpression)) {
-      return (node as ts.NewExpression).expression.getText() === "Array";
+      const constructorName = (node as ts.NewExpression).expression.getText();
+      return Rule.isCollectionName(constructorName);
     }
 
     return false;
+  }
+
+  private static isCollectionName(str: string): boolean {
+    const collections = new Set([
+      "Array",
+      "Int8Array",
+      "Uint8Array",
+      "Uint8ClampedArray",
+      "Int16Array",
+      "Uint16Array",
+      "Int32Array",
+      "Uint32Array",
+      "Float32Array",
+      "Float64Array",
+      "Set",
+      "Map",
+      "WeakSet",
+      "WeakMap",
+    ]);
+    return collections.has(str);
   }
 }
