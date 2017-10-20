@@ -1,0 +1,4 @@
+src/vscode/src/vs/platform/telemetry/common/telemetryUtils.ts: 43
+src/vscode/src/vs/editor/contrib/codelens/browser/codelens.ts: 165
+src/vscode/src/vs/editor/contrib/hover/browser/hoverWidgets.ts: 81
+src/vscode/src/vs/workbench/parts/markers/common/markersModel.ts: 100

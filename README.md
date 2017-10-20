@@ -9,6 +9,7 @@ How does it work?
 
 ## Rules
 
+* Getters and setters should access the expected fields ([`no-accessor-field-mismatch`])
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
 * `delete` should not be used on arrays ([`no-array-delete`])
 * Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
@@ -34,6 +35,7 @@ How does it work?
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 
+[`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
 [`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
 [`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
 [`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
