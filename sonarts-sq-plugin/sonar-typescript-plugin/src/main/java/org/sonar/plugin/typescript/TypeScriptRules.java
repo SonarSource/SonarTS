@@ -48,6 +48,7 @@ import org.sonar.plugin.typescript.rules.Indent;
 import org.sonar.plugin.typescript.rules.LabelPosition;
 import org.sonar.plugin.typescript.rules.MaxFileLineCount;
 import org.sonar.plugin.typescript.rules.MaxLineLength;
+import org.sonar.plugin.typescript.rules.NoAccessorFieldMismatch;
 import org.sonar.plugin.typescript.rules.NoAllDuplicatedBranches;
 import org.sonar.plugin.typescript.rules.NoAngleBracketTypeAssertion;
 import org.sonar.plugin.typescript.rules.NoAny;
@@ -193,6 +194,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(LabelPosition.class)
       .add(MaxFileLineCount.class)
       .add(MaxLineLength.class)
+      .add(NoAccessorFieldMismatch.class)
       .add(NoAllDuplicatedBranches.class)
       .add(NoAngleBracketTypeAssertion.class)
       .add(NoAny.class)
