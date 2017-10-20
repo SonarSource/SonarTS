@@ -47,6 +47,18 @@ function nok6() {
     mySet = new Set();
 }
 
+function nok7() {
+    let mySet = new WeakSet();
+//      ^^^^^ {{Either use this collection's contents or remove the collection.}}
+    mySet.add({});
+    mySet.delete({});
+}
+
+function nok8() {
+    let array = new Uint16Array(2);
+//      ^^^^^ {{Either use this collection's contents or remove the collection.}}
+    array[1] = 43;
+}
 
 
 // OK

@@ -187,7 +187,7 @@ export class Rule extends tslint.Rules.TypedRule {
     const type = typeChecker.getTypeAtLocation(usage.node);
     if (type.symbol) {
       const typeName = type.symbol.name;
-      return Rule.isArrayMapOrSet(typeName);
+      return Rule.isCollectionName(typeName);
     }
     return false;
   }
@@ -203,13 +203,29 @@ export class Rule extends tslint.Rules.TypedRule {
 
     if (is(node, ts.SyntaxKind.NewExpression)) {
       const constructorName = (node as ts.NewExpression).expression.getText();
-      return Rule.isArrayMapOrSet(constructorName);
+      return Rule.isCollectionName(constructorName);
     }
 
     return false;
   }
 
-  private static isArrayMapOrSet(str: string): boolean {
-    return str === "Array" || str === "Set" || str === "Map"
+  private static isCollectionName(str: string): boolean {
+    const collections = new Set([
+      "Array",
+      "Int8Array",
+      "Uint8Array",
+      "Uint8ClampedArray",
+      "Int16Array",
+      "Uint16Array",
+      "Int32Array",
+      "Uint32Array",
+      "Float32Array",
+      "Float64Array",
+      "Set",
+      "Map",
+      "WeakSet",
+      "WeakMap",
+    ]);
+    return collections.has(str);
   }
 }
