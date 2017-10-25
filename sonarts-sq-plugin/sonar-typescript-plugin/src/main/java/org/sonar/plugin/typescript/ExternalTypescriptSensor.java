@@ -177,7 +177,6 @@ public class ExternalTypescriptSensor implements Sensor {
       OutputStreamWriter writerToSonar = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
       writerToSonar.write(command.toJsonRequest());
       writerToSonar.close();
-      process.waitFor();
       try (InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)) {
         SonarTSRunnerResponse[] responses = new Gson().fromJson(inputStreamReader, SonarTSRunnerResponse[].class);
         if (responses == null) {

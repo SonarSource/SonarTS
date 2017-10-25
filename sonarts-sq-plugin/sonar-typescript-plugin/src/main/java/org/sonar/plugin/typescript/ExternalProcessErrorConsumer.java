@@ -41,7 +41,7 @@ public class ExternalProcessErrorConsumer {
   public final void consumeStdError(Process process) {
     final ExecutorService errorConsumer = Executors.newSingleThreadExecutor();
     errorConsumer.submit(() -> {
-      try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+      try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF8"))) {
         readErrors(errorReader);
       } catch (IOException e) {
         LOG.error("Error while reading error stream", e);
