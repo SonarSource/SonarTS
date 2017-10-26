@@ -166,7 +166,7 @@ public class ExternalTypescriptSensorTest {
     sensor.execute(sensorContext);
 
     assertThat(sensorContext.allIssues()).hasSize(0);
-    String errorMessage = logTester.logs(LoggerLevel.ERROR).get(0);
+    String errorMessage = logTester.logs(LoggerLevel.ERROR).get(1);
 
     assertThat(errorMessage).contains("returned an empty output. Run with -X for more information");
     assertThat(logTester.logs().get(logTester.logs().size() - 1)).contains("foo/file.ts");
@@ -268,7 +268,7 @@ public class ExternalTypescriptSensorTest {
 
     noSonarFilter = mock(NoSonarFilter.class);
     CheckFactory checkFactory = new CheckFactory(new TestActiveRules("S1751", "S113"));
-    return new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, checkFactory);
+    return new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, checkFactory, new LineTrimmingExternalProcessErrorConsumer());
   }
 
   private DefaultInputFile createTestInputFile(SensorContextTester sensorContext) {

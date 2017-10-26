@@ -19,24 +19,24 @@
  */
 package org.sonar.plugin.typescript;
 
-import org.junit.Test;
-import org.sonar.api.Plugin;
-import org.sonar.api.SonarQubeSide;
-import org.sonar.api.SonarRuntime;
-import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.utils.Version;
+import java.io.BufferedReader;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class LineTrimmingExternalProcessErrorConsumer extends ExternalProcessErrorConsumer {
 
-public class TypeScriptPluginTest {
+  private static final Logger LOG = Loggers.get(LineTrimmingExternalProcessErrorConsumer.class);
 
-  @Test
-  public void count_extensions_with_5_6() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(5, 6), SonarQubeSide.SCANNER);
-    Plugin.Context context = new Plugin.Context(runtime);
-    Plugin underTest = new TypeScriptPlugin();
-    underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(10);
+  private int trimmingLimit = 100;
+
+  @Override
+  protected void readErrors(BufferedReader errorReader) {
+    errorReader.lines().forEach(line -> {
+      if (line.length() > trimmingLimit) {
+        LOG.error(line.substring(0, trimmingLimit - 1) + "...");
+      } else {
+        LOG.error(line);
+      }
+    });
   }
-
 }

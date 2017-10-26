@@ -40,6 +40,7 @@ public class TypeScriptPlugin implements Plugin {
   public void define(Context context) {
     context.addExtensions(
       new SonarTSCoreBundleFactory(/* absolute location inside jar */ "/sonarts-bundle.zip"),
+      ExternalProcessErrorConsumer.class,
       TypeScriptLanguage.class,
       ExternalTypescriptSensor.class,
       SonarWayProfile.class,

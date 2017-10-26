@@ -58,22 +58,24 @@ import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 public class ExternalTypescriptSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(ExternalTypescriptSensor.class);
-  private final CheckFactory checkFactory;
 
-  private ExecutableBundleFactory executableBundleFactory;
-  private NoSonarFilter noSonarFilter;
-  private FileLinesContextFactory fileLinesContextFactory;
+  private final CheckFactory checkFactory;
+  private final ExternalProcessErrorConsumer errorConsumer;
+  private final ExecutableBundleFactory executableBundleFactory;
+  private final NoSonarFilter noSonarFilter;
+  private final FileLinesContextFactory fileLinesContextFactory;
 
   /**
    * ExecutableBundleFactory is injected for testability purposes
    */
   public ExternalTypescriptSensor(
     ExecutableBundleFactory executableBundleFactory, NoSonarFilter noSonarFilter, FileLinesContextFactory fileLinesContextFactory,
-    CheckFactory checkFactory) {
+    CheckFactory checkFactory, ExternalProcessErrorConsumer errorConsumer) {
     this.executableBundleFactory = executableBundleFactory;
     this.noSonarFilter = noSonarFilter;
     this.fileLinesContextFactory = fileLinesContextFactory;
     this.checkFactory = checkFactory;
+    this.errorConsumer = errorConsumer;
   }
 
   @Override
@@ -164,31 +166,29 @@ public class ExternalTypescriptSensor implements Sensor {
     return null;
   }
 
-  private static SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, File typescriptLocation) {
+  private SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, File typescriptLocation) {
     String commandLine = command.commandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens());
     setNodePath(typescriptLocation, processBuilder);
-    processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT);
     LOG.debug(String.format("Starting external process `%s`", commandLine));
-    InputStreamReader inputStreamReader;
     try {
       Process process = processBuilder.start();
+      errorConsumer.consumeStdError(process);
       OutputStreamWriter writerToSonar = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
       writerToSonar.write(command.toJsonRequest());
       writerToSonar.close();
-      inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
+      try (InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)) {
+        SonarTSRunnerResponse[] responses = new Gson().fromJson(inputStreamReader, SonarTSRunnerResponse[].class);
+        if (responses == null) {
+          LOG.error(String.format("External process `%s` returned an empty output. Run with -X for more information", commandLine));
+          return new SonarTSRunnerResponse[0];
+        }
+        return responses;
+      }
 
     } catch (Exception e) {
       throw new IllegalStateException(String.format("Failed to run external process `%s`. Run with -X for more information", commandLine), e);
     }
-
-    SonarTSRunnerResponse[] responses = new Gson().fromJson(inputStreamReader, SonarTSRunnerResponse[].class);
-    if (responses == null) {
-      LOG.error(String.format("External process `%s` returned an empty output. Run with -X for more information", commandLine));
-
-      return new SonarTSRunnerResponse[0];
-    }
-    return responses;
 
   }
 
@@ -273,7 +273,6 @@ public class ExternalTypescriptSensor implements Sensor {
     }
     highlighting.save();
   }
-
 
   @Nullable
   private static File getTypescriptLocation(File currentDirectory) {
