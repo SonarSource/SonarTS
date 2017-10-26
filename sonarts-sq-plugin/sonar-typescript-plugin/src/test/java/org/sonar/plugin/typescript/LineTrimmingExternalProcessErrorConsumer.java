@@ -20,8 +20,12 @@
 package org.sonar.plugin.typescript;
 
 import java.io.BufferedReader;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class LineTrimmingExternalProcessErrorConsumer extends ExternalProcessErrorConsumer {
+
+  private static final Logger LOG = Loggers.get(LineTrimmingExternalProcessErrorConsumer.class);
 
   private int trimmingLimit = 100;
 

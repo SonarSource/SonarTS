@@ -35,8 +35,7 @@ import org.sonarsource.api.sonarlint.SonarLintSide;
 @SonarLintSide
 public class ExternalProcessErrorConsumer {
 
-  // Available to subclasses
-  protected static final Logger LOG = Loggers.get(ExternalProcessErrorConsumer.class);
+  private static final Logger LOG = Loggers.get(ExternalProcessErrorConsumer.class);
 
   public final void consumeStdError(Process process) {
     final ExecutorService errorConsumer = Executors.newSingleThreadExecutor();
