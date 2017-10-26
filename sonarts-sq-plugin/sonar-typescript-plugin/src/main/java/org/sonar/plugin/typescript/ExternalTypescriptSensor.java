@@ -168,7 +168,7 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, File typescriptLocation) {
     String commandLine = command.commandLine();
-    ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens()).redirectError(ProcessBuilder.Redirect.PIPE);
+    ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens());
     setNodePath(typescriptLocation, processBuilder);
     LOG.debug(String.format("Starting external process `%s`", commandLine));
     try {
