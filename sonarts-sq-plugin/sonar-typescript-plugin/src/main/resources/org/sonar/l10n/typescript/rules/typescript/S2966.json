@@ -9,5 +9,7 @@
   "tags": [
     "unpredictable"
   ],
-  "defaultSeverity": "Minor"
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-2966",
+  "sqKey": "S2966"
 }

@@ -10,5 +10,7 @@
     "es2015",
     "clumsy"
   ],
-  "defaultSeverity": "Minor"
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-3512",
+  "sqKey": "S3512"
 }

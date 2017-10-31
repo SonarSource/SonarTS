@@ -14,5 +14,7 @@
     "CWE",
     "OWASP Top Ten"
   ],
-  "defaultSeverity": "Critical"
+  "defaultSeverity": "Critical",
+  "ruleSpecification": "RSPEC-1523",
+  "sqKey": "S1523"
 }

@@ -9,5 +9,7 @@
   "tags": [
     "clumsy"
   ],
-  "defaultSeverity": "Minor"
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-4157",
+  "sqKey": "S4157"
 }

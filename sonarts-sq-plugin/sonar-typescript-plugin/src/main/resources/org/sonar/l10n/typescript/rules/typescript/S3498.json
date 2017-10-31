@@ -10,5 +10,7 @@
     "convention",
     "es2015"
   ],
-  "defaultSeverity": "Minor"
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-3498",
+  "sqKey": "S3498"
 }

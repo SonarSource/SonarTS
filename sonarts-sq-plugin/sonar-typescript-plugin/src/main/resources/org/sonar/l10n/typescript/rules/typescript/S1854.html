@@ -3,26 +3,26 @@ assigned a value that is not subsequently used. Calculating or retrieving a valu
 error in the code. Even if it's not an error, it is at best a waste of resources. Therefore all calculated values should be used.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
-function pow(a, b) {
+function pow(a: number, b: number) {
   if(b == 0) {
     return 0;
   }
-  var x = a;
-  for(var i = 1; i &lt; b; i++) {
-    x = x * a;  //Dead store because the last return statement should return x instead of returning a
+  let x = a;
+  for(let i = 1; i &lt; b; i++) {
+    x = a * i;  //Dead store because the last return statement should return x instead of returning a
   }
   return a;
 }
 </pre>
 <h2>Compliant Solution</h2>
 <pre>
-function pow(a, b) {
+function pow(a: number, b: number) {
   if(b == 0) {
     return 0;
   }
-  var x = a;
-  for(var i = 1; i &lt; b; i++) {
-    x = x * a;
+  let x = a;
+  for(let i = 1; i &lt; b; i++) {
+    x = a * i;
   }
   return x;
 }

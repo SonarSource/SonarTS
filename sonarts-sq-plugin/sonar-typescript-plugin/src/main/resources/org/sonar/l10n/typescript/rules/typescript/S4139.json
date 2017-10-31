@@ -9,5 +9,7 @@
   "tags": [
     
   ],
-  "defaultSeverity": "Major"
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-4139",
+  "sqKey": "S4139"
 }

@@ -14,5 +14,7 @@
   "standards": [
     "CWE"
   ],
-  "defaultSeverity": "Minor"
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-1874",
+  "sqKey": "S1874"
 }

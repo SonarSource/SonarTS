@@ -9,4 +9,10 @@ if (someMap.size &lt; 0) {...} // Noncompliant
 
 const result = someArray.length &gt;= 0;  // Noncompliant
 </pre>
+<h2>Compliant Solution</h2>
+<pre>
+if (!myList.isEmpty()) { ... }
+
+if (myArray.length &gt;= 42) { ... }
+</pre>
 

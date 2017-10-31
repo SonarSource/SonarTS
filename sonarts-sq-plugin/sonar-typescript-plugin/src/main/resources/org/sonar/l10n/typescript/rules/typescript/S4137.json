@@ -9,5 +9,7 @@
   "tags": [
     "confusing"
   ],
-  "defaultSeverity": "Minor"
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-4137",
+  "sqKey": "S4137"
 }

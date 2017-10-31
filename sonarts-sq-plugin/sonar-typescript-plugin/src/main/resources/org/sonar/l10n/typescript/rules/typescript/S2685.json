@@ -9,5 +9,7 @@
   "tags": [
     "obsolete"
   ],
-  "defaultSeverity": "Major"
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-2685",
+  "sqKey": "S2685"
 }

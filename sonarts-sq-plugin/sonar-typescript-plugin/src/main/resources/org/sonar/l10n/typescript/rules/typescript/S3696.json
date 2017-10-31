@@ -11,5 +11,7 @@
     "api-design",
     "misra"
   ],
-  "defaultSeverity": "Major"
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-3696",
+  "sqKey": "S3696"
 }

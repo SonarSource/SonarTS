@@ -9,5 +9,7 @@
   "tags": [
     
   ],
-  "defaultSeverity": "Blocker"
+  "defaultSeverity": "Blocker",
+  "ruleSpecification": "RSPEC-1451",
+  "sqKey": "S1451"
 }

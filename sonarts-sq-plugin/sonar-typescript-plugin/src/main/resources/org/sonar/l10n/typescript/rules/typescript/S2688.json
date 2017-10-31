@@ -9,5 +9,7 @@
   "tags": [
     "cert"
   ],
-  "defaultSeverity": "Major"
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-2688",
+  "sqKey": "S2688"
 }
