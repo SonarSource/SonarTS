@@ -1,8 +1,8 @@
 #!/bin/bash
+set -e
 
 cd sonarts-core
 
-yarn build
 yarn test
 yarn license-check
 npm pack
