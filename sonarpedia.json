@@ -1,0 +1,7 @@
+{
+  "rules-metadata-path": "./sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/typescript",
+  "languages": [
+    "TS"
+  ],
+  "latest-update": "2017-10-31T16:13:58.205Z"
+}

@@ -9,5 +9,7 @@
   "tags": [
     "confusing"
   ],
-  "defaultSeverity": "Critical"
+  "defaultSeverity": "Critical",
+  "ruleSpecification": "RSPEC-4123",
+  "sqKey": "S4123"
 }
