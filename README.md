@@ -114,19 +114,19 @@ to enable TypeScript support.
 
 To run unit tests:
 ```
-cd sonarts-code
+cd sonarts-core
 yarn test
 ```
 
 To run unit tests in watch mode:
 ```
-cd sonarts-code
+cd sonarts-core
 yarn test -- --watch
 ```
 
 And finally to run unit tests with coverage:
 ```
-cd sonarts-code
+cd sonarts-core
 yarn test -- --coverage
 ```
 When you run tests with coverage, the `coverage/` directory will be created at the root. You can
