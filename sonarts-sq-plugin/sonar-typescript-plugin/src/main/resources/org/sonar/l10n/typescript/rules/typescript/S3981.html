@@ -11,8 +11,10 @@ const result = someArray.length &gt;= 0;  // Noncompliant
 </pre>
 <h2>Compliant Solution</h2>
 <pre>
-if (!myList.isEmpty()) { ... }
+if (someSet.size &gt; 0) {...}
 
-if (myArray.length &gt;= 42) { ... }
+if (someMap.size == 0) {...}
+
+const result = someArray.length &gt; 0;
 </pre>
 
