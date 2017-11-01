@@ -4,6 +4,7 @@ echo "Running $TEST with SQ=$SQ_VERSION"
 
 case "$TEST" in
   ci)
+  ./install_npm_yarn.sh
   ./build.sh
   exit 0;
   ;;
