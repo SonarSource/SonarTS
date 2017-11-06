@@ -1,11 +1,11 @@
 #!/bin/bash
 
 #install npm
-node_home=node-v8.9.0-win-x64
+node_home=$(pwd)/node-v8.9.0-win-x64
 if [ ! -d "$node_home" ]; then
   echo "=== Install Node.js ===";
-  wget --no-check-certificate -O node.zip https://nodejs.org/dist/v8.9.0/node-v8.9.0-win-x64.zip;
-  unzip node.zip;
+  curl --insecure --silent --show-error -o node.zip https://nodejs.org/dist/v8.9.0/node-v8.9.0-win-x64.zip;
+  unzip -q node.zip;
   rm node.zip;
 fi
 
