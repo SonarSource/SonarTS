@@ -15,18 +15,13 @@
     "test": "jest --forceExit",
     "ruling": "ts-node tests/ruling/index.ts",
     "license-check": "license-check",
-    "format": "prettier --write --print-width 120 --trailing-comma all '{src,tests}/**/!(*.lint).ts'"
+    "format": "prettier --write '{src,tests}/**/!(*.lint).ts'"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SonarSource/SonarTS.git"
   },
-  "keywords": [
-    "sonarts",
-    "sonarqube",
-    "typescript",
-    "tslint"
-  ],
+  "keywords": ["sonarts", "sonarqube", "typescript", "tslint"],
   "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/SonarSource/SonarTS/issues"
@@ -61,15 +56,14 @@
     "webpack-dev-server": "^2.4.5"
   },
   "license-check-config": {
-    "src": [
-      "src/**/*.ts",
-      "tests/**/*.ts",
-      "!tests/**/*.lint.ts",
-      "!node_modules/**/*"
-    ],
+    "src": ["src/**/*.ts", "tests/**/*.ts", "!tests/**/*.lint.ts", "!node_modules/**/*"],
     "path": "HEADER",
     "blocking": true,
     "logInfo": false,
     "logError": true
+  },
+  "prettier": {
+    "printWidth": 120,
+    "trailingComma": "all"
   }
 }
