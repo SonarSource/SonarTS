@@ -36,6 +36,7 @@ How does it work?
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
+* Conditionally executed blocks should be reachable ([`no-unreachable-block`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
@@ -65,6 +66,7 @@ How does it work?
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
 [`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
+[`no-unreachable-block`]: ./sonarts-core/docs/rules/no-unreachable-block.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
 [`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md
 [`no-useless-cast`]: ./sonarts-core/docs/rules/no-useless-cast.md

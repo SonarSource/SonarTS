@@ -1,0 +1,16 @@
+src/desktop/app/src/lib/dispatcher/emoji-store.ts: 95
+src/desktop/app/src/lib/dispatcher/git-store.ts: 602,644,670
+src/desktop/app/src/lib/git/diff.ts: 208
+src/desktop/app/src/lib/patch-formatter.ts: 184
+src/desktop/app/src/shared-process/communication.ts: 24
+src/desktop/app/src/ui/list.tsx: 699
+src/desktop/app/src/ui/diff/diff-line-gutter.tsx: 224,233
+src/desktop/app/src/ui/diff/index.tsx: 121
+src/desktop/app/src/ui/branches/branch-list.tsx: 105
+src/desktop/app/src/ui/app-menu/app-menu.tsx: 290
+src/desktop/app/src/ui/app-menu/app-menu-bar.tsx: 194,338
+src/desktop/app/src/ui/add-repository/write-default-readme.ts: 18
+src/desktop/app/src/ui/add-repository/gitignores.ts: 16,51,68
+src/desktop/app/src/ui/add-repository/licenses.ts: 43,59,119
+src/desktop/app/src/ui/add-repository/git-attributes.ts: 13
+src/desktop/app/src/ui/acknowledgements/acknowledgements.tsx: 43

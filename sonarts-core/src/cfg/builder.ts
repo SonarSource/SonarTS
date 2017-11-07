@@ -27,7 +27,11 @@ function getLine(node: ts.Node): number {
   return node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line + 1;
 }
 
-export class CfgBuilder {
+export function build(statements: ts.NodeArray<ts.Statement>) {
+  return new CfgBuilder().build(statements);
+}
+
+class CfgBuilder {
   private end = new CfgEndBlock();
   private blocks: CfgBlock[] = [this.end];
   private breakables: Breakable[] = [];
