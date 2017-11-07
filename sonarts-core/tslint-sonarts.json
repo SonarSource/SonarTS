@@ -21,6 +21,7 @@
     "no-self-assignment": true,
     "no-unconditional-jump": true,
     "no-unenclosed-multiline-block": true,
+    "no-unreachable-block": true,
     "no-unthrown-error": true,
     "no-unused-array": true,
     "no-use-of-empty-return-value": true,

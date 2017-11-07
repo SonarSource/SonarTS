@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { CfgBuilder } from "./builder";
+import { build as buildCfg } from "./builder";
 
 export class ControlFlowGraph {
   private startBlock: CfgBlock;
@@ -43,7 +43,7 @@ export class ControlFlowGraph {
   }
 
   public static fromStatements(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph | undefined {
-    return new CfgBuilder().build(statements);
+    return buildCfg(statements);
   }
 
   public getBlocks(): CfgBlock[] {

@@ -28,6 +28,9 @@
     "url": "https://github.com/SonarSource/SonarTS/issues"
   },
   "homepage": "https://github.com/SonarSource/SonarTS",
+  "dependencies": {
+    "tsutils": "^2.12.2"
+  },
   "peerDependencies": {
     "tslint": "^5.1.0",
     "typescript": "^2.2"
