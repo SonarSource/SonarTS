@@ -20,7 +20,7 @@ node -v
 
 #install yarn
 echo "=== Install yarn ===";
-npm install -g yarn typescript ;
+npm install -g yarn;
 
 yarn -v
 
