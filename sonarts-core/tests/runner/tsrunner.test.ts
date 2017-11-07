@@ -18,9 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as path from "path";
-import * as ts from "typescript";
-import { processRequest } from "../../src/runner/tsrunner";
-import { parseString } from "../../src/utils/parser";
+import {processRequest} from "../../src/runner/processRequest";
 
 it("should process full input", () => {
   const filepath = path.join(__dirname, "./fixtures/runner_project/sample.lint.ts");
