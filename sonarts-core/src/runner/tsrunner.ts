@@ -30,17 +30,9 @@ process.stdin.on("data", (chunk: string) => {
 
 process.stdin.on("end", () => {
   const inputString = chunks.join("");
-  process.stdout.setEncoding("utf8");
-  process.stdout.write("[");
-
   const results = processRequest(inputString);
-  results.forEach((output, index) => {
-    process.stdout.write(JSON.stringify(output, null, " "));
-    if (index < results.length - 1) {
-      process.stdout.write(",");
-    }
-  });
 
-  process.stdout.write("]\n");
+  process.stdout.setEncoding("utf8");
+  process.stdout.write(JSON.stringify(results, null, " "));
 });
 

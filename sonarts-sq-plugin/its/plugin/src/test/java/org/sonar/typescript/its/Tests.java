@@ -48,7 +48,8 @@ import static java.util.Collections.singletonList;
   CoverageTest.class,
   FutureSyntaxTest.class,
   ComplexProjectStructureTest.class,
-  IssuesTest.class
+  IssuesTest.class,
+  FileWithBomTest.class
 })
 public class Tests {
 

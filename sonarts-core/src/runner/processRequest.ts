@@ -18,8 +18,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import {parseString} from "../utils/parser";
-import * as fs from "fs";
 import * as ts from "typescript";
 import * as tslint from "tslint";
 import * as rules from "./rules";
@@ -34,9 +32,7 @@ export function processRequest(inputString: string): object[] {
     let program = tslint.Linter.createProgram(input.tsconfig);
 
     let output = input.filepaths.map((filepath: string) => {
-        const scriptKind = filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-        const fileContent = fs.readFileSync(filepath, "utf8");
-        const sourceFile = parseString(fileContent, scriptKind);
+        const sourceFile = program.getSourceFile(filepath);
         const output: object = { filepath };
         sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
         Object.assign(output, rules.getIssues(input.rules, program, filepath));
