@@ -31,7 +31,7 @@ it("should run sonarts rules", () => {
   const issues = getIssues(
     [{ ruleName: "no-identical-expressions", ruleArguments: true }, { ruleName: "no-dead-store", ruleArguments: true }],
     program,
-    sampleFile,
+    program.getSourceFile(sampleFile),
   );
   expect(issues.issues.length).toBe(2);
 });

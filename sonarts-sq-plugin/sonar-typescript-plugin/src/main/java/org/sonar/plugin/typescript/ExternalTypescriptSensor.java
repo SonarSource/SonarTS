@@ -320,16 +320,16 @@ public class ExternalTypescriptSensor implements Sensor {
   private static class SonarTSRunnerResponse {
 
     String filepath;
-    Failure[] issues;
-    Highlight[] highlights;
-    CpdToken[] cpdTokens;
-    int[] ncloc;
-    int[] commentLines;
-    Integer[] nosonarLines;
-    int[] executableLines;
-    int functions;
-    int statements;
-    int classes;
+    Failure[] issues = {};
+    Highlight[] highlights = {};
+    CpdToken[] cpdTokens = {};
+    int[] ncloc = {};
+    int[] commentLines = {};
+    Integer[] nosonarLines = {};
+    int[] executableLines = {};
+    int functions = 0;
+    int statements = 0;
+    int classes = 0;
   }
 
   private static class Highlight {

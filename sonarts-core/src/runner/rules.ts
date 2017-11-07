@@ -23,17 +23,15 @@ import * as tslint from "tslint";
 
 const SONARTS_RULES_FOLDER = path.join(__dirname, "../../lib/rules");
 
-export function getIssues(ruleConfigs: tslint.IOptions[], program: ts.Program, filepath: string): { issues: any[] } {
+export function getIssues(
+  ruleConfigs: tslint.IOptions[],
+  program: ts.Program,
+  sourceFile: ts.SourceFile,
+): { issues: any[] } {
   const rules = tslint.loadRules(ruleConfigs, SONARTS_RULES_FOLDER);
-  const sourceFile = program.getSourceFile(filepath);
-  if (sourceFile) {
-    let issues: tslint.RuleFailure[] = [];
-    rules.forEach(rule => (issues = issues.concat(executeRule(rule, sourceFile, program))));
-    return { issues: issues.map(issue => issue.toJson()) };
-  } else {
-    console.error("Missing source file : " + filepath);
-    return { issues: [] };
-  }
+  let issues: tslint.RuleFailure[] = [];
+  rules.forEach(rule => (issues = issues.concat(executeRule(rule, sourceFile, program))));
+  return { issues: issues.map(issue => issue.toJson()) };
 }
 
 export function executeRule(rule: tslint.IRule, sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
