@@ -1,6 +1,6 @@
 {
   "name": "tslint-sonarts",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
   "bin": {
@@ -9,7 +9,8 @@
   "scripts": {
     "watch-cfg-viewer": "node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "clear": "rm -rf lib/*",
-    "prepublishOnly": "yarn build",
+    "prepack": "yarn build && cp ../README.md .",
+    "postpack": "rm README.md",
     "build": "yarn clear && yarn && tsc -p . && yarn build-cfg && webpack",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer/",
     "test": "jest --forceExit",
