@@ -4,8 +4,8 @@
 node_home=$(pwd)/node-v8.9.0-win-x64
 if [ ! -d "$node_home" ]; then
   echo "=== Install Node.js ===";
-  curl --insecure --silent --show-error -o node.zip https://nodejs.org/dist/v8.9.0/node-v8.9.0-win-x64.zip;
-  7z e node.zip;
+  curl --insecure --silent --show-error -o node.7z https://nodejs.org/dist/v8.9.0/node-v8.9.0-win-x64.7z;
+  7z x node.7z;
   rm node.zip;
 fi
 
