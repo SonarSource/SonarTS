@@ -157,6 +157,19 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
+  public void should_use_defaults_if_missing_data() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext);
+
+    ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().command(node, resourceScript("/mockSonarTSMissingData.js"), testInputFile.absolutePath()));
+    sensor.execute(sensorContext);
+
+    assertThat(sensorContext.allIssues()).hasSize(0);
+    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(0);
+    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(0);
+  }
+
+  @Test
   public void should_log_when_empty_sonarts_out() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);

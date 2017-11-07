@@ -18,13 +18,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as path from "path";
-import {processRequest} from "../../src/runner/processRequest";
+import { processRequest } from "../../src/runner/processRequest";
 
 it("should process full input", () => {
   const filepath = path.join(__dirname, "./fixtures/runner_project/sample.lint.ts");
   const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
-  const result = processRequest( JSON.stringify({filepaths: [path.normalize(filepath)], rules: [{ruleName: "no-empty"}], tsconfig: tsconfig}));
-  result.forEach(r => r.issues.forEach(i => i.name = path.normalize(i.name)));
+  const result = processRequest(inputForRequest(filepath, tsconfig));
+  result.forEach(r => r.issues.forEach(i => (i.name = path.normalize(i.name))));
 
   expect(result).toEqual([
     {
@@ -59,3 +59,29 @@ it("should process full input", () => {
     },
   ]);
 });
+
+it("should process files with BOM correctly", () => {
+  const filepath = path.join(__dirname, "./fixtures/runner_project/withBOM.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
+  const result = processRequest(inputForRequest(filepath, tsconfig));
+
+  const firstCpdToken = result[0].cpdTokens[0];
+  const firstSyntaxHighlightingToken = result[0].highlights[0];
+
+  expect(firstCpdToken).toEqual({ startLine: 1, startCol: 0, endLine: 1, endCol: 6, image: "import" });
+  expect(firstSyntaxHighlightingToken).toEqual({
+    startLine: 1,
+    startCol: 0,
+    endLine: 1,
+    endCol: 6,
+    textType: "keyword",
+  });
+});
+
+function inputForRequest(filepath: string, tsconfig: string): string {
+  return JSON.stringify({
+    filepaths: [path.normalize(filepath)],
+    rules: [{ ruleName: "no-empty" }],
+    tsconfig: tsconfig,
+  });
+}

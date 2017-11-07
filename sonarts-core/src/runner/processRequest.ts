@@ -18,8 +18,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import {parseString} from "../utils/parser";
-import * as fs from "fs";
 import * as ts from "typescript";
 import * as tslint from "tslint";
 import * as rules from "./rules";
@@ -30,17 +28,19 @@ import getCpdTokens from "./cpd";
 const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting, getMetrics, getCpdTokens];
 
 export function processRequest(inputString: string): object[] {
-    const input = JSON.parse(inputString);
-    let program = tslint.Linter.createProgram(input.tsconfig);
+  const input = JSON.parse(inputString);
+  let program = tslint.Linter.createProgram(input.tsconfig);
 
-    let output = input.filepaths.map((filepath: string) => {
-        const scriptKind = filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-        const fileContent = fs.readFileSync(filepath, "utf8");
-        const sourceFile = parseString(fileContent, scriptKind);
-        const output: object = { filepath };
-        sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
-        Object.assign(output, rules.getIssues(input.rules, program, filepath));
-        return output;
-    });
+  let output = input.filepaths.map((filepath: string) => {
+    const sourceFile = program.getSourceFile(filepath);
+    const output: object = { filepath };
+    if (sourceFile) {
+      sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
+      Object.assign(output, rules.getIssues(input.rules, program, sourceFile));
+    } else {
+      console.error(`Failed to find a source file matching path ${filepath} in program created with ${input.tsconfig}`);
+    }
     return output;
+  });
+  return output;
 }
