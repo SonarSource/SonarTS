@@ -25,9 +25,9 @@ import { parseString } from "../../src/utils/parser";
 it("should process full input", () => {
   const filepath = path.join(__dirname, "./fixtures/runner_project/sample.lint.ts");
   const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
-  const result = processRequest(
-    `{"filepaths": ["${filepath}"], "rules": [{"ruleName": "no-empty"}], "tsconfig": "${tsconfig}"}`,
-  );
+  const result = processRequest( JSON.stringify({filepaths: [path.normalize(filepath)], rules: [{ruleName: "no-empty"}], tsconfig: tsconfig}));
+  result.forEach(r => r.issues.forEach(i => i.name = path.normalize(i.name)));
+
   expect(result).toEqual([
     {
       filepath,
@@ -36,7 +36,7 @@ it("should process full input", () => {
           failure: "block is empty",
           startPosition: { line: 0, character: 12, position: 12 },
           endPosition: { line: 0, character: 14, position: 14 },
-          name: filepath,
+          name: path.normalize(filepath),
           ruleName: "no-empty",
           fix: undefined,
           ruleSeverity: "ERROR",
