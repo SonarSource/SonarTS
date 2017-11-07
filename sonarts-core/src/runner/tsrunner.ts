@@ -17,21 +17,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as fs from "fs";
-import * as ts from "typescript";
-import { parseString } from "../utils/parser";
-import getCpdTokens from "./cpd";
-import getHighlighting from "./highlighter";
-import getMetrics from "./metrics";
-import * as rules from "./rules";
-import * as tslint from "tslint";
+import {processRequest} from "./processRequest";
 
 const chunks: string[] = [];
 
 process.stdin.resume();
 process.stdin.setEncoding("utf8");
-
-const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting, getMetrics, getCpdTokens];
 
 process.stdin.on("data", (chunk: string) => {
   chunks.push(chunk);
@@ -39,7 +30,6 @@ process.stdin.on("data", (chunk: string) => {
 
 process.stdin.on("end", () => {
   const inputString = chunks.join("");
-
   process.stdout.setEncoding("utf8");
   process.stdout.write("[");
 
@@ -54,18 +44,3 @@ process.stdin.on("end", () => {
   process.stdout.write("]\n");
 });
 
-export function processRequest(inputString: string): object[] {
-  const input = JSON.parse(inputString);
-  let program = tslint.Linter.createProgram(input.tsconfig);
-
-  let output = input.filepaths.map((filepath: string) => {
-    const scriptKind = filepath.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-    const fileContent = fs.readFileSync(filepath, "utf8");
-    const sourceFile = parseString(fileContent, scriptKind);
-    const output: object = { filepath };
-    sensors.forEach(sensor => Object.assign(output, sensor(sourceFile)));
-    Object.assign(output, rules.getIssues(input.rules, program, filepath));
-    return output;
-  });
-  return output;
-}
