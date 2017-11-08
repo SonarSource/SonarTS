@@ -31,8 +31,10 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.config.Settings;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.sonar.plugin.typescript.TypeScriptPlugin;
 import org.sonar.plugin.typescript.TypeScriptRules;
 
 public class SonarTSCoreBundle implements ExecutableBundle {
@@ -41,23 +43,25 @@ public class SonarTSCoreBundle implements ExecutableBundle {
 
   // relative location inside sonarts-core bundle
   private static final String SONAR_LOCATION = "node_modules/tslint-sonarts/bin/tsrunner";
+  private final Settings settings;
 
   private File deployDestination;
   private String bundleLocation;
   private File tsMetricsExecutable;
 
-  private SonarTSCoreBundle(String bundleLocation, File deployDestination) {
+  private SonarTSCoreBundle(String bundleLocation, File deployDestination, Settings settings) {
     this.bundleLocation = bundleLocation;
     this.deployDestination = deployDestination;
+    this.settings = settings;
 
     File sonartsCoreDir = new File(deployDestination, "sonarts-bundle");
 
     this.tsMetricsExecutable = new File(sonartsCoreDir, SONAR_LOCATION);
   }
 
-  static SonarTSCoreBundle createAndDeploy(String bundleLocation, File deployDestination) {
+  static SonarTSCoreBundle createAndDeploy(String bundleLocation, File deployDestination, Settings settings) {
     LOG.debug(String.format("Deploying bundle from `%s` to `%s`", bundleLocation, deployDestination.getAbsolutePath()));
-    SonarTSCoreBundle sonarTSCoreBundle = new SonarTSCoreBundle(bundleLocation, deployDestination);
+    SonarTSCoreBundle sonarTSCoreBundle = new SonarTSCoreBundle(bundleLocation, deployDestination, settings);
     sonarTSCoreBundle.deploy();
 
     return sonarTSCoreBundle;
@@ -83,7 +87,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    */
   @Override
   public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
-    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, "node", this.tsMetricsExecutable.getAbsolutePath());
+    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, getNodeExecutable(), this.tsMetricsExecutable.getAbsolutePath());
     runnerCommand.setTsConfigPath(tsconfigPath);
     typeScriptRules.forEach(rule -> {
       if(rule.isEnabled()) {
@@ -91,6 +95,14 @@ public class SonarTSCoreBundle implements ExecutableBundle {
       }
     });
     return runnerCommand;
+  }
+
+  private String getNodeExecutable() {
+    String nodeExecutable = settings.getString(TypeScriptPlugin.NODE_EXECUTABLE);
+    if (nodeExecutable == null) {
+      nodeExecutable = "node";
+    }
+    return nodeExecutable;
   }
 
   private File copyTo(File targetPath) throws IOException {

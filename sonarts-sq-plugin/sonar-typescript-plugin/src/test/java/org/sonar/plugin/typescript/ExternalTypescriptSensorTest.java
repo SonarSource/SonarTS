@@ -39,6 +39,7 @@ import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
+import org.sonar.api.config.Settings;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
@@ -48,6 +49,7 @@ import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
 import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -320,7 +322,7 @@ public class ExternalTypescriptSensorTest {
     }
 
     @Override
-    public ExecutableBundle createAndDeploy(File deployDestination) {
+    public ExecutableBundle createAndDeploy(File deployDestination, Settings settings) {
       return new TestBundle();
     }
 

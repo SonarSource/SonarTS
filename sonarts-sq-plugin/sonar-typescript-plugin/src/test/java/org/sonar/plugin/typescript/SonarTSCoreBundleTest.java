@@ -20,6 +20,7 @@
 package org.sonar.plugin.typescript;
 
 import java.io.File;
+import java.util.Collections;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,7 +31,9 @@ import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.CheckFactory;
+import org.sonar.api.config.MapSettings;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
+import org.sonar.plugin.typescript.executable.SonarTSCoreBundle;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
 import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 
@@ -53,16 +56,13 @@ public class SonarTSCoreBundleTest {
 
   @Test
   public void should_create_command() throws Exception {
-    ExecutableBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION);
+    ExecutableBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, new MapSettings());
     File projectBaseDir = new File("/myProject");
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
     DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file2.ts").build();
 
-    ActiveRules activeRules = new TestActiveRules("S1854"); // no-dead-store
-    TypeScriptRules typeScriptRules = new TypeScriptRules(new CheckFactory(activeRules));
-
-    SonarTSRunnerCommand ruleCommand = bundle.getSonarTsRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), typeScriptRules);
+    SonarTSRunnerCommand ruleCommand = bundle.getSonarTsRunnerCommand(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), getTypeScriptRules());
     String ruleCommandContent = ruleCommand.toJsonRequest();
     assertThat(ruleCommand.commandLine()).isEqualTo("node " + new File(DEPLOY_DESTINATION, "sonarts-bundle/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
     assertThat(ruleCommandContent).contains("file1.ts");
@@ -71,11 +71,25 @@ public class SonarTSCoreBundleTest {
     assertThat(ruleCommandContent).contains("no-dead-store");
   }
 
+  private TypeScriptRules getTypeScriptRules() {
+    ActiveRules activeRules = new TestActiveRules("S1854"); // no-dead-store
+    return new TypeScriptRules(new CheckFactory(activeRules));
+  }
+
   @Test
   public void should_fail_when_bad_zip() throws Exception {
     expectedException.expect(IllegalStateException.class);
     expectedException.expectMessage("Failed to deploy SonarTS bundle (with classpath '/badZip.zip')");
-    new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION);
+    new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION, new MapSettings());
   }
 
+  @Test
+  public void should_execute_node_from_settings() {
+    MapSettings settings = new MapSettings();
+    settings.setProperty("sonar.typescript.node", "/usr/local/bin/node");
+    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings);
+    SonarTSRunnerCommand command = bundle.getSonarTsRunnerCommand("tsconfig", Collections.emptySet(), getTypeScriptRules());
+    String commandLine = command.commandLine();
+    assertThat(commandLine).startsWith("/usr/local/bin/node");
+  }
 }
