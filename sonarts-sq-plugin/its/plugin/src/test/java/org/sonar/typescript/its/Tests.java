@@ -45,6 +45,7 @@ import static java.util.Collections.singletonList;
   CpdTest.class,
   TsxTest.class,
   ProfileTest.class,
+  GlobalTypescriptModuleTest.class,
   CoverageTest.class,
   FutureSyntaxTest.class,
   ComplexProjectStructureTest.class,
@@ -82,7 +83,7 @@ public class Tests {
     return measures.size() == 1 ? measures.get(0) : null;
   }
 
-  private static void runNPMInstall(File projectDir) {
+  static void runNPMInstall(File projectDir) {
     Command command = Command.create(System2.INSTANCE.isOsWindows() ? "npm.cmd" : "npm");
     command.addArgument("install");
     command.setDirectory(projectDir);

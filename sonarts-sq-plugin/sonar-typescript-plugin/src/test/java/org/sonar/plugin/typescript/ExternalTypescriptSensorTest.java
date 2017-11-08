@@ -20,6 +20,7 @@
 package org.sonar.plugin.typescript;
 
 import com.google.common.collect.Sets;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -44,7 +45,9 @@ import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.api.utils.log.Loggers;
 import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
@@ -227,7 +230,7 @@ public class ExternalTypescriptSensorTest {
 
   @Test
   public void should_do_nothing_when_response_with_not_existing_file() throws Exception {
-    String testFile = new File(BASE_DIR, "not_exists.ts").getAbsolutePath();
+    new File(BASE_DIR, "not_exists.ts").getAbsolutePath();
     ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), "some/path/file.ts"));
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
@@ -236,22 +239,45 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_not_fail_when_stdErr_process_is_not_empty() throws Exception {
-    TestBundleFactory testBundle = new TestBundleFactory().command("cat", "not_existing_file");
-    SensorContextTester sensorContext = createSensorContext();
+  public void should_log_debug_if_no_local_typescript_found() throws Exception {
+    SensorContextTester sensorContext = SensorContextTester.create(new File(BASE_DIR, "dirWithoutTypeScript"));
+    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot());
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
+
+    TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath());
     createSensor(testBundle).execute(sensorContext);
 
+    assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
+    assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("Global one referenced in 'NODE_PATH' will be used");
+    assertThat(sensorContext.allIssues()).hasSize(1);
+  }
+
+  @Test
+  public void should_log_error_if_no_typescript_found() throws Exception {
+    SensorContextTester sensorContext = SensorContextTester.create(new File(BASE_DIR, "dirWithoutTypeScript"));
+    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot());
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
+
+    TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockTypescriptNotFound.js"), testInputFile.absolutePath());
+    createSensor(testBundle, new ExternalProcessErrorConsumer()).execute(sensorContext);
+
+    assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
+    assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("Global one referenced in 'NODE_PATH' will be used");
+    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Failed find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
     assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
   @Test
-  public void should_stop_analysis_if_no_typescript_found() throws Exception {
-    SensorContextTester sensorContext = SensorContextTester.create(new File(BASE_DIR, "dirWithoutTypeScript"));
-    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot());
-    TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"));
-    createSensor(testBundle).execute(sensorContext);
+  public void should_relog_error() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
-    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("No TypeScript compiler found in your project, analysis of typescript files is aborted");
+    TestBundleFactory testBundleFactory = new TestBundleFactory().command(node, resourceScript("/mockError.js"), testInputFile.absolutePath());
+    ExternalTypescriptSensor sensor = createSensor(testBundleFactory, new ExternalProcessErrorConsumer());
+
+    sensor.execute(sensorContext);
+    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Some error");
+    assertThat(sensorContext.allIssues()).hasSize(1);
   }
 
   @Test(timeout = 2000)
@@ -275,13 +301,17 @@ public class ExternalTypescriptSensorTest {
   }
 
   private ExternalTypescriptSensor createSensor(ExecutableBundleFactory executableBundleFactory) {
+    return createSensor(executableBundleFactory, new LineTrimmingExternalProcessErrorConsumer());
+  }
+
+  private ExternalTypescriptSensor createSensor(ExecutableBundleFactory executableBundleFactory, ExternalProcessErrorConsumer errorConsumer) {
     FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
     fileLinesContext = mock(FileLinesContext.class);
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
 
     noSonarFilter = mock(NoSonarFilter.class);
     CheckFactory checkFactory = new CheckFactory(new TestActiveRules("S1751", "S113"));
-    return new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, checkFactory, new LineTrimmingExternalProcessErrorConsumer());
+    return new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, checkFactory, errorConsumer);
   }
 
   private DefaultInputFile createTestInputFile(SensorContextTester sensorContext) {
@@ -299,7 +329,7 @@ public class ExternalTypescriptSensorTest {
 
   private DefaultInputFile createTestInputFile(SensorContextTester sensorContext, String relativePath) {
     DefaultInputFile testInputFile = new TestInputFileBuilder("moduleKey", relativePath)
-      .setModuleBaseDir(BASE_DIR.toPath())
+      .setModuleBaseDir(sensorContext.fileSystem().baseDir().toPath())
       .setType(Type.MAIN)
       .setLanguage(TypeScriptLanguage.KEY)
       .setCharset(StandardCharsets.UTF_8)
@@ -330,6 +360,24 @@ public class ExternalTypescriptSensorTest {
       public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
         return new SonarTSRunnerCommand(inputFiles, ruleCheckCommand);
       }
+    }
+  }
+
+  public static class LineTrimmingExternalProcessErrorConsumer extends ExternalProcessErrorConsumer {
+
+    private static final Logger LOG = Loggers.get(LineTrimmingExternalProcessErrorConsumer.class);
+
+    private int trimmingLimit = 100;
+
+    @Override
+    protected void readErrors(BufferedReader errorReader) {
+      errorReader.lines().forEach(line -> {
+        if (line.length() > trimmingLimit) {
+          LOG.error(line.substring(0, trimmingLimit - 1) + "...");
+        } else {
+          LOG.error(line);
+        }
+      });
     }
   }
 

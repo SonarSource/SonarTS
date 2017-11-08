@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.utils.log.Logger;
@@ -49,6 +50,17 @@ public class ExternalProcessErrorConsumer {
   }
 
   protected void readErrors(BufferedReader errorReader) {
-    errorReader.lines().forEach(LOG::error);
+    AtomicBoolean tsNotFound = new AtomicBoolean(false);
+    errorReader.lines().forEach(line -> {
+      if (line.contains("Error: Cannot find module 'typescript'")) {
+        tsNotFound.set(true);
+      }
+
+      LOG.error(line);
+    });
+
+    if (tsNotFound.get()) {
+      LOG.error("Failed find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
+    }
   }
 }
