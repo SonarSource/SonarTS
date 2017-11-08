@@ -1,8 +1,9 @@
 # SonarTS [![Build Status](https://travis-ci.org/SonarSource/SonarTS.svg?branch=master)](https://travis-ci.org/SonarSource/SonarTS) [![NPM version](https://badge.fury.io/js/tslint-sonarts.svg)](http://badge.fury.io/js/tslint-sonarts) [![Quality Gate](https://next.sonarqube.com/sonarqube/api/badges/gate?key=sonarts)](https://next.sonarqube.com/sonarqube/dashboard?id=sonarts) [![Coverage](https://next.sonarqube.com/sonarqube/api/badges/measure?key=sonarts&metric=coverage)](https://next.sonarqube.com/sonarqube/component_measures/domain/Coverage?id=sonarts)
 Static code analyzer for TypeScript detecting bugs and suspicious patterns in your code.
 
-**Follow [twitter](https://twitter.com/sonarjs)** <br>
-**[Try out SonarJS, our analyzer for JavaScript](https://github.com/SonarSource/sonarjs)**
+**Follow us on [twitter](https://twitter.com/sonarjs)** <br>
+
+*[To analyze pure JavaScript code, see SonarJS](https://github.com/SonarSource/sonarjs)*
 
 
 How does it work?
