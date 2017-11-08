@@ -10,11 +10,11 @@ Please describe your request
 
 **SonarTS version:** <!-- version of SonarJS where you have a bug --><br>
 **Node.js version:** <!-- version of Node.js in your environment --><br>
-**TypeScript version:** <!-- version of TypeScript in your environment --><br>
+**TypeScript version:** <!-- version of TypeScript in your project --><br>
 
 **SonarQube version:** <!-- version of SonarQube if relevant --><br>
-**SonarLint version and used IDE:** <!-- put if you use SonarTS in IDE --><br>
-**TSLint version:** <!-- version of TSLint if relevant --><br>
+**SonarLint version and used IDE:** <!-- fill if you use SonarTS in your IDE --><br>
+**TSLint version:** <!-- version of TSLint if you run SonarTS as a TSLint extension --><br>
 
 **Rule key:** <!-- key of the rule if you are bug reporting on a rule -->
 
