@@ -22,8 +22,10 @@ package org.sonar.plugin.typescript;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.utils.log.Logger;
@@ -40,7 +42,7 @@ public class ExternalProcessErrorConsumer {
   public final void consumeStdError(Process process) {
     final ExecutorService errorConsumer = Executors.newSingleThreadExecutor();
     errorConsumer.submit(() -> {
-      try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), "UTF8"))) {
+      try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
         readErrors(errorReader);
       } catch (IOException e) {
         LOG.error("Error while reading error stream", e);
@@ -49,6 +51,17 @@ public class ExternalProcessErrorConsumer {
   }
 
   protected void readErrors(BufferedReader errorReader) {
-    errorReader.lines().forEach(LOG::error);
+    AtomicBoolean tsNotFound = new AtomicBoolean(false);
+    errorReader.lines().forEach(line -> {
+      if (line.contains("Error: Cannot find module 'typescript'")) {
+        tsNotFound.set(true);
+      }
+
+      LOG.error(line);
+    });
+
+    if (tsNotFound.get()) {
+      LOG.error("Failed to find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
+    }
   }
 }

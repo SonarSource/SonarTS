@@ -49,6 +49,8 @@ public class ComplexProjectStructureTest {
     orchestrator.executeBuild(
       Tests.createScanner(projectLocation, PROJECT_KEY, projectLocation + "/module1/nestedDir" )
         .setSourceDirs("")
+        // to test that addition to this variable is performed correctly
+        .setEnvironmentVariable("NODE_PATH", "foobar")
         .setProperty("sonar.modules", "module1")
         .setProperty("module1.sonar.sources", "nestedDir/src")
         .setProfile("test-profile"));
