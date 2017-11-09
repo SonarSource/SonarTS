@@ -197,7 +197,7 @@ public class ExternalTypescriptSensor implements Sensor {
     if (localTypescript != null) {
       Map<String, String> environment = processBuilder.environment();
       LOG.debug("Setting 'NODE_PATH' to " + localTypescript);
-      environment.put("NODE_PATH", localTypescript.getAbsolutePath() + environment.getOrDefault("NODE_PATH", ""));
+      environment.put("NODE_PATH", localTypescript.getAbsolutePath() + File.pathSeparator + environment.getOrDefault("NODE_PATH", ""));
     }
   }
 
