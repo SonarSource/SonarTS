@@ -263,7 +263,7 @@ public class ExternalTypescriptSensorTest {
 
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("Global one referenced in 'NODE_PATH' will be used");
-    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Failed find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
+    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Failed to find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
     assertThat(sensorContext.allIssues()).hasSize(0);
   }
 

@@ -60,7 +60,7 @@ public class ExternalProcessErrorConsumer {
     });
 
     if (tsNotFound.get()) {
-      LOG.error("Failed find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
+      LOG.error("Failed to find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
     }
   }
 }
