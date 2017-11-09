@@ -95,7 +95,7 @@ public class ExternalTypescriptSensor implements Sensor {
       return;
     }
 
-    ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination);
+    ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination, sensorContext.settings());
 
     Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
 

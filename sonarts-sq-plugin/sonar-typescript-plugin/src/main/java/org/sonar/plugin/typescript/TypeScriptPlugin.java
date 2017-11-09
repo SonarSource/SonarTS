@@ -36,6 +36,9 @@ public class TypeScriptPlugin implements Plugin {
   public static final String LCOV_REPORT_PATHS = "sonar.typescript.lcov.reportPaths";
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
 
+  public static final String NODE_EXECUTABLE = "sonar.typescript.node";
+  private static final String NODE_EXECUTABLE_DEFAULT = "node";
+
   @Override
   public void define(Context context) {
     context.addExtensions(
@@ -64,6 +67,14 @@ public class TypeScriptPlugin implements Plugin {
         .subCategory(TESTS_AND_COVERAGE_SUBCATEGORY)
         .category(TYPESCRIPT_CATEGORY)
         .multiValues(true)
+        .build(),
+      PropertyDefinition.builder(NODE_EXECUTABLE)
+        .defaultValue(NODE_EXECUTABLE_DEFAULT)
+        .name("Node.js executable")
+        .description("Node.js executable used to run the analysis.")
+        .subCategory(GENERAL_SUBCATEGORY)
+        .category(TYPESCRIPT_CATEGORY)
+        .onQualifiers(Qualifiers.PROJECT)
         .build()
     );
   }
