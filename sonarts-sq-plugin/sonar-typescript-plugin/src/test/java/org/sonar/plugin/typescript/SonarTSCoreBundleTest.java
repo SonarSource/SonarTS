@@ -32,6 +32,8 @@ import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.config.MapSettings;
+import org.sonar.api.config.PropertyDefinition;
+import org.sonar.api.config.PropertyDefinitions;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundle;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
@@ -56,7 +58,7 @@ public class SonarTSCoreBundleTest {
 
   @Test
   public void should_create_command() throws Exception {
-    ExecutableBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, new MapSettings());
+    ExecutableBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings());
     File projectBaseDir = new File("/myProject");
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
@@ -71,6 +73,10 @@ public class SonarTSCoreBundleTest {
     assertThat(ruleCommandContent).contains("no-dead-store");
   }
 
+  private MapSettings getSettings() {
+    return new MapSettings(new PropertyDefinitions(PropertyDefinition.builder(TypeScriptPlugin.NODE_EXECUTABLE).defaultValue("node").build()));
+  }
+
   private TypeScriptRules getTypeScriptRules() {
     ActiveRules activeRules = new TestActiveRules("S1854"); // no-dead-store
     return new TypeScriptRules(new CheckFactory(activeRules));
@@ -80,12 +86,12 @@ public class SonarTSCoreBundleTest {
   public void should_fail_when_bad_zip() throws Exception {
     expectedException.expect(IllegalStateException.class);
     expectedException.expectMessage("Failed to deploy SonarTS bundle (with classpath '/badZip.zip')");
-    new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION, new MapSettings());
+    new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings());
   }
 
   @Test
   public void should_execute_node_from_settings() {
-    MapSettings settings = new MapSettings();
+    MapSettings settings = getSettings();
     settings.setProperty("sonar.typescript.node", "/usr/local/bin/node");
     SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings);
     SonarTSRunnerCommand command = bundle.getSonarTsRunnerCommand("tsconfig", Collections.emptySet(), getTypeScriptRules());

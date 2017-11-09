@@ -87,7 +87,8 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    */
   @Override
   public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
-    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, getNodeExecutable(), this.tsMetricsExecutable.getAbsolutePath());
+    String nodeExecutable = settings.getString(TypeScriptPlugin.NODE_EXECUTABLE);
+    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, nodeExecutable, this.tsMetricsExecutable.getAbsolutePath());
     runnerCommand.setTsConfigPath(tsconfigPath);
     typeScriptRules.forEach(rule -> {
       if(rule.isEnabled()) {
@@ -95,14 +96,6 @@ public class SonarTSCoreBundle implements ExecutableBundle {
       }
     });
     return runnerCommand;
-  }
-
-  private String getNodeExecutable() {
-    String nodeExecutable = settings.getString(TypeScriptPlugin.NODE_EXECUTABLE);
-    if (nodeExecutable == null) {
-      nodeExecutable = "node";
-    }
-    return nodeExecutable;
   }
 
   private File copyTo(File targetPath) throws IOException {
