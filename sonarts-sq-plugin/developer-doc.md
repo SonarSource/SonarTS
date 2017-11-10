@@ -9,4 +9,5 @@
 * If the rule provides configuration, override `configuration` as required
 * Generate the rule documentation with the Rule Api and add it to `sonar-typescript-plugin/src/main/resources/...../rules/typescript`
 * If the rule belongs to a default profile, add it to the relevant one(s)
+* Add rule class to `TypeScriptRules.getRuleClasses()`
 * Run all tests and fix the red ones (some tests are there explicitly to check some basic mistakes when creating a new rule)
