@@ -2,8 +2,8 @@
 set -euo pipefail
 
 cd sonarts-core
-yarn build
+npm pack
+yarn add typescript@${TS} --dev
 yarn test -- --coverage
 yarn license-check
-npm pack
 cd ..
