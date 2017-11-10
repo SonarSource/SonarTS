@@ -108,7 +108,7 @@ export function toTokens(node: ts.Node): ts.Node[] {
     }
 
     // skip jsDoc
-    if (currentNode.kind === ts.SyntaxKind.FirstJSDocTagNode) {
+    if (currentNode.kind >= ts.SyntaxKind.FirstJSDocNode && currentNode.kind <= ts.SyntaxKind.LastJSDocNode) {
       continue;
     }
 
