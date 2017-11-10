@@ -1,6 +1,6 @@
 # Symbolic Execution Design Notes for SonarTS
 
-* The execution tree is currently visited depth-first and it's not using a worklist approach
+* The execution tree is currently visited depth-first and it's not currently using a worklist approach
 
 * Rules are invoked at the end of the full visit of the exploded graph
 ** During execution we collect all the program states for each program point
