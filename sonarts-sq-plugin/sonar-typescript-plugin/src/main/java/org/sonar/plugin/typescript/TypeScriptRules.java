@@ -82,6 +82,7 @@ import org.sonar.plugin.typescript.rules.NoMisusedNew;
 import org.sonar.plugin.typescript.rules.NoMultilineStringLiterals;
 import org.sonar.plugin.typescript.rules.NoNonNullAssertion;
 import org.sonar.plugin.typescript.rules.NoRequireImports;
+import org.sonar.plugin.typescript.rules.NoReturnAwait;
 import org.sonar.plugin.typescript.rules.NoSameLineConditional;
 import org.sonar.plugin.typescript.rules.NoSelfAssignment;
 import org.sonar.plugin.typescript.rules.NoShadowedVariable;
@@ -228,6 +229,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoMultilineStringLiterals.class)
       .add(NoNonNullAssertion.class)
       .add(NoRequireImports.class)
+      .add(NoReturnAwait.class)
       .add(NoSameLineConditional.class)
       .add(NoSelfAssignment.class)
       .add(NoShadowedVariable.class)

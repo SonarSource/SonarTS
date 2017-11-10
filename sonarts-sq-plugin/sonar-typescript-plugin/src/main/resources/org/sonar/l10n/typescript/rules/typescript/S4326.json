@@ -1,0 +1,15 @@
+{
+  "title": "Unnecessary \"await\" should be avoided",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "1min"
+  },
+  "tags": [
+    "redundant"
+  ],
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-4326",
+  "sqKey": "S4326"
+}
