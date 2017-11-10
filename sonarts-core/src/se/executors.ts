@@ -52,8 +52,11 @@ export function applyExecutors(element: ts.Node, state: ProgramState, program: t
 
 function identifier(identifier: ts.Identifier, state: ProgramState, program: ts.Program) {
   const symbol = program.getTypeChecker().getSymbolAtLocation(identifier);
-  const sv = state.sv(symbol) || createUnknownSymbolicValue();
-  return state.pushSV(sv);
+  if (symbol) {
+    const sv = state.sv(symbol) || createUnknownSymbolicValue();
+    return state.pushSV(sv);
+  }
+  return state;
 }
 
 function numeralLiteral(literal: ts.NumericLiteral, state: ProgramState, _program: ts.Program) {
@@ -82,6 +85,9 @@ function assign(
 ) {
   const { getSymbolAtLocation } = program.getTypeChecker();
   const variable = getSymbolAtLocation(variableIdentifier);
+  if (!variable) {
+    return state;
+  }
   let valueSV;
   if (value) {
     [valueSV, state] = state.popSV();

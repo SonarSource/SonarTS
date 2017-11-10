@@ -27,7 +27,7 @@ function getLine(node: ts.Node): number {
   return node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line + 1;
 }
 
-export function build(statements: ts.NodeArray<ts.Statement>) {
+export function build(statements: ts.Statement[]) {
   return new CfgBuilder().build(statements);
 }
 
@@ -36,7 +36,7 @@ class CfgBuilder {
   private blocks: CfgBlock[] = [this.end];
   private breakables: Breakable[] = [];
 
-  public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph | undefined {
+  public build(statements: ts.Statement[]): ControlFlowGraph | undefined {
     const current = this.createBlock();
     current.addSuccessor(this.end);
     try {
@@ -58,7 +58,7 @@ class CfgBuilder {
         return current;
 
       case SyntaxKind.Block:
-        return this.buildStatements(current, (statement as ts.Block).statements);
+        return this.buildStatements(current, Array.from((statement as ts.Block).statements));
 
       case SyntaxKind.ExpressionStatement:
         return this.buildExpression(current, (statement as ts.ExpressionStatement).expression);
@@ -349,7 +349,7 @@ class CfgBuilder {
     switchStatement.caseBlock.clauses.forEach(caseClause => {
       if (caseClause.kind === ts.SyntaxKind.DefaultClause) {
         defaultBlockEnd = this.createBlock();
-        defaultBlock = this.buildStatements(defaultBlockEnd, caseClause.statements);
+        defaultBlock = this.buildStatements(defaultBlockEnd, Array.from(caseClause.statements));
       }
     });
     let currentClauseStatementsStart: CfgBlock = afterSwitchBlock;
@@ -358,7 +358,7 @@ class CfgBuilder {
       if (caseClause.kind === ts.SyntaxKind.CaseClause) {
         currentClauseStatementsStart = this.buildStatements(
           this.createBlockPredecessorOf(currentClauseStatementsStart),
-          caseClause.statements,
+          Array.from(caseClause.statements),
         );
         const currentClauseExpressionEnd = this.createBranchingBlock(
           caseClause.expression.getText(),
@@ -400,7 +400,7 @@ class CfgBuilder {
   }
 
   private buildBindingName(current: CfgBlock, bindingName: ts.BindingName): CfgBlock {
-    const buildElements = (elements: ts.NodeArray<ts.BindingElement | ts.OmittedExpression>) => {
+    const buildElements = (elements: Array<ts.BindingElement | ts.OmittedExpression>) => {
       [...elements].reverse().forEach(element => (current = this.buildBindingElement(current, element)));
     };
 
@@ -410,11 +410,11 @@ class CfgBuilder {
         break;
       case ts.SyntaxKind.ObjectBindingPattern:
         const objectBindingPattern = bindingName as ts.ObjectBindingPattern;
-        buildElements(objectBindingPattern.elements);
+        buildElements(Array.from(objectBindingPattern.elements));
         break;
       case ts.SyntaxKind.ArrayBindingPattern:
         const arrayBindingPattern = bindingName as ts.ArrayBindingPattern;
-        buildElements(arrayBindingPattern.elements);
+        buildElements(Array.from(arrayBindingPattern.elements));
         break;
     }
     return current;

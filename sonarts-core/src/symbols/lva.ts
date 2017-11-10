@@ -32,7 +32,7 @@ export class LiveVariableAnalyzer {
     if (!is(root.body, ts.SyntaxKind.Block)) {
       return;
     }
-    const cfg = ControlFlowGraph.fromStatements((root.body as ts.Block).statements);
+    const cfg = ControlFlowGraph.fromStatements(Array.from((root.body as ts.Block).statements));
     if (!cfg) return;
     this.root = root;
     // symbols whose value will be read after entering a block (aka live symbols)
