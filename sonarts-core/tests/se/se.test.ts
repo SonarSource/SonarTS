@@ -59,7 +59,7 @@ describe("Variable Declaration", () => {
 describe("Assignment", () => {
   it("assigns already known symbolic value", () => {
     expect.assertions(1);
-    run(`let x = foo(); y = x; _inspect(x, y);`, (node, states, symbols) => {
+    run(`let y; let x = foo(); y = x; _inspect(x, y);`, (node, states, symbols) => {
       expect(states[0].sv(symbols.get("x"))).toBe(states[0].sv(symbols.get("y")));
     });
   });

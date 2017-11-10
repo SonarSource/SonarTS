@@ -22,29 +22,33 @@ import * as tsutils from "tsutils";
 import { createLiteralSymbolicValue, createUnknownSymbolicValue, createUndefinedSymbolicValue } from "./symbolicValues";
 import { ProgramState } from "./programStates";
 
-export function applyExecutors(element: ts.Node, state: ProgramState, program: ts.Program): ProgramState {
-  const { parent } = element;
+export function applyExecutors(programPoint: ts.Node, state: ProgramState, program: ts.Program): ProgramState {
+  const { parent } = programPoint;
 
   // TODO is there a better way to handle this?
   // special case: `let x;`
-  if (parent && tsutils.isVariableDeclaration(parent) && parent.name === element && !parent.initializer) {
+  if (parent && tsutils.isVariableDeclaration(parent) && parent.name === programPoint && !parent.initializer) {
     return variableDeclaration(parent, state, program);
   }
 
-  if (tsutils.isNumericLiteral(element)) {
-    return numeralLiteral(element, state, program);
+  if (tsutils.isNumericLiteral(programPoint)) {
+    return numeralLiteral(programPoint, state, program);
   }
 
-  if (tsutils.isIdentifier(element)) {
-    return identifier(element, state, program);
+  if (tsutils.isIdentifier(programPoint)) {
+    return identifier(programPoint, state, program);
   }
 
-  if (tsutils.isBinaryExpression(element)) {
-    return binaryExpression(element, state, program);
+  if (tsutils.isBinaryExpression(programPoint)) {
+    return binaryExpression(programPoint, state, program);
   }
 
-  if (tsutils.isVariableDeclaration(element)) {
-    return variableDeclaration(element, state, program);
+  if (tsutils.isVariableDeclaration(programPoint)) {
+    return variableDeclaration(programPoint, state, program);
+  }
+
+  if (tsutils.isCallExpression(programPoint)) {
+    return callExpression(state);
   }
 
   return state;
@@ -65,7 +69,7 @@ function numeralLiteral(literal: ts.NumericLiteral, state: ProgramState, _progra
 
 function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, program: ts.Program) {
   if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken && tsutils.isIdentifier(expression.left)) {
-    return assign(expression.left, expression.right, state, program);
+    state = assign(expression.left, expression.right, state, program);
   }
   return state;
 }
@@ -75,6 +79,10 @@ function variableDeclaration(declaration: ts.VariableDeclaration, state: Program
     return assign(declaration.name, declaration.initializer, state, program);
   }
   return state;
+}
+
+function callExpression(state: ProgramState) {
+  return state.pushSV(createUnknownSymbolicValue());
 }
 
 function assign(
