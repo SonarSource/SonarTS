@@ -50,7 +50,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   protected visitFunctionDeclaration(node: ts.FunctionDeclaration) {
     const { body } = node;
     if (body) {
-      const se = new SymbolicExecution(body.statements, this.getProgram());
+      const se = new SymbolicExecution(Array.from(body.statements), this.getProgram());
       se.execute((node, programStates) => {
         if (
           tsutils.isBinaryExpression(node) &&
@@ -64,7 +64,11 @@ class Walker extends tslint.ProgramAwareRuleWalker {
           const rightSymbol = this.getProgram()
             .getTypeChecker()
             .getSymbolAtLocation(node.right);
-          if (programStates.every(programState => programState.sv(leftSymbol) === programState.sv(rightSymbol))) {
+          if (
+            leftSymbol !== undefined &&
+            rightSymbol !== undefined &&
+            programStates.every(programState => programState.sv(leftSymbol) === programState.sv(rightSymbol))
+          ) {
             this.addFailureAtNode(node, Rule.getMessage("true"));
           }
         }

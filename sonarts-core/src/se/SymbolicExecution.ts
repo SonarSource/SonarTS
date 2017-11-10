@@ -28,7 +28,7 @@ export class SymbolicExecution {
   private readonly program: ts.Program;
   private readonly programNodes = new Map<ts.Node, ProgramState[]>();
 
-  constructor(statements: ts.NodeArray<ts.Statement>, program: ts.Program) {
+  constructor(statements: ts.Statement[], program: ts.Program) {
     this.cfg = buildCfg(statements);
     this.program = program;
   }

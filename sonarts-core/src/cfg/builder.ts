@@ -27,7 +27,7 @@ function getLine(node: ts.Node): number {
   return node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line + 1;
 }
 
-export function build(statements: ts.NodeArray<ts.Statement>) {
+export function build(statements: ts.Statement[]) {
   return new CfgBuilder().build(statements);
 }
 
@@ -400,7 +400,7 @@ class CfgBuilder {
   }
 
   private buildBindingName(current: CfgBlock, bindingName: ts.BindingName): CfgBlock {
-    const buildElements = (elements: ts.NodeArray<ts.BindingElement | ts.OmittedExpression>) => {
+    const buildElements = (elements: Array<ts.BindingElement | ts.OmittedExpression>) => {
       [...elements].reverse().forEach(element => (current = this.buildBindingElement(current, element)));
     };
 
@@ -410,11 +410,11 @@ class CfgBuilder {
         break;
       case ts.SyntaxKind.ObjectBindingPattern:
         const objectBindingPattern = bindingName as ts.ObjectBindingPattern;
-        buildElements(objectBindingPattern.elements);
+        buildElements(Array.from(objectBindingPattern.elements));
         break;
       case ts.SyntaxKind.ArrayBindingPattern:
         const arrayBindingPattern = bindingName as ts.ArrayBindingPattern;
-        buildElements(arrayBindingPattern.elements);
+        buildElements(Array.from(arrayBindingPattern.elements));
         break;
     }
     return current;
