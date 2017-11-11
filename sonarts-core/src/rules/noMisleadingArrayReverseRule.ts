@@ -110,7 +110,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       // foo(b.reverse())
       this.isForbiddenCallExpression(node) ||
       // foo(b => b.reverse())
-      this.isForbiddenArrowFunction(node)
+      this.isForbiddenArrowFunction(node) ||
+	    // const x = a.reverse().join();
+	    this.isForbiddenChainedCall(node)
     );
   }
 
@@ -136,6 +138,15 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     return parent != null && parent.kind === ts.SyntaxKind.ArrowFunction && (parent as ts.ArrowFunction).body === node;
   }
 
+  private isForbiddenChainedCall(node: ts.Node): boolean {
+    const { parent } = node;
+    return ( 
+      parent != null &&
+      parent.kind !== ts.SyntaxKind.ExpressionStatement &&
+      parent.kind !== ts.SyntaxKind.ReturnStatement
+    );
+  }
+  
   private isBinaryExpression(node?: ts.Node): node is ts.BinaryExpression {
     return node != null && node.kind === ts.SyntaxKind.BinaryExpression;
   }
