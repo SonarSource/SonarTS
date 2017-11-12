@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { firstLocalAncestor } from "../utils/navigation"
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -102,48 +103,11 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private isForbiddenOperation(node: ts.Node): boolean {
-    return (
-      // const a = b.reverse()
-      this.isForbiddenVariableDeclaration(node) ||
-      // a = b.reverse();
-      this.isForbiddenBinaryExpression(node) ||
-      // foo(b.reverse())
-      this.isForbiddenCallExpression(node) ||
-      // foo(b => b.reverse())
-      this.isForbiddenArrowFunction(node) ||
-	    // const x = a.reverse().join();
-	    this.isForbiddenChainedCall(node)
-    );
-  }
-
-  private isForbiddenVariableDeclaration(node: ts.Node): boolean {
-    return node.parent != null && node.parent.kind === ts.SyntaxKind.VariableDeclaration;
-  }
-
-  private isForbiddenBinaryExpression(node: ts.Node): boolean {
-    return node.parent != null && this.isBinaryExpression(node.parent);
-  }
-
-  private isForbiddenCallExpression(node: ts.Node): boolean {
-    const { parent } = node;
-    return (
-      parent != null &&
-      parent.kind === ts.SyntaxKind.CallExpression &&
-      (parent as ts.CallExpression).arguments.some(argument => argument === node)
-    );
-  }
-
-  private isForbiddenArrowFunction(node: ts.Node): boolean {
-    const { parent } = node;
-    return parent != null && parent.kind === ts.SyntaxKind.ArrowFunction && (parent as ts.ArrowFunction).body === node;
-  }
-
-  private isForbiddenChainedCall(node: ts.Node): boolean {
     const { parent } = node;
     return ( 
       parent != null &&
       parent.kind !== ts.SyntaxKind.ExpressionStatement &&
-      parent.kind !== ts.SyntaxKind.ReturnStatement
+      !firstLocalAncestor(node, ts.SyntaxKind.ReturnStatement)
     );
   }
   

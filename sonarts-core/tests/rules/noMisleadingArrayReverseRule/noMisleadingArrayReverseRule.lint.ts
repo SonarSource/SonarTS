@@ -25,6 +25,7 @@ function reverseAndJoin() {
   const a = [1, 2, 3];
   const x = a.reverse().join();
   //        ^^^^^^^^^^^ {{Move this array "reverse" operation to a separate statement.}}
+  return a.reverse().join(); // ok, within return statement
 }
 
 function something(a: string[]) {}
