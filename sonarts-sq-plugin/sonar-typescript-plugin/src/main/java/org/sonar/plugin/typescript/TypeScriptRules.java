@@ -108,7 +108,6 @@ import org.sonar.plugin.typescript.rules.RestrictPlusOperands;
 import org.sonar.plugin.typescript.rules.Semicolon;
 import org.sonar.plugin.typescript.rules.TripleEquals;
 import org.sonar.plugin.typescript.rules.TypeScriptRule;
-import org.sonar.plugin.typescript.rules.TypeofCompare;
 import org.sonar.plugin.typescript.rules.UseDefaultTypeParameter;
 import org.sonar.plugin.typescript.rules.UseIsnan;
 import org.sonar.plugin.typescript.rules.VariableName;
@@ -254,7 +253,6 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(RestrictPlusOperands.class)
       .add(Semicolon.class)
       .add(TripleEquals.class)
-      .add(TypeofCompare.class)
       .add(VariableName.class)
       .add(UseIsnan.class)
       .add(UseDefaultTypeParameter.class)
