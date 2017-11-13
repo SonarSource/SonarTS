@@ -17,14 +17,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { join } from "path";
-import * as ts from "typescript";
-import * as tsutils from "tsutils";
-import { is } from "../../src/utils/navigation";
-import { parseString } from "../../src/utils/parser";
-import { SymbolicExecution, SECallback } from "../../src/se/SymbolicExecution";
-import { ProgramState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
+import { run } from "../utils/seTestUtils";
 
 describe("Variable Declaration", () => {
   it("creates unknown symbolic value", () => {
@@ -106,39 +100,3 @@ describe("Loops", () => {
     });
   });
 });
-
-function run(source: string, callback: SETestCallback) {
-  const filename = "filename.ts";
-  const host: ts.CompilerHost = {
-    ...ts.createCompilerHost({ strict: true }),
-    getSourceFile: () => ts.createSourceFile(filename, source, ts.ScriptTarget.Latest, true),
-    getCanonicalFileName: () => filename,
-  };
-  const program = ts.createProgram([], { strict: true }, host);
-  const sourceFile = program.getSourceFiles()[0];
-
-  const se = new SymbolicExecution(sourceFile.statements, program);
-
-  se.execute((node, state) => {
-    const map = isInspectNode(node, program);
-    if (map) {
-      callback(node, state, map);
-    }
-  });
-}
-
-function isInspectNode(node: ts.Node, program: ts.Program): Map<string, ts.Symbol> | undefined {
-  if (tsutils.isCallExpression(node) && tsutils.isIdentifier(node.expression) && node.expression.text === "_inspect") {
-    const symbols = new Map<string, ts.Symbol>();
-    const identifiers = node.arguments.filter(tsutils.isIdentifier);
-    identifiers.forEach(identifier =>
-      symbols.set(identifier.text, program.getTypeChecker().getSymbolAtLocation(identifier)),
-    );
-    return symbols;
-  }
-  return undefined;
-}
-
-interface SETestCallback {
-  (node: ts.Node, programStates: ProgramState[], inspectedSymbos: Map<string, ts.Symbol>): void;
-}
