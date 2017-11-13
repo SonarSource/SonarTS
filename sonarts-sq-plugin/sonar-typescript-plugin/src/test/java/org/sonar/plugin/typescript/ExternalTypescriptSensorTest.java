@@ -257,7 +257,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
 
     TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockTypescriptNotFound.js"), testInputFile.absolutePath());
-    executeSensor(sensorContext, testBundle);
+    executeSensor(sensorContext, testBundle, new TestableErrorConsumer(500));
 
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("Global one referenced in 'NODE_PATH' will be used");
@@ -293,10 +293,13 @@ public class ExternalTypescriptSensorTest {
   }
 
   private void executeSensor(SensorContextTester sensorContext, TestBundleFactory testBundle) {
-    SlowErrorConsumer slowErrorConsumer = new SlowErrorConsumer();
-    createSensor(testBundle, slowErrorConsumer).execute(sensorContext);
-    while (slowErrorConsumer.running != null && slowErrorConsumer.running) {
-      sleep();
+    executeSensor(sensorContext, testBundle, new TestableErrorConsumer(0));
+  }
+
+  private void executeSensor(SensorContextTester sensorContext, TestBundleFactory testBundle, TestableErrorConsumer errorConsumer) {
+    createSensor(testBundle, errorConsumer).execute(sensorContext);
+    while (errorConsumer.running != null && errorConsumer.running) {
+      sleep(errorConsumer.delay);
     }
   }
 
@@ -381,22 +384,27 @@ public class ExternalTypescriptSensorTest {
     }
   }
 
-  private static class SlowErrorConsumer extends ExternalProcessErrorConsumer {
+  private static class TestableErrorConsumer extends ExternalProcessErrorConsumer {
 
     private volatile Boolean running = null;
+    private int delay;
+
+    TestableErrorConsumer(int delay) {
+      this.delay = delay;
+    }
 
     @Override
     protected void readErrors(BufferedReader errorReader) {
       running = true;
-      sleep();
+      sleep(delay);
       super.readErrors(errorReader);
       running = false;
     }
   }
 
-  private static void sleep() {
+  private static void sleep(int millis) {
     try {
-      Thread.sleep(500);
+      Thread.sleep(millis);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
