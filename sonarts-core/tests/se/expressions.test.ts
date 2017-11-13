@@ -20,10 +20,11 @@
 import { run } from "../utils/seTestUtils";
 
 describe("Expressions", () => {
-  it("chains assignments", () => {
+  it("assignment", () => {
     expect.assertions(1);
-    run(`let a; let b; a = b = 0; _inspect(a);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("a"))).toEqual({ type: "literal", value: "0" });
+    run(`let a; _inspectStack(a = 0);`, (node, states, symbols) => {
+      console.log(states[0].toString());
+      expect(states[0].popSV()[0]).toEqual({ type: "literal", value: "0" });
     });
   });
 });

@@ -21,6 +21,7 @@ import * as ts from "typescript";
 import * as tsutils from "tsutils";
 import { createLiteralSymbolicValue, createUnknownSymbolicValue, createUndefinedSymbolicValue } from "./symbolicValues";
 import { ProgramState } from "./programStates";
+import { SymbolicValue } from "./symbolicValues";
 
 export function applyExecutors(programPoint: ts.Node, state: ProgramState, program: ts.Program): ProgramState {
   const { parent } = programPoint;
@@ -68,39 +69,42 @@ function numeralLiteral(literal: ts.NumericLiteral, state: ProgramState, _progra
 }
 
 function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, program: ts.Program) {
-  if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken && tsutils.isIdentifier(expression.left)) {
-    state = assign(expression.left, expression.right, state, program);
+  if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+    let [value, nextState] = state.popSV();
+    const { getSymbolAtLocation } = program.getTypeChecker();
+    const variable = getSymbolAtLocation(expression.left as ts.Identifier);
+    if (!variable) {
+      return nextState;
+    }
+
+    if (!value) {
+      throw "Assignment without value";
+    }
+    nextState = nextState.pushSV(value);
+  
+    return nextState.setSV(variable, value);
   }
   return state;
 }
 
 function variableDeclaration(declaration: ts.VariableDeclaration, state: ProgramState, program: ts.Program) {
   if (tsutils.isIdentifier(declaration.name)) {
-    return assign(declaration.name, declaration.initializer, state, program);
+    let [value, nextState] = state.popSV();
+    const { getSymbolAtLocation } = program.getTypeChecker();
+    const variable = getSymbolAtLocation(declaration.name);    
+    if (!variable) {
+      return nextState;
+    }
+
+    if (!value) {
+      value = createUndefinedSymbolicValue();
+    }
+  
+    return nextState.setSV(variable, value);
   }
   return state;
 }
 
 function callExpression(state: ProgramState) {
   return state.pushSV(createUnknownSymbolicValue());
-}
-
-function assign(
-  variableIdentifier: ts.Identifier,
-  value: ts.Expression | undefined,
-  state: ProgramState,
-  program: ts.Program,
-) {
-  const { getSymbolAtLocation } = program.getTypeChecker();
-  const variable = getSymbolAtLocation(variableIdentifier);
-  if (!variable) {
-    return state;
-  }
-  let valueSV;
-  if (value) {
-    [valueSV, state] = state.popSV();
-  } else {
-    valueSV = createUndefinedSymbolicValue();
-  }
-  return state.pushSV(valueSV).setSV(variable, valueSV);
 }

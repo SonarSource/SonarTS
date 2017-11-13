@@ -71,9 +71,7 @@ describe("Assignment", () => {
       expect(states[0].sv(symbols.get("x"))).toEqual({ type: "unknown" });
     });
   });
-});
-
-describe("Expressions", () => {
+  
   it("chains assignments", () => {
     expect.assertions(1);
     run(`let a; let b; a = b = 0; _inspect(a);`, (node, states, symbols) => {

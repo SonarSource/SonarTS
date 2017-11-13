@@ -68,10 +68,10 @@ export class SymbolicExecution {
    * @returns next program state otherwise
    */
   private visitProgramPoint(programPoint: ts.Node, programState: ProgramState) {
-    const nextProgramState = applyExecutors(programPoint, programState, this.program);
     const visitedStates = this.programNodes.get(programPoint) || [];
-    if (!this.isVisitedProgramState(visitedStates, nextProgramState)) {
-      const nextVisitedStates = [...visitedStates, nextProgramState];
+    if (!this.isVisitedProgramState(visitedStates, programState)) {
+      const nextProgramState = applyExecutors(programPoint, programState, this.program);
+      const nextVisitedStates = [...visitedStates, programState];
       this.programNodes.set(programPoint, nextVisitedStates);
       return nextProgramState;
     }
