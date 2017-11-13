@@ -22,8 +22,8 @@ export interface SymbolicValue {
 }
 
 export interface LiteralSymbolicValue extends SymbolicValue {
-  value: string;
   type: "literal";
+  value: string;
 }
 
 export interface UnknownSymbolicValue extends SymbolicValue {
@@ -32,6 +32,10 @@ export interface UnknownSymbolicValue extends SymbolicValue {
 
 export interface UndefinedSymbolicValue extends SymbolicValue {
   type: "undefined";
+}
+
+export interface ObjectLiteralSymbolicValue extends SymbolicValue {
+  type: "object";
 }
 
 export function createLiteralSymbolicValue(value: string): LiteralSymbolicValue {
@@ -44,6 +48,10 @@ export function createUnknownSymbolicValue(): UnknownSymbolicValue {
 
 export function createUndefinedSymbolicValue(): UndefinedSymbolicValue {
   return { type: "undefined" };
+}
+
+export function createObjectLiteralSymbolicValue(): ObjectLiteralSymbolicValue {
+  return { type: "object" };
 }
 
 export function isEqualSymbolicValues(a: SymbolicValue, b: SymbolicValue) {

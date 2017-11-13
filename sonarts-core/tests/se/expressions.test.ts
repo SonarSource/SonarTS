@@ -17,31 +17,43 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { run } from "../utils/seTestUtils";
+import { runStack } from "../utils/seTestUtils";
+import { SymbolicValue } from "../../src/se/symbolicValues";
 
 describe("Expressions", () => {
-  it("assignment", () => {
-    expect.assertions(1);
-    run(`let a; _inspectStack(a = 0);`, (node, states, symbols) => {
-      expect(states[0].popSV()[0]).toEqual({ type: "literal", value: "0" });
-    });
-  });
+  it("assignment", check(
+    `let a; _inspectStack(a = 0);`,
+    { type: "literal", value: "0" },
+    true));
 
-  it("function call", () => {
-    expect.assertions(2);
-    run(`let foo = function() {}; _inspectStack(foo());`, (node, states, symbols) => {
-      let [topOfStack, nextState] = states[0].popSV();
-      expect(topOfStack).toEqual({ type: "unknown" });
-      expect(nextState.popSV()[0]).toBeUndefined();
-    });
-  });
+  it("function call", check(
+    `let foo = function() {}; _inspectStack(foo());`,
+    { type: "unknown" },
+    true));
 
-  it("function call with parameters", () => {
-    expect.assertions(2);
-    run(`let foo; let x = 0; let y = 1; _inspectStack(foo(x, y));`, (node, states, symbols) => {
-      let [topOfStack, nextState] = states[0].popSV();
-      expect(topOfStack).toEqual({ type: "unknown" });
-      expect(nextState.popSV()[0]).toBeUndefined();
-    });
-  });
+  it("function call with parameters", check(
+    `let foo; let x = 0; let y = 1; _inspectStack(foo(x, y));`,
+    { type: "unknown" },
+    true));
+
+  it("object declaration", check(
+    `_inspectStack({ bar: 0 });`,
+    { type: "object" },
+    false));
+
+  it("property access expression", check(
+    `let foo = { bar: 0 }; _inspectStack(foo.bar);`,
+    { type: "unknown" },
+    false));
+
 });
+
+function check(source: string, expectedSV: SymbolicValue, expectedEmpty: boolean) {
+  return () => {
+    expect.assertions(2);
+    runStack(source, (sv, empty) => {
+      expect(sv).toEqual(expectedSV);
+      expect(empty).toBe(expectedEmpty);
+    });
+  }
+}
