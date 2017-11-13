@@ -3,6 +3,7 @@
 .sonarlint/
 .scannerwork/
 .idea/
+*.iml
 .vscode/
 
 # ---- NPM pack
