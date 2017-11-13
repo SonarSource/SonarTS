@@ -88,6 +88,7 @@ import org.sonar.plugin.typescript.rules.NoSelfAssignment;
 import org.sonar.plugin.typescript.rules.NoShadowedVariable;
 import org.sonar.plugin.typescript.rules.NoSparseArrays;
 import org.sonar.plugin.typescript.rules.NoStringThrow;
+import org.sonar.plugin.typescript.rules.NoThisAssignment;
 import org.sonar.plugin.typescript.rules.NoUnconditionalJump;
 import org.sonar.plugin.typescript.rules.NoUnenclosedMultilineBlock;
 import org.sonar.plugin.typescript.rules.NoUnsafeFinally;
@@ -235,6 +236,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoShadowedVariable.class)
       .add(NoSparseArrays.class)
       .add(NoStringThrow.class)
+      .add(NoThisAssignment.class)
       .add(NoUnconditionalJump.class)
       .add(NoUnenclosedMultilineBlock.class)
       .add(NoUnsafeFinally.class)
