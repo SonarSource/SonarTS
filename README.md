@@ -126,13 +126,13 @@ yarn test
 To run unit tests in watch mode:
 ```
 cd sonarts-core
-yarn test -- --watch
+yarn test --watch
 ```
 
 And finally to run unit tests with coverage:
 ```
 cd sonarts-core
-yarn test -- --coverage
+yarn test --coverage
 ```
 When you run tests with coverage, the `coverage/` directory will be created at the root. You can
 open the web version of the coverage report `coverage/lcov-report/index.html` to see which lines are covered by tests.
@@ -162,9 +162,9 @@ To run the ruling test:
 ```
 cd sonarts-core
 yarn ruling
-yarn ruling -- --rule <RuleFileName> # to run ruling for a single rule
-yarn ruling -- --update # to update the snapshots
-yarn ruling -- --rule <RuleFileName> --update # it is possible to combine both options
+yarn ruling --rule <RuleFileName> # to run ruling for a single rule
+yarn ruling --update # to update the snapshots
+yarn ruling --rule <RuleFileName> --update # it is possible to combine both options
 ```
 
 ### Tools we use
