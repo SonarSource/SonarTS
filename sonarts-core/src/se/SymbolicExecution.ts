@@ -42,7 +42,6 @@ export class SymbolicExecution {
   }
 
   private readonly visitBlock = (block: CfgBlock, programState: ProgramState) => {
-    console.log(block.getLabel());
     for (const programPoint of block.getElements()) {
       const nextProgramState = this.visitProgramPoint(programPoint, programState);
       if (nextProgramState) {

@@ -25,6 +25,14 @@ import { parseString } from "../../src/utils/parser";
 import { SymbolicExecution, SECallback } from "../../src/se/SymbolicExecution";
 import { ProgramState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
+import { SymbolicValue } from "../../src/se/symbolicValues";
+
+export function runStack(source: string, callback: StackTestCallBack) {
+  run(source, (node, states, symbols) => {
+    let [top, nextState] = states[0].popSV();
+    callback(top, !nextState.popSV()[0]);
+  });
+}
 
 export function run(source: string, callback: SETestCallback) {
   const filename = "filename.ts";
@@ -65,4 +73,8 @@ function isInspectNode(node: ts.Node, program: ts.Program): Map<string, ts.Symbo
 
 export interface SETestCallback {
   (node: ts.Node, programStates: ProgramState[], inspectedSymbos: Map<string, ts.Symbol>): void;
+}
+
+export interface StackTestCallBack {
+  (top: SymbolicValue, empty: boolean) : void;
 }

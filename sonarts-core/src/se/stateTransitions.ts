@@ -19,7 +19,7 @@
  */
 import * as ts from "typescript";
 import * as tsutils from "tsutils";
-import { createLiteralSymbolicValue, createUnknownSymbolicValue, createUndefinedSymbolicValue } from "./symbolicValues";
+import { createLiteralSymbolicValue, createUnknownSymbolicValue, createUndefinedSymbolicValue, createObjectLiteralSymbolicValue } from "./symbolicValues";
 import { ProgramState } from "./programStates";
 
 export function applyExecutors(programPoint: ts.Node, state: ProgramState, program: ts.Program): ProgramState {
@@ -51,7 +51,15 @@ export function applyExecutors(programPoint: ts.Node, state: ProgramState, progr
     return callExpression(programPoint, state);
   }
 
-  return state;
+  if (tsutils.isObjectLiteralExpression(programPoint)) {
+    return objectLiteralExpression(state);
+  }
+
+  if (tsutils.isPropertyAccessExpression(programPoint)) {
+    return propertyAccessExpression(state);
+  }
+
+  return state.pushSV(createUnknownSymbolicValue());
 }
 
 function identifier(identifier: ts.Identifier, state: ProgramState, program: ts.Program) {
@@ -98,9 +106,6 @@ function variableDeclaration(declaration: ts.VariableDeclaration, state: Program
     if (!value) {
       value = createUndefinedSymbolicValue();
     }
-    if (!nextState.hasEmptyStack()) {
-      throw "Non empty stack at the end of declaration " + declaration.getText();
-    }
     return nextState.setSV(variable, value);
   }
   return state;
@@ -111,4 +116,13 @@ function callExpression(callExpression: ts.CallExpression, state: ProgramState) 
   callExpression.arguments.forEach(_ => nextState = nextState.popSV()[1]);
   nextState = nextState.popSV()[1]; // Pop callee value
   return nextState.pushSV(createUnknownSymbolicValue());
+}
+
+function objectLiteralExpression(state: ProgramState) {
+  // TODO it's not so simple. We need to pop plenty of things here
+  return state.pushSV(createObjectLiteralSymbolicValue());
+}
+
+function propertyAccessExpression(state: ProgramState) {
+  return state.popSV()[1].pushSV(createUnknownSymbolicValue());
 }
