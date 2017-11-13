@@ -20,7 +20,7 @@
 import * as ts from "typescript";
 import { build as buildCfg } from "../cfg/builder";
 import { ControlFlowGraph, CfgBlock } from "../cfg/cfg";
-import { applyExecutors } from "./executors";
+import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
 
 export class SymbolicExecution {
