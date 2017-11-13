@@ -91,7 +91,7 @@ function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, 
   
     return nextState.setSV(variable, value);
   }
-  return state;
+  return state.pushSV(createUnknownSymbolicValue());
 }
 
 function variableDeclaration(declaration: ts.VariableDeclaration, state: ProgramState, program: ts.Program) {
