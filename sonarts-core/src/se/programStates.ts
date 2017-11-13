@@ -52,13 +52,9 @@ export class ProgramState {
     return new ProgramState(this.symbolicValues, newExpressionStack);
   }
 
-  popSV(): [SymbolicValue, ProgramState] {
+  popSV(): [SymbolicValue | undefined, ProgramState] {
     const newExpressionStack = [...this.expressionStack];
-    const sv = newExpressionStack.pop();
-    if (!sv) {
-      throw new Error("Nothing in the expression stack");
-    }
-    return [sv, new ProgramState(this.symbolicValues, newExpressionStack)];
+    return [newExpressionStack.pop(), new ProgramState(this.symbolicValues, newExpressionStack)];
   }
 
   toString() {
@@ -66,7 +62,7 @@ export class ProgramState {
     this.symbolicValues.forEach((value, key) => {
       prettyEntries.set(key.name, value);
     });
-    return inspect(prettyEntries);
+    return inspect({ prettyEntries, expressionStack: this.expressionStack });
   }
 
   isEqualTo(another: ProgramState) {

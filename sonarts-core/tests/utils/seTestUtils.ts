@@ -47,14 +47,19 @@ export function run(source: string, callback: SETestCallback) {
 }
 
 function isInspectNode(node: ts.Node, program: ts.Program): Map<string, ts.Symbol> | undefined {
-  if (tsutils.isCallExpression(node) && tsutils.isIdentifier(node.expression) && node.expression.text === "_inspect") {
-    const symbols = new Map<string, ts.Symbol>();
-    const identifiers = node.arguments.filter(tsutils.isIdentifier);
-    identifiers.forEach(identifier =>
-      symbols.set(identifier.text, program.getTypeChecker().getSymbolAtLocation(identifier)),
-    );
-    return symbols;
-  }
+  if (tsutils.isCallExpression(node) && tsutils.isIdentifier(node.expression)) {
+    if (node.expression.text === "_inspect") {
+      const symbols = new Map<string, ts.Symbol>();
+      const identifiers = node.arguments.filter(tsutils.isIdentifier);
+      identifiers.forEach(identifier =>
+        symbols.set(identifier.text, program.getTypeChecker().getSymbolAtLocation(identifier)),
+      );
+      return symbols;
+    }
+    if (node.expression.text === "_inspectStack") {
+      return new Map<string, ts.Symbol>();
+    }
+  } 
   return undefined;
 }
 
