@@ -27,6 +27,7 @@ export class SymbolicExecution {
   private readonly cfg: ControlFlowGraph | undefined;
   private readonly program: ts.Program;
   private readonly programNodes = new Map<ts.Node, ProgramState[]>();
+  private visits = 0;
 
   constructor(statements: ts.Statement[], program: ts.Program) {
     this.cfg = buildCfg(statements);
@@ -42,6 +43,10 @@ export class SymbolicExecution {
   }
 
   private readonly visitBlock = (block: CfgBlock, programState: ProgramState) => {
+    if (this.visits > 1000) {
+      throw "Visits limit exceeded";
+    }
+    this.visits++;
     for (const programPoint of block.getElements()) {
       const nextProgramState = this.visitProgramPoint(programPoint, programState);
       if (nextProgramState) {

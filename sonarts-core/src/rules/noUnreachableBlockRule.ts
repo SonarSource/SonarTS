@@ -77,32 +77,3 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     super.visitFunctionDeclaration(node);
   }
 }
-
-function foo(x: number[] | number | string) {
-  const r = forty(!!x);
-  let f: string|number = "s";
-  if (r == 40) {
-    f = generateNumber();
-  }
-  if (r == 40) {
-    if (typeof r == "string")
-  }
-  const foo = r === 0;
-  if (foo) {}
-}
-
-function generateNumber() : number {
-  return 0;
-}
-
-function forty(p: boolean) {
-  if (p) {
-    return 40;
-  }
-  return 0;
-}
-
-function isNumber(x: number[] | number | string): x is number {
-  return true;
-}
-
