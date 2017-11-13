@@ -4,6 +4,7 @@
 
 TEST:
   - ci
+  - ts # run unit test of sonarts-core with different TypeScript versions
   - plugin
   - ruling
 
@@ -29,3 +30,12 @@ exclude:
     SQ_VERSION: DEV
   - TEST: ruling
     SQ_VERSION: LTS
+
+# limit ts test to only one run (we don't care about OS and SQ)
+# run only on linux + LTS
+  - TEST: ts
+    SLAVE: windows
+  - TEST: ts
+    SQ_VERSION: DEV
+  - TEST: ts
+    SQ_VERSION: LATEST_RELEASE

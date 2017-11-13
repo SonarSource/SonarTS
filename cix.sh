@@ -42,9 +42,34 @@ case "$TEST" in
   mvn -B -e package
   ;;
 
+  ts)
+
+  echo "Node version"
+  node -v
+
+  echo "Yarn version"
+  yarn -v
+
+  cd sonarts-core
+
+  declare -a tsVersions=("2.2" "2.3" "2.4" "2.5" "2.6")
+
+  for tsVersion in "${tsVersions[@]}"
+  do
+    echo "Running tests with TypeScript v$tsVersion"
+    yarn add typescript@${tsVersion} --dev
+    yarn test
+  done
+
+  cd ..
+  
+  exit 0;
+  ;;
+
   *)
   echo "Unexpected TEST mode: $TEST"
   exit 1
   ;;
+
 esac
 

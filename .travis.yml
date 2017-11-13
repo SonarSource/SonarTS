@@ -9,13 +9,6 @@ jdk:
 git:
   submodules: false
 
-env:
-  - TS=2.2
-  - TS=2.3
-  - TS=2.4
-  - TS=2.5
-  - TS=2.6
-
 script: ./sonarts-core/travis.sh && ./sonarts-sq-plugin/travis.sh && ./sonarts_mvn_build_deploy_analyze.sh
 
 cache: # yarn

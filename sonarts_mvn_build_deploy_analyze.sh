@@ -88,7 +88,7 @@ elif [[ "${TRAVIS_BRANCH}" == "branch-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "fals
       -Dsonar.analysis.sha1=$TRAVIS_COMMIT  \
       -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG
 
-elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ] && [ "$TS" == "2.3" ]; then
+elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   echo '======= Build and analyze pull request'
 
 
