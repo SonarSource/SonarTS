@@ -52,7 +52,6 @@ import org.sonar.api.utils.log.Loggers;
 import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
-import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
 import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,9 +111,8 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
-    ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath()));
-
-    sensor.execute(sensorContext);
+    TestBundleFactory bundleFactory = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
 
@@ -152,9 +150,8 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
-    ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().command(node, resourceScript("/mockSonarTSFileLevelIssue.js"), testInputFile.absolutePath()));
-
-    sensor.execute(sensorContext);
+    TestBundleFactory bundleFactory = new TestBundleFactory().command(node, resourceScript("/mockSonarTSFileLevelIssue.js"), testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
     Issue issue = sensorContext.allIssues().iterator().next();
@@ -166,8 +163,8 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
-    ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().command(node, resourceScript("/mockSonarTSMissingData.js"), testInputFile.absolutePath()));
-    sensor.execute(sensorContext);
+    TestBundleFactory bundleFactory = new TestBundleFactory().command(node, resourceScript("/mockSonarTSMissingData.js"), testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(0);
     assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(0);
@@ -179,15 +176,15 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
-    ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().command(node, resourceScript("/mockEmptyResponse.js"), testInputFile.absolutePath()));
-
-    sensor.execute(sensorContext);
+    TestBundleFactory bundleFactory = new TestBundleFactory().command(node, resourceScript("/mockEmptyResponse.js"), testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(0);
-    String errorMessage = logTester.logs(LoggerLevel.ERROR).get(1);
+    boolean containsMessage = logTester.logs(LoggerLevel.ERROR).stream().anyMatch(log -> log.contains("returned an empty output. Run with -X for more information"));
+    assertThat(containsMessage).isTrue();
 
-    assertThat(errorMessage).contains("returned an empty output. Run with -X for more information");
-    assertThat(logTester.logs().get(logTester.logs().size() - 1)).contains("foo/file.ts");
+    containsMessage = logTester.logs(LoggerLevel.ERROR).stream().anyMatch(log -> log.contains("foo/file.ts"));
+    assertThat(containsMessage).isTrue();
   }
 
   @Test
@@ -195,9 +192,8 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "foo/bar/file.ts");
 
-    ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath()));
-
-    sensor.execute(sensorContext);
+    TestBundleFactory bundleFactory = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
   }
@@ -215,7 +211,7 @@ public class ExternalTypescriptSensorTest {
 
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
-    createSensor(testBundle).execute(sensorContext);
+    executeSensor(sensorContext, testBundle);
   }
 
   @Test
@@ -225,7 +221,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile inputFile = createTestInputFile(sensorContext, "file.ts");
     TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), inputFile.absolutePath());
 
-    createSensor(testBundle).execute(sensorContext);
+    executeSensor(sensorContext, testBundle);
 
     assertThat(logTester.logs()).contains("No tsconfig.json file found for " + inputFile.absolutePath() + " (looking up the directories tree). This file will not be analyzed.");
   }
@@ -233,10 +229,10 @@ public class ExternalTypescriptSensorTest {
   @Test
   public void should_do_nothing_when_response_with_not_existing_file() throws Exception {
     new File(BASE_DIR, "not_exists.ts").getAbsolutePath();
-    ExternalTypescriptSensor sensor = createSensor(new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), "some/path/file.ts"));
+    TestBundleFactory bundleFactory = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), "some/path/file.ts");
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
-    sensor.execute(sensorContext);
+    executeSensor(sensorContext, bundleFactory);
     assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
@@ -247,7 +243,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
 
     TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath());
-    createSensor(testBundle).execute(sensorContext);
+    executeSensor(sensorContext, testBundle);
 
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("Global one referenced in 'NODE_PATH' will be used");
@@ -261,7 +257,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
 
     TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockTypescriptNotFound.js"), testInputFile.absolutePath());
-    createSensor(testBundle, new ExternalProcessErrorConsumer()).execute(sensorContext);
+    executeSensor(sensorContext, testBundle, new TestableErrorConsumer(500));
 
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("Global one referenced in 'NODE_PATH' will be used");
@@ -275,9 +271,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
     TestBundleFactory testBundleFactory = new TestBundleFactory().command(node, resourceScript("/mockError.js"), testInputFile.absolutePath());
-    ExternalTypescriptSensor sensor = createSensor(testBundleFactory, new ExternalProcessErrorConsumer());
-
-    sensor.execute(sensorContext);
+    executeSensor(sensorContext, testBundleFactory);
     assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Some error");
     assertThat(sensorContext.allIssues()).hasSize(1);
   }
@@ -287,7 +281,7 @@ public class ExternalTypescriptSensorTest {
     TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/rulesDeadlock.js"));
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
-    createSensor(testBundle).execute(sensorContext);
+    createSensor(testBundle, new LineTrimmingExternalProcessErrorConsumer()).execute(sensorContext);
 
     assertThat(sensorContext.allIssues()).hasSize(0);
   }
@@ -298,12 +292,19 @@ public class ExternalTypescriptSensorTest {
     return sensorContext;
   }
 
-  private ExternalTypescriptSensor createSensor() {
-    return createSensor(new TestBundleFactory());
+  private void executeSensor(SensorContextTester sensorContext, TestBundleFactory testBundle) {
+    executeSensor(sensorContext, testBundle, new TestableErrorConsumer(0));
   }
 
-  private ExternalTypescriptSensor createSensor(ExecutableBundleFactory executableBundleFactory) {
-    return createSensor(executableBundleFactory, new LineTrimmingExternalProcessErrorConsumer());
+  private void executeSensor(SensorContextTester sensorContext, TestBundleFactory testBundle, TestableErrorConsumer errorConsumer) {
+    createSensor(testBundle, errorConsumer).execute(sensorContext);
+    while (errorConsumer.running != null && errorConsumer.running) {
+      sleep(errorConsumer.delay);
+    }
+  }
+
+  private ExternalTypescriptSensor createSensor() {
+    return createSensor(new TestBundleFactory(), new LineTrimmingExternalProcessErrorConsumer());
   }
 
   private ExternalTypescriptSensor createSensor(ExecutableBundleFactory executableBundleFactory, ExternalProcessErrorConsumer errorConsumer) {
@@ -383,4 +384,29 @@ public class ExternalTypescriptSensorTest {
     }
   }
 
+  private static class TestableErrorConsumer extends ExternalProcessErrorConsumer {
+
+    private volatile Boolean running = null;
+    private int delay;
+
+    TestableErrorConsumer(int delay) {
+      this.delay = delay;
+    }
+
+    @Override
+    protected void readErrors(BufferedReader errorReader) {
+      running = true;
+      sleep(delay);
+      super.readErrors(errorReader);
+      running = false;
+    }
+  }
+
+  private static void sleep(int millis) {
+    try {
+      Thread.sleep(millis);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
 }
