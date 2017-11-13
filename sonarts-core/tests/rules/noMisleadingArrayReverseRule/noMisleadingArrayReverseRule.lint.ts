@@ -21,6 +21,12 @@ a = a.reverse();
 d = a.reverse();
 //  ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
 
+function reverseAndJoin() {
+  const a = [1, 2, 3];
+  const x = a.reverse().join();
+  //        ^^^^^^^^^^^ {{Move this array "reverse" operation to a separate statement.}}
+}
+
 function something(a: string[]) {}
 something(a.reverse());
 //        ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
