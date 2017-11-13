@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { firstLocalAncestor } from "../utils/navigation"
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -48,10 +49,14 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Walker extends tslint.RuleWalker {
   public visitBindingPattern(node: ts.BindingPattern) {
-    if (node.elements.length === 0) {
+    if (node.elements.length === 0 && !definesFunctionType(node)) {
       this.addFailureAtNode(node, Rule.formatMessage());
     }
 
     super.visitBindingPattern(node);
   }
+}
+
+function definesFunctionType(node: ts.BindingPattern) {
+  return firstLocalAncestor(node, ts.SyntaxKind.FunctionType);
 }

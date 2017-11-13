@@ -31,3 +31,7 @@ var obj = {}; // empty object literal
 var arr = []; // empty array literal
 
 var [el1, el2] = arr;
+
+interface MyInterface {
+  foo: ({}) => void;  // OK
+}
