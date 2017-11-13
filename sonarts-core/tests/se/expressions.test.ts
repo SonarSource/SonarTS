@@ -46,6 +46,12 @@ describe("Expressions", () => {
     { type: "unknown" },
     false));
 
+  it("defaults to pushing unknown value", check(
+    `let x = foo(); _inspectStack(x = x + 1);`,
+    { type: "unknown"},
+    false
+  ))
+
 });
 
 function check(source: string, expectedSV: SymbolicValue, expectedEmpty: boolean) {
