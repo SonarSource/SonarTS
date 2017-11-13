@@ -28,6 +28,13 @@ describe("Variable Declaration", () => {
     });
   });
 
+  it("does not push value to the stack", () => {
+    expect.assertions(1);
+    run(`let x = foo(); _inspect();`, (node, states, symbols) => {
+      expect(states[0].popSV()[0]).toBeUndefined();
+    });
+  });
+
   it("creates literal symbolic value", () => {
     expect.assertions(1);
     run(`let x = 0; _inspect(x);`, (node, states, symbols) => {

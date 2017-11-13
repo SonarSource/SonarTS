@@ -21,14 +21,13 @@ import * as ts from "typescript";
 import * as tsutils from "tsutils";
 import { createLiteralSymbolicValue, createUnknownSymbolicValue, createUndefinedSymbolicValue } from "./symbolicValues";
 import { ProgramState } from "./programStates";
-import { SymbolicValue } from "./symbolicValues";
 
 export function applyExecutors(programPoint: ts.Node, state: ProgramState, program: ts.Program): ProgramState {
   const { parent } = programPoint;
 
   // TODO is there a better way to handle this?
   // special case: `let x;`
-  if (parent && tsutils.isVariableDeclaration(parent) && parent.name === programPoint && !parent.initializer) {
+  if (parent && tsutils.isVariableDeclaration(parent) && parent.name === programPoint) {
     return variableDeclaration(parent, state, program);
   }
 
@@ -49,7 +48,7 @@ export function applyExecutors(programPoint: ts.Node, state: ProgramState, progr
   }
 
   if (tsutils.isCallExpression(programPoint)) {
-    return callExpression(state);
+    return callExpression(programPoint, state);
   }
 
   return state;
@@ -99,12 +98,17 @@ function variableDeclaration(declaration: ts.VariableDeclaration, state: Program
     if (!value) {
       value = createUndefinedSymbolicValue();
     }
-  
+    if (!nextState.hasEmptyStack()) {
+      throw "Non empty stack at the end of declaration " + declaration.getText();
+    }
     return nextState.setSV(variable, value);
   }
   return state;
 }
 
-function callExpression(state: ProgramState) {
-  return state.pushSV(createUnknownSymbolicValue());
+function callExpression(callExpression: ts.CallExpression, state: ProgramState) {
+  let nextState = state;
+  callExpression.arguments.forEach(_ => nextState = nextState.popSV()[1]);
+  nextState = nextState.popSV()[1]; // Pop callee value
+  return nextState.pushSV(createUnknownSymbolicValue());
 }

@@ -57,6 +57,10 @@ export class ProgramState {
     return [newExpressionStack.pop(), new ProgramState(this.symbolicValues, newExpressionStack)];
   }
 
+  hasEmptyStack(): boolean {
+    return this.expressionStack.length == 0;
+  }
+
   toString() {
     const prettyEntries = new Map<string, SymbolicValue>();
     this.symbolicValues.forEach((value, key) => {

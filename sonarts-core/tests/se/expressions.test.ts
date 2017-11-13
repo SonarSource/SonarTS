@@ -23,8 +23,25 @@ describe("Expressions", () => {
   it("assignment", () => {
     expect.assertions(1);
     run(`let a; _inspectStack(a = 0);`, (node, states, symbols) => {
-      console.log(states[0].toString());
       expect(states[0].popSV()[0]).toEqual({ type: "literal", value: "0" });
+    });
+  });
+
+  it("function call", () => {
+    expect.assertions(2);
+    run(`let foo = function() {}; _inspectStack(foo());`, (node, states, symbols) => {
+      let [topOfStack, nextState] = states[0].popSV();
+      expect(topOfStack).toEqual({ type: "unknown" });
+      expect(nextState.popSV()[0]).toBeUndefined();
+    });
+  });
+
+  it("function call with parameters", () => {
+    expect.assertions(2);
+    run(`let foo; let x = 0; let y = 1; _inspectStack(foo(x, y));`, (node, states, symbols) => {
+      let [topOfStack, nextState] = states[0].popSV();
+      expect(topOfStack).toEqual({ type: "unknown" });
+      expect(nextState.popSV()[0]).toBeUndefined();
     });
   });
 });
