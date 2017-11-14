@@ -92,7 +92,7 @@ export class ProgramState {
   }
 
   getConstraints(sv: SymbolicValue) {
-    return this.constraints.get(sv);
+    return this.constraints.get(sv) || [];
   }
 
   hasEmptyStack(): boolean {

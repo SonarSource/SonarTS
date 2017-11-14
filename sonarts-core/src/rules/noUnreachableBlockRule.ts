@@ -19,12 +19,12 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import * as tsutils from "tsutils";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolicExecution } from "../se/SymbolicExecution";
 import { build } from "../cfg/builder";
 import { ProgramState } from "../se/programStates";
 import { createUnknownSymbolicValue } from "../se/symbolicValues";
+import { isTruthy, Constraint, isFalsy } from "../se/constraints";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -58,34 +58,22 @@ class Walker extends tslint.ProgramAwareRuleWalker {
         return;
       }
       const se = new SymbolicExecution(cfg, this.getProgram());
-      se.execute(createInitialState(node, this.getProgram()), (node, programStates) => {
-        if (
-          tsutils.isBinaryExpression(node) &&
-          node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&
-          tsutils.isIdentifier(node.left) &&
-          tsutils.isIdentifier(node.right)
-        ) {
-          const leftSymbol = this.getProgram()
-            .getTypeChecker()
-            .getSymbolAtLocation(node.left);
-          const rightSymbol = this.getProgram()
-            .getTypeChecker()
-            .getSymbolAtLocation(node.right);
-          if (leftSymbol !== undefined && rightSymbol !== undefined) {
-            if (
-              programStates.every(programState => {
-                const leftSV = programState.sv(leftSymbol);
-                const rightSV = programState.sv(rightSymbol);
-                return !!leftSV && !!rightSV && leftSV === rightSV;
-              })
-            ) {
-              this.addFailureAtNode(node, Rule.getMessage("true"));
-            }
-          }
+      se.execute(createInitialState(node, this.getProgram()), undefined, (branchingProgramPoint, programStates) => {
+        if (this.ifAllProgramStateConstraints(programStates, isTruthy)) {
+          this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("true"));
+        } else if (this.ifAllProgramStateConstraints(programStates, isFalsy)) {
+          this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("false"));
         }
       });
     }
     super.visitFunctionDeclaration(node);
+  }
+
+  private ifAllProgramStateConstraints(programStates: ProgramState[], checker: (constraints: Constraint[]) => boolean) {
+    return programStates.every(programState => {
+      const [sv] = programState.popSV();
+      return sv !== undefined && checker(programState.getConstraints(sv));
+    });
   }
 }
 
