@@ -26,6 +26,7 @@ import { SymbolicExecution, SECallback } from "../../src/se/SymbolicExecution";
 import { ProgramState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
 import { SymbolicValue } from "../../src/se/symbolicValues";
+import { build } from "../../src/cfg/builder";
 
 export function runStack(source: string, callback: StackTestCallBack) {
   run(source, (node, states, symbols) => {
@@ -43,8 +44,8 @@ export function run(source: string, callback: SETestCallback) {
   };
   const program = ts.createProgram([], { strict: true }, host);
   const sourceFile = program.getSourceFiles()[0];
-
-  const se = new SymbolicExecution(sourceFile.statements, program);
+  
+  const se = new SymbolicExecution(build(sourceFile.statements)!, program);
 
   se.execute((node, state) => {
     const map = isInspectNode(node, program);

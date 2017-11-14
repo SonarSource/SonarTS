@@ -18,33 +18,33 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { build as buildCfg } from "../cfg/builder";
 import { ControlFlowGraph, CfgBlock } from "../cfg/cfg";
 import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
 
 export class SymbolicExecution {
-  private readonly cfg: ControlFlowGraph | undefined;
-  private readonly program: ts.Program;
+  private static readonly BLOCK_VISITS_LIMIT = 1000;
+
   private readonly programNodes = new Map<ts.Node, ProgramState[]>();
   private visits = 0;
 
-  constructor(statements: ts.Statement[], program: ts.Program) {
-    this.cfg = buildCfg(statements);
-    this.program = program;
-  }
+  constructor(private readonly cfg: ControlFlowGraph, private readonly program: ts.Program) {}
 
-  public execute(callback: SECallback) {
-    if (this.cfg) {
-      const programState = ProgramState.empty();
-      this.visitBlock(this.cfg.start, programState);
+  public execute(callback: SECallback): boolean {
+    const programState = ProgramState.empty();
+    this.visitBlock(this.cfg.start, programState);
+    if (this.visitsLimitBreached()) {
+      // Analysis incomplete, it's safer to not raise issues at all
+      return false;
+    } else {
       this.processCallbacks(callback);
+      return true;
     }
   }
 
   private readonly visitBlock = (block: CfgBlock, programState: ProgramState) => {
-    if (this.visits > 1000) {
-      throw "Visits limit exceeded";
+    if (this.visitsLimitBreached()) {
+      return;
     }
     this.visits++;
     for (const programPoint of block.getElements()) {
@@ -60,6 +60,10 @@ export class SymbolicExecution {
       this.visitBlock(successor, programState);
     }
   };
+
+  private readonly visitsLimitBreached = () => {
+    return this.visits >= SymbolicExecution.BLOCK_VISITS_LIMIT;
+  }
 
   private readonly processCallbacks = (...callbacks: SECallback[]) => {
     this.programNodes.forEach((programStates, programPoint) => {

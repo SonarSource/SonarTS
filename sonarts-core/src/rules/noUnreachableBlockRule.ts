@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import * as tsutils from "tsutils";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolicExecution } from "../se/SymbolicExecution";
+import { build } from "../cfg/builder";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -50,7 +51,11 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   protected visitFunctionDeclaration(node: ts.FunctionDeclaration) {
     const { body } = node;
     if (body) {
-      const se = new SymbolicExecution(Array.from(body.statements), this.getProgram());
+      const cfg = build(Array.from(body.statements));
+      if (!cfg) {
+        return;
+      }
+      const se = new SymbolicExecution(cfg, this.getProgram());
       se.execute((node, programStates) => {
         if (
           tsutils.isBinaryExpression(node) &&
