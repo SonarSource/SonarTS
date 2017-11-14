@@ -24,7 +24,40 @@ function alwaysFalseIf(x: {}, y: undefined, z: null, w: void, u: undefined | nul
   //  ^^^ FN: This condition always evaluates to "false".
 }
 
+function parallelValues(y: boolean) {
+  let x = 0;
+  if (y) {
+    x = 1;
+  }
+  if (y) {
+    if (x) {
+    //  ^  {{This condition always evaluates to "true".}}     
+    }
+  }
+}
+
+function parallelTypes(x: string | number, y: boolean) {
+  if (y) {
+    x = foo();
+  }
+  if (y) {
+    if (x !== "") {
+    //  ^  {{This condition always evaluates to "false".}}     
+    }
+  }
+}
+
+function foo(): number {
+  return 3;
+}
+
 function alwaysFalseIfByConstraint(x: string) {
+  if (x) {
+    if (x) {
+      //^ {{This condition always evaluates to "true".}}
+    }
+  }
+
   if (x === "") {
     if (x) {
       //^ FN: This condition always evaluates to "false".
@@ -33,11 +66,6 @@ function alwaysFalseIfByConstraint(x: string) {
 }
 
 function alwaysTrueTernary(x: number[]) {
-  if (x) return 1;
-  //  ^ FN: This condition always evaluates to "true".
-}
-
-function l(x: number[]) {
   return x ? 1 : 2;
   //     ^ FN: This condition always evaluates to "true".
 }
@@ -127,7 +155,7 @@ function equality() {
   let x = foo();
   const y = x;
   if (x === y) return 1;
-  //  ^^^^^^^ {{This condition always evaluates to "true".}}
+  //  ^^^^^^^ FN: This condition always evaluates to "true".
 }
 
 function possiblyUndefinedParameter(parameter: any) {

@@ -26,17 +26,27 @@ export class SymbolicExecution {
   private static readonly BLOCK_VISITS_LIMIT = 1000;
 
   private readonly programNodes = new Map<ts.Node, ProgramState[]>();
+  private readonly branchingProgramNodes = new Map<ts.Node, ProgramState[]>();
   private visits = 0;
 
   constructor(private readonly cfg: ControlFlowGraph, private readonly program: ts.Program) {}
 
-  public execute(initialState: ProgramState, callback: SECallback): boolean {
+  public execute(
+    initialState: ProgramState,
+    onProgramPoint?: ProgramPointCallback,
+    onBranchingProgramPoint?: BranchingProgramPointCallback,
+  ): boolean {
     this.visitBlock(this.cfg.start, initialState);
     if (this.visitsLimitBreached()) {
       // Analysis incomplete, it's safer to not raise issues at all
       return false;
     } else {
-      this.processCallbacks(callback);
+      if (onProgramPoint) {
+        this.processProgramPointCallbacks(onProgramPoint);
+      }
+      if (onBranchingProgramPoint) {
+        this.processBranchingProgramPointCallbacks(onBranchingProgramPoint);
+      }
       return true;
     }
   }
@@ -56,6 +66,10 @@ export class SymbolicExecution {
     }
 
     if (block instanceof CfgBranchingBlock) {
+      const lastElement = block.getElements()[block.getElements().length - 1];
+      const existingStates = this.branchingProgramNodes.get(lastElement) || [];
+      this.branchingProgramNodes.set(lastElement, [...existingStates, programState]);
+
       this.visitBlock(block.getTrueSuccessor(), programState.addTruthyConstraint());
       this.visitBlock(block.getFalseSuccessor(), programState.addFalsyConstraint());
     } else {
@@ -69,8 +83,14 @@ export class SymbolicExecution {
     return this.visits >= SymbolicExecution.BLOCK_VISITS_LIMIT;
   };
 
-  private readonly processCallbacks = (...callbacks: SECallback[]) => {
+  private readonly processProgramPointCallbacks = (...callbacks: ProgramPointCallback[]) => {
     this.programNodes.forEach((programStates, programPoint) => {
+      callbacks.forEach(callback => callback(programPoint, programStates));
+    });
+  };
+
+  private readonly processBranchingProgramPointCallbacks = (...callbacks: BranchingProgramPointCallback[]) => {
+    this.branchingProgramNodes.forEach((programStates, programPoint) => {
       callbacks.forEach(callback => callback(programPoint, programStates));
     });
   };
@@ -100,6 +120,10 @@ export class SymbolicExecution {
   }
 }
 
-export interface SECallback {
-  (node: ts.Node, programStates: ProgramState[]): void;
+export interface ProgramPointCallback {
+  (programPoint: ts.Node, programStates: ProgramState[]): void;
+}
+
+export interface BranchingProgramPointCallback {
+  (programPoint: ts.Node, programStates: ProgramState[]): void;
 }

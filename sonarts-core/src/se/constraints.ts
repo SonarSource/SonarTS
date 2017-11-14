@@ -61,3 +61,11 @@ export function addConstraintToList(constraint: Constraint, list: Constraint[]):
   const shouldAdd = list.find(item => isEqualConstraints(constraint, item)) === undefined;
   return shouldAdd ? [...list, constraint] : list;
 }
+
+export function isTruthy(constraints: Constraint[]) {
+  return constraints.length === 1 && isTruthyConstraint(constraints[0]);
+}
+
+export function isFalsy(constraints: Constraint[]) {
+  return constraints.length === 1 && isFalsyConstraint(constraints[0]);
+}
