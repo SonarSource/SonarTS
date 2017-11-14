@@ -71,12 +71,16 @@ class Walker extends tslint.ProgramAwareRuleWalker {
           const rightSymbol = this.getProgram()
             .getTypeChecker()
             .getSymbolAtLocation(node.right);
-          if (
-            leftSymbol !== undefined &&
-            rightSymbol !== undefined &&
-            programStates.every(programState => programState.sv(leftSymbol) === programState.sv(rightSymbol))
-          ) {
-            this.addFailureAtNode(node, Rule.getMessage("true"));
+          if (leftSymbol !== undefined && rightSymbol !== undefined) {
+            if (
+              programStates.every(programState => {
+                const leftSV = programState.sv(leftSymbol);
+                const rightSV = programState.sv(rightSymbol);
+                return !!leftSV && !!rightSV && leftSV === rightSV;
+              })
+            ) {
+              this.addFailureAtNode(node, Rule.getMessage("true"));
+            }
           }
         }
       });

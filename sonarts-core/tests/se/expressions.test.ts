@@ -21,23 +21,21 @@ import { runStack } from "../utils/seTestUtils";
 import { SymbolicValue } from "../../src/se/symbolicValues";
 
 describe("Expressions", () => {
+  const UNKNOWN = { type: "unknown" };
+
   it("assignment", check(`let a; _inspectStack(a = 0);`, { type: "literal", value: "0" }, true));
 
-  it("function call", check(`let foo = function() {}; _inspectStack(foo());`, { type: "unknown" }, true));
+  it("function call", check(`let foo = function() {}; _inspectStack(foo());`, UNKNOWN, true));
 
-  it(
-    "function call with parameters",
-    check(`let foo; let x = 0; let y = 1; _inspectStack(foo(x, y));`, { type: "unknown" }, true),
-  );
+  it("function call with parameters", check(`let foo; let x = 0; let y = 1; _inspectStack(foo(x, y));`, UNKNOWN, true));
 
   it("object declaration", check(`_inspectStack({ bar: 0 });`, { type: "object" }, false));
 
-  it("property access expression", check(`let foo = { bar: 0 }; _inspectStack(foo.bar);`, { type: "unknown" }, false));
+  it("property access expression", check(`let foo = { bar: 0 }; _inspectStack(foo.bar);`, UNKNOWN, false));
 
-  it(
-    "defaults to pushing unknown value",
-    check(`let x = foo(); _inspectStack(x = x + 1);`, { type: "unknown" }, false),
-  );
+  it("defaults to pushing unknown value", check(`let x = foo(); _inspectStack(x = x + 1);`, UNKNOWN, false));
+
+  it("postfix increment"), check(`let x = 0; _inspectStack(x++)`, UNKNOWN, false);
 });
 
 function check(source: string, expectedSV: SymbolicValue, expectedEmpty: boolean) {

@@ -87,6 +87,16 @@ describe("Assignment", () => {
   });
 });
 
+describe("Increments Decrements", () => {
+  it("changes SV after postfix", () => {
+    expect.assertions(2);
+    run(`let x = 0; let y = 0; x++; y--; _inspect(x, y);`, (node, states, symbols) => {
+      expect(states[0].sv(symbols.get("x"))).toEqual({ type: "unknown" });
+      expect(states[0].sv(symbols.get("y"))).toEqual({ type: "unknown" });
+    });
+  });
+});
+
 describe("Conditions", () => {
   it("tracks symbolic values across branches", () => {
     expect.assertions(2);
