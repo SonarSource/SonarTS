@@ -26,9 +26,13 @@ import {
   createObjectLiteralSymbolicValue,
 } from "./symbolicValues";
 import { ProgramState } from "./programStates";
+import { PostfixUnaryExpression } from "typescript";
+import { isIdentifier } from "tsutils";
 
 export function applyExecutors(programPoint: ts.Node, state: ProgramState, program: ts.Program): ProgramState {
   const { parent } = programPoint;
+  const { getSymbolAtLocation } = program.getTypeChecker();
+  const getSymbol = getSymbolAtLocation;
 
   // TODO is there a better way to handle this?
   // special case: `let x;`
@@ -45,7 +49,7 @@ export function applyExecutors(programPoint: ts.Node, state: ProgramState, progr
   }
 
   if (tsutils.isBinaryExpression(programPoint)) {
-    return binaryExpression(programPoint, state, program);
+    return binaryExpression(programPoint, state, getSymbol);
   }
 
   if (tsutils.isVariableDeclaration(programPoint)) {
@@ -64,7 +68,15 @@ export function applyExecutors(programPoint: ts.Node, state: ProgramState, progr
     return propertyAccessExpression(state);
   }
 
+  if (tsutils.isPostfixUnaryExpression(programPoint)) {
+    return postfixUnaryExpression(programPoint, state, getSymbol);
+  }
+
   return state.pushSV(createUnknownSymbolicValue());
+}
+
+interface GetSymbol {
+  (identifier: ts.Identifier): ts.Symbol | undefined;
 }
 
 function identifier(identifier: ts.Identifier, state: ProgramState, program: ts.Program) {
@@ -80,11 +92,10 @@ function numeralLiteral(literal: ts.NumericLiteral, state: ProgramState, _progra
   return state.pushSV(createLiteralSymbolicValue(literal.text));
 }
 
-function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, program: ts.Program) {
+function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, getSymbol: GetSymbol) {
   if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
     let [value, nextState] = state.popSV();
-    const { getSymbolAtLocation } = program.getTypeChecker();
-    const variable = getSymbolAtLocation(expression.left as ts.Identifier);
+    const variable = getSymbol(expression.left as ts.Identifier);
     if (!variable) {
       return nextState;
     }
@@ -130,4 +141,17 @@ function objectLiteralExpression(state: ProgramState) {
 
 function propertyAccessExpression(state: ProgramState) {
   return state.popSV()[1].pushSV(createUnknownSymbolicValue());
+}
+
+function postfixUnaryExpression(unary: PostfixUnaryExpression, state: ProgramState, getSymbol: GetSymbol) {
+  let nextState = state;
+  const operand = unary.operand;
+  const sv = createUnknownSymbolicValue();
+  if (isIdentifier(operand)) {
+    const symbol = getSymbol(operand);
+    if (symbol) {
+      nextState = nextState.setSV(symbol, sv);
+    }
+  }
+  return nextState.popSV()[1].pushSV(sv);
 }

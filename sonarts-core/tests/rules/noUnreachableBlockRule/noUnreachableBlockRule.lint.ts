@@ -135,3 +135,13 @@ function possiblyUndefinedParameter(parameter: any) {
     // OK, parameter can be anything here
   }
 }
+
+namespace A {
+  let bar: any;
+
+  function foo() {
+    if (bar === undefined) {
+      // OK, we should ignore symbols declared outside of function scope
+    }
+  }
+}
