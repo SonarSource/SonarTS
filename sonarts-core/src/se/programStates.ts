@@ -20,21 +20,25 @@
 import * as ts from "typescript";
 import { SymbolicValue, isEqualSymbolicValues } from "./symbolicValues";
 import { inspect } from "util";
+import { Constraint } from "./constraints";
 
 type SymbolicValues = Map<ts.Symbol, SymbolicValue>;
 type ExpressionStack = SymbolicValue[];
+type Constraints = Map<SymbolicValue, Constraint[]>;
 
 export class ProgramState {
   private readonly symbolicValues: SymbolicValues;
   private readonly expressionStack: ExpressionStack;
+  private readonly constraints: Constraints;
 
   public static empty() {
-    return new ProgramState(new Map(), []);
+    return new ProgramState(new Map(), [], new Map());
   }
 
-  private constructor(symbolicValues: SymbolicValues, expressionStack: ExpressionStack) {
+  private constructor(symbolicValues: SymbolicValues, expressionStack: ExpressionStack, constraints: Constraints) {
     this.symbolicValues = symbolicValues;
     this.expressionStack = expressionStack;
+    this.constraints = constraints;
   }
 
   sv(symbol: ts.Symbol): SymbolicValue | undefined {
@@ -44,17 +48,29 @@ export class ProgramState {
   setSV(symbol: ts.Symbol, sv: SymbolicValue) {
     const newSymbolicValues = new Map(this.symbolicValues);
     newSymbolicValues.set(symbol, sv);
-    return new ProgramState(newSymbolicValues, this.expressionStack);
+    return new ProgramState(newSymbolicValues, this.expressionStack, this.constraints);
   }
 
   pushSV(sv: SymbolicValue): ProgramState {
     const newExpressionStack = [...this.expressionStack, sv];
-    return new ProgramState(this.symbolicValues, newExpressionStack);
+    return new ProgramState(this.symbolicValues, newExpressionStack, this.constraints);
   }
 
   popSV(): [SymbolicValue | undefined, ProgramState] {
     const newExpressionStack = [...this.expressionStack];
-    return [newExpressionStack.pop(), new ProgramState(this.symbolicValues, newExpressionStack)];
+    return [newExpressionStack.pop(), new ProgramState(this.symbolicValues, newExpressionStack, this.constraints)];
+  }
+
+  addConstraint(constraint: Constraint) {
+    if (this.expressionStack.length > 0) {
+      const sv = this.expressionStack[this.expressionStack.length - 1];
+      const newConstraints = new Map(this.constraints);
+      const svConstraints = newConstraints.get(sv) || [];
+      newConstraints.set(sv, [...svConstraints, constraint]);
+      return new ProgramState(this.symbolicValues, this.expressionStack, newConstraints);
+    } else {
+      throw new Error("Cannot apply a constraint, because the expression stack is empty");
+    }
   }
 
   hasEmptyStack(): boolean {
