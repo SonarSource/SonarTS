@@ -39,7 +39,15 @@ export function runStack(source: string, callback: StackTestCallBack) {
 
 export function runConstraints(source: string, callback: ConstraintsTestCallback) {
   run(source, (node, states, symbols) => {
-    callback(states[0].getConstraints(states[0].sv(symbols.get(symbols.keys().next().value))));
+    const onlySymbol = symbols.get(symbols.keys().next().value);
+    const allConstraints = states.map(state => {
+      const stateConstraints = state.getConstraints(state.sv(onlySymbol));
+      if (stateConstraints.length > 1) {
+        throw new Error(`Symbolic value for "${onlySymbol.name}" unexpectedly has more than one constraint`);
+      }
+      return stateConstraints[0];
+    });
+    callback(allConstraints);
   });
 }
 

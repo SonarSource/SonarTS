@@ -22,33 +22,46 @@ import { Constraint, getTruthyConstraint, getFalsyConstraint } from "../../src/s
 
 describe("If", () => {
   it("constraints condition to TRUTHY for THEN branch", () => {
-    checkConstaint(`let x; if (x) { _inspect(x) }`, getTruthyConstraint());
+    checkConstaints(`let x; if (x) { _inspect(x) }`, getTruthyConstraint());
   });
 
   it("constraints condition to FALSY for ELSE branch", () => {
-    checkConstaint(`let x; if (x) {} else { _inspect(x) } `, getFalsyConstraint());
+    checkConstaints(`let x; if (x) {} else { _inspect(x) } `, getFalsyConstraint());
+  });
+
+  it("merges constraints after the block", () => {
+    checkConstaints(`let x; if (x) {} else {} _inspect(x)`, [getTruthyConstraint(), getFalsyConstraint()]);
   });
 });
 
 describe("Conditional expression", () => {
   it("constraints condition to TRUTHY", () => {
-    checkConstaint(`let x; x ? _inspect(x) : _`, getTruthyConstraint());
+    checkConstaints(`let x; x ? _inspect(x) : _`, getTruthyConstraint());
   });
 
   it("constraints condition to FALSE", () => {
-    checkConstaint(`let x; x ? _ : _inspect(x)`, getFalsyConstraint());
+    checkConstaints(`let x; x ? _ : _inspect(x)`, getFalsyConstraint());
+  });
+
+  it("merges constraints after the block", () => {
+    checkConstaints(`let x; x ? _ : _; _inspect(x)`, [getTruthyConstraint(), getFalsyConstraint()]);
   });
 });
 
 describe("While", () => {
   it("constraints condition to TRUTHY", () => {
-    checkConstaint(`let x; while(x) { _inspect(x) }`, getTruthyConstraint());
+    checkConstaints(`let x; while(x) { _inspect(x) }`, getTruthyConstraint());
+  });
+
+  it("has only FALSY constraint after the block", () => {
+    checkConstaints(`let x; while(x) {} _inspect(x)`, [getFalsyConstraint()]);
   });
 });
 
-function checkConstaint<T extends Constraint>(source: string, expectedConstraint: T) {
+function checkConstaints<T extends Constraint>(source: string, expectedConstraints: T | T[]) {
   expect.assertions(1);
   runConstraints(source, constraints => {
-    expect(constraints).toEqual([expectedConstraint]);
+    const expected = Array.isArray(expectedConstraints) ? expectedConstraints : [expectedConstraints];
+    expect(constraints).toEqual(expected);
   });
 }
