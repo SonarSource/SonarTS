@@ -31,7 +31,7 @@ function parallelValues(y: boolean) {
   }
   if (y) {
     if (x) {
-    //  ^  {{This condition always evaluates to "true".}}     
+      //  ^  FN: This condition always evaluates to "true".
     }
   }
 }
@@ -42,7 +42,7 @@ function parallelTypes(x: string | number, y: boolean) {
   }
   if (y) {
     if (x !== "") {
-    //  ^  {{This condition always evaluates to "false".}}     
+      //  ^  FN: This condition always evaluates to "false".
     }
   }
 }
@@ -144,11 +144,6 @@ function dom() {
   return performance && performance.now ? performance.now() : null;
 }
 
-function nullable(x: {}) {
-  if (x) return 1;
-}
-nullable(null);
-
 export default 1;
 
 function equality() {
@@ -171,5 +166,36 @@ namespace A {
     if (bar === undefined) {
       // OK, we should ignore symbols declared outside of function scope
     }
+  }
+}
+
+function escapeSqlIdentifier(str: string) {
+  for (const c of str) {
+    // ok, should not constrain `c` nor `str`
+    if (str) {
+    }
+    if (c) {
+    }
+  }
+}
+
+// FP!!!
+function loopInsideIf(d: number) {
+  if (d) {
+    for (let i = d; i; i++) {}
+    //              ^ {{This condition always evaluates to "true".}}
+  }
+}
+
+// FP!!!
+function artifactsAfterIf(symbol: Symbol) {
+  if (symbol) {
+    return 1;
+  }
+
+  let target: Symbol;
+  if (target) {
+    //^^^^^^ {{This condition always evaluates to "false".}}
+    return [target];
   }
 }
