@@ -33,7 +33,8 @@ import { Constraint } from "../../src/se/constraints";
 export function runStack(source: string, callback: StackTestCallBack) {
   run(source, (node, states, symbols) => {
     const [top, nextState] = states[0].popSV();
-    callback(top, !nextState.popSV()[0]);
+    // compare with 1, because `_inspectStack` always pushes one expression to the stack
+    callback(top, nextState.getStackSize() === 1);
   });
 }
 

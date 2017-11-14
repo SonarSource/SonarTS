@@ -31,7 +31,8 @@ describe("Variable Declaration", () => {
   it("does not push value to the stack", () => {
     expect.assertions(1);
     run(`let x = foo(); _inspect();`, (node, states, symbols) => {
-      expect(states[0].popSV()[0]).toBeUndefined();
+      // compare with 1, because `_inspect` always pushes one expression to the stack
+      expect(states[0].getStackSize()).toBe(1);
     });
   });
 

@@ -67,6 +67,10 @@ export class ProgramState {
     return [newExpressionStack.pop(), new ProgramState(this.symbolicValues, newExpressionStack, this.constraints)];
   }
 
+  getStackSize() {
+    return this.expressionStack.length;
+  }
+
   addConstraint(constraint: Constraint) {
     if (this.expressionStack.length > 0) {
       const sv = this.expressionStack[this.expressionStack.length - 1];
