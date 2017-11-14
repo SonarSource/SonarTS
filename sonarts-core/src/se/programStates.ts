@@ -20,7 +20,13 @@
 import * as ts from "typescript";
 import { SymbolicValue, isEqualSymbolicValues } from "./symbolicValues";
 import { inspect } from "util";
-import { Constraint, getTruthyConstraint, getFalsyConstraint, isEqualConstraints } from "./constraints";
+import {
+  Constraint,
+  getTruthyConstraint,
+  getFalsyConstraint,
+  isEqualConstraints,
+  addConstraintToList,
+} from "./constraints";
 
 type SymbolicValues = Map<ts.Symbol, SymbolicValue>;
 type ExpressionStack = SymbolicValue[];
@@ -66,7 +72,7 @@ export class ProgramState {
       const sv = this.expressionStack[this.expressionStack.length - 1];
       const newConstraints = new Map(this.constraints);
       const svConstraints = newConstraints.get(sv) || [];
-      newConstraints.set(sv, [...svConstraints, constraint]);
+      newConstraints.set(sv, addConstraintToList(constraint, svConstraints));
       return new ProgramState(this.symbolicValues, this.expressionStack, newConstraints);
     } else {
       throw new Error("Cannot apply a constraint, because the expression stack is empty");

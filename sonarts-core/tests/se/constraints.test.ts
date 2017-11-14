@@ -32,6 +32,16 @@ describe("If", () => {
   it("merges constraints after the block", () => {
     checkConstaints(`let x; if (x) {} else {} _inspect(x)`, [getTruthyConstraint(), getFalsyConstraint()]);
   });
+
+  it("constraints nested IFs", () => {
+    checkConstaints(
+      `let x; 
+       if (x) { 
+         if (x) { _inspect(x) } 
+       }`,
+      getTruthyConstraint(),
+    );
+  });
 });
 
 describe("Conditional expression", () => {
