@@ -18,8 +18,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 export enum ConstraintKind {
-  Truthy,
   Falsy,
+  Truthy,
 }
 
 export interface Constraint {
@@ -34,10 +34,21 @@ export interface FalsyConstraint extends Constraint {
   kind: ConstraintKind.Falsy;
 }
 
+const truthyConstraint: TruthyConstraint = { kind: ConstraintKind.Truthy };
+const falsyConstraint: FalsyConstraint = { kind: ConstraintKind.Falsy };
+
 export function isTruthyConstraint(constraint: Constraint): constraint is TruthyConstraint {
   return constraint.kind === ConstraintKind.Truthy;
 }
 
 export function isFalsyConstraint(constraint: Constraint): constraint is FalsyConstraint {
   return constraint.kind === ConstraintKind.Falsy;
+}
+
+export function getTruthyConstraint(): TruthyConstraint {
+  return truthyConstraint;
+}
+
+export function getFalsyConstraint(): FalsyConstraint {
+  return falsyConstraint;
 }

@@ -20,7 +20,7 @@
 import * as ts from "typescript";
 import { SymbolicValue, isEqualSymbolicValues } from "./symbolicValues";
 import { inspect } from "util";
-import { Constraint } from "./constraints";
+import { Constraint, getTruthyConstraint, getFalsyConstraint } from "./constraints";
 
 type SymbolicValues = Map<ts.Symbol, SymbolicValue>;
 type ExpressionStack = SymbolicValue[];
@@ -73,6 +73,18 @@ export class ProgramState {
     }
   }
 
+  addTruthyConstraint() {
+    return this.addConstraint(getTruthyConstraint());
+  }
+
+  addFalsyConstraint() {
+    return this.addConstraint(getFalsyConstraint());
+  }
+
+  getConstraints(sv: SymbolicValue) {
+    return this.constraints.get(sv);
+  }
+
   hasEmptyStack(): boolean {
     return this.expressionStack.length == 0;
   }
@@ -82,7 +94,7 @@ export class ProgramState {
     this.symbolicValues.forEach((value, key) => {
       prettyEntries.set(key.name, value);
     });
-    return inspect({ prettyEntries, expressionStack: this.expressionStack });
+    return inspect({ prettyEntries, expressionStack: this.expressionStack, constraints: this.constraints });
   }
 
   isEqualTo(another: ProgramState) {

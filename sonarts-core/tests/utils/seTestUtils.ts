@@ -28,11 +28,18 @@ import { isEqual } from "lodash";
 import { SymbolicValue, createUnknownSymbolicValue } from "../../src/se/symbolicValues";
 import { build } from "../../src/cfg/builder";
 import { isFunctionDeclaration } from "tsutils";
+import { Constraint } from "../../src/se/constraints";
 
 export function runStack(source: string, callback: StackTestCallBack) {
   run(source, (node, states, symbols) => {
-    let [top, nextState] = states[0].popSV();
+    const [top, nextState] = states[0].popSV();
     callback(top, !nextState.popSV()[0]);
+  });
+}
+
+export function runConstraints(source: string, callback: ConstraintsTestCallback) {
+  run(source, (node, states, symbols) => {
+    callback(states[0].getConstraints(states[0].sv(symbols.get(symbols.keys().next().value))));
   });
 }
 
@@ -46,7 +53,7 @@ export function run(source: string, callback: SETestCallback) {
   const program = ts.createProgram([], { strict: true }, host);
   const sourceFile = program.getSourceFiles()[0];
 
-  const se = new SymbolicExecution(build(sourceFile.statements)!, program);
+  const se = new SymbolicExecution(build(Array.from(sourceFile.statements))!, program);
 
   se.execute(createInitialState(), (node, state) => {
     const map = isInspectNode(node, program);
@@ -83,4 +90,8 @@ export interface SETestCallback {
 
 export interface StackTestCallBack {
   (top: SymbolicValue, empty: boolean): void;
+}
+
+export interface ConstraintsTestCallback {
+  (constraints: Constraint[] | undefined): void;
 }

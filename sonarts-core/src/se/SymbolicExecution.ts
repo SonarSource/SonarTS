@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { ControlFlowGraph, CfgBlock } from "../cfg/cfg";
+import { ControlFlowGraph, CfgBlock, CfgBranchingBlock } from "../cfg/cfg";
 import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
 
@@ -55,8 +55,13 @@ export class SymbolicExecution {
       }
     }
 
-    for (const successor of block.getSuccessors()) {
-      this.visitBlock(successor, programState);
+    if (block instanceof CfgBranchingBlock) {
+      this.visitBlock(block.getTrueSuccessor(), programState.addTruthyConstraint());
+      this.visitBlock(block.getFalseSuccessor(), programState.addFalsyConstraint());
+    } else {
+      for (const successor of block.getSuccessors()) {
+        this.visitBlock(successor, programState);
+      }
     }
   };
 
