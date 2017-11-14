@@ -129,3 +129,9 @@ function equality() {
   if (x === y) return 1;
   //  ^^^^^^^ {{This condition always evaluates to "true".}}
 }
+
+function possiblyUndefinedParameter(parameter: any) {
+  if (parameter === undefined) {
+    // OK, parameter can be anything here
+  }
+}

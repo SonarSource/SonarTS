@@ -30,9 +30,8 @@ export class SymbolicExecution {
 
   constructor(private readonly cfg: ControlFlowGraph, private readonly program: ts.Program) {}
 
-  public execute(callback: SECallback): boolean {
-    const programState = ProgramState.empty();
-    this.visitBlock(this.cfg.start, programState);
+  public execute(initialState: ProgramState, callback: SECallback): boolean {
+    this.visitBlock(this.cfg.start, initialState);
     if (this.visitsLimitBreached()) {
       // Analysis incomplete, it's safer to not raise issues at all
       return false;
@@ -63,7 +62,7 @@ export class SymbolicExecution {
 
   private readonly visitsLimitBreached = () => {
     return this.visits >= SymbolicExecution.BLOCK_VISITS_LIMIT;
-  }
+  };
 
   private readonly processCallbacks = (...callbacks: SECallback[]) => {
     this.programNodes.forEach((programStates, programPoint) => {

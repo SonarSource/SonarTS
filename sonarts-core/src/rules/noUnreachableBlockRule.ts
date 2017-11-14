@@ -23,6 +23,8 @@ import * as tsutils from "tsutils";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolicExecution } from "../se/SymbolicExecution";
 import { build } from "../cfg/builder";
+import { ProgramState } from "../se/programStates";
+import { createUnknownSymbolicValue } from "../se/symbolicValues";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -56,7 +58,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
         return;
       }
       const se = new SymbolicExecution(cfg, this.getProgram());
-      se.execute((node, programStates) => {
+      se.execute(createInitialState(node, this.getProgram()), (node, programStates) => {
         if (
           tsutils.isBinaryExpression(node) &&
           node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken &&
@@ -81,4 +83,15 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
     super.visitFunctionDeclaration(node);
   }
+}
+
+function createInitialState(declaration: ts.FunctionDeclaration, program: ts.Program) {
+  let state = ProgramState.empty();
+  declaration.parameters.forEach(parameter => {
+    const symbol = program.getTypeChecker().getSymbolAtLocation(parameter.name);
+    if (symbol) {
+      state = state.setSV(symbol, createUnknownSymbolicValue());
+    }
+  });
+  return state;
 }
