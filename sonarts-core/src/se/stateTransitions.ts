@@ -81,11 +81,8 @@ interface GetSymbol {
 
 function identifier(identifier: ts.Identifier, state: ProgramState, program: ts.Program) {
   const symbol = program.getTypeChecker().getSymbolAtLocation(identifier);
-  if (symbol) {
-    const sv = state.sv(symbol) || createUnknownSymbolicValue();
-    return state.pushSV(sv);
-  }
-  return state;
+  let sv = (symbol && state.sv(symbol)) || createUnknownSymbolicValue();
+  return state.pushSV(sv);
 }
 
 function numeralLiteral(literal: ts.NumericLiteral, state: ProgramState, _program: ts.Program) {

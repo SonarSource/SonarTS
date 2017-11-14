@@ -48,7 +48,7 @@ describe("Expressions", () => {
   });
 
   it("postfix increment", () => {
-    check(`let x = 0; _inspectStack(x++)`, UNKNOWN, false);
+    check(`let x = 0; _inspectStack(x++)`, UNKNOWN, true);
   });
 });
 
