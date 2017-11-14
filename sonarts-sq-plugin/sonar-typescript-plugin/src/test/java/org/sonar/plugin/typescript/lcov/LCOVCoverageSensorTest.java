@@ -67,7 +67,7 @@ public class LCOVCoverageSensorTest {
     assertThat(context.coveredConditions("moduleKey:file1.ts", 2)).isEqualTo(2);
     assertThat(context.conditions("moduleKey:file1.ts", 2)).isEqualTo(4);
 
-    assertThat(logTester.logs().get(1)).containsSequence("Could not resolve 1 file paths in [", BASE_DIR, "], first unresolved path: file2.ts");
+    assertThat(logTester.logs()).contains("Could not resolve 1 file paths in [" + new File(moduleBaseDir, "lcov.info").getAbsolutePath() + "], first unresolved path: file2.ts");
   }
 
   private void createInputFile() throws IOException {
