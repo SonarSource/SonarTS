@@ -45,7 +45,7 @@ case "$TEST" in
   ts)
 
   node_home=$(pwd)/node-v8.9.1-linux-x64
-  node_archive=node.7z
+  node_archive=node-v8.9.1-linux-x64.tar.xz
   if [ ! -d "$node_home" ]; then
     echo "=== Install Node.js ===";
     curl --insecure --silent --show-error -o $node_archive https://nodejs.org/dist/v8.9.1/node-v8.9.1-linux-x64.tar.xz;
