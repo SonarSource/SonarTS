@@ -212,15 +212,6 @@ export class Rule extends tslint.Rules.TypedRule {
   private static isCollectionName(str: string): boolean {
     const collections = new Set([
       "Array",
-      "Int8Array",
-      "Uint8Array",
-      "Uint8ClampedArray",
-      "Int16Array",
-      "Uint16Array",
-      "Int32Array",
-      "Uint32Array",
-      "Float32Array",
-      "Float64Array",
       "Set",
       "Map",
       "WeakSet",

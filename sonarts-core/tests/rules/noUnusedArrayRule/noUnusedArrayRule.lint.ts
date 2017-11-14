@@ -54,12 +54,6 @@ function nok7() {
     mySet.delete({});
 }
 
-function nok8() {
-    let array = new Uint16Array(2);
-//      ^^^^^ {{Either use this collection's contents or remove the collection.}}
-    array[1] = 43;
-}
-
 
 // OK
 
@@ -152,6 +146,10 @@ function ok12() {
     return foo;
 }
 
+function ok13(buffer) {
+    let array = new Uint16Array(buffer);
+    array[1] = 43;
+}
 
 export const EXPORTED_ARRAY: any[] = [];
 import { IMPORTED_ARRAY } from "./dep";
