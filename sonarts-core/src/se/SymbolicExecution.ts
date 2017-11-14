@@ -21,9 +21,10 @@ import * as ts from "typescript";
 import { ControlFlowGraph, CfgBlock, CfgBranchingBlock } from "../cfg/cfg";
 import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
+import { is } from "../utils/navigation";
 
 export class SymbolicExecution {
-  private static readonly BLOCK_VISITS_LIMIT = 1000;
+  private static readonly BLOCK_VISITS_LIMIT = 100;
 
   private readonly programNodes = new Map<ts.Node, ProgramState[]>();
   private readonly branchingProgramNodes = new Map<ts.Node, ProgramState[]>();
@@ -65,7 +66,7 @@ export class SymbolicExecution {
       }
     }
 
-    if (block instanceof CfgBranchingBlock) {
+    if (block instanceof CfgBranchingBlock && !this.isForInOfLoop(block)) {
       const lastElement = block.getElements()[block.getElements().length - 1];
       const existingStates = this.branchingProgramNodes.get(lastElement) || [];
       this.branchingProgramNodes.set(lastElement, [...existingStates, programState]);
@@ -117,6 +118,10 @@ export class SymbolicExecution {
       }
     }
     return false;
+  }
+
+  private isForInOfLoop(block: CfgBranchingBlock) {
+    return is(block.loopingStatement, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement);
   }
 }
 
