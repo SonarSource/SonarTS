@@ -78,7 +78,7 @@ describe("Assignment", () => {
       expect(states[0].sv(symbols.get("x"))).toEqual({ type: "unknown" });
     });
   });
-  
+
   it("chains assignments", () => {
     expect.assertions(1);
     run(`let a; let b; a = b = 0; _inspect(a);`, (node, states, symbols) => {
@@ -106,19 +106,36 @@ describe("Loops", () => {
   });
 });
 
+describe.skip("Parameters", () => {
+  it("initializes program state with parameters symbols to unknown", () => {
+    expect.assertions(1);
+    run(
+      `function foo(x: any, y: any) {
+      _inspect(x, y);
+    }`,
+      (node, states, symbols) => {
+        expect(states[0].sv(symbols.get("x"))).toEqual({ type: "unknown" });
+      },
+    );
+  });
+});
+
 describe("Too Many Branches", () => {
   it("cuts execution", () => {
     expect.assertions(0);
-    run(`
+    run(
+      `
     let x = foo();
     if (x) x = 1; if (x) x = 2; if (x) x = 3; if (x) x = 4; if (x) x = 5; if (x) x = 6; if (x) x = 7; if (x) x = 8;
     if (x) x = 9; if (x) x = 10; if (x) x = 11; if (x) x = 12; if (x) x = 13; if (x) x = 14; if (x) x = 15; if (x) x = 16;
     if (x) x = 17; if (x) x = 18; if (x) x = 19; if (x) x = 20; if (x) x = 21; if (x) x = 22; if (x) x = 23; if (x) x = 24;
     if (x) x = 25;
     _inspect(x);
-    `, (node, states, symbols) => {
-      console.log(states.length);
-      expect(true).toBeFalsy(); // This should never be called
-    });
-  })
+    `,
+      (node, states, symbols) => {
+        console.log(states.length);
+        expect(true).toBeFalsy(); // This should never be called
+      },
+    );
+  });
 });

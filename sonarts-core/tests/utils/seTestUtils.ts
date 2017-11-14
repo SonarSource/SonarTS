@@ -25,8 +25,9 @@ import { parseString } from "../../src/utils/parser";
 import { SymbolicExecution, SECallback } from "../../src/se/SymbolicExecution";
 import { ProgramState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
-import { SymbolicValue } from "../../src/se/symbolicValues";
+import { SymbolicValue, createUnknownSymbolicValue } from "../../src/se/symbolicValues";
 import { build } from "../../src/cfg/builder";
+import { isFunctionDeclaration } from "tsutils";
 
 export function runStack(source: string, callback: StackTestCallBack) {
   run(source, (node, states, symbols) => {
@@ -44,15 +45,19 @@ export function run(source: string, callback: SETestCallback) {
   };
   const program = ts.createProgram([], { strict: true }, host);
   const sourceFile = program.getSourceFiles()[0];
-  
+
   const se = new SymbolicExecution(build(sourceFile.statements)!, program);
 
-  se.execute((node, state) => {
+  se.execute(createInitialState(), (node, state) => {
     const map = isInspectNode(node, program);
     if (map) {
       callback(node, state, map);
     }
   });
+}
+
+function createInitialState() {
+  return ProgramState.empty();
 }
 
 function isInspectNode(node: ts.Node, program: ts.Program): Map<string, ts.Symbol> | undefined {
@@ -68,7 +73,7 @@ function isInspectNode(node: ts.Node, program: ts.Program): Map<string, ts.Symbo
     if (node.expression.text === "_inspectStack") {
       return new Map<string, ts.Symbol>();
     }
-  } 
+  }
   return undefined;
 }
 
@@ -77,5 +82,5 @@ export interface SETestCallback {
 }
 
 export interface StackTestCallBack {
-  (top: SymbolicValue, empty: boolean) : void;
+  (top: SymbolicValue, empty: boolean): void;
 }

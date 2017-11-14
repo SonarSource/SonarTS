@@ -19,7 +19,12 @@
  */
 import * as ts from "typescript";
 import * as tsutils from "tsutils";
-import { createLiteralSymbolicValue, createUnknownSymbolicValue, createUndefinedSymbolicValue, createObjectLiteralSymbolicValue } from "./symbolicValues";
+import {
+  createLiteralSymbolicValue,
+  createUnknownSymbolicValue,
+  createUndefinedSymbolicValue,
+  createObjectLiteralSymbolicValue,
+} from "./symbolicValues";
 import { ProgramState } from "./programStates";
 
 export function applyExecutors(programPoint: ts.Node, state: ProgramState, program: ts.Program): ProgramState {
@@ -88,7 +93,7 @@ function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, 
       throw "Assignment without value";
     }
     nextState = nextState.pushSV(value);
-  
+
     return nextState.setSV(variable, value);
   }
   return state.pushSV(createUnknownSymbolicValue());
@@ -98,7 +103,7 @@ function variableDeclaration(declaration: ts.VariableDeclaration, state: Program
   if (tsutils.isIdentifier(declaration.name)) {
     let [value, nextState] = state.popSV();
     const { getSymbolAtLocation } = program.getTypeChecker();
-    const variable = getSymbolAtLocation(declaration.name);    
+    const variable = getSymbolAtLocation(declaration.name);
     if (!variable) {
       return nextState;
     }
@@ -113,7 +118,7 @@ function variableDeclaration(declaration: ts.VariableDeclaration, state: Program
 
 function callExpression(callExpression: ts.CallExpression, state: ProgramState) {
   let nextState = state;
-  callExpression.arguments.forEach(_ => nextState = nextState.popSV()[1]);
+  callExpression.arguments.forEach(_ => (nextState = nextState.popSV()[1]));
   nextState = nextState.popSV()[1]; // Pop callee value
   return nextState.pushSV(createUnknownSymbolicValue());
 }
