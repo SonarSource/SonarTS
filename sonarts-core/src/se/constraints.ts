@@ -52,3 +52,7 @@ export function getTruthyConstraint(): TruthyConstraint {
 export function getFalsyConstraint(): FalsyConstraint {
   return falsyConstraint;
 }
+
+export function isEqualConstraints(a: Constraint, b: Constraint): boolean {
+  return a.kind === b.kind;
+}

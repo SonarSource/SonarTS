@@ -20,7 +20,7 @@
 import * as ts from "typescript";
 import { SymbolicValue, isEqualSymbolicValues } from "./symbolicValues";
 import { inspect } from "util";
-import { Constraint, getTruthyConstraint, getFalsyConstraint } from "./constraints";
+import { Constraint, getTruthyConstraint, getFalsyConstraint, isEqualConstraints } from "./constraints";
 
 type SymbolicValues = Map<ts.Symbol, SymbolicValue>;
 type ExpressionStack = SymbolicValue[];
@@ -98,7 +98,7 @@ export class ProgramState {
   }
 
   isEqualTo(another: ProgramState) {
-    return this.areSymbolsEqual(another) && this.areSymbolicValuesEqual(another);
+    return this.areSymbolsEqual(another) && this.areSymbolicValuesEqual(another) && this.areConstraintsEqual(another);
   }
 
   private areSymbolsEqual(another: ProgramState) {
@@ -111,6 +111,17 @@ export class ProgramState {
     return Array.from(this.symbolicValues.entries()).reduce((result, [symbol, value]) => {
       const anotherValue = another.symbolicValues.get(symbol);
       return result && anotherValue !== undefined && isEqualSymbolicValues(value, anotherValue);
+    }, true);
+  }
+
+  private areConstraintsEqual(another: ProgramState) {
+    return Array.from(this.constraints.entries()).reduce((result, [sv, constraints]) => {
+      const anotherConstraints = another.constraints.get(sv);
+      return (
+        result &&
+        anotherConstraints !== undefined &&
+        areArraysEqual(constraints, anotherConstraints, isEqualConstraints)
+      );
     }, true);
   }
 }
