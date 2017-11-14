@@ -12,6 +12,7 @@
     "no-identical-conditions": true,
     "no-identical-expressions": true,
     "no-identical-functions": true,
+    "no-ignored-initial-value": true,
     "no-ignored-return": true,
     "no-inconsistent-return": false,
     "no-misleading-array-reverse": true,

@@ -42,7 +42,7 @@ export class ControlFlowGraph {
     this.makeBidirectional();
   }
 
-  public static fromStatements(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph | undefined {
+  public static fromStatements(statements: ts.Statement[]): ControlFlowGraph | undefined {
     return new CfgBuilder().build(statements);
   }
 

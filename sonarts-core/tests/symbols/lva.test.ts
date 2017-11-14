@@ -89,7 +89,7 @@ it("destructuring", () => {
 
 function liveVariableAnalysis(functionName: string) {
   const func = findFunction(functionName);
-  new LiveVariableAnalyzer(symbols).analyze(func);
+  new LiveVariableAnalyzer(symbols).analyzeFunction(func);
   return func;
 }
 

@@ -66,7 +66,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   protected visitNode(node: ts.Node): void {
     if (is(node, ...FUNCTION_LIKE)) {
       const functionLike = node as ts.FunctionLikeDeclaration;
-      new LiveVariableAnalyzer(this.symbols).analyze(functionLike);
+      new LiveVariableAnalyzer(this.symbols).analyzeFunction(functionLike);
       descendants(node)
         .filter(descendant => is(descendant, ts.SyntaxKind.Identifier))
         .forEach(descendant => {
