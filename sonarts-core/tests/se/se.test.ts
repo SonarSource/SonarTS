@@ -115,6 +115,18 @@ describe("Loops", () => {
       expect(true).toBeTruthy();
     });
   });
+
+  it("visits FOR loop with two different states", () => {
+    expect.assertions(2);
+    const finished = run(
+      `for (let x = y; x; x++) {}`,
+      () => {},
+      (programPoint, programStates) => {
+        expect(programStates.length).toBe(1);
+      },
+    );
+    expect(finished).toBe(true);
+  });
 });
 
 describe.skip("Parameters", () => {
