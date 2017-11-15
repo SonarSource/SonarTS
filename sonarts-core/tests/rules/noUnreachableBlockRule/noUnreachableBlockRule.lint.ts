@@ -185,15 +185,18 @@ function loopInsideIf(d: number) {
   }
 }
 
-// FP!!!
-function artifactsAfterIf(symbol: Symbol) {
-  if (symbol) {
-    return 1;
+function artifactsAfterIf() {
+  let x;
+  if (x) {
+    return;
   }
 
-  let target: Symbol;
-  if (target) {
-    //^^^^^^ {{This condition always evaluates to "false".}}
-    return [target];
+  let y;
+  if (y) {
   }
+}
+
+function and(x: Foo, y: Foo) {
+  let z;
+  z = x && y;
 }
