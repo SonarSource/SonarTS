@@ -200,3 +200,20 @@ function and(x: Foo, y: Foo) {
   let z;
   z = x && y;
 }
+
+function logicalOrWithGlobals() {
+  const z = x || y;
+
+  if (z) {
+  }
+}
+
+function changeInsideIf() {
+  let x = foo();
+  if (x) {
+    x &= foo();
+    if (x) {
+    }
+  }
+}
+
