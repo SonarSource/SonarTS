@@ -31,6 +31,7 @@ import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
   private blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
+  private deadUsages: Set<Usage> = new Set();
   private root: ts.FunctionLikeDeclaration | ts.SourceFile;
   private static readonly FUNCTION_OR_SOURCE_FILE = [...FUNCTION_LIKE, ts.SyntaxKind.SourceFile];
 
@@ -40,12 +41,12 @@ export class LiveVariableAnalyzer {
     if (!is(root.body, ts.SyntaxKind.Block)) {
       return;
     }
-    return this.analyze(root, (root.body as ts.Block).statements);
+    const cfg = ControlFlowGraph.fromStatements((root.body as ts.Block).statements);
+    if (!cfg) return;
+    return this.analyze(root, cfg);
   }
 
-  public analyze(root: ts.Node, statements: ts.Statement[]): LVAReturn | undefined {
-    const cfg = ControlFlowGraph.fromStatements(statements);
-    if (!cfg) return;
+  public analyze(root: ts.Node, cfg: ControlFlowGraph): LVAReturn | undefined {
     this.root = (is(root, ...FUNCTION_LIKE) ? root : firstAncestor(root, LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE)) as
       | ts.FunctionLikeDeclaration
       | ts.SourceFile;
@@ -65,7 +66,7 @@ export class LiveVariableAnalyzer {
       this.blockAvailableReads.set(block, newBlockReads);
     }
 
-    return { cfg, blockAvailableReads: this.blockAvailableReads };
+    return { cfg, blockAvailableReads: this.blockAvailableReads, deadUsages: this.deadUsages };
   }
 
   private computeSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
@@ -86,10 +87,10 @@ export class LiveVariableAnalyzer {
     if (usage && !this.isUsedInNestedFunctions(usage.symbol)) {
       if (usage.is(UsageFlag.WRITE)) {
         if (availableReads.has(usage.symbol)) {
-          usage.dead = false;
+          this.deadUsages.delete(usage);
           availableReads.delete(usage.symbol);
         } else {
-          usage.dead = true;
+          this.deadUsages.add(usage);
         }
       }
       if (usage.is(UsageFlag.READ)) {
@@ -127,4 +128,4 @@ export class LiveVariableAnalyzer {
   }
 }
 
-export type LVAReturn = { cfg: ControlFlowGraph; blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>> };
+export type LVAReturn = { cfg: ControlFlowGraph; blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>; deadUsages: Set<Usage> };

@@ -24,6 +24,7 @@ import { SymbolTable, UsageFlag } from "../symbols/table";
 import { SonarRuleMetaData } from "../sonarRule";
 import { is, FUNCTION_LIKE, descendants, ancestorsChain } from "../utils/navigation";
 import { LiveVariableAnalyzer, LVAReturn } from "../symbols/lva";
+import { ControlFlowGraph } from "../cfg/cfg";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -66,11 +67,15 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       this.check(functionLike.body!, lvaReturn, ...functionLike.parameters);
     } else if (is(node, ts.SyntaxKind.CatchClause)) {
       const catchClause = node as ts.CatchClause;
-      const lvaReturn = this.lva.analyze(catchClause.block, catchClause.block.statements);
+      const cfg = ControlFlowGraph.fromStatements(catchClause.block.statements);
+      if (!cfg) return;
+      const lvaReturn = this.lva.analyze(catchClause.block, cfg);
       this.check(catchClause.block, lvaReturn, catchClause.variableDeclaration);
     } else if (is(node, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement)) {
       const iterationStatement = node as ts.IterationStatement;
-      const lvaReturn = this.lva.analyze(iterationStatement, [iterationStatement.statement]);
+      const cfg = ControlFlowGraph.fromStatements([iterationStatement.statement]);
+      if (!cfg) return;
+      const lvaReturn = this.lva.analyze(iterationStatement, cfg);
       this.check(iterationStatement.statement, lvaReturn, (iterationStatement as ts.ForInStatement).initializer);
     }
 
