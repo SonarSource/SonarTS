@@ -59,6 +59,7 @@ import org.sonar.plugin.typescript.rules.NoConsole;
 import org.sonar.plugin.typescript.rules.NoConstruct;
 import org.sonar.plugin.typescript.rules.NoDeadStore;
 import org.sonar.plugin.typescript.rules.NoDebugger;
+import org.sonar.plugin.typescript.rules.NoDuplicateImports;
 import org.sonar.plugin.typescript.rules.NoDuplicateSuper;
 import org.sonar.plugin.typescript.rules.NoDuplicateVariable;
 import org.sonar.plugin.typescript.rules.NoDuplicatedBranches;
@@ -71,6 +72,7 @@ import org.sonar.plugin.typescript.rules.NoIdenticalConditions;
 import org.sonar.plugin.typescript.rules.NoIdenticalExpressions;
 import org.sonar.plugin.typescript.rules.NoIdenticalFunctions;
 import org.sonar.plugin.typescript.rules.NoIgnoredReturn;
+import org.sonar.plugin.typescript.rules.NoImplicitDependencies;
 import org.sonar.plugin.typescript.rules.NoInconsistentReturn;
 import org.sonar.plugin.typescript.rules.NoInferrableTypes;
 import org.sonar.plugin.typescript.rules.NoInternalModule;
@@ -206,6 +208,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoConstruct.class)
       .add(NoDeadStore.class)
       .add(NoDebugger.class)
+      .add(NoDuplicateImports.class)
       .add(NoDuplicateSuper.class)
       .add(NoDuplicateVariable.class)
       .add(NoDuplicatedBranches.class)
@@ -219,6 +222,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoIdenticalFunctions.class)
       .add(NoInferrableTypes.class)
       .add(NoIgnoredReturn.class)
+      .add(NoImplicitDependencies.class)
       .add(NoInconsistentReturn.class)
       .add(NoInternalModule.class)
       .add(NoInvalidTemplateStrings.class)
