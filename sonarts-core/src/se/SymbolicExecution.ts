@@ -21,7 +21,7 @@ import * as ts from "typescript";
 import { ControlFlowGraph, CfgBlock, CfgBranchingBlock } from "../cfg/cfg";
 import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
-import { is } from "../utils/navigation";
+import { is, CONDITIONAL_STATEMENTS, LOOP_STATEMENTS } from "../utils/navigation";
 import { getTruthyConstraint, getFalsyConstraint } from "./constraints";
 
 const BLOCK_VISITS_LIMIT = 1000;
@@ -61,11 +61,24 @@ export function execute(
       const existingStates = branchingProgramNodes.get(lastElement) || [];
       branchingProgramNodes.set(lastElement, [...existingStates, programState]);
 
-      if (programState.canBeConstrainedTo(getTruthyConstraint())) {
-        visitBlock(block.getTrueSuccessor(), programState.constrainToTruthy());
+      // if we were inside a branching statement, clear the stack
+      let truthyState = programState.canBeConstrainedTo(getTruthyConstraint())
+        ? programState.constrainToTruthy()
+        : undefined;
+      let falsyState = programState.canBeConstrainedTo(getFalsyConstraint())
+        ? programState.constrainToFalsy()
+        : undefined;
+
+      if (isStatement(block)) {
+        truthyState = truthyState && truthyState.popSV()[1];
+        falsyState = falsyState && falsyState.popSV()[1];
       }
-      if (programState.canBeConstrainedTo(getFalsyConstraint())) {
-        visitBlock(block.getFalseSuccessor(), programState.constrainToFalsy());
+
+      if (truthyState) {
+        visitBlock(block.getTrueSuccessor(), truthyState);
+      }
+      if (falsyState) {
+        visitBlock(block.getFalseSuccessor(), falsyState);
       }
     } else {
       for (const successor of block.getSuccessors()) {
@@ -104,6 +117,10 @@ export function execute(
 
   function isForInOfLoop(block: CfgBranchingBlock) {
     return is(block.loopingStatement, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement);
+  }
+
+  function isStatement(block: CfgBranchingBlock) {
+    return is(block.branchingElement, ...CONDITIONAL_STATEMENTS, ...LOOP_STATEMENTS);
   }
 }
 

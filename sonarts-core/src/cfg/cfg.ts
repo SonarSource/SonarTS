@@ -69,6 +69,16 @@ export class ControlFlowGraph {
             );
           }
         }
+        if (block.branchingElement) {
+          // TODO not sure why `block` and `successor` can have same `branchingElement`
+          if (successor.branchingElement !== block.branchingElement) {
+            successor.branchingElement = block.branchingElement;
+          } else {
+            throw new Error(
+              `CFG inconsistency : both empty block "${block.getLabel()}" and successor "${successor.getLabel()}" have branchingElement`,
+            );
+          }
+        }
         if (block instanceof CfgBlockWithPredecessors) {
           block.predecessors.forEach(predecessor => {
             predecessor.replaceSuccessor(block, successor);
@@ -100,6 +110,7 @@ export class ControlFlowGraph {
 
 export interface CfgBlock {
   loopingStatement: ts.IterationStatement | undefined;
+  branchingElement: ts.Node | undefined;
 
   addElement(element: ts.Node): void;
 
@@ -117,6 +128,7 @@ export interface CfgBlock {
 export abstract class CfgBlockWithPredecessors {
   public predecessors: CfgBlock[] = [];
   public loopingStatement: ts.IterationStatement | undefined;
+  public branchingElement: ts.Node | undefined;
 
   public replacePredecessor(what: CfgBlock, withWhat: CfgBlock): void {
     const index = this.predecessors.indexOf(what);
