@@ -18,127 +18,82 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { isEqual } from "lodash";
-import { run } from "../utils/seTestUtils";
+import { inspectSV } from "../utils/seTestUtils";
 
 describe("Variable Declaration", () => {
   it("creates unknown symbolic value", () => {
-    expect.assertions(1);
-    run(`let x = foo(); _inspect(x);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("x"))).toEqual({ type: "unknown" });
-    });
-  });
-
-  it("does not push value to the stack", () => {
-    expect.assertions(1);
-    run(`let x = foo(); _inspect();`, (node, states, symbols) => {
-      // compare with 1, because `_inspect` always pushes one expression to the stack
-      expect(states[0].getStackSize()).toBe(1);
-    });
+    const values = inspectSV(`let x = foo(); _inspect(x);`);
+    expect(values["x"]).toEqual([{ type: "unknown" }]);
   });
 
   it("creates literal symbolic value", () => {
-    expect.assertions(1);
-    run(`let x = 0; _inspect(x);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("x"))).toEqual({ type: "literal", value: "0" });
-    });
+    const values = inspectSV(`let x = 0; _inspect(x);`);
+    expect(values["x"]).toEqual([{ type: "literal", value: "0" }]);
   });
 
   it("initializes with undefined", () => {
-    expect.assertions(1);
-    run(`let x; _inspect(x);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("x"))).toEqual({ type: "undefined" });
-    });
+    const values = inspectSV(`let x; _inspect(x);`);
+    expect(values["x"]).toEqual([{ type: "undefined" }]);
   });
 
   it("initializes with already known symbolic value", () => {
-    expect.assertions(1);
-    run(`let x = foo(); let y = x; _inspect(x, y);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("x"))).toBe(states[0].sv(symbols.get("y")));
-    });
+    const values = inspectSV(`let x = foo(); let y = x; _inspect(x, y);`);
+    expect(values["x"][0]).toBe(values["y"][0]);
   });
 });
 
 describe("Assignment", () => {
   it("assigns already known symbolic value", () => {
-    expect.assertions(1);
-    run(`let y; let x = foo(); y = x; _inspect(x, y);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("x"))).toBe(states[0].sv(symbols.get("y")));
-    });
+    const values = inspectSV(`let y; let x = foo(); y = x; _inspect(x, y);`);
+    expect(values["x"][0]).toBe(values["y"][0]);
   });
 
   it("assigns literal symbolic value", () => {
     expect.assertions(1);
-    run(`let x = foo(); x = 0; _inspect(x);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("x"))).toEqual({ type: "literal", value: "0" });
-    });
+    const values = inspectSV(`let x = foo(); x = 0; _inspect(x);`);
+    expect(values["x"]).toEqual([{ type: "literal", value: "0" }]);
   });
 
   it("assigns unknown symbolic value", () => {
     expect.assertions(1);
-    run(`let x; x = foo(); _inspect(x);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("x"))).toEqual({ type: "unknown" });
-    });
+    const values = inspectSV(`let x; x = foo(); _inspect(x);`);
+    expect(values["x"]).toEqual([{ type: "unknown" }]);
   });
 
   it("chains assignments", () => {
     expect.assertions(1);
-    run(`let a; let b; a = b = 0; _inspect(a);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("a"))).toEqual({ type: "literal", value: "0" });
-    });
+    const values = inspectSV(`let x; let y; x = y = 0; _inspect(x);`);
+    expect(values["x"]).toEqual([{ type: "literal", value: "0" }]);
   });
 });
 
 describe("Increments Decrements", () => {
   it("changes SV after postfix", () => {
-    expect.assertions(2);
-    run(`let x = 0; let y = 0; x++; y--; _inspect(x, y);`, (node, states, symbols) => {
-      expect(states[0].sv(symbols.get("x"))).toEqual({ type: "unknown" });
-      expect(states[0].sv(symbols.get("y"))).toEqual({ type: "unknown" });
-    });
+    const values = inspectSV(`let x = 0; let y = 0; x++; y--; _inspect(x, y);`);
+    expect(values["x"]).toEqual([{ type: "unknown" }]);
+    expect(values["y"]).toEqual([{ type: "unknown" }]);
   });
 });
 
 describe("Conditions", () => {
   it("tracks symbolic values across branches", () => {
-    expect.assertions(2);
-    run(`let x = 0; if (cond) { x = 1; } _inspect(x);`, (node, states, symbols) => {
-      expect(states.find(state => isEqual(state.sv(symbols.get("x")), { type: "literal", value: "0" }))).toBeTruthy();
-      expect(states.find(state => isEqual(state.sv(symbols.get("x")), { type: "literal", value: "1" }))).toBeTruthy();
-    });
+    const values = inspectSV(`let x = 0; if (cond) { x = 1; } _inspect(x);`);
+    expect(values["x"]).toContainEqual({ type: "literal", value: "1" });
+    expect(values["x"]).toContainEqual({ type: "literal", value: "0" });
+    expect(values["x"]).toHaveLength(2);
   });
 });
 
 describe("Loops", () => {
   it("does not cycle on loops", () => {
-    expect.assertions(1);
-    run(`for (let x = 0; x < 100; x++) { _inspect(x); }`, () => {
-      expect(true).toBeTruthy();
-    });
-  });
-
-  it("visits FOR loop with two different states", () => {
-    expect.assertions(2);
-    const finished = run(
-      `for (let x = y; x; x++) {}`,
-      () => {},
-      (programPoint, programStates) => {
-        expect(programStates.length).toBe(1);
-      },
-    );
-    expect(finished).toBe(true);
+    const values = inspectSV(`for (let x = 0; x < 100; x++) { _inspect(x); }`);
+    expect(values).toBeDefined();
   });
 });
 
 describe.skip("Parameters", () => {
   it("initializes program state with parameters symbols to unknown", () => {
-    expect.assertions(1);
-    run(
-      `function foo(x: any, y: any) {
-      _inspect(x, y);
-    }`,
-      (node, states, symbols) => {
-        expect(states[0].sv(symbols.get("x"))).toEqual({ type: "unknown" });
-      },
-    );
+    const values = inspectSV(`function foo(x: any, y: any) { _inspect(x, y); }`);
+    expect(values["x"]).toEqual([{ type: "unknown" }]);
   });
 });

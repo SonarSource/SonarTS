@@ -17,45 +17,46 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { runStack } from "../utils/seTestUtils";
+import { inspectStack } from "../utils/seTestUtils";
 import { SymbolicValue } from "../../src/se/symbolicValues";
 
-describe("Expressions", () => {
-  const UNKNOWN = { type: "unknown" };
+const UNKNOWN = { type: "unknown" };
 
-  it("assignment", () => {
-    check(`let a; _inspectStack(a = 0);`, { type: "literal", value: "0" }, true);
-  });
+it("assignment", () => {
+  check(`let a; _inspect(a = 0);`, { type: "literal", value: "0" }, true);
+});
 
-  it("function call", () => {
-    check(`let foo = function() {}; _inspectStack(foo());`, UNKNOWN, true);
-  });
+it("function call", () => {
+  check(`let foo = function() {}; _inspect(foo());`, UNKNOWN, true);
+});
 
-  it("function call with parameters", () => {
-    check(`let foo; let x = 0; let y = 1; _inspectStack(foo(x, y));`, UNKNOWN, true);
-  });
+it("function call with parameters", () => {
+  check(`let foo; let x = 0; let y = 1; _inspect(foo(x, y));`, UNKNOWN, true);
+});
 
-  it("object declaration", () => {
-    check(`_inspectStack({ bar: 0 });`, { type: "object" }, false);
-  });
+it("object declaration", () => {
+  check(`_inspect({ bar: 0 });`, { type: "object" }, false);
+});
 
-  it("property access expression", () => {
-    check(`let foo = { bar: 0 }; _inspectStack(foo.bar);`, UNKNOWN, false);
-  });
+it("property access expression", () => {
+  check(`let foo = { bar: 0 }; _inspect(foo.bar);`, UNKNOWN, false);
+});
 
-  it("defaults to pushing unknown value", () => {
-    check(`let x = foo(); _inspectStack(x = x + 1);`, UNKNOWN, false);
-  });
+it("defaults to pushing unknown value", () => {
+  check(`let x = foo(); _inspect(x = x + 1);`, UNKNOWN, false);
+});
 
-  it("postfix increment", () => {
-    check(`let x = 0; _inspectStack(x++)`, UNKNOWN, true);
-  });
+it("postfix increment", () => {
+  check(`let x = 0; _inspect(x++)`, UNKNOWN, true);
+});
+
+it("does not push value to the stack", () => {
+  const { top, empty } = inspectStack(`let x = foo(); _inspect(_);`);
+  expect(empty).toBe(true);
 });
 
 function check<T extends SymbolicValue>(source: string, expectedSV: T, expectedEmpty: boolean) {
-  expect.assertions(2);
-  runStack(source, (sv, empty) => {
-    expect(sv).toEqual(expectedSV);
-    expect(empty).toBe(expectedEmpty);
-  });
+  const { top, empty } = inspectStack(source);
+  expect(top).toEqual(expectedSV);
+  expect(empty).toBe(expectedEmpty);
 }
