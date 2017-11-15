@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import * as tsutils from "tsutils";
 import { is } from "../../src/utils/navigation";
 import { parseString } from "../../src/utils/parser";
-import { SymbolicExecution, SECallback } from "../../src/se/SymbolicExecution";
+import { SymbolicExecution, BranchingProgramPointCallback } from "../../src/se/SymbolicExecution";
 import { ProgramState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
 import { SymbolicValue, createUnknownSymbolicValue } from "../../src/se/symbolicValues";
@@ -52,7 +52,11 @@ export function runConstraints(source: string, callback: ConstraintsTestCallback
   });
 }
 
-export function run(source: string, callback: SETestCallback) {
+export function run(
+  source: string,
+  callback?: SETestCallback,
+  onBranchingProgramPoint?: BranchingProgramPointCallback,
+) {
   const filename = "filename.ts";
   const host: ts.CompilerHost = {
     ...ts.createCompilerHost({ strict: true }),
@@ -64,12 +68,16 @@ export function run(source: string, callback: SETestCallback) {
 
   const se = new SymbolicExecution(build(Array.from(sourceFile.statements))!, program);
 
-  se.execute(createInitialState(), (node, state) => {
-    const map = isInspectNode(node, program);
-    if (map) {
-      callback(node, state, map);
-    }
-  });
+  return se.execute(
+    createInitialState(),
+    (node, state) => {
+      const map = isInspectNode(node, program);
+      if (map) {
+        callback(node, state, map);
+      }
+    },
+    onBranchingProgramPoint,
+  );
 }
 
 function createInitialState() {

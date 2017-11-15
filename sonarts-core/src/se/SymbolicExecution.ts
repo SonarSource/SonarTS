@@ -22,9 +22,10 @@ import { ControlFlowGraph, CfgBlock, CfgBranchingBlock } from "../cfg/cfg";
 import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
 import { is } from "../utils/navigation";
+import { getTruthyConstraint, getFalsyConstraint } from "./constraints";
 
 export class SymbolicExecution {
-  private static readonly BLOCK_VISITS_LIMIT = 100;
+  private static readonly BLOCK_VISITS_LIMIT = 1000;
 
   private readonly programNodes = new Map<ts.Node, ProgramState[]>();
   private readonly branchingProgramNodes = new Map<ts.Node, ProgramState[]>();
@@ -39,6 +40,8 @@ export class SymbolicExecution {
   ): boolean {
     this.visitBlock(this.cfg.start, initialState);
     if (this.visitsLimitBreached()) {
+      console.log("Limit!");
+
       // Analysis incomplete, it's safer to not raise issues at all
       return false;
     } else {
@@ -71,8 +74,12 @@ export class SymbolicExecution {
       const existingStates = this.branchingProgramNodes.get(lastElement) || [];
       this.branchingProgramNodes.set(lastElement, [...existingStates, programState]);
 
-      this.visitBlock(block.getTrueSuccessor(), programState.addTruthyConstraint());
-      this.visitBlock(block.getFalseSuccessor(), programState.addFalsyConstraint());
+      if (programState.canBeConstrainedTo(getTruthyConstraint())) {
+        this.visitBlock(block.getTrueSuccessor(), programState.constrainToTruthy());
+      }
+      if (programState.canBeConstrainedTo(getFalsyConstraint())) {
+        this.visitBlock(block.getFalseSuccessor(), programState.constrainToFalsy());
+      }
     } else {
       for (const successor of block.getSuccessors()) {
         this.visitBlock(successor, programState);

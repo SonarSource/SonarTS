@@ -64,7 +64,7 @@ describe("While", () => {
   });
 
   it("has only FALSY constraint after the block", () => {
-    checkConstraints(`let x; while(x) {} _inspect(x)`, [getFalsyConstraint()]);
+    checkConstraints(`let x; while(x) {} _inspect(x)`, getFalsyConstraint());
   });
 });
 

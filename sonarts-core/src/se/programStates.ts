@@ -26,6 +26,8 @@ import {
   getFalsyConstraint,
   isEqualConstraints,
   addConstraintToList,
+  isTruthyConstraint,
+  isFalsyConstraint,
 } from "./constraints";
 
 type SymbolicValues = Map<ts.Symbol, SymbolicValue>;
@@ -71,7 +73,7 @@ export class ProgramState {
     return this.expressionStack.length;
   }
 
-  addConstraint(constraint: Constraint) {
+  constrain(constraint: Constraint) {
     if (this.expressionStack.length > 0) {
       const sv = this.expressionStack[this.expressionStack.length - 1];
       const newConstraints = new Map(this.constraints);
@@ -83,16 +85,24 @@ export class ProgramState {
     }
   }
 
-  addTruthyConstraint() {
-    return this.addConstraint(getTruthyConstraint());
+  constrainToTruthy() {
+    return this.constrain(getTruthyConstraint());
   }
 
-  addFalsyConstraint() {
-    return this.addConstraint(getFalsyConstraint());
+  constrainToFalsy() {
+    return this.constrain(getFalsyConstraint());
   }
 
   getConstraints(sv: SymbolicValue) {
     return this.constraints.get(sv) || [];
+  }
+
+  canBeConstrainedTo(constraint: Constraint) {
+    const sv = this.expressionStack[this.expressionStack.length - 1];
+    const constraints = this.getConstraints(sv);
+    return isTruthyConstraint(constraint)
+      ? constraints.every(c => !isFalsyConstraint(c))
+      : constraints.every(c => !isTruthyConstraint(c));
   }
 
   hasEmptyStack(): boolean {
@@ -125,14 +135,22 @@ export class ProgramState {
   }
 
   private areConstraintsEqual(another: ProgramState) {
-    return Array.from(this.constraints.entries()).reduce((result, [sv, constraints]) => {
-      const anotherConstraints = another.constraints.get(sv);
-      return (
-        result &&
-        anotherConstraints !== undefined &&
-        areArraysEqual(constraints, anotherConstraints, isEqualConstraints)
-      );
-    }, true);
+    const symbols = Array.from(this.symbolicValues.keys());
+
+    for (const symbol of symbols) {
+      const value = this.sv(symbol);
+      const anotherValue = another.sv(symbol);
+
+      if (value && anotherValue) {
+        const constraints = this.getConstraints(value);
+        const anotherConstraints = another.getConstraints(anotherValue);
+
+        if (!areArraysEqual(constraints, anotherConstraints, isEqualConstraints)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }
 

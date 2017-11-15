@@ -179,11 +179,9 @@ function escapeSqlIdentifier(str: string) {
   }
 }
 
-// FP!!!
 function loopInsideIf(d: number) {
   if (d) {
     for (let i = d; i; i++) {}
-    //              ^ {{This condition always evaluates to "true".}}
   }
 }
 
