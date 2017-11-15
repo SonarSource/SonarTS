@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { SymbolicExecution } from "../se/SymbolicExecution";
+import { execute } from "../se/SymbolicExecution";
 import { build } from "../cfg/builder";
 import { ProgramState } from "../se/programStates";
 import { createUnknownSymbolicValue } from "../se/symbolicValues";
@@ -57,14 +57,16 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       if (!cfg) {
         return;
       }
-      const se = new SymbolicExecution(cfg, this.getProgram());
-      se.execute(createInitialState(node, this.getProgram()), undefined, (branchingProgramPoint, programStates) => {
-        if (this.ifAllProgramStateConstraints(programStates, isTruthy)) {
-          this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("true"));
-        } else if (this.ifAllProgramStateConstraints(programStates, isFalsy)) {
-          this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("false"));
-        }
-      });
+      const result = execute(cfg, this.getProgram(), createInitialState(node, this.getProgram()));
+      if (result) {
+        result.branchingProgramNodes.forEach((states, branchingProgramPoint) => {
+          if (this.ifAllProgramStateConstraints(states, isTruthy)) {
+            this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("true"));
+          } else if (this.ifAllProgramStateConstraints(states, isFalsy)) {
+            this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("false"));
+          }
+        });
+      }
     }
     super.visitFunctionDeclaration(node);
   }
