@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import * as tsutils from "tsutils";
 import { is } from "../../src/utils/navigation";
 import { parseString } from "../../src/utils/parser";
-import { BranchingProgramPointCallback, execute } from "../../src/se/SymbolicExecution";
+import { BranchingProgramPointCallback, execute, ExecutionResult } from "../../src/se/SymbolicExecution";
 import { ProgramState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
 import { SymbolicValue, createUnknownSymbolicValue } from "../../src/se/symbolicValues";
@@ -30,33 +30,42 @@ import { build } from "../../src/cfg/builder";
 import { isFunctionDeclaration } from "tsutils";
 import { Constraint } from "../../src/se/constraints";
 
-export function runStack(source: string, callback: StackTestCallBack) {
-  run(source, (node, states, symbols) => {
-    const [top, nextState] = states[0].popSV();
-    // compare with 1, because `_inspectStack` always pushes one expression to the stack
-    callback(top, nextState.getStackSize() === 1);
-  });
+export function inspectStack(source: string) {
+  const { result } = executeFromSource(source);
+  const { programPoint, programStates } = findInspectCall(result);
+  if (programStates.length !== 1) {
+    throw new Error(`Expected 1 result, but got ${programStates.length}`);
+  }
+  const [top, nextState] = programStates[0].popSV();
+  // compare with 1, because `_inspect` always pushes one expression to the stack
+  return { top, empty: nextState.getStackSize() === 1 };
 }
 
-export function runConstraints(source: string, callback: ConstraintsTestCallback) {
-  run(source, (node, states, symbols) => {
-    const onlySymbol = symbols.get(symbols.keys().next().value);
-    const allConstraints = states.map(state => {
-      const stateConstraints = state.getConstraints(state.sv(onlySymbol));
-      if (stateConstraints.length > 1) {
-        throw new Error(`Symbolic value for "${onlySymbol.name}" unexpectedly has more than one constraint`);
-      }
-      return stateConstraints[0];
-    });
-    callback(allConstraints);
+export function inspectConstraints(source: string): Constraint[] | undefined {
+  const { result, program } = executeFromSource(source);
+  const { programPoint, programStates } = findInspectCall(result);
+  const identifiers = programPoint.arguments.filter(tsutils.isIdentifier);
+  const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
+  const constraints = programStates.map(programState => {
+    const value = programState.sv(symbols[0]);
+    return programState.getConstraints(value)[0];
   });
+  return constraints;
 }
 
-export function run(
-  source: string,
-  callback?: SETestCallback,
-  onBranchingProgramPoint?: BranchingProgramPointCallback,
-) {
+export function inspectSV(source: string) {
+  const { result, program } = executeFromSource(source);
+  const { programPoint, programStates } = findInspectCall(result);
+  const identifiers = programPoint.arguments.filter(tsutils.isIdentifier);
+  const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
+  const sv: { [name: string]: SymbolicValue[] } = {};
+  for (const symbol of symbols) {
+    sv[symbol.name] = programStates.map(programState => programState.sv(symbol));
+  }
+  return sv;
+}
+
+function executeFromSource(source: string) {
   const filename = "filename.ts";
   const host: ts.CompilerHost = {
     ...ts.createCompilerHost({ strict: true }),
@@ -66,52 +75,22 @@ export function run(
   const program = ts.createProgram([], { strict: true }, host);
   const sourceFile = program.getSourceFiles()[0];
 
-  const result = execute(build(Array.from(sourceFile.statements))!, program, createInitialState());
-  if (result) {
-    result.programNodes.forEach((states, node) => {
-      const map = isInspectNode(node, program);
-      if (map) {
-        callback(node, states, map);
-      }
-    });
-    if (onBranchingProgramPoint) {
-      result.branchingProgramNodes.forEach((states, node) => onBranchingProgramPoint(node, states));
-    }
-    return true;
-  } else {
-    return false;
+  const result = execute(build(Array.from(sourceFile.statements))!, program, ProgramState.empty());
+  if (!result) {
+    throw new Error("Symbolic execution did not return any result.");
   }
+
+  return { result, program };
 }
 
-function createInitialState() {
-  return ProgramState.empty();
-}
-
-function isInspectNode(node: ts.Node, program: ts.Program): Map<string, ts.Symbol> | undefined {
-  if (tsutils.isCallExpression(node) && tsutils.isIdentifier(node.expression)) {
-    if (node.expression.text === "_inspect") {
-      const symbols = new Map<string, ts.Symbol>();
-      const identifiers = node.arguments.filter(tsutils.isIdentifier);
-      identifiers.forEach(identifier =>
-        symbols.set(identifier.text, program.getTypeChecker().getSymbolAtLocation(identifier)),
-      );
-      return symbols;
-    }
-    if (node.expression.text === "_inspectStack") {
-      return new Map<string, ts.Symbol>();
+function findInspectCall(result: ExecutionResult) {
+  for (const [programPoint, programStates] of result.programNodes.entries()) {
+    if (
+      tsutils.isCallExpression(programPoint) &&
+      tsutils.isIdentifier(programPoint.expression) &&
+      programPoint.expression.text === "_inspect"
+    ) {
+      return { programPoint, programStates };
     }
   }
-  return undefined;
-}
-
-export interface SETestCallback {
-  (node: ts.Node, programStates: ProgramState[], inspectedSymbos: Map<string, ts.Symbol>): void;
-}
-
-export interface StackTestCallBack {
-  (top: SymbolicValue, empty: boolean): void;
-}
-
-export interface ConstraintsTestCallback {
-  (constraints: Constraint[] | undefined): void;
 }
