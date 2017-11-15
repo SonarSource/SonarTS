@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import * as tsutils from "tsutils";
 import { is } from "../../src/utils/navigation";
 import { parseString } from "../../src/utils/parser";
-import { SymbolicExecution, BranchingProgramPointCallback } from "../../src/se/SymbolicExecution";
+import { BranchingProgramPointCallback, execute } from "../../src/se/SymbolicExecution";
 import { ProgramState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
 import { SymbolicValue, createUnknownSymbolicValue } from "../../src/se/symbolicValues";
@@ -66,18 +66,21 @@ export function run(
   const program = ts.createProgram([], { strict: true }, host);
   const sourceFile = program.getSourceFiles()[0];
 
-  const se = new SymbolicExecution(build(Array.from(sourceFile.statements))!, program);
-
-  return se.execute(
-    createInitialState(),
-    (node, state) => {
+  const result = execute(build(Array.from(sourceFile.statements))!, program, createInitialState());
+  if (result) {
+    result.programNodes.forEach((states, node) => {
       const map = isInspectNode(node, program);
       if (map) {
-        callback(node, state, map);
+        callback(node, states, map);
       }
-    },
-    onBranchingProgramPoint,
-  );
+    });
+    if (onBranchingProgramPoint) {
+      result.branchingProgramNodes.forEach((states, node) => onBranchingProgramPoint(node, states));
+    }
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function createInitialState() {
