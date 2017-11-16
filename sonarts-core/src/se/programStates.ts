@@ -18,7 +18,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { SymbolicValue, isEqualSymbolicValues, createUnknownSymbolicValue } from "./symbolicValues";
+import {
+  SymbolicValue,
+  isEqualSymbolicValues,
+  unknownSymbolicValue,
+  isUndefinedSymbolcValue,
+  isNumericLiteralSymbolicValue,
+} from "./symbolicValues";
 import { inspect } from "util";
 import {
   Constraint,
@@ -94,6 +100,12 @@ export class ProgramState {
   }
 
   getConstraints(sv: SymbolicValue) {
+    if (isUndefinedSymbolcValue(sv) || (isNumericLiteralSymbolicValue(sv) && sv.value === "0")) {
+      return [getFalsyConstraint()];
+    }
+    if (isNumericLiteralSymbolicValue(sv) && sv.value !== "0") {
+      return [getTruthyConstraint()];
+    }
     return this.constraints.get(sv) || [];
   }
 
@@ -179,7 +191,7 @@ export function createInitialState(declaration: ts.FunctionDeclaration, program:
   declaration.parameters.forEach(parameter => {
     const symbol = program.getTypeChecker().getSymbolAtLocation(parameter.name);
     if (symbol) {
-      state = state.setSV(symbol, createUnknownSymbolicValue());
+      state = state.setSV(symbol, unknownSymbolicValue());
     }
   });
   return state;

@@ -1,2 +1,9 @@
+src/TypeScript/src/compiler/parser.ts: 7280,7280,7280,7280
 src/TypeScript/src/compiler/binder.ts: 393,393,393,393
 src/TypeScript/src/compiler/moduleNameResolver.ts: 884,884,884,884,884
+src/TypeScript/src/compiler/checker.ts: 1930,5755,8565,1930,5755,8565,1930,5755,8565,1930,5755,8565
+src/TypeScript/src/compiler/transformers/destructuring.ts: 161,161,161,161
+src/TypeScript/src/compiler/transformers/ts.ts: 1518,1518,1518,1518
+src/TypeScript/src/compiler/declarationEmitter.ts: 160,160,160,160
+src/TypeScript/src/compiler/program.ts: 1378,1379,1378,1379,1378,1379,1378,1379
+src/TypeScript/src/services/preProcess.ts: 332,343,332,343,332,343

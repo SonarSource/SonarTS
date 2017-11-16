@@ -19,7 +19,7 @@ function alwaysFalseIf(x: {}, y: undefined, z: null, w: void, u: undefined | nul
   if ("") return 1;
   //  ^^ FN: This condition always evaluates to "false".
   if (0) return 1;
-  //  ^ FN: This condition always evaluates to "false".
+  //  ^ {{This condition always evaluates to "false".}}
   if (NaN) return 1;
   //  ^^^ FN: This condition always evaluates to "false".
 }
@@ -31,7 +31,7 @@ function parallelValues(y: boolean) {
   }
   if (y) {
     if (x) {
-      //  ^  FN: This condition always evaluates to "true".
+      //^  {{This condition always evaluates to "true".}}
     }
   }
 }
@@ -185,17 +185,6 @@ function loopInsideIf(d: number) {
   }
 }
 
-function artifactsAfterIf() {
-  let x;
-  if (x) {
-    return;
-  }
-
-  let y;
-  if (y) {
-  }
-}
-
 function and(x: Foo, y: Foo) {
   let z;
   z = x && y;
@@ -214,5 +203,13 @@ function changeInsideIf() {
     x &= foo();
     if (x) {
     }
+  }
+}
+
+function _switch(x: number) {
+  switch (x) {
+    case 1:
+      // ok, don't try to constrain `status`, nor `400`
+      return "foo";
   }
 }
