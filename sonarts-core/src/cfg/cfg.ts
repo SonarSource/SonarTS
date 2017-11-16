@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { CfgBuilder } from "./builder";
+import { build as buildCfg } from "./builder";
 
 export class ControlFlowGraph {
   private startBlock: CfgBlock;
@@ -42,8 +42,8 @@ export class ControlFlowGraph {
     this.makeBidirectional();
   }
 
-  public static fromStatements(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph | undefined {
-    return new CfgBuilder().build(statements);
+  public static fromStatements(statements: ts.Statement[]): ControlFlowGraph | undefined {
+    return buildCfg(statements);
   }
 
   public getBlocks(): CfgBlock[] {
@@ -66,6 +66,16 @@ export class ControlFlowGraph {
           } else {
             throw new Error(
               `CFG inconsistency : both empty block "${block.getLabel()}" and successor "${successor.getLabel()}" have loopingStatement`,
+            );
+          }
+        }
+        if (block.branchingElement) {
+          // TODO not sure why `block` and `successor` can have same `branchingElement`
+          if (successor.branchingElement !== block.branchingElement) {
+            successor.branchingElement = block.branchingElement;
+          } else {
+            throw new Error(
+              `CFG inconsistency : both empty block "${block.getLabel()}" and successor "${successor.getLabel()}" have branchingElement`,
             );
           }
         }
@@ -100,6 +110,7 @@ export class ControlFlowGraph {
 
 export interface CfgBlock {
   loopingStatement: ts.IterationStatement | undefined;
+  branchingElement: ts.Node | undefined;
 
   addElement(element: ts.Node): void;
 
@@ -117,6 +128,7 @@ export interface CfgBlock {
 export abstract class CfgBlockWithPredecessors {
   public predecessors: CfgBlock[] = [];
   public loopingStatement: ts.IterationStatement | undefined;
+  public branchingElement: ts.Node | undefined;
 
   public replacePredecessor(what: CfgBlock, withWhat: CfgBlock): void {
     const index = this.predecessors.indexOf(what);

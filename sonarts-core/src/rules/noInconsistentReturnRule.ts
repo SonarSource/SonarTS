@@ -66,7 +66,7 @@ class Walker extends tslint.RuleWalker {
 
   private checkFunctionLikeDeclaration(issuePositionToken: ts.Node, body: ts.Block, returnType?: ts.TypeNode) {
     if (this.declaredReturnTypeContainsVoidTypes(returnType)) return;
-    const cfg = ControlFlowGraph.fromStatements(body.statements);
+    const cfg = ControlFlowGraph.fromStatements(Array.from(body.statements));
     if (cfg) {
       const predecessors = cfg.end.predecessors.filter(
         block => block === cfg.start || this.blockHasPredecessors(block),
