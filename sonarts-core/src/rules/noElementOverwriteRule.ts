@@ -59,26 +59,43 @@ class Walker extends Lint.ProgramAwareRuleWalker {
     super.visitBlock(node);
   }
 
+  protected visitCaseClause(node: ts.CaseClause): void {
+    this.checkStatements(node.statements);
+    super.visitCaseClause(node);
+  }
+
   private checkStatements(statements: Array<ts.Statement>) {
-    const usedKeysPerCollection: Map<ts.Symbol, Map<Key, KeyWriteCollectionUsage>> = new Map();
+    const usedKeys: Map<Key, KeyWriteCollectionUsage> = new Map();
+    let collection: ts.Symbol | null = null;
     statements.forEach(statement => {
-      const keyWriteUsage = this.keyWriteCollectionUsage(statement);
+      const keyWriteUsage = this.keyWriteUsage(statement);
       if (keyWriteUsage) {
-        this.checkCollectionUsage(keyWriteUsage, usedKeysPerCollection);
+        if (collection && keyWriteUsage.collectionSymbol !== collection) {
+          usedKeys.clear();
+        }
+        const previous = usedKeys.get(keyWriteUsage.indexOrKey);
+        if (previous) {
+          this.addFailureAtNode(keyWriteUsage.node, this.message(keyWriteUsage.indexString, previous.node));
+        }
+        usedKeys.set(keyWriteUsage.indexOrKey, keyWriteUsage);
+        collection = keyWriteUsage.collectionSymbol;
       } else {
-        usedKeysPerCollection.clear();
+        usedKeys.clear();
       }
     });
   }
 
-  private keyWriteCollectionUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
+  private keyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
     if (is(node, ts.SyntaxKind.ExpressionStatement)) {
       const expression = (node as ts.ExpressionStatement).expression;
-      return this.arrayUsage(expression) || this.mapUsage(expression) || this.setUsage(expression) || this.propertyUsage(expression);
+      return this.arrayKeyWriteUsage(expression)
+          || this.mapKeyWriteUsage(expression)
+          || this.setKeyWriteUsage(expression)
+          || this.objectKeyWriteUsage(expression);
     }
   }
 
-  private arrayUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
+  private arrayKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
     if (isAssignment(node) && is(node.left, ts.SyntaxKind.ElementAccessExpression)) {
       const lhs = node.left as ts.ElementAccessExpression;
       const array = this.getTypeChecker().getSymbolAtLocation(lhs.expression);
@@ -101,11 +118,11 @@ class Walker extends Lint.ProgramAwareRuleWalker {
         .some(id => this.getTypeChecker().getSymbolAtLocation(id) === symbol);
   }
 
-  private mapUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
+  private mapKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
     return this.callExpression(node, "Map", "set");
   }
 
-  private setUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
+  private setKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
     return this.callExpression(node, "Set", "add");
   }
 
@@ -131,7 +148,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
     }
   }
 
-  private propertyUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
+  private objectKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
     if (isAssignment(node) && is(node.left, ts.SyntaxKind.PropertyAccessExpression)) {
       const lhs = node.left as ts.PropertyAccessExpression;
       // avoid deeply nested property access
@@ -158,20 +175,6 @@ class Walker extends Lint.ProgramAwareRuleWalker {
     }
     const symbol = this.getTypeChecker().getSymbolAtLocation(node);
     return symbol && {index: symbol, indexString: symbol.name};
-  }
-
-  private checkCollectionUsage(collectionUsage: KeyWriteCollectionUsage,
-                               collectionUsages: Map<ts.Symbol, Map<Key, KeyWriteCollectionUsage>>,) {
-    let indexes = collectionUsages.get(collectionUsage.collectionSymbol);
-    if (!indexes) {
-      indexes = new Map();
-      collectionUsages.set(collectionUsage.collectionSymbol, indexes);
-    }
-    const previous = indexes.get(collectionUsage.indexOrKey);
-    if (previous) {
-      this.addFailureAtNode(collectionUsage.node, this.message(collectionUsage.indexString, previous.node));
-    }
-    indexes.set(collectionUsage.indexOrKey, collectionUsage);
   }
 
   private message(index: string, previousUsage: ts.Node) {

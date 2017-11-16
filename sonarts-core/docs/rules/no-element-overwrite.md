@@ -1,4 +1,4 @@
-# no-collection-index-overwrite
+# no-element-overwrite
 
 It is highly suspicious when a value is saved for a key or index and then unconditionally 
 overwritten. Such replacements are likely in error.
@@ -18,8 +18,8 @@ function fun() {
 
 function map() {
   const myMap = new Map<string, number>();
-  myMap.set("key", 1);
-  myMap.set("key", 2); // Noncompliant - value for key "key" is replaced
+  myMap.set("first", 1);
+  myMap.set("first", 2); // Noncompliant - value for key "key" is replaced
   return map;
 }
 ```
@@ -33,9 +33,11 @@ function arr() {
   fruits[2] = "apple";
 }
 
-function properties(person: any) {
-  person.first = "John";
-  person.last = "Smith";
+function map() {
+  const myMap = new Map<string, number>();
+  myMap.set("first", 1);
+  myMap.set("second", 2); // Noncompliant - value for key "key" is replaced
+  return map;
 }
 ```
 

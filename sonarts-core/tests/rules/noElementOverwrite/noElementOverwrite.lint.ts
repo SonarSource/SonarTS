@@ -94,3 +94,37 @@ function FN(cond: boolean): void {
 global[1] = "foo";
   global[1] = "bar";
 //^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 94.}}
+
+function FP() {
+  let x = [1,], y = [1, ];
+  x[1] = 3;
+  y[1] = x[1];
+  x[1] = 43; // Compliant
+}
+
+function switchTest(kind: number) {
+  let result = [];
+  switch (kind) {
+    case 1:
+      result[1] = 1;
+      result[1] = 2;
+    //^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 109.}}
+      break;
+    case 2:
+      result[2] = 1;
+      result[2] = 2;
+    //^^^^^^ {{Verify this is the index that was intended; "2" was already set on line 114.}}
+      break;
+  }
+}
+
+function indexChanges() {
+  let nums = [];
+  let i = 1;
+  nums[i++] = 42;
+  nums[i++] = 43;
+  i += 1;
+  nums[i] = 2;
+  i += 1;
+  nums[i] = 2;
+}
