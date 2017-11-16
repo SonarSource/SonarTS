@@ -56,15 +56,16 @@ export function execute(
     }
     visits++;
     for (const programPoint of block.getElements()) {
-      if (isVisitedProgramState(programPoint, programState)) {
-        return;
-      }
       programState = visitProgramPoint(programPoint, programState);
     }
 
     // ignore for-of, for-in and switch, because we can't constrain right element
     if (block instanceof CfgBranchingBlock && !isForInOfLoop(block) && !isSwitch(block)) {
-      visitBranchingBlock(block, programState);
+      if (addToBranchingNodes(block, programState)) {
+        visitBranchingBlock(block, programState);
+      } else {
+        return;
+      }
     } else {
       for (const successor of block.getSuccessors()) {
         visitBlock(successor, programState);
@@ -73,8 +74,6 @@ export function execute(
   }
 
   function visitBranchingBlock(block: CfgBranchingBlock, programState: ProgramState) {
-    addToBranchingNodes(block, programState);
-
     let truthyState = programState.constrainToTruthy();
     let falsyState = programState.constrainToFalsy();
 
@@ -101,16 +100,6 @@ export function execute(
     return applyExecutors(programPoint, programState, program, shouldTrackSymbol);
   }
 
-  function isVisitedProgramState(programPoint: ts.Node, programState: ProgramState) {
-    const visitedStates = programNodes.get(programPoint) || [];
-    for (const existingState of visitedStates) {
-      if (existingState.isEqualTo(programState)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   function addToProgramNodes(programPoint: ts.Node, programState: ProgramState) {
     const visitedStates = programNodes.get(programPoint) || [];
     const nextVisitedStates = [...visitedStates, programState];
@@ -120,7 +109,11 @@ export function execute(
   function addToBranchingNodes(block: CfgBranchingBlock, programState: ProgramState) {
     const lastElement = block.getElements()[block.getElements().length - 1];
     const existingStates = branchingProgramNodes.get(lastElement) || [];
+    if (existingStates.find(existingState => programState.isEqualTo(existingState))) {
+      return false;
+    }
     branchingProgramNodes.set(lastElement, [...existingStates, programState]);
+    return true;
   }
 
   function isForInOfLoop(block: CfgBranchingBlock) {

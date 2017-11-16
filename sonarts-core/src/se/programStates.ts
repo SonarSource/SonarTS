@@ -18,27 +18,25 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import {
-  SymbolicValue,
-  isEqualSymbolicValues,
-  unknownSymbolicValue,
-  isUndefinedSymbolcValue,
-  isNumericLiteralSymbolicValue,
-} from "./symbolicValues";
+import { SymbolicValue, isEqualSymbolicValues, isUndefinedSymbolcValue, isNumericLiteralSymbolicValue, unknownSymbolicValue } from "./symbolicValues";
 import { inspect } from "util";
 import { Constraint, getTruthyConstraint, getFalsyConstraint, isEqualConstraints, constrain } from "./constraints";
+import { Map } from "immutable";
 
 type SymbolicValues = Map<ts.Symbol, SymbolicValue>;
 type ExpressionStack = SymbolicValue[];
 type Constraints = Map<SymbolicValue, Constraint[]>;
 
 export class ProgramState {
+  private static startLoc = 0;
+  public static localElapsed = 0;
+
   private readonly symbolicValues: SymbolicValues;
   private readonly expressionStack: ExpressionStack;
   private readonly constraints: Constraints;
 
   public static empty() {
-    return new ProgramState(new Map(), [], new Map());
+    return new ProgramState(Map<ts.Symbol, SymbolicValue>(), [], Map<SymbolicValue, Constraint[]>());
   }
 
   private constructor(symbolicValues: SymbolicValues, expressionStack: ExpressionStack, constraints: Constraints) {
@@ -52,9 +50,7 @@ export class ProgramState {
   }
 
   setSV(symbol: ts.Symbol, sv: SymbolicValue) {
-    const newSymbolicValues = new Map(this.symbolicValues);
-    newSymbolicValues.set(symbol, sv);
-    return new ProgramState(newSymbolicValues, this.expressionStack, this.constraints);
+    return new ProgramState(this.symbolicValues.set(symbol, sv), this.expressionStack, this.constraints);
   }
 
   pushSV(sv: SymbolicValue): ProgramState {
@@ -74,11 +70,13 @@ export class ProgramState {
   constrain(constraint: Constraint) {
     if (this.expressionStack.length > 0) {
       const sv = this.expressionStack[this.expressionStack.length - 1];
-      const newSVConstraints = constrain(this.getConstraints(sv), constraint);
-      if (newSVConstraints) {
-        const newConstraints = new Map(this.constraints);
-        newConstraints.set(sv, newSVConstraints);
-        return new ProgramState(this.symbolicValues, this.expressionStack, newConstraints);
+      const svConstraints = constrain(this.getConstraints(sv), constraint);
+      if (svConstraints) {
+        return new ProgramState(
+          this.symbolicValues,
+          this.expressionStack,
+          this.constraints.set(sv, svConstraints),
+        );
       } else {
         // impossible program state
         return undefined;
@@ -111,52 +109,56 @@ export class ProgramState {
   }
 
   toString() {
-    const prettyEntries = new Map<string, SymbolicValue>();
+    let prettyEntries = Map<string, SymbolicValue>();
     this.symbolicValues.forEach((value, key) => {
-      prettyEntries.set(key.name, value);
+      if (key && value) {
+        prettyEntries = prettyEntries.set(key.name, value);
+      }
     });
     return inspect({ prettyEntries, expressionStack: this.expressionStack, constraints: this.constraints });
   }
 
   isEqualTo(another: ProgramState) {
     return (
+      this.areTopStackConstraintsEqual(another) &&
       this.areSymbolsEqual(another) &&
       this.areSymbolicValuesEqual(another) &&
-      this.areSymbolConstraintsEqual(another) &&
-      this.areTopStackConstraintsEqual(another)
+      this.areSymbolConstraintsEqual(another)
     );
   }
 
   private areSymbolsEqual(another: ProgramState) {
-    const symbols = Array.from(this.symbolicValues.keys());
-    const anotherSymbols = Array.from(another.symbolicValues.keys());
-    return areArraysEqual(symbols, anotherSymbols);
+    if (this.symbolicValues.size != another.symbolicValues.size) {
+      return false;
+    }
+    const res = this.symbolicValues.keySeq().equals(another.symbolicValues.keySeq());
+    return res;
   }
 
   private areSymbolicValuesEqual(another: ProgramState) {
-    return Array.from(this.symbolicValues.entries()).reduce((result, [symbol, value]) => {
+    return this.symbolicValues.entrySeq().reduce((result, entry) => {
+      const [symbol, value] = entry!;
       const anotherValue = another.symbolicValues.get(symbol);
-      return result && anotherValue !== undefined && isEqualSymbolicValues(value, anotherValue);
+      return result! && anotherValue !== undefined && isEqualSymbolicValues(value, anotherValue);
     }, true);
   }
 
   private areSymbolConstraintsEqual(another: ProgramState) {
-    const symbols = Array.from(this.symbolicValues.keys());
-
-    for (const symbol of symbols) {
-      const value = this.sv(symbol);
-      const anotherValue = another.sv(symbol);
+    const symbols = this.symbolicValues.keySeq();
+    return !symbols.find(symbol => {
+      const value = this.sv(symbol!);
+      const anotherValue = another.sv(symbol!);
 
       if (value && anotherValue) {
         const constraints = this.getConstraints(value);
         const anotherConstraints = another.getConstraints(anotherValue);
 
         if (!areArraysEqual(constraints, anotherConstraints, isEqualConstraints)) {
-          return false;
+          return true;
         }
       }
-    }
-    return true;
+      return false;
+    });
   }
 
   private areTopStackConstraintsEqual(another: ProgramState) {
@@ -171,7 +173,18 @@ export class ProgramState {
     }
     const constraints = this.getConstraints(top);
     const anotherConstraints = another.getConstraints(anotherTop);
-    return areArraysEqual(constraints, anotherConstraints, isEqualConstraints);
+    const res = areArraysEqual(constraints, anotherConstraints, isEqualConstraints);
+    return res;
+  }
+
+  private startLocal() {
+    ProgramState.startLoc = Date.now();
+  }
+
+  private endLocal() {
+    if (ProgramState.startLoc > 0) {
+      ProgramState.localElapsed += (Date.now() - ProgramState.startLoc) / 1000;
+    }
   }
 }
 
