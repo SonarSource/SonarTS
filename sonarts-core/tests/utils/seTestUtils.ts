@@ -20,10 +20,11 @@
 import { join } from "path";
 import * as ts from "typescript";
 import * as tsutils from "tsutils";
-import { is } from "../../src/utils/navigation";
+import * as tslint from "tslint";
+import { is, descendants } from "../../src/utils/navigation";
 import { parseString } from "../../src/utils/parser";
 import { BranchingProgramPointCallback, execute, ExecutionResult } from "../../src/se/SymbolicExecution";
-import { ProgramState } from "../../src/se/programStates";
+import { ProgramState, createInitialState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
 import { SymbolicValue, createUnknownSymbolicValue } from "../../src/se/symbolicValues";
 import { build } from "../../src/cfg/builder";
@@ -55,6 +56,23 @@ export function inspectConstraints(source: string): Constraint[] | undefined {
 
 export function inspectSV(source: string) {
   const { result, program } = executeFromSource(source);
+  return inspectSVFromResult(result, program);
+}
+
+export function executeOneFunction(source: string): { result: ExecutionResult; program: ts.Program } {
+  const { sourceFile, program } = parse(source);
+  const node = descendants(sourceFile).find(node =>
+    is(node, ts.SyntaxKind.FunctionDeclaration),
+  ) as ts.FunctionDeclaration;
+  const result = execute(
+    build(Array.from(node.body.statements)),
+    program,
+    createInitialState(node as ts.FunctionDeclaration, program),
+  );
+  return { result, program };
+}
+
+export function inspectSVFromResult(result: ExecutionResult, program: ts.Program) {
   const { programPoint, programStates } = findInspectCall(result);
   const identifiers = programPoint.arguments.filter(tsutils.isIdentifier);
   const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
@@ -66,6 +84,15 @@ export function inspectSV(source: string) {
 }
 
 function executeFromSource(source: string) {
+  const { sourceFile, program } = parse(source);
+  const result = execute(build(Array.from(sourceFile.statements))!, program, ProgramState.empty());
+  if (!result) {
+    throw new Error("Symbolic execution did not return any result.");
+  }
+  return { result, program };
+}
+
+function parse(source: string) {
   const filename = "filename.ts";
   const host: ts.CompilerHost = {
     ...ts.createCompilerHost({ strict: true }),
@@ -73,14 +100,7 @@ function executeFromSource(source: string) {
     getCanonicalFileName: () => filename,
   };
   const program = ts.createProgram([], { strict: true }, host);
-  const sourceFile = program.getSourceFiles()[0];
-
-  const result = execute(build(Array.from(sourceFile.statements))!, program, ProgramState.empty());
-  if (!result) {
-    throw new Error("Symbolic execution did not return any result.");
-  }
-
-  return { result, program };
+  return { sourceFile: program.getSourceFiles()[0], program };
 }
 
 function findInspectCall(result: ExecutionResult) {

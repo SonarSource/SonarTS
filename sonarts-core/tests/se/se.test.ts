@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { isEqual } from "lodash";
-import { inspectSV } from "../utils/seTestUtils";
+import { inspectSV, inspectSVFromResult, executeOneFunction } from "../utils/seTestUtils";
 
 describe("Variable Declaration", () => {
   it("creates unknown symbolic value", () => {
@@ -91,9 +91,10 @@ describe("Loops", () => {
   });
 });
 
-describe.skip("Parameters", () => {
+describe("Parameters", () => {
   it("initializes program state with parameters symbols to unknown", () => {
-    const values = inspectSV(`function foo(x: any, y: any) { _inspect(x, y); }`);
+    const { result, program } = executeOneFunction(`function foo(x: any, y: any) { _inspect(x, y); }`);
+    const values = inspectSVFromResult(result, program);
     expect(values["x"]).toEqual([{ type: "unknown" }]);
   });
 });

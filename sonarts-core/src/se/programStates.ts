@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { SymbolicValue, isEqualSymbolicValues } from "./symbolicValues";
+import { SymbolicValue, isEqualSymbolicValues, createUnknownSymbolicValue } from "./symbolicValues";
 import { inspect } from "util";
 import {
   Constraint,
@@ -152,6 +152,17 @@ export class ProgramState {
     }
     return true;
   }
+}
+
+export function createInitialState(declaration: ts.FunctionDeclaration, program: ts.Program) {
+  let state = ProgramState.empty();
+  declaration.parameters.forEach(parameter => {
+    const symbol = program.getTypeChecker().getSymbolAtLocation(parameter.name);
+    if (symbol) {
+      state = state.setSV(symbol, createUnknownSymbolicValue());
+    }
+  });
+  return state;
 }
 
 function areArraysEqual<T>(a: T[], b: T[], comparator = (a: T, b: T) => a === b) {
