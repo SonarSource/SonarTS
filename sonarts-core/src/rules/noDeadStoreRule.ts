@@ -67,21 +67,21 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     if (is(node, ...FUNCTION_LIKE)) {
       const functionLike = node as ts.FunctionLikeDeclaration;
       const lvaReturn = new LiveVariableAnalyzer(this.symbols).analyzeFunction(functionLike);
-      if (!lvaReturn) {
-        return;
-      }
-      const { deadUsages } = lvaReturn;
+      if (lvaReturn) {
+        const { deadUsages } = lvaReturn;
 
-      descendants(node)
-        .filter(descendant => is(descendant, ts.SyntaxKind.Identifier))
-        .forEach(descendant => {
-          const identifier = descendant as ts.Identifier;
-          const usage = this.symbols.getUsage(identifier);
-          if (usage && deadUsages.has(usage) && !this.isException(usage)) {
-            this.addFailureAtNode(identifier, Rule.formatMessage(identifier));
-          }
-        });
+        descendants(node)
+          .filter(descendant => is(descendant, ts.SyntaxKind.Identifier))
+          .forEach(descendant => {
+            const identifier = descendant as ts.Identifier;
+            const usage = this.symbols.getUsage(identifier);
+            if (usage && deadUsages.has(usage) && !this.isException(usage)) {
+              this.addFailureAtNode(identifier, Rule.formatMessage(identifier));
+            }
+          });
+      }
     }
+
     super.visitNode(node);
   }
 
