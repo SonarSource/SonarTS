@@ -616,7 +616,10 @@ export class CfgBuilder {
   }
 
   private buildJsxAttributes(current: CfgBlock, jsxAttributes: ts.JsxAttributes): CfgBlock {
-    [...jsxAttributes.properties].reverse().forEach(jsxAttributeLike => {
+    // TS 2.3 changed the way jsx attributes are stored in AST
+    // see PR: https://github.com/Microsoft/TypeScript/pull/13640
+    const properties = jsxAttributes.properties || jsxAttributes;
+    [...properties].reverse().forEach(jsxAttributeLike => {
       if (jsxAttributeLike.kind === SyntaxKind.JsxSpreadAttribute) {
         current = this.buildExpression(current, jsxAttributeLike.expression);
       } else if (jsxAttributeLike.initializer && jsxAttributeLike.initializer.kind !== SyntaxKind.StringLiteral) {

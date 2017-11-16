@@ -42,9 +42,45 @@ case "$TEST" in
   mvn -B -e package
   ;;
 
+  ts)
+
+  node_home=$(pwd)/node-v8.9.1-linux-x64
+  node_archive=node-v8.9.1-linux-x64.tar.xz
+  if [ ! -d "$node_home" ]; then
+    echo "=== Install Node.js ===";
+    curl --insecure --silent --show-error -o $node_archive https://nodejs.org/dist/v8.9.1/node-v8.9.1-linux-x64.tar.xz;
+    tar xvzf $node_archive -C $node_home;
+    rm $node_archive;
+  fi
+
+  export PATH=$node_home/bin:$PATH;
+
+  echo "Node version"
+  node -v
+
+  echo "Yarn version"
+  yarn -v
+
+  cd sonarts-core
+
+  declare -a tsVersions=("2.2" "2.3" "2.4" "2.5" "2.6")
+
+  for tsVersion in "${tsVersions[@]}"
+  do
+    echo "Running tests with TypeScript v$tsVersion"
+    yarn add typescript@${tsVersion} --dev
+    yarn test
+  done
+
+  cd ..
+  
+  exit 0;
+  ;;
+
   *)
   echo "Unexpected TEST mode: $TEST"
   exit 1
   ;;
+
 esac
 

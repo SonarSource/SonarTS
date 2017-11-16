@@ -2,8 +2,7 @@
 set -euo pipefail
 
 cd sonarts-core
-yarn build
-yarn test -- --coverage
-yarn license-check
 npm pack
+# yarn test -- --coverage
+yarn license-check
 cd ..
