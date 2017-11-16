@@ -60,7 +60,7 @@ describe("Conditional expression", () => {
 
 describe("While", () => {
   it("constrains condition to TRUTHY", () => {
-    checkConstraints(`let x; while(x) { _inspect(x) }`, [getTruthyConstraint(), getTruthyConstraint()]);
+    checkConstraints(`let x = foo(); while(x) { _inspect(x) }`, [getTruthyConstraint(), getTruthyConstraint()]);
   });
 
   it("has only FALSY constraint after the block", () => {
