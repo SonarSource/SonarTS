@@ -175,7 +175,7 @@ export class ProgramState {
   }
 }
 
-export function createInitialState(declaration: ts.FunctionDeclaration, program: ts.Program) {
+export function createInitialState(declaration: ts.FunctionLikeDeclaration, program: ts.Program) {
   let state = ProgramState.empty();
   declaration.parameters.forEach(parameter => {
     const symbol = program.getTypeChecker().getSymbolAtLocation(parameter.name);
