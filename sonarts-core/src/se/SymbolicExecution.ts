@@ -30,6 +30,7 @@ export function execute(
   cfg: ControlFlowGraph,
   program: ts.Program,
   initialState: ProgramState,
+  shouldTrackSymbol: (symbol: ts.Symbol) => boolean = () => true,
 ): ExecutionResult | undefined {
   const programNodes = new Map<ts.Node, ProgramState[]>();
   const branchingProgramNodes = new Map<ts.Node, ProgramState[]>();
@@ -100,7 +101,7 @@ export function execute(
   function visitProgramPoint(programPoint: ts.Node, programState: ProgramState) {
     const visitedStates = programNodes.get(programPoint) || [];
     if (!isVisitedProgramState(visitedStates, programState)) {
-      const nextProgramState = applyExecutors(programPoint, programState, program);
+      const nextProgramState = applyExecutors(programPoint, programState, program, shouldTrackSymbol);
       const nextVisitedStates = [...visitedStates, programState];
       programNodes.set(programPoint, nextVisitedStates);
       return nextProgramState;

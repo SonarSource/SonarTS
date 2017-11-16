@@ -24,6 +24,9 @@ import { execute } from "../se/SymbolicExecution";
 import { build } from "../cfg/builder";
 import { ProgramState, createInitialState } from "../se/programStates";
 import { isTruthy, Constraint, isFalsy } from "../se/constraints";
+import { SymbolTableBuilder } from "../symbols/builder";
+import { SymbolTable, UsageFlag } from "../symbols/table";
+import { firstLocalAncestor, FUNCTION_LIKE } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -44,11 +47,21 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    const symbols = SymbolTableBuilder.build(sourceFile, program);
+    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
   }
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
+  public constructor(
+    sourceFile: ts.SourceFile,
+    options: tslint.IOptions,
+    program: ts.Program,
+    private readonly symbols: SymbolTable,
+  ) {
+    super(sourceFile, options, program);
+  }
+
   protected visitFunctionDeclaration(node: ts.FunctionDeclaration) {
     const { body } = node;
     if (body) {
@@ -56,7 +69,14 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       if (!cfg) {
         return;
       }
-      const result = execute(cfg, this.getProgram(), createInitialState(node, this.getProgram()));
+
+      const shouldTrackSymbol = (symbol: ts.Symbol) =>
+        this.symbols
+          .allUsages(symbol)
+          .filter(usage => usage.is(UsageFlag.WRITE))
+          .every(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) === node);
+
+      const result = execute(cfg, this.getProgram(), createInitialState(node, this.getProgram()), shouldTrackSymbol);
       if (result) {
         result.branchingProgramNodes.forEach((states, branchingProgramPoint) => {
           if (this.ifAllProgramStateConstraints(states, isTruthy)) {
