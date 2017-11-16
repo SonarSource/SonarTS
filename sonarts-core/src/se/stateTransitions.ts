@@ -98,12 +98,19 @@ function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, 
     }
 
     if (!value) {
-      throw "Assignment without value";
+      throw new Error("Assignment without value");
     }
-    nextState = nextState.pushSV(value);
-
-    return nextState.setSV(variable, value);
+    return nextState.pushSV(value).setSV(variable, value);
+  } else if (
+    // any other kinds of assignment, like +=, |=, etc.
+    expression.operatorToken.kind > ts.SyntaxKind.EqualsToken &&
+    expression.operatorToken.kind <= ts.SyntaxKind.CaretEqualsToken
+  ) {
+    const variable = getSymbol(expression.left as ts.Identifier);
+    const value = createUnknownSymbolicValue();
+    return variable ? state.pushSV(value).setSV(variable, value) : state;
   }
+
   return state.pushSV(createUnknownSymbolicValue());
 }
 
