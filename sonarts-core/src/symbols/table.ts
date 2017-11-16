@@ -48,8 +48,6 @@ export class SymbolTable {
 }
 
 export class Usage {
-  public dead = false;
-
   constructor(public readonly symbol: ts.Symbol, public readonly flags: UsageFlag, public readonly node: ts.Node) {}
 
   public is(requestedFlags: UsageFlag) {

@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { firstLocalAncestor } from "../utils/navigation"
+import { firstLocalAncestor } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -104,13 +104,13 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private isForbiddenOperation(node: ts.Node): boolean {
     const { parent } = node;
-    return ( 
+    return (
       parent != null &&
       parent.kind !== ts.SyntaxKind.ExpressionStatement &&
       !firstLocalAncestor(node, ts.SyntaxKind.ReturnStatement)
     );
   }
-  
+
   private isBinaryExpression(node?: ts.Node): node is ts.BinaryExpression {
     return node != null && node.kind === ts.SyntaxKind.BinaryExpression;
   }

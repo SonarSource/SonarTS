@@ -19,22 +19,39 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import { collectLeftHandIdentifiers, firstLocalAncestor, FUNCTION_LIKE, is, isAssignment } from "../utils/navigation";
+import {
+  collectLeftHandIdentifiers,
+  firstLocalAncestor,
+  FUNCTION_LIKE,
+  is,
+  isAssignment,
+  firstAncestor,
+} from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
 
 export class LiveVariableAnalyzer {
   private blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
-  private root: ts.FunctionLikeDeclaration;
+  private deadUsages: Set<Usage> = new Set();
+  private root: ts.FunctionLikeDeclaration | ts.SourceFile;
+  private static readonly FUNCTION_OR_SOURCE_FILE = [...FUNCTION_LIKE, ts.SyntaxKind.SourceFile];
 
   constructor(private readonly symbols: SymbolTable) {}
 
-  public analyze(root: ts.FunctionLikeDeclaration) {
+  public analyzeFunction(root: ts.FunctionLikeDeclaration): LVAReturn | undefined {
     if (!is(root.body, ts.SyntaxKind.Block)) {
       return;
     }
     const cfg = ControlFlowGraph.fromStatements((root.body as ts.Block).statements);
     if (!cfg) return;
-    this.root = root;
+    return this.analyze(root, cfg);
+  }
+
+  public analyze(root: ts.Node, cfg: ControlFlowGraph): LVAReturn | undefined {
+    this.root = (is(root, ...FUNCTION_LIKE)
+      ? root
+      : firstAncestor(root, LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE)) as
+      | ts.FunctionLikeDeclaration
+      | ts.SourceFile;
     // symbols whose value will be read after entering a block (aka live symbols)
     this.blockAvailableReads = new Map<CfgBlock, Set<ts.Symbol>>();
     const blocks = cfg.getBlocks().concat(cfg.end);
@@ -50,6 +67,8 @@ export class LiveVariableAnalyzer {
       }
       this.blockAvailableReads.set(block, newBlockReads);
     }
+
+    return { cfg, blockAvailableReads: this.blockAvailableReads, deadUsages: this.deadUsages };
   }
 
   private computeSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
@@ -70,10 +89,10 @@ export class LiveVariableAnalyzer {
     if (usage && !this.isUsedInNestedFunctions(usage.symbol)) {
       if (usage.is(UsageFlag.WRITE)) {
         if (availableReads.has(usage.symbol)) {
-          usage.dead = false;
+          this.deadUsages.delete(usage);
           availableReads.delete(usage.symbol);
         } else {
-          usage.dead = true;
+          this.deadUsages.add(usage);
         }
       }
       if (usage.is(UsageFlag.READ)) {
@@ -83,7 +102,9 @@ export class LiveVariableAnalyzer {
   }
 
   private isUsedInNestedFunctions(symbol: ts.Symbol): boolean {
-    return this.symbols.allUsages(symbol).some(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) !== this.root);
+    return this.symbols
+      .allUsages(symbol)
+      .some(usage => firstLocalAncestor(usage.node, ...LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE) !== this.root);
   }
 
   private successorSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
@@ -108,3 +129,9 @@ export class LiveVariableAnalyzer {
     return true;
   }
 }
+
+export type LVAReturn = {
+  cfg: ControlFlowGraph;
+  blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
+  deadUsages: Set<Usage>;
+};

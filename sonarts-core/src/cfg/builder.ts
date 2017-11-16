@@ -32,7 +32,7 @@ export class CfgBuilder {
   private blocks: CfgBlock[] = [this.end];
   private breakables: Breakable[] = [];
 
-  public build(statements: ts.NodeArray<ts.Statement>): ControlFlowGraph | undefined {
+  public build(statements: ts.Statement[]): ControlFlowGraph | undefined {
     const current = this.createBlock();
     current.addSuccessor(this.end);
     try {

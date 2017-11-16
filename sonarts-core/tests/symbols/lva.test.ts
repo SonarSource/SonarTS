@@ -21,10 +21,11 @@ import * as path from "path";
 import * as ts from "typescript";
 import { ControlFlowGraph } from "../../src/cfg/cfg";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
-import { LiveVariableAnalyzer } from "../../src/symbols/lva";
+import { LiveVariableAnalyzer, LVAReturn } from "../../src/symbols/lva";
 import { SymbolTable, UsageFlag } from "../../src/symbols/table";
 import { descendants, FUNCTION_LIKE, is } from "../../src/utils/navigation";
 import { buildSymbolTable, getNode } from "./test_utils";
+import { FunctionLikeDeclaration } from "typescript";
 
 let symbols: SymbolTable;
 let sourceFile: ts.SourceFile;
@@ -33,64 +34,68 @@ beforeEach(() => {
   ({ symbols, sourceFile } = buildSymbolTable("sample_lva.lint.ts"));
 });
 
+function isDead(varName: string, func: FunctionLikeDeclaration, lvaReturn: LVAReturn, line?: number) {
+  return lvaReturn.deadUsages.has(symbols.getUsage(getNode(func, varName, line)));
+}
+
 it("linear", () => {
-  const func = liveVariableAnalysis("linear");
-  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
+  const { func, lvaReturn } = liveVariableAnalysis("linear");
+  expect(isDead("x", func, lvaReturn)).toBe(false);
+  expect(isDead("y", func, lvaReturn)).toBe(true);
 });
 
 it("simple if", () => {
-  const func = liveVariableAnalysis("oneBranch");
-  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
+  const { func, lvaReturn } = liveVariableAnalysis("oneBranch");
+  expect(isDead("x", func, lvaReturn)).toBe(false);
+  expect(isDead("y", func, lvaReturn)).toBe(true);
 });
 
 it("simple loop", () => {
-  const func = liveVariableAnalysis("oneLoop");
-  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "x", 25)).dead).toBe(true);
-  expect(symbols.getUsage(getNode(func, "x", 26)).dead).toBe(false);
+  const { func, lvaReturn } = liveVariableAnalysis("oneLoop");
+  expect(isDead("x", func, lvaReturn)).toBe(false);
+  expect(isDead("x", func, lvaReturn, 25)).toBe(true);
+  expect(isDead("x", func, lvaReturn, 26)).toBe(false);
 });
 
 it("loops and branches", () => {
-  const func = liveVariableAnalysis("loopsAndBranches");
-  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "x", 39)).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "x", 47)).dead).toBe(true);
+  const { func, lvaReturn } = liveVariableAnalysis("loopsAndBranches");
+  expect(isDead("x", func, lvaReturn)).toBe(false);
+  expect(isDead("x", func, lvaReturn, 39)).toBe(false);
+  expect(isDead("x", func, lvaReturn, 47)).toBe(true);
 
-  expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
-  expect(symbols.getUsage(getNode(func, "y", 34)).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "y", 37)).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "y", 42)).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "y", 44)).dead).toBe(true);
+  expect(isDead("y", func, lvaReturn)).toBe(true);
+  expect(isDead("y", func, lvaReturn, 34)).toBe(false);
+  expect(isDead("y", func, lvaReturn, 37)).toBe(false);
+  expect(isDead("y", func, lvaReturn, 42)).toBe(false);
+  expect(isDead("y", func, lvaReturn, 44)).toBe(true);
 });
 
 it("ignore class fields", () => {
-  const func = liveVariableAnalysis("someMethod");
-  expect(symbols.getUsage(getNode(func, "x", 55)).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "y", 56)).dead).toBe(true);
-  expect(symbols.getUsage(getNode(func, "y", 57)).dead).toBe(true);
+  const { func, lvaReturn } = liveVariableAnalysis("someMethod");
+  expect(isDead("x", func, lvaReturn, 55)).toBe(false);
+  expect(isDead("y", func, lvaReturn, 56)).toBe(true);
+  expect(isDead("y", func, lvaReturn, 57)).toBe(true);
 });
 
 it("ignore symbols used in nested functions", () => {
-  const func = liveVariableAnalysis("containerMethod");
-  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "x", 62)).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "y")).dead).toBe(true);
-  expect(symbols.getUsage(getNode(func, "z")).dead).toBe(false);
+  const { func, lvaReturn } = liveVariableAnalysis("containerMethod");
+  expect(isDead("x", func, lvaReturn)).toBe(false);
+  expect(isDead("x", func, lvaReturn, 62)).toBe(false);
+  expect(isDead("y", func, lvaReturn)).toBe(true);
+  expect(isDead("z", func, lvaReturn)).toBe(false);
 });
 
 it("destructuring", () => {
-  const func = liveVariableAnalysis("destructuring");
-  expect(symbols.getUsage(getNode(func, "x")).dead).toBe(false);
-  expect(symbols.getUsage(getNode(func, "c", 82)).dead).toBe(true);
-  expect(symbols.getUsage(getNode(func, "d", 82)).dead).toBe(true);
+  const { func, lvaReturn } = liveVariableAnalysis("destructuring");
+  expect(isDead("x", func, lvaReturn)).toBe(false);
+  expect(isDead("c", func, lvaReturn, 82)).toBe(true);
+  expect(isDead("d", func, lvaReturn, 82)).toBe(true);
 });
 
-function liveVariableAnalysis(functionName: string) {
+function liveVariableAnalysis(functionName: string): { func: FunctionLikeDeclaration; lvaReturn: LVAReturn } {
   const func = findFunction(functionName);
-  new LiveVariableAnalyzer(symbols).analyze(func);
-  return func;
+  const lvaReturn = new LiveVariableAnalyzer(symbols).analyzeFunction(func);
+  return { func, lvaReturn };
 }
 
 function findFunction(functionName: string): ts.FunctionLikeDeclaration {
