@@ -22,8 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { execute } from "../se/SymbolicExecution";
 import { build } from "../cfg/builder";
-import { ProgramState } from "../se/programStates";
-import { createUnknownSymbolicValue } from "../se/symbolicValues";
+import { ProgramState, createInitialState } from "../se/programStates";
 import { isTruthy, Constraint, isFalsy } from "../se/constraints";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -77,15 +76,4 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       return sv !== undefined && checker(programState.getConstraints(sv));
     });
   }
-}
-
-function createInitialState(declaration: ts.FunctionDeclaration, program: ts.Program) {
-  let state = ProgramState.empty();
-  declaration.parameters.forEach(parameter => {
-    const symbol = program.getTypeChecker().getSymbolAtLocation(parameter.name);
-    if (symbol) {
-      state = state.setSV(symbol, createUnknownSymbolicValue());
-    }
-  });
-  return state;
 }
