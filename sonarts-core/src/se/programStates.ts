@@ -18,7 +18,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { SymbolicValue, isEqualSymbolicValues, isUndefinedSymbolcValue, isNumericLiteralSymbolicValue, unknownSymbolicValue } from "./symbolicValues";
+import {
+  SymbolicValue,
+  isEqualSymbolicValues,
+  isUndefinedSymbolcValue,
+  isNumericLiteralSymbolicValue,
+  unknownSymbolicValue,
+} from "./symbolicValues";
 import { inspect } from "util";
 import { Constraint, getTruthyConstraint, getFalsyConstraint, isEqualConstraints, constrain } from "./constraints";
 import { Map } from "immutable";
@@ -28,9 +34,6 @@ type ExpressionStack = SymbolicValue[];
 type Constraints = Map<SymbolicValue, Constraint[]>;
 
 export class ProgramState {
-  private static startLoc = 0;
-  public static localElapsed = 0;
-
   private readonly symbolicValues: SymbolicValues;
   private readonly expressionStack: ExpressionStack;
   private readonly constraints: Constraints;
@@ -72,11 +75,7 @@ export class ProgramState {
       const sv = this.expressionStack[this.expressionStack.length - 1];
       const svConstraints = constrain(this.getConstraints(sv), constraint);
       if (svConstraints) {
-        return new ProgramState(
-          this.symbolicValues,
-          this.expressionStack,
-          this.constraints.set(sv, svConstraints),
-        );
+        return new ProgramState(this.symbolicValues, this.expressionStack, this.constraints.set(sv, svConstraints));
       } else {
         // impossible program state
         return undefined;
@@ -175,16 +174,6 @@ export class ProgramState {
     const anotherConstraints = another.getConstraints(anotherTop);
     const res = areArraysEqual(constraints, anotherConstraints, isEqualConstraints);
     return res;
-  }
-
-  private startLocal() {
-    ProgramState.startLoc = Date.now();
-  }
-
-  private endLocal() {
-    if (ProgramState.startLoc > 0) {
-      ProgramState.localElapsed += (Date.now() - ProgramState.startLoc) / 1000;
-    }
   }
 }
 
