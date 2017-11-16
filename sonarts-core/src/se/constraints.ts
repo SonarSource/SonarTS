@@ -57,9 +57,27 @@ export function isEqualConstraints(a: Constraint, b: Constraint): boolean {
   return a.kind === b.kind;
 }
 
-export function addConstraintToList(constraint: Constraint, list: Constraint[]): Constraint[] {
-  const shouldAdd = list.find(item => isEqualConstraints(constraint, item)) === undefined;
-  return shouldAdd ? [...list, constraint] : list;
+export function constrain(list: Constraint[], candidate: Constraint): Constraint[] | undefined {
+  const newList = [];
+  let existingKind = false;
+  for (const item of list) {
+    const result = constrainWith(item, candidate);
+    if (!result) {
+      return undefined;
+    }
+    newList.push(...result);
+    if (item.kind === candidate.kind) {
+      existingKind = true;
+    }
+  }
+  if (!existingKind) {
+    newList.push(candidate);
+  }
+  return newList;
+}
+
+function constrainWith(what: Constraint, withWhat: Constraint): Constraint[] | undefined {
+  return what.kind === withWhat.kind ? [what] : undefined;
 }
 
 export function isTruthy(constraints: Constraint[]) {

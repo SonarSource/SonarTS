@@ -69,7 +69,6 @@ describe("While", () => {
 });
 
 function checkConstraints<T extends Constraint>(source: string, expectedConstraints: T | T[]) {
-  expect.assertions(1);
   const constraints = inspectConstraints(source);
   const expected = Array.isArray(expectedConstraints) ? expectedConstraints : [expectedConstraints];
   expect(constraints).toEqual(expected);

@@ -26,15 +26,7 @@ import {
   isNumericLiteralSymbolicValue,
 } from "./symbolicValues";
 import { inspect } from "util";
-import {
-  Constraint,
-  getTruthyConstraint,
-  getFalsyConstraint,
-  isEqualConstraints,
-  addConstraintToList,
-  isTruthyConstraint,
-  isFalsyConstraint,
-} from "./constraints";
+import { Constraint, getTruthyConstraint, getFalsyConstraint, isEqualConstraints, constrain } from "./constraints";
 
 type SymbolicValues = Map<ts.Symbol, SymbolicValue>;
 type ExpressionStack = SymbolicValue[];
@@ -82,10 +74,15 @@ export class ProgramState {
   constrain(constraint: Constraint) {
     if (this.expressionStack.length > 0) {
       const sv = this.expressionStack[this.expressionStack.length - 1];
-      const newConstraints = new Map(this.constraints);
-      const svConstraints = newConstraints.get(sv) || [];
-      newConstraints.set(sv, addConstraintToList(constraint, svConstraints));
-      return new ProgramState(this.symbolicValues, this.expressionStack, newConstraints);
+      const newSVConstraints = constrain(this.getConstraints(sv), constraint);
+      if (newSVConstraints) {
+        const newConstraints = new Map(this.constraints);
+        newConstraints.set(sv, newSVConstraints);
+        return new ProgramState(this.symbolicValues, this.expressionStack, newConstraints);
+      } else {
+        // impossible program state
+        return undefined;
+      }
     } else {
       throw new Error("Cannot apply a constraint, because the expression stack is empty");
     }
@@ -107,14 +104,6 @@ export class ProgramState {
       return [getTruthyConstraint()];
     }
     return this.constraints.get(sv) || [];
-  }
-
-  canBeConstrainedTo(constraint: Constraint) {
-    const sv = this.expressionStack[this.expressionStack.length - 1];
-    const constraints = this.getConstraints(sv);
-    return isTruthyConstraint(constraint)
-      ? constraints.every(c => !isFalsyConstraint(c))
-      : constraints.every(c => !isTruthyConstraint(c));
   }
 
   hasEmptyStack(): boolean {
