@@ -34,31 +34,31 @@ beforeEach(() => {
   ({ symbols, sourceFile } = buildSymbolTable("sample_lva.lint.ts"));
 });
 
-function isDead(varName: string,  func: FunctionLikeDeclaration, lvaReturn: LVAReturn, line? : number ) {
+function isDead(varName: string, func: FunctionLikeDeclaration, lvaReturn: LVAReturn, line?: number) {
   return lvaReturn.deadUsages.has(symbols.getUsage(getNode(func, varName, line)));
 }
 
 it("linear", () => {
-  const {func, lvaReturn} = liveVariableAnalysis("linear");
+  const { func, lvaReturn } = liveVariableAnalysis("linear");
   expect(isDead("x", func, lvaReturn)).toBe(false);
   expect(isDead("y", func, lvaReturn)).toBe(true);
 });
 
 it("simple if", () => {
-  const {func, lvaReturn} = liveVariableAnalysis("oneBranch");
+  const { func, lvaReturn } = liveVariableAnalysis("oneBranch");
   expect(isDead("x", func, lvaReturn)).toBe(false);
   expect(isDead("y", func, lvaReturn)).toBe(true);
 });
 
 it("simple loop", () => {
-  const {func, lvaReturn} = liveVariableAnalysis("oneLoop");
+  const { func, lvaReturn } = liveVariableAnalysis("oneLoop");
   expect(isDead("x", func, lvaReturn)).toBe(false);
   expect(isDead("x", func, lvaReturn, 25)).toBe(true);
   expect(isDead("x", func, lvaReturn, 26)).toBe(false);
 });
 
 it("loops and branches", () => {
-  const {func, lvaReturn} = liveVariableAnalysis("loopsAndBranches");
+  const { func, lvaReturn } = liveVariableAnalysis("loopsAndBranches");
   expect(isDead("x", func, lvaReturn)).toBe(false);
   expect(isDead("x", func, lvaReturn, 39)).toBe(false);
   expect(isDead("x", func, lvaReturn, 47)).toBe(true);
@@ -71,14 +71,14 @@ it("loops and branches", () => {
 });
 
 it("ignore class fields", () => {
-  const {func, lvaReturn} = liveVariableAnalysis("someMethod");
+  const { func, lvaReturn } = liveVariableAnalysis("someMethod");
   expect(isDead("x", func, lvaReturn, 55)).toBe(false);
   expect(isDead("y", func, lvaReturn, 56)).toBe(true);
   expect(isDead("y", func, lvaReturn, 57)).toBe(true);
 });
 
 it("ignore symbols used in nested functions", () => {
-  const {func, lvaReturn} = liveVariableAnalysis("containerMethod");
+  const { func, lvaReturn } = liveVariableAnalysis("containerMethod");
   expect(isDead("x", func, lvaReturn)).toBe(false);
   expect(isDead("x", func, lvaReturn, 62)).toBe(false);
   expect(isDead("y", func, lvaReturn)).toBe(true);
@@ -86,13 +86,13 @@ it("ignore symbols used in nested functions", () => {
 });
 
 it("destructuring", () => {
-  const {func, lvaReturn} = liveVariableAnalysis("destructuring");
+  const { func, lvaReturn } = liveVariableAnalysis("destructuring");
   expect(isDead("x", func, lvaReturn)).toBe(false);
   expect(isDead("c", func, lvaReturn, 82)).toBe(true);
   expect(isDead("d", func, lvaReturn, 82)).toBe(true);
 });
 
-function liveVariableAnalysis(functionName: string): {func: FunctionLikeDeclaration, lvaReturn: LVAReturn} {
+function liveVariableAnalysis(functionName: string): { func: FunctionLikeDeclaration; lvaReturn: LVAReturn } {
   const func = findFunction(functionName);
   const lvaReturn = new LiveVariableAnalyzer(symbols).analyzeFunction(func);
   return { func, lvaReturn };

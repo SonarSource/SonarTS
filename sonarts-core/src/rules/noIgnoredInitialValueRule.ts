@@ -82,7 +82,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     super.visitNode(node);
   }
 
-  private check(root: ts.Node, lvaReturn?: LVAReturn,  ...nodesToCheck: ts.Node[]) {
+  private check(root: ts.Node, lvaReturn?: LVAReturn, ...nodesToCheck: ts.Node[]) {
     if (!lvaReturn) {
       return;
     }
@@ -117,10 +117,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     ];
     return this.symbols
       .allUsages(symbol)
-      .every(
-        usage =>
-          usage.is(UsageFlag.DECLARATION) || ancestorsChain(usage.node, ...boundaries).includes(root),
-      );
+      .every(usage => usage.is(UsageFlag.DECLARATION) || ancestorsChain(usage.node, ...boundaries).includes(root));
   }
 }
 

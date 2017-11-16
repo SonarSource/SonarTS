@@ -47,7 +47,9 @@ export class LiveVariableAnalyzer {
   }
 
   public analyze(root: ts.Node, cfg: ControlFlowGraph): LVAReturn | undefined {
-    this.root = (is(root, ...FUNCTION_LIKE) ? root : firstAncestor(root, LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE)) as
+    this.root = (is(root, ...FUNCTION_LIKE)
+      ? root
+      : firstAncestor(root, LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE)) as
       | ts.FunctionLikeDeclaration
       | ts.SourceFile;
     // symbols whose value will be read after entering a block (aka live symbols)
@@ -128,4 +130,8 @@ export class LiveVariableAnalyzer {
   }
 }
 
-export type LVAReturn = { cfg: ControlFlowGraph; blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>; deadUsages: Set<Usage> };
+export type LVAReturn = {
+  cfg: ControlFlowGraph;
+  blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
+  deadUsages: Set<Usage>;
+};
