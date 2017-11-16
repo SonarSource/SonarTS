@@ -118,7 +118,12 @@ export class ProgramState {
   }
 
   isEqualTo(another: ProgramState) {
-    return this.areSymbolsEqual(another) && this.areSymbolicValuesEqual(another) && this.areConstraintsEqual(another);
+    return (
+      this.areSymbolsEqual(another) &&
+      this.areSymbolicValuesEqual(another) &&
+      this.areSymbolConstraintsEqual(another) &&
+      this.areTopStackConstraintsEqual(another)
+    );
   }
 
   private areSymbolsEqual(another: ProgramState) {
@@ -134,7 +139,7 @@ export class ProgramState {
     }, true);
   }
 
-  private areConstraintsEqual(another: ProgramState) {
+  private areSymbolConstraintsEqual(another: ProgramState) {
     const symbols = Array.from(this.symbolicValues.keys());
 
     for (const symbol of symbols) {
@@ -151,6 +156,21 @@ export class ProgramState {
       }
     }
     return true;
+  }
+
+  private areTopStackConstraintsEqual(another: ProgramState) {
+    const top = this.expressionStack.length > 0 && this.expressionStack[this.expressionStack.length - 1];
+    const anotherTop =
+      another.expressionStack.length > 0 && another.expressionStack[another.expressionStack.length - 1];
+    if (!top && !anotherTop) {
+      return true;
+    }
+    if (!top || !anotherTop) {
+      return false;
+    }
+    const constraints = this.getConstraints(top);
+    const anotherConstraints = another.getConstraints(anotherTop);
+    return areArraysEqual(constraints, anotherConstraints, isEqualConstraints);
   }
 }
 
