@@ -14,9 +14,9 @@ How does it work?
 
 ## Rules
 
-* Getters and setters should access the expected fields ([`no-accessor-field-mismatch`])
+* Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
-* `delete` should not be used on arrays ([`no-array-delete`])
+* `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
 * Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
@@ -26,7 +26,7 @@ How does it work?
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Functions should not have identical implementations ([`no-identical-functions`])
-* Function parameters, caught exceptions and foreach variables' initial values should not be ignored ([`no-ignored-initial-value`])
+* Function parameters, caught exceptions and foreach variables' initial values should not be ignored ([`no-ignored-initial-value`]) ([`requires type-check`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
@@ -37,9 +37,10 @@ How does it work?
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
-* Array contents should be used ([`no-unused-array`])
-* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
+* Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
+* Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
+* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
@@ -66,8 +67,9 @@ How does it work?
 [`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
 [`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md
-[`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
+[`no-useless-cast`]: ./sonarts-core/docs/rules/no-useless-cast.md
 [`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
+[`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
