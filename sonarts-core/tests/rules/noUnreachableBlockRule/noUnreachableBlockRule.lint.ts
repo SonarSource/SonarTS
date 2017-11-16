@@ -226,3 +226,22 @@ function changeInNestedFunction() {
     x = 2;
   }
 }
+
+// FP!
+function hmmm(y: any) {
+  // prettier-ignore
+  const x = y < 1 && 1 || y;
+}
+
+// why not FP?!
+function hmmm(y: any) {
+  const x = (y < 1 && 1) || y;
+}
+
+// FP on destructiring!
+function destructuring() {
+  let x;
+  ({ x } = foo());
+  if (x) {
+  }
+}
