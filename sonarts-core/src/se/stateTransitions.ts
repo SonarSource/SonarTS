@@ -20,10 +20,10 @@
 import * as ts from "typescript";
 import * as tsutils from "tsutils";
 import {
-  createLiteralSymbolicValue,
-  createUnknownSymbolicValue,
-  createUndefinedSymbolicValue,
-  createObjectLiteralSymbolicValue,
+  numericLiteralSymbolicValue,
+  unknownSymbolicValue,
+  undefinedSymbolicValue,
+  objectLiteralSymbolicValue,
 } from "./symbolicValues";
 import { ProgramState } from "./programStates";
 import { PostfixUnaryExpression } from "typescript";
@@ -72,7 +72,7 @@ export function applyExecutors(programPoint: ts.Node, state: ProgramState, progr
     return postfixUnaryExpression(programPoint, state, getSymbol);
   }
 
-  return state.pushSV(createUnknownSymbolicValue());
+  return state.pushSV(unknownSymbolicValue());
 }
 
 interface GetSymbol {
@@ -81,12 +81,12 @@ interface GetSymbol {
 
 function identifier(identifier: ts.Identifier, state: ProgramState, program: ts.Program) {
   const symbol = program.getTypeChecker().getSymbolAtLocation(identifier);
-  let sv = (symbol && state.sv(symbol)) || createUnknownSymbolicValue();
+  let sv = (symbol && state.sv(symbol)) || unknownSymbolicValue();
   return state.pushSV(sv);
 }
 
 function numeralLiteral(literal: ts.NumericLiteral, state: ProgramState, _program: ts.Program) {
-  return state.pushSV(createLiteralSymbolicValue(literal.text));
+  return state.pushSV(numericLiteralSymbolicValue(literal.text));
 }
 
 function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, getSymbol: GetSymbol) {
@@ -107,11 +107,11 @@ function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, 
     expression.operatorToken.kind <= ts.SyntaxKind.CaretEqualsToken
   ) {
     const variable = getSymbol(expression.left as ts.Identifier);
-    const value = createUnknownSymbolicValue();
+    const value = unknownSymbolicValue();
     return variable ? state.pushSV(value).setSV(variable, value) : state;
   }
 
-  return state.pushSV(createUnknownSymbolicValue());
+  return state.pushSV(unknownSymbolicValue());
 }
 
 function variableDeclaration(declaration: ts.VariableDeclaration, state: ProgramState, program: ts.Program) {
@@ -124,7 +124,7 @@ function variableDeclaration(declaration: ts.VariableDeclaration, state: Program
     }
 
     if (!value) {
-      value = createUndefinedSymbolicValue();
+      value = undefinedSymbolicValue();
     }
     return nextState.setSV(variable, value);
   }
@@ -135,22 +135,22 @@ function callExpression(callExpression: ts.CallExpression, state: ProgramState) 
   let nextState = state;
   callExpression.arguments.forEach(_ => (nextState = nextState.popSV()[1]));
   nextState = nextState.popSV()[1]; // Pop callee value
-  return nextState.pushSV(createUnknownSymbolicValue());
+  return nextState.pushSV(unknownSymbolicValue());
 }
 
 function objectLiteralExpression(state: ProgramState) {
   // TODO it's not so simple. We need to pop plenty of things here
-  return state.pushSV(createObjectLiteralSymbolicValue());
+  return state.pushSV(objectLiteralSymbolicValue());
 }
 
 function propertyAccessExpression(state: ProgramState) {
-  return state.popSV()[1].pushSV(createUnknownSymbolicValue());
+  return state.popSV()[1].pushSV(unknownSymbolicValue());
 }
 
 function postfixUnaryExpression(unary: PostfixUnaryExpression, state: ProgramState, getSymbol: GetSymbol) {
   let nextState = state;
   const operand = unary.operand;
-  const sv = createUnknownSymbolicValue();
+  const sv = unknownSymbolicValue();
   if (isIdentifier(operand)) {
     const symbol = getSymbol(operand);
     if (symbol) {

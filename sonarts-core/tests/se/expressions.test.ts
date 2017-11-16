@@ -18,36 +18,39 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { inspectStack } from "../utils/seTestUtils";
-import { SymbolicValue } from "../../src/se/symbolicValues";
-
-const UNKNOWN = { type: "unknown" };
+import {
+  SymbolicValue,
+  unknownSymbolicValue,
+  objectLiteralSymbolicValue,
+  numericLiteralSymbolicValue,
+} from "../../src/se/symbolicValues";
 
 it("assignment", () => {
-  check(`let a; _inspect(a = 0);`, { type: "literal", value: "0" }, true);
+  check(`let a; _inspect(a = 0);`, numericLiteralSymbolicValue("0"), true);
 });
 
 it("function call", () => {
-  check(`let foo = function() {}; _inspect(foo());`, UNKNOWN, true);
+  check(`let foo = function() {}; _inspect(foo());`, unknownSymbolicValue(), true);
 });
 
 it("function call with parameters", () => {
-  check(`let foo; let x = 0; let y = 1; _inspect(foo(x, y));`, UNKNOWN, true);
+  check(`let foo; let x = 0; let y = 1; _inspect(foo(x, y));`, unknownSymbolicValue(), true);
 });
 
 it("object declaration", () => {
-  check(`_inspect({ bar: 0 });`, { type: "object" }, false);
+  check(`_inspect({ bar: 0 });`, objectLiteralSymbolicValue(), false);
 });
 
 it("property access expression", () => {
-  check(`let foo = { bar: 0 }; _inspect(foo.bar);`, UNKNOWN, false);
+  check(`let foo = { bar: 0 }; _inspect(foo.bar);`, unknownSymbolicValue(), false);
 });
 
 it("defaults to pushing unknown value", () => {
-  check(`let x = foo(); _inspect(x = x + 1);`, UNKNOWN, false);
+  check(`let x = foo(); _inspect(x = x + 1);`, unknownSymbolicValue(), false);
 });
 
 it("postfix increment", () => {
-  check(`let x = 0; _inspect(x++)`, UNKNOWN, true);
+  check(`let x = 0; _inspect(x++)`, unknownSymbolicValue(), true);
 });
 
 it("does not push value to the stack", () => {

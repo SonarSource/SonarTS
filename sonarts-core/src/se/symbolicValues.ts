@@ -17,47 +17,58 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export interface SymbolicValue {
-  type: string;
+export enum SymbolicValueType {
+  Unknown,
+  NumericLiteral,
+  Undefined,
+  ObjectLiteral,
 }
 
-export interface LiteralSymbolicValue extends SymbolicValue {
-  type: "literal";
-  value: string;
+export interface SymbolicValue {
+  readonly type: SymbolicValueType;
+}
+
+export interface NumericLiteralSymbolicValue extends SymbolicValue {
+  readonly type: SymbolicValueType.NumericLiteral;
+  readonly value: string;
 }
 
 export interface UnknownSymbolicValue extends SymbolicValue {
-  type: "unknown";
+  readonly type: SymbolicValueType.Unknown;
 }
 
 export interface UndefinedSymbolicValue extends SymbolicValue {
-  type: "undefined";
+  readonly type: SymbolicValueType.Undefined;
 }
 
 export interface ObjectLiteralSymbolicValue extends SymbolicValue {
-  type: "object";
+  readonly type: SymbolicValueType.ObjectLiteral;
 }
 
-export function createLiteralSymbolicValue(value: string): LiteralSymbolicValue {
-  return { type: "literal", value };
+export function numericLiteralSymbolicValue(value: string): NumericLiteralSymbolicValue {
+  return { type: SymbolicValueType.NumericLiteral, value };
 }
 
-export function createUnknownSymbolicValue(): UnknownSymbolicValue {
-  return { type: "unknown" };
+export function unknownSymbolicValue(): UnknownSymbolicValue {
+  return { type: SymbolicValueType.Unknown };
 }
 
-export function createUndefinedSymbolicValue(): UndefinedSymbolicValue {
-  return { type: "undefined" };
+export function undefinedSymbolicValue(): UndefinedSymbolicValue {
+  return { type: SymbolicValueType.Undefined };
 }
 
-export function createObjectLiteralSymbolicValue(): ObjectLiteralSymbolicValue {
-  return { type: "object" };
+export function objectLiteralSymbolicValue(): ObjectLiteralSymbolicValue {
+  return { type: SymbolicValueType.ObjectLiteral };
 }
 
 export function isEqualSymbolicValues(a: SymbolicValue, b: SymbolicValue) {
-  return isLiteralSymbolicValue(a) && isLiteralSymbolicValue(b) ? a.value === b.value : a.type === b.type;
+  return isNumericLiteralSymbolicValue(a) && isNumericLiteralSymbolicValue(b) ? a.value === b.value : a.type === b.type;
 }
 
-function isLiteralSymbolicValue(value: SymbolicValue): value is LiteralSymbolicValue {
-  return value.type === "literal";
+export function isNumericLiteralSymbolicValue(value: SymbolicValue): value is NumericLiteralSymbolicValue {
+  return value.type === SymbolicValueType.NumericLiteral;
+}
+
+export function isUndefinedSymbolcValue(value: SymbolicValue): value is UndefinedSymbolicValue {
+  return value.type === SymbolicValueType.Undefined;
 }

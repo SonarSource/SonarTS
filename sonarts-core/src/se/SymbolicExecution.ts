@@ -56,7 +56,8 @@ export function execute(
       }
     }
 
-    if (block instanceof CfgBranchingBlock && !isForInOfLoop(block)) {
+    // ignore for-of, for-in and switch, because we can't constrain right element
+    if (block instanceof CfgBranchingBlock && !isForInOfLoop(block) && !isSwitch(block)) {
       const lastElement = block.getElements()[block.getElements().length - 1];
       const existingStates = branchingProgramNodes.get(lastElement) || [];
       branchingProgramNodes.set(lastElement, [...existingStates, programState]);
@@ -121,6 +122,10 @@ export function execute(
 
   function isStatement(block: CfgBranchingBlock) {
     return is(block.branchingElement, ...CONDITIONAL_STATEMENTS, ...LOOP_STATEMENTS);
+  }
+
+  function isSwitch(block: CfgBranchingBlock) {
+    return is(block.branchingElement, ts.SyntaxKind.SwitchStatement);
   }
 }
 
