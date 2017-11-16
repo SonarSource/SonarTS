@@ -22,9 +22,16 @@ import { ControlFlowGraph, CfgBlock, CfgBranchingBlock } from "../cfg/cfg";
 import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
 import { is, CONDITIONAL_STATEMENTS, LOOP_STATEMENTS } from "../utils/navigation";
-import { getTruthyConstraint, getFalsyConstraint } from "./constraints";
 
 const BLOCK_VISITS_LIMIT = 1000;
+
+export type ProgramNodes = Map<ts.Node, ProgramState[]>;
+
+export interface ExecutionResult {
+  programNodes: ProgramNodes;
+  branchingProgramNodes: ProgramNodes;
+  visits: number;
+}
 
 export function execute(
   cfg: ControlFlowGraph,
@@ -32,13 +39,13 @@ export function execute(
   initialState: ProgramState,
   shouldTrackSymbol: (symbol: ts.Symbol) => boolean = () => true,
 ): ExecutionResult | undefined {
-  const programNodes = new Map<ts.Node, ProgramState[]>();
-  const branchingProgramNodes = new Map<ts.Node, ProgramState[]>();
+  const programNodes: ProgramNodes = new Map();
+  const branchingProgramNodes: ProgramNodes = new Map();
   let visits = 0;
   visitBlock(cfg.start, initialState);
   if (visitsLimitBreached()) {
     // Analysis incomplete, it's safer to not report partial results
-    return;
+    return undefined;
   } else {
     return { programNodes, branchingProgramNodes, visits };
   }
@@ -49,39 +56,15 @@ export function execute(
     }
     visits++;
     for (const programPoint of block.getElements()) {
-      const nextProgramState = visitProgramPoint(programPoint, programState);
-      if (nextProgramState) {
-        programState = nextProgramState;
-      } else {
+      if (isVisitedProgramState(programPoint, programState)) {
         return;
       }
+      programState = visitProgramPoint(programPoint, programState);
     }
 
     // ignore for-of, for-in and switch, because we can't constrain right element
     if (block instanceof CfgBranchingBlock && !isForInOfLoop(block) && !isSwitch(block)) {
-      const lastElement = block.getElements()[block.getElements().length - 1];
-      const existingStates = branchingProgramNodes.get(lastElement) || [];
-      branchingProgramNodes.set(lastElement, [...existingStates, programState]);
-
-      // if we were inside a branching statement, clear the stack
-      let truthyState = programState.canBeConstrainedTo(getTruthyConstraint())
-        ? programState.constrainToTruthy()
-        : undefined;
-      let falsyState = programState.canBeConstrainedTo(getFalsyConstraint())
-        ? programState.constrainToFalsy()
-        : undefined;
-
-      if (isStatement(block)) {
-        truthyState = truthyState && truthyState.popSV()[1];
-        falsyState = falsyState && falsyState.popSV()[1];
-      }
-
-      if (truthyState) {
-        visitBlock(block.getTrueSuccessor(), truthyState);
-      }
-      if (falsyState) {
-        visitBlock(block.getFalseSuccessor(), falsyState);
-      }
+      visitBranchingBlock(block, programState);
     } else {
       for (const successor of block.getSuccessors()) {
         visitBlock(successor, programState);
@@ -89,32 +72,55 @@ export function execute(
     }
   }
 
+  function visitBranchingBlock(block: CfgBranchingBlock, programState: ProgramState) {
+    addToBranchingNodes(block, programState);
+
+    let truthyState = programState.constrainToTruthy();
+    let falsyState = programState.constrainToFalsy();
+
+    // if we are inside a branching statement, remove its expression from the stack
+    if (isStatement(block)) {
+      truthyState = truthyState && truthyState.popSV()[1];
+      falsyState = falsyState && falsyState.popSV()[1];
+    }
+
+    if (truthyState) {
+      visitBlock(block.getTrueSuccessor(), truthyState);
+    }
+    if (falsyState) {
+      visitBlock(block.getFalseSuccessor(), falsyState);
+    }
+  }
+
   function visitsLimitBreached() {
     return visits >= BLOCK_VISITS_LIMIT;
   }
 
-  /** 
-   * Visit a program point with a given program state to produce next program state.
-   * @returns `undefined` if the program point with next program state was already visited, 
-   * @returns next program state otherwise
-   */
   function visitProgramPoint(programPoint: ts.Node, programState: ProgramState) {
-    const visitedStates = programNodes.get(programPoint) || [];
-    if (!isVisitedProgramState(visitedStates, programState)) {
-      const nextProgramState = applyExecutors(programPoint, programState, program, shouldTrackSymbol);
-      const nextVisitedStates = [...visitedStates, programState];
-      programNodes.set(programPoint, nextVisitedStates);
-      return nextProgramState;
-    }
+    addToProgramNodes(programPoint, programState);
+    return applyExecutors(programPoint, programState, program, shouldTrackSymbol);
   }
 
-  function isVisitedProgramState(visitedState: ProgramState[], programState: ProgramState) {
-    for (const existingState of visitedState) {
+  function isVisitedProgramState(programPoint: ts.Node, programState: ProgramState) {
+    const visitedStates = programNodes.get(programPoint) || [];
+    for (const existingState of visitedStates) {
       if (existingState.isEqualTo(programState)) {
         return true;
       }
     }
     return false;
+  }
+
+  function addToProgramNodes(programPoint: ts.Node, programState: ProgramState) {
+    const visitedStates = programNodes.get(programPoint) || [];
+    const nextVisitedStates = [...visitedStates, programState];
+    programNodes.set(programPoint, nextVisitedStates);
+  }
+
+  function addToBranchingNodes(block: CfgBranchingBlock, programState: ProgramState) {
+    const lastElement = block.getElements()[block.getElements().length - 1];
+    const existingStates = branchingProgramNodes.get(lastElement) || [];
+    branchingProgramNodes.set(lastElement, [...existingStates, programState]);
   }
 
   function isForInOfLoop(block: CfgBranchingBlock) {
@@ -128,18 +134,4 @@ export function execute(
   function isSwitch(block: CfgBranchingBlock) {
     return is(block.branchingElement, ts.SyntaxKind.SwitchStatement);
   }
-}
-
-export interface ProgramPointCallback {
-  (programPoint: ts.Node, programStates: ProgramState[]): void;
-}
-
-export interface BranchingProgramPointCallback {
-  (programPoint: ts.Node, programStates: ProgramState[]): void;
-}
-
-export interface ExecutionResult {
-  programNodes: Map<ts.Node, ProgramState[]>;
-  branchingProgramNodes: Map<ts.Node, ProgramState[]>;
-  visits: number;
 }
