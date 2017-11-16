@@ -29,133 +29,133 @@ import { ProgramState } from "./programStates";
 import { PostfixUnaryExpression } from "typescript";
 import { isIdentifier } from "tsutils";
 
-export function applyExecutors(programPoint: ts.Node, state: ProgramState, program: ts.Program): ProgramState {
+export function applyExecutors(
+  programPoint: ts.Node,
+  state: ProgramState,
+  program: ts.Program,
+  shouldTrackSymbol: (symbol: ts.Symbol) => boolean = () => true,
+): ProgramState {
   const { parent } = programPoint;
   const { getSymbolAtLocation } = program.getTypeChecker();
-  const getSymbol = getSymbolAtLocation;
 
   // TODO is there a better way to handle this?
   // special case: `let x;`
   if (parent && tsutils.isVariableDeclaration(parent) && parent.name === programPoint) {
-    return variableDeclaration(parent, state, program);
+    return variableDeclaration(parent);
   }
 
   if (tsutils.isNumericLiteral(programPoint)) {
-    return numeralLiteral(programPoint, state, program);
+    return numeralLiteral(programPoint);
   }
 
   if (tsutils.isIdentifier(programPoint)) {
-    return identifier(programPoint, state, program);
+    return identifier(programPoint);
   }
 
   if (tsutils.isBinaryExpression(programPoint)) {
-    return binaryExpression(programPoint, state, getSymbol);
+    return binaryExpression(programPoint);
   }
 
   if (tsutils.isVariableDeclaration(programPoint)) {
-    return variableDeclaration(programPoint, state, program);
+    return variableDeclaration(programPoint);
   }
 
   if (tsutils.isCallExpression(programPoint)) {
-    return callExpression(programPoint, state);
+    return callExpression(programPoint);
   }
 
   if (tsutils.isObjectLiteralExpression(programPoint)) {
-    return objectLiteralExpression(state);
+    return objectLiteralExpression();
   }
 
   if (tsutils.isPropertyAccessExpression(programPoint)) {
-    return propertyAccessExpression(state);
+    return propertyAccessExpression();
   }
 
   if (tsutils.isPostfixUnaryExpression(programPoint)) {
-    return postfixUnaryExpression(programPoint, state, getSymbol);
+    return postfixUnaryExpression(programPoint);
   }
 
   return state.pushSV(unknownSymbolicValue());
-}
 
-interface GetSymbol {
-  (identifier: ts.Identifier): ts.Symbol | undefined;
-}
-
-function identifier(identifier: ts.Identifier, state: ProgramState, program: ts.Program) {
-  const symbol = program.getTypeChecker().getSymbolAtLocation(identifier);
-  let sv = (symbol && state.sv(symbol)) || unknownSymbolicValue();
-  return state.pushSV(sv);
-}
-
-function numeralLiteral(literal: ts.NumericLiteral, state: ProgramState, _program: ts.Program) {
-  return state.pushSV(numericLiteralSymbolicValue(literal.text));
-}
-
-function binaryExpression(expression: ts.BinaryExpression, state: ProgramState, getSymbol: GetSymbol) {
-  if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
-    let [value, nextState] = state.popSV();
-    const variable = getSymbol(expression.left as ts.Identifier);
-    if (!variable) {
-      return nextState;
-    }
-
-    if (!value) {
-      throw new Error("Assignment without value");
-    }
-    return nextState.pushSV(value).setSV(variable, value);
-  } else if (
-    // any other kinds of assignment, like +=, |=, etc.
-    expression.operatorToken.kind > ts.SyntaxKind.EqualsToken &&
-    expression.operatorToken.kind <= ts.SyntaxKind.CaretEqualsToken
-  ) {
-    const variable = getSymbol(expression.left as ts.Identifier);
-    const value = unknownSymbolicValue();
-    return variable ? state.pushSV(value).setSV(variable, value) : state;
+  function identifier(identifier: ts.Identifier) {
+    const symbol = program.getTypeChecker().getSymbolAtLocation(identifier);
+    let sv = (symbol && state.sv(symbol)) || unknownSymbolicValue();
+    return state.pushSV(sv);
   }
 
-  return state.pushSV(unknownSymbolicValue());
-}
-
-function variableDeclaration(declaration: ts.VariableDeclaration, state: ProgramState, program: ts.Program) {
-  if (tsutils.isIdentifier(declaration.name)) {
-    let [value, nextState] = state.popSV();
-    const { getSymbolAtLocation } = program.getTypeChecker();
-    const variable = getSymbolAtLocation(declaration.name);
-    if (!variable) {
-      return nextState;
-    }
-
-    if (!value) {
-      value = undefinedSymbolicValue();
-    }
-    return nextState.setSV(variable, value);
+  function numeralLiteral(literal: ts.NumericLiteral) {
+    return state.pushSV(numericLiteralSymbolicValue(literal.text));
   }
-  return state;
-}
 
-function callExpression(callExpression: ts.CallExpression, state: ProgramState) {
-  let nextState = state;
-  callExpression.arguments.forEach(_ => (nextState = nextState.popSV()[1]));
-  nextState = nextState.popSV()[1]; // Pop callee value
-  return nextState.pushSV(unknownSymbolicValue());
-}
+  function binaryExpression(expression: ts.BinaryExpression) {
+    if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+      let [value, nextState] = state.popSV();
+      const variable = getSymbolAtLocation(expression.left as ts.Identifier);
+      if (!variable) {
+        return nextState;
+      }
 
-function objectLiteralExpression(state: ProgramState) {
-  // TODO it's not so simple. We need to pop plenty of things here
-  return state.pushSV(objectLiteralSymbolicValue());
-}
-
-function propertyAccessExpression(state: ProgramState) {
-  return state.popSV()[1].pushSV(unknownSymbolicValue());
-}
-
-function postfixUnaryExpression(unary: PostfixUnaryExpression, state: ProgramState, getSymbol: GetSymbol) {
-  let nextState = state;
-  const operand = unary.operand;
-  const sv = unknownSymbolicValue();
-  if (isIdentifier(operand)) {
-    const symbol = getSymbol(operand);
-    if (symbol) {
-      nextState = nextState.setSV(symbol, sv);
+      if (!value) {
+        throw new Error("Assignment without value");
+      }
+      return nextState.pushSV(value).setSV(variable, value);
+    } else if (
+      // any other kinds of assignment, like +=, |=, etc.
+      expression.operatorToken.kind > ts.SyntaxKind.EqualsToken &&
+      expression.operatorToken.kind <= ts.SyntaxKind.CaretEqualsToken
+    ) {
+      const variable = getSymbolAtLocation(expression.left as ts.Identifier);
+      const value = unknownSymbolicValue();
+      return variable ? state.pushSV(value).setSV(variable, value) : state;
     }
+
+    return state.pushSV(unknownSymbolicValue());
   }
-  return nextState.popSV()[1].pushSV(sv);
+
+  function variableDeclaration(declaration: ts.VariableDeclaration) {
+    if (tsutils.isIdentifier(declaration.name)) {
+      let [value, nextState] = state.popSV();
+      const { getSymbolAtLocation } = program.getTypeChecker();
+      const variable = getSymbolAtLocation(declaration.name);
+      if (!variable || !shouldTrackSymbol(variable)) {
+        return nextState;
+      }
+
+      if (!value) {
+        value = undefinedSymbolicValue();
+      }
+      return nextState.setSV(variable, value);
+    }
+    return state;
+  }
+
+  function callExpression(callExpression: ts.CallExpression) {
+    let nextState = state;
+    callExpression.arguments.forEach(_ => (nextState = nextState.popSV()[1]));
+    nextState = nextState.popSV()[1]; // Pop callee value
+    return nextState.pushSV(unknownSymbolicValue());
+  }
+
+  function objectLiteralExpression() {
+    // TODO it's not so simple. We need to pop plenty of things here
+    return state.pushSV(objectLiteralSymbolicValue());
+  }
+
+  function propertyAccessExpression() {
+    return state.popSV()[1].pushSV(unknownSymbolicValue());
+  }
+
+  function postfixUnaryExpression(unary: PostfixUnaryExpression) {
+    let nextState = state;
+    const operand = unary.operand;
+    const sv = unknownSymbolicValue();
+    if (isIdentifier(operand)) {
+      const symbol = getSymbolAtLocation(operand);
+      if (symbol) {
+        nextState = nextState.setSV(symbol, sv);
+      }
+    }
+    return nextState.popSV()[1].pushSV(sv);
+  }
 }

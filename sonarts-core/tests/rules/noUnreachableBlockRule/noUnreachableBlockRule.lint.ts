@@ -213,3 +213,16 @@ function _switch(x: number) {
       return "foo";
   }
 }
+
+function changeInNestedFunction() {
+  let x = 0;
+
+  inner();
+
+  if (x) {
+  }
+
+  function inner() {
+    x = 2;
+  }
+}
