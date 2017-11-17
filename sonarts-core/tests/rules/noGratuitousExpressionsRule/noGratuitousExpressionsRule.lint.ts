@@ -231,6 +231,7 @@ function changeInNestedFunction() {
 function hmmm(y: any) {
   // prettier-ignore
   const x = y < 1 && 1 || y;
+  //                 ^  {{This condition always evaluates to "true".}} False Positive
 }
 
 // why not FP?!
@@ -238,10 +239,11 @@ function hmmm(y: any) {
   const x = (y < 1 && 1) || y;
 }
 
-// FP on destructiring!
+// FP!
 function destructuring() {
   let x;
   ({ x } = foo());
   if (x) {
+    //^  {{This condition always evaluates to "false".}} False Positive
   }
 }
