@@ -32,6 +32,7 @@ How does it work?
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
+* Redundant pairs of parentheses should be removed ([`no-redundant-parentheses`])
 * Conditionals should start on new lines ([`no-same-line-conditional`])
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
@@ -61,6 +62,7 @@ How does it work?
 [`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
 [`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
+[`no-redundant-parentheses`]: ./sonarts-core/docs/rules/no-redundant-parentheses.md
 [`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
