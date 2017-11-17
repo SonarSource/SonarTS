@@ -17,14 +17,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import { Rule } from "../../../src/rules/noElementOverwriteRule";
+import runRule from "../../runRule";
 
-import * as ts from "typescript";
-
-// SonarQube's line indexing starts from 1, while TypeScript is 0 based.
-export function toSonarLine(line: number) {
-  return line + 1;
-}
-
-export function nodeToSonarLine(node: ts.Node) {
-  return toSonarLine(node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line);
-}
+it("raises error", () => {
+  const { actualErrors, expectedErrors } = runRule(Rule, __filename);
+  expect(actualErrors).toEqual(expectedErrors);
+});

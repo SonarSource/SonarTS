@@ -7,6 +7,7 @@
     "no-collection-size-mischeck": true,
     "no-dead-store": true,
     "no-duplicated-branches": true,
+    "no-element-overwrite": true,
     "no-empty-destructuring": true,
     "no-empty-nested-blocks": false,
     "no-identical-conditions": true,

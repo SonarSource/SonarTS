@@ -20,6 +20,7 @@ How does it work?
 * Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
+* Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
@@ -47,6 +48,7 @@ How does it work?
 [`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
 [`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md
 [`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
+[`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
 [`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
 [`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
 [`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
