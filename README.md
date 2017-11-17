@@ -32,7 +32,7 @@ How does it work?
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
-* Redundant pairs of parentheses should be removed ([`no-redundant-parenthese`])
+* Redundant pairs of parentheses should be removed ([`no-redundant-parentheses`])
 * Conditionals should start on new lines ([`no-same-line-conditional`])
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
