@@ -81,21 +81,11 @@ class Test {
   }
 }
 
-function FN(cond: boolean): void {
-  let x = [];
-  x[1] = "banana";
-  x = [];
-  x[1] = "apple";
-  x[1] = "appl";
-//^ {{Verify this is the index that was intended; "1" was already set on line 88.}}
-
-}
-
 global[1] = "foo";
   global[1] = "bar";
-//^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 94.}}
+//^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 84.}}
 
-function FP() {
+function anotherCollection() {
   let x = [1,], y = [1, ];
   x[1] = 3;
   y[1] = x[1];
@@ -108,12 +98,12 @@ function switchTest(kind: number) {
     case 1:
       result[1] = 1;
       result[1] = 2;
-    //^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 109.}}
+    //^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 99.}}
       break;
     case 2:
       result[2] = 1;
       result[2] = 2;
-    //^^^^^^ {{Verify this is the index that was intended; "2" was already set on line 114.}}
+    //^^^^^^ {{Verify this is the index that was intended; "2" was already set on line 104.}}
       break;
   }
 }

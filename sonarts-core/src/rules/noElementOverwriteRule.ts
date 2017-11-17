@@ -42,12 +42,6 @@ export class Rule extends Lint.Rules.TypedRule {
 }
 
 class Walker extends Lint.ProgramAwareRuleWalker {
-  public constructor(sourceFile: ts.SourceFile,
-                     options: Lint.IOptions,
-                     program: ts.Program,) {
-    super(sourceFile, options, program);
-  }
-
 
   protected visitSourceFile(node: ts.SourceFile): void {
     this.checkStatements(node.statements);
@@ -65,7 +59,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
   }
 
   private checkStatements(statements: Array<ts.Statement>) {
-    const usedKeys: Map<Key, KeyWriteCollectionUsage> = new Map();
+    const usedKeys: Map<string, KeyWriteCollectionUsage> = new Map();
     let collection: ts.Symbol | null = null;
     statements.forEach(statement => {
       const keyWriteUsage = this.keyWriteUsage(statement);
@@ -73,9 +67,9 @@ class Walker extends Lint.ProgramAwareRuleWalker {
         if (collection && keyWriteUsage.collectionSymbol !== collection) {
           usedKeys.clear();
         }
-        const previous = usedKeys.get(keyWriteUsage.indexOrKey);
-        if (previous) {
-          this.addFailureAtNode(keyWriteUsage.node, this.message(keyWriteUsage.indexString, previous.node));
+        const sameKeyWriteUsage = usedKeys.get(keyWriteUsage.indexOrKey);
+        if (sameKeyWriteUsage) {
+          this.addFailureAtNode(keyWriteUsage.node, this.message(keyWriteUsage.indexOrKey, sameKeyWriteUsage.node));
         }
         usedKeys.set(keyWriteUsage.indexOrKey, keyWriteUsage);
         collection = keyWriteUsage.collectionSymbol;
@@ -99,14 +93,12 @@ class Walker extends Lint.ProgramAwareRuleWalker {
     if (isAssignment(node) && is(node.left, ts.SyntaxKind.ElementAccessExpression)) {
       const lhs = node.left as ts.ElementAccessExpression;
       const array = this.getTypeChecker().getSymbolAtLocation(lhs.expression);
-      if (!array) return;
-      if (this.usedInRhs(node.right, array)) return;
+      if (!array || this.usedInRhs(node.right, array)) return;
       const index = this.extractIndex(lhs.argumentExpression);
       if (!index) return;
       return {
         collectionSymbol: array,
-        indexOrKey: index.index,
-        indexString: index.indexString,
+        indexOrKey: index,
         node: lhs.expression,
       };
     }
@@ -132,15 +124,13 @@ class Walker extends Lint.ProgramAwareRuleWalker {
       if (is(callExpression.expression, ts.SyntaxKind.PropertyAccessExpression)) {
         const propertyAccess = callExpression.expression as ts.PropertyAccessExpression;
         const type = this.getTypeChecker().getTypeAtLocation(propertyAccess.expression);
-        if (type.symbol && type.symbol.name === typeName && propertyAccess && propertyAccess.name.text === method) {
+        if (type.symbol && type.symbol.name === typeName && propertyAccess.name.text === method) {
           const lhsSymbol = this.getTypeChecker().getSymbolAtLocation(propertyAccess.expression);
-          if (!lhsSymbol) return;
           const key = this.extractIndex(callExpression.arguments[0]);
-          if (!key) return;
+          if (!lhsSymbol || !key) return;
           return {
             collectionSymbol: lhsSymbol,
-            indexOrKey: key.index,
-            indexString: key.indexString,
+            indexOrKey: key,
             node: propertyAccess.expression,
           };
         }
@@ -161,20 +151,19 @@ class Walker extends Lint.ProgramAwareRuleWalker {
       return {
         collectionSymbol: objectSymbol,
         indexOrKey: property,
-        indexString: property,
         node: lhs.expression,
       };
     }
   }
 
-  private extractIndex(node?: ts.Node): { index: Key; indexString: string } | undefined {
+  private extractIndex(node?: ts.Node): string | undefined {
     if (!node) return;
     if (is(node, ts.SyntaxKind.NumericLiteral, ts.SyntaxKind.StringLiteral)) {
       const literal = node as ts.LiteralLikeNode;
-      return {index: literal.text, indexString: literal.text};
+      return literal.text;
     }
     const symbol = this.getTypeChecker().getSymbolAtLocation(node);
-    return symbol && {index: symbol, indexString: symbol.name};
+    return symbol && symbol.name;
   }
 
   private message(index: string, previousUsage: ts.Node) {
@@ -185,9 +174,6 @@ class Walker extends Lint.ProgramAwareRuleWalker {
 
 interface KeyWriteCollectionUsage {
   collectionSymbol: ts.Symbol;
-  indexOrKey: Key;
-  indexString: string; // used for message
+  indexOrKey: string;
   node: ts.Node;
 }
-
-type Key = ts.Symbol | string;
