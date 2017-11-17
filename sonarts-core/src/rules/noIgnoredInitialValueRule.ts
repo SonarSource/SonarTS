@@ -67,10 +67,12 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       this.check(functionLike.body!, lvaReturn, ...functionLike.parameters);
     } else if (is(node, ts.SyntaxKind.CatchClause)) {
       const catchClause = node as ts.CatchClause;
-      const cfg = ControlFlowGraph.fromStatements(catchClause.block.statements);
+      const cfg = ControlFlowGraph.fromStatements(Array.from(catchClause.block.statements));
       if (!cfg) return;
       const lvaReturn = this.lva.analyze(catchClause.block, cfg);
-      this.check(catchClause.block, lvaReturn, catchClause.variableDeclaration);
+      if (catchClause.variableDeclaration) {
+        this.check(catchClause.block, lvaReturn, catchClause.variableDeclaration);
+      }
     } else if (is(node, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement)) {
       const iterationStatement = node as ts.IterationStatement;
       const cfg = ControlFlowGraph.fromStatements([iterationStatement.statement]);

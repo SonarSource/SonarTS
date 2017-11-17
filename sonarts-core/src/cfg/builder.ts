@@ -54,7 +54,7 @@ export class CfgBuilder {
         return current;
 
       case SyntaxKind.Block:
-        return this.buildStatements(current, (statement as ts.Block).statements);
+        return this.buildStatements(current, Array.from((statement as ts.Block).statements));
 
       case SyntaxKind.ExpressionStatement:
         return this.buildExpression(current, (statement as ts.ExpressionStatement).expression);
@@ -345,7 +345,7 @@ export class CfgBuilder {
     switchStatement.caseBlock.clauses.forEach(caseClause => {
       if (caseClause.kind === ts.SyntaxKind.DefaultClause) {
         defaultBlockEnd = this.createBlock();
-        defaultBlock = this.buildStatements(defaultBlockEnd, caseClause.statements);
+        defaultBlock = this.buildStatements(defaultBlockEnd, Array.from(caseClause.statements));
       }
     });
     let currentClauseStatementsStart: CfgBlock = afterSwitchBlock;
@@ -354,7 +354,7 @@ export class CfgBuilder {
       if (caseClause.kind === ts.SyntaxKind.CaseClause) {
         currentClauseStatementsStart = this.buildStatements(
           this.createBlockPredecessorOf(currentClauseStatementsStart),
-          caseClause.statements,
+          Array.from(caseClause.statements),
         );
         const currentClauseExpressionEnd = this.createBranchingBlock(
           caseClause.expression.getText(),

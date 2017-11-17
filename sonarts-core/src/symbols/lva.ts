@@ -41,7 +41,7 @@ export class LiveVariableAnalyzer {
     if (!is(root.body, ts.SyntaxKind.Block)) {
       return;
     }
-    const cfg = ControlFlowGraph.fromStatements((root.body as ts.Block).statements);
+    const cfg = ControlFlowGraph.fromStatements(Array.from((root.body as ts.Block).statements));
     if (!cfg) return;
     return this.analyze(root, cfg);
   }
