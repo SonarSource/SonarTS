@@ -26,6 +26,7 @@
     "no-unthrown-error": true,
     "no-unused-array": true,
     "no-use-of-empty-return-value": true,
+    "no-useless-cast": true,
     "no-useless-increment": true,
     "no-variable-usage-before-declaration": true
   }
