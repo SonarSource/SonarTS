@@ -81,7 +81,7 @@ it("should process files with BOM correctly", () => {
 function inputForRequest(filepath: string, tsconfig: string): string {
   return JSON.stringify({
     filepaths: [path.normalize(filepath)],
-    rules: [{ ruleName: "no-empty" }],
+    rules: [{ ruleArguments: [], ruleName: "no-empty" }],
     tsconfig: tsconfig,
   });
 }

@@ -70,12 +70,14 @@ class Walker extends tslint.RuleWalker {
   public visitSwitchStatement(node: ts.SwitchStatement) {
     const { clauses } = node.caseBlock;
     for (let i = 1; i < clauses.length; i++) {
-      const firstClauseWithoutBreak = this.takeWithoutBreak(this.expandSingleBlockStatement(clauses[i].statements));
+      const firstClauseWithoutBreak = this.takeWithoutBreak(
+        this.expandSingleBlockStatement(Array.from(clauses[i].statements)),
+      );
 
       if (this.hasRequiredSize(firstClauseWithoutBreak)) {
         for (let j = 0; j < i; j++) {
           const secondClauseWithoutBreak = this.takeWithoutBreak(
-            this.expandSingleBlockStatement(clauses[j].statements),
+            this.expandSingleBlockStatement(Array.from(clauses[j].statements)),
           );
 
           if (areEquivalent(firstClauseWithoutBreak, secondClauseWithoutBreak)) {
@@ -139,6 +141,6 @@ class Walker extends tslint.RuleWalker {
   }
 
   private expandSingleBlockStatement(nodes: ts.Node[]) {
-    return nodes.length === 1 && this.isBlock(nodes[0]) ? (nodes[0] as ts.Block).statements : nodes;
+    return nodes.length === 1 && this.isBlock(nodes[0]) ? Array.from((nodes[0] as ts.Block).statements) : nodes;
   }
 }

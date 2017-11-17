@@ -31,7 +31,7 @@ class Viewer {
 
   public show(source: string) {
     const sourceFile = parseString(source);
-    const graph = ControlFlowGraph.fromStatements(sourceFile.statements);
+    const graph = ControlFlowGraph.fromStatements(Array.from(sourceFile.statements));
 
     if (!graph) {
       alert("The build of CFG faild.");

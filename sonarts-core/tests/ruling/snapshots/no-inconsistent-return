@@ -75,6 +75,7 @@ src/console/src/views/ProjectRootView/AddProjectPopup.tsx: 222
 src/console/src/views/models/AuthProviderPopup/AuthProviderSidePanel.tsx: 444
 src/console/src/views/Settings/Team/MemberRow.tsx: 91
 src/console/src/views/Integrations/Algolia/AlgoliaView.tsx: 168
+src/console/src/views/RelationsPopup/RelationFooter.tsx: 142
 src/console/src/views/RelationsPopup/RelationPopup.tsx: 612
 src/console/src/views/SchemaView/SchemaOverview/AddType.tsx: 334
 src/console/src/views/SchemaView/EnumsOverview/AddEnum.tsx: 286

@@ -40,18 +40,18 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Walker extends tslint.RuleWalker {
   protected visitBlock(node: ts.Block): void {
-    this.visitStatements(node.statements);
+    this.visitStatements(Array.from(node.statements));
     super.visitBlock(node);
   }
 
   protected visitSourceFile(node: ts.SourceFile): void {
-    this.visitStatements(node.statements);
+    this.visitStatements(Array.from(node.statements));
     super.visitSourceFile(node);
   }
 
   protected visitModuleDeclaration(node: ts.ModuleDeclaration): void {
     if (node.body && node.body.kind === ts.SyntaxKind.ModuleBlock) {
-      this.visitStatements(node.body.statements);
+      this.visitStatements(Array.from(node.body.statements));
     }
     super.visitModuleDeclaration(node);
   }

@@ -82,11 +82,11 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     let matchingField: Field | undefined;
     let accessorIsPublic: boolean;
     if (containingStructure.kind === ts.SyntaxKind.ObjectLiteralExpression) {
-      matchingField = Walker.matchingField(containingStructure.properties, [], setterOrGetter.name);
+      matchingField = Walker.matchingField(Array.from(containingStructure.properties), [], setterOrGetter.name);
       accessorIsPublic = true;
     } else {
       matchingField = Walker.matchingField(
-        containingStructure.members,
+        Array.from(containingStructure.members),
         Walker.fieldsDeclaredInConstructorParameters(containingStructure),
         setterOrGetter.name,
       );

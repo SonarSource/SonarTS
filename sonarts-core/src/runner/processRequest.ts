@@ -27,7 +27,7 @@ import getCpdTokens from "./cpd";
 
 const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting, getMetrics, getCpdTokens];
 
-export function processRequest(inputString: string): object[] {
+export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);
   let program = tslint.Linter.createProgram(input.tsconfig);
 

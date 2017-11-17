@@ -102,12 +102,12 @@ class Walker extends tslint.RuleWalker {
       | undefined;
     if (wrappingFunction && wrappingFunction.body) {
       if (wrappingFunction.body.kind === ts.SyntaxKind.Block) {
-        return ControlFlowGraph.fromStatements((wrappingFunction.body as ts.Block).statements);
+        return ControlFlowGraph.fromStatements(Array.from((wrappingFunction.body as ts.Block).statements));
       } else {
         return; // When moving buildCfg to cfg file this should be replaced by fromExpression, here instead, we skip
       }
     }
-    return ControlFlowGraph.fromStatements(node.getSourceFile().statements);
+    return ControlFlowGraph.fromStatements(Array.from(node.getSourceFile().statements));
   }
 
   private actuallyLoops(block: CfgBlock): boolean {

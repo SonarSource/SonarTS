@@ -111,11 +111,11 @@ class Walker extends tslint.RuleWalker {
         const isLast = index === node.caseBlock.clauses.length - 1;
         return isLast || clause.statements.length > 0;
       })
-      .map(clause => this.takeWithoutBreak(clause.statements));
+      .map(clause => this.takeWithoutBreak(Array.from(clause.statements)));
     return { branches, endsWithDefault };
   }
 
-  private takeWithoutBreak(nodes: ts.NodeArray<ts.Node>) {
+  private takeWithoutBreak(nodes: ts.Node[]) {
     return nodes.length > 0 && nodes[nodes.length - 1].kind === ts.SyntaxKind.BreakStatement
       ? nodes.slice(0, -1)
       : nodes;
