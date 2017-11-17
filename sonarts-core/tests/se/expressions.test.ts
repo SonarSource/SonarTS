@@ -20,7 +20,7 @@
 import { inspectStack } from "../utils/seTestUtils";
 import {
   SymbolicValue,
-  unknownSymbolicValue,
+  simpleSymbolicValue,
   objectLiteralSymbolicValue,
   numericLiteralSymbolicValue,
 } from "../../src/se/symbolicValues";
@@ -30,11 +30,11 @@ it("assignment", () => {
 });
 
 it("function call", () => {
-  check(`let foo = function() {}; _inspect(foo());`, unknownSymbolicValue(), true);
+  check(`let foo = function() {}; _inspect(foo());`, simpleSymbolicValue(), true);
 });
 
 it("function call with parameters", () => {
-  check(`let foo; let x = 0; let y = 1; _inspect(foo(x, y));`, unknownSymbolicValue(), true);
+  check(`let foo; let x = 0; let y = 1; _inspect(foo(x, y));`, simpleSymbolicValue(), true);
 });
 
 it("object declaration", () => {
@@ -42,15 +42,15 @@ it("object declaration", () => {
 });
 
 it("property access expression", () => {
-  check(`let foo = { bar: 0 }; _inspect(foo.bar);`, unknownSymbolicValue(), false);
+  check(`let foo = { bar: 0 }; _inspect(foo.bar);`, simpleSymbolicValue(), false);
 });
 
 it("defaults to pushing unknown value", () => {
-  check(`let x = foo(); _inspect(x = x + 1);`, unknownSymbolicValue(), false);
+  check(`let x = foo(); _inspect(x = x + 1);`, simpleSymbolicValue(), false);
 });
 
 it("postfix increment", () => {
-  check(`let x = 0; _inspect(x++)`, unknownSymbolicValue(), true);
+  check(`let x = 0; _inspect(x++)`, simpleSymbolicValue(), true);
 });
 
 it("does not push value to the stack", () => {

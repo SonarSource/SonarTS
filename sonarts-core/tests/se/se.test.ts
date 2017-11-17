@@ -19,12 +19,13 @@
  */
 import { isEqual } from "lodash";
 import { inspectSV, inspectSVFromResult, executeOneFunction } from "../utils/seTestUtils";
-import { unknownSymbolicValue, undefinedSymbolicValue, numericLiteralSymbolicValue } from "../../src/se/symbolicValues";
+import { simpleSymbolicValue, undefinedSymbolicValue, numericLiteralSymbolicValue } from "../../src/se/symbolicValues";
+import { inspect } from "util";
 
 describe("Variable Declaration", () => {
   it("creates unknown symbolic value", () => {
     const values = inspectSV(`let x = foo(); _inspect(x);`);
-    expect(values["x"]).toEqual([unknownSymbolicValue()]);
+    expect(values["x"]).toEqual([simpleSymbolicValue()]);
   });
 
   it("creates literal symbolic value", () => {
@@ -50,19 +51,16 @@ describe("Assignment", () => {
   });
 
   it("assigns literal symbolic value", () => {
-    expect.assertions(1);
     const values = inspectSV(`let x = foo(); x = 0; _inspect(x);`);
     expect(values["x"]).toEqual([numericLiteralSymbolicValue("0")]);
   });
 
   it("assigns unknown symbolic value", () => {
-    expect.assertions(1);
     const values = inspectSV(`let x; x = foo(); _inspect(x);`);
-    expect(values["x"]).toEqual([unknownSymbolicValue()]);
+    expect(values["x"]).toEqual([simpleSymbolicValue()]);
   });
 
   it("chains assignments", () => {
-    expect.assertions(1);
     const values = inspectSV(`let x; let y; x = y = 0; _inspect(x);`);
     expect(values["x"]).toEqual([numericLiteralSymbolicValue("0")]);
   });
@@ -71,8 +69,8 @@ describe("Assignment", () => {
 describe("Increments Decrements", () => {
   it("changes SV after postfix", () => {
     const values = inspectSV(`let x = 0; let y = 0; x++; y--; _inspect(x, y);`);
-    expect(values["x"]).toEqual([unknownSymbolicValue()]);
-    expect(values["y"]).toEqual([unknownSymbolicValue()]);
+    expect(values["x"]).toEqual([simpleSymbolicValue()]);
+    expect(values["y"]).toEqual([simpleSymbolicValue()]);
   });
 });
 
@@ -96,6 +94,6 @@ describe("Parameters", () => {
   it("initializes program state with parameters symbols to unknown", () => {
     const { result, program } = executeOneFunction(`function foo(x: any, y: any) { _inspect(x, y); }`);
     const values = inspectSVFromResult(result, program);
-    expect(values["x"]).toEqual([unknownSymbolicValue()]);
+    expect(values["x"]).toEqual([simpleSymbolicValue()]);
   });
 });

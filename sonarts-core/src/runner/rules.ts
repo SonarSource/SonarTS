@@ -30,6 +30,7 @@ export function getIssues(
 ): { issues: any[] } {
   const rules = tslint.loadRules(ruleConfigs, SONARTS_RULES_FOLDER);
   let issues: tslint.RuleFailure[] = [];
+  console.log(rules);
   rules.forEach(rule => (issues = issues.concat(executeRule(rule, sourceFile, program))));
   return { issues: issues.map(issue => issue.toJson()) };
 }

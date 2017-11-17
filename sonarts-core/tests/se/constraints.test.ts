@@ -18,19 +18,19 @@
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 import { inspectConstraints } from "../utils/seTestUtils";
-import { Constraint, getTruthyConstraint, getFalsyConstraint } from "../../src/se/constraints";
+import { Constraint, truthyConstraint, falsyConstraint } from "../../src/se/constraints";
 
 describe("If", () => {
   it("constrains condition to TRUTHY for THEN branch", () => {
-    checkConstraints(`let x = foo(); if (x) { _inspect(x) }`, getTruthyConstraint());
+    checkConstraints(`let x = foo(); if (x) { _inspect(x) }`, truthyConstraint());
   });
 
   it("constrains condition to FALSY for ELSE branch", () => {
-    checkConstraints(`let x = foo(); if (x) {} else { _inspect(x) } `, getFalsyConstraint());
+    checkConstraints(`let x = foo(); if (x) {} else { _inspect(x) } `, falsyConstraint());
   });
 
   it("merges constraints after the block", () => {
-    checkConstraints(`let x = foo(); if (x) {} else {} _inspect(x)`, [getTruthyConstraint(), getFalsyConstraint()]);
+    checkConstraints(`let x = foo(); if (x) {} else {} _inspect(x)`, [truthyConstraint(), falsyConstraint()]);
   });
 
   it("constrains nested IFs", () => {
@@ -39,32 +39,32 @@ describe("If", () => {
        if (x) { 
          if (x) { _inspect(x) } 
        }`,
-      getTruthyConstraint(),
+      truthyConstraint(),
     );
   });
 });
 
 describe("Conditional expression", () => {
   it("constrains condition to TRUTHY", () => {
-    checkConstraints(`let x = foo(); x ? _inspect(x) : _`, getTruthyConstraint());
+    checkConstraints(`let x = foo(); x ? _inspect(x) : _`, truthyConstraint());
   });
 
   it("constrains condition to FALSE", () => {
-    checkConstraints(`let x = foo(); x ? _ : _inspect(x)`, getFalsyConstraint());
+    checkConstraints(`let x = foo(); x ? _ : _inspect(x)`, falsyConstraint());
   });
 
   it("merges constraints after the block", () => {
-    checkConstraints(`let x = foo(); x ? _ : _; _inspect(x)`, [getTruthyConstraint(), getFalsyConstraint()]);
+    checkConstraints(`let x = foo(); x ? _ : _; _inspect(x)`, [truthyConstraint(), falsyConstraint()]);
   });
 });
 
 describe("While", () => {
   it("constrains condition to TRUTHY", () => {
-    checkConstraints(`let x = foo(); while(x) { _inspect(x) }`, [getTruthyConstraint(), getTruthyConstraint()]);
+    checkConstraints(`let x = foo(); while(x) { _inspect(x) }`, [truthyConstraint(), truthyConstraint()]);
   });
 
   it("has only FALSY constraint after the block", () => {
-    checkConstraints(`let x = foo(); while(x) {} _inspect(x)`, getFalsyConstraint());
+    checkConstraints(`let x = foo(); while(x) {} _inspect(x)`, falsyConstraint());
   });
 });
 

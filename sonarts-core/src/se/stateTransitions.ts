@@ -21,7 +21,7 @@ import * as ts from "typescript";
 import * as tsutils from "tsutils";
 import {
   numericLiteralSymbolicValue,
-  unknownSymbolicValue,
+  simpleSymbolicValue,
   undefinedSymbolicValue,
   objectLiteralSymbolicValue,
 } from "./symbolicValues";
@@ -76,11 +76,11 @@ export function applyExecutors(
     return postfixUnaryExpression(programPoint);
   }
 
-  return state.pushSV(unknownSymbolicValue());
+  return state.pushSV(simpleSymbolicValue());
 
   function identifier(identifier: ts.Identifier) {
     const symbol = program.getTypeChecker().getSymbolAtLocation(identifier);
-    let sv = (symbol && state.sv(symbol)) || unknownSymbolicValue();
+    let sv = (symbol && state.sv(symbol)) || simpleSymbolicValue();
     return state.pushSV(sv);
   }
 
@@ -106,11 +106,11 @@ export function applyExecutors(
       expression.operatorToken.kind <= ts.SyntaxKind.CaretEqualsToken
     ) {
       const variable = getSymbolAtLocation(expression.left as ts.Identifier);
-      const value = unknownSymbolicValue();
+      const value = simpleSymbolicValue();
       return variable ? state.pushSV(value).setSV(variable, value) : state;
     }
 
-    return state.pushSV(unknownSymbolicValue());
+    return state.pushSV(simpleSymbolicValue());
   }
 
   function variableDeclaration(declaration: ts.VariableDeclaration) {
@@ -134,7 +134,7 @@ export function applyExecutors(
     let nextState = state;
     callExpression.arguments.forEach(_ => (nextState = nextState.popSV()[1]));
     nextState = nextState.popSV()[1]; // Pop callee value
-    return nextState.pushSV(unknownSymbolicValue());
+    return nextState.pushSV(simpleSymbolicValue());
   }
 
   function objectLiteralExpression() {
@@ -143,13 +143,13 @@ export function applyExecutors(
   }
 
   function propertyAccessExpression() {
-    return state.popSV()[1].pushSV(unknownSymbolicValue());
+    return state.popSV()[1].pushSV(simpleSymbolicValue());
   }
 
   function postfixUnaryExpression(unary: PostfixUnaryExpression) {
     let nextState = state;
     const operand = unary.operand;
-    const sv = unknownSymbolicValue();
+    const sv = simpleSymbolicValue();
     if (isIdentifier(operand)) {
       const symbol = getSymbolAtLocation(operand);
       if (symbol) {

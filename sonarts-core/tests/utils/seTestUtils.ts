@@ -26,7 +26,7 @@ import { parseString } from "../../src/utils/parser";
 import { BranchingProgramPointCallback, execute, ExecutionResult } from "../../src/se/SymbolicExecution";
 import { ProgramState, createInitialState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
-import { SymbolicValue, unknownSymbolicValue } from "../../src/se/symbolicValues";
+import { SymbolicValue, simpleSymbolicValue } from "../../src/se/symbolicValues";
 import { build } from "../../src/cfg/builder";
 import { isFunctionDeclaration } from "tsutils";
 import { Constraint } from "../../src/se/constraints";

@@ -49,7 +49,7 @@ export function numericLiteralSymbolicValue(value: string): NumericLiteralSymbol
   return { type: SymbolicValueType.NumericLiteral, value };
 }
 
-export function unknownSymbolicValue(): UnknownSymbolicValue {
+export function simpleSymbolicValue(): UnknownSymbolicValue {
   return { type: SymbolicValueType.Unknown };
 }
 

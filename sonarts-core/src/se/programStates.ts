@@ -23,10 +23,10 @@ import {
   isEqualSymbolicValues,
   isUndefinedSymbolcValue,
   isNumericLiteralSymbolicValue,
-  unknownSymbolicValue,
+  simpleSymbolicValue,
 } from "./symbolicValues";
 import { inspect } from "util";
-import { Constraint, getTruthyConstraint, getFalsyConstraint, isEqualConstraints, constrain } from "./constraints";
+import { Constraint, truthyConstraint, falsyConstraint, isEqualConstraints, constrain } from "./constraints";
 import { Map } from "immutable";
 
 type SymbolicValues = Map<ts.Symbol, SymbolicValue>;
@@ -86,19 +86,19 @@ export class ProgramState {
   }
 
   constrainToTruthy() {
-    return this.constrain(getTruthyConstraint());
+    return this.constrain(truthyConstraint());
   }
 
   constrainToFalsy() {
-    return this.constrain(getFalsyConstraint());
+    return this.constrain(falsyConstraint());
   }
 
   getConstraints(sv: SymbolicValue) {
     if (isUndefinedSymbolcValue(sv) || (isNumericLiteralSymbolicValue(sv) && sv.value === "0")) {
-      return [getFalsyConstraint()];
+      return [falsyConstraint()];
     }
     if (isNumericLiteralSymbolicValue(sv) && sv.value !== "0") {
-      return [getTruthyConstraint()];
+      return [truthyConstraint()];
     }
     return this.constraints.get(sv) || [];
   }
@@ -182,7 +182,7 @@ export function createInitialState(declaration: ts.FunctionLikeDeclaration, prog
   declaration.parameters.forEach(parameter => {
     const symbol = program.getTypeChecker().getSymbolAtLocation(parameter.name);
     if (symbol) {
-      state = state.setSV(symbol, unknownSymbolicValue());
+      state = state.setSV(symbol, simpleSymbolicValue());
     }
   });
   return state;

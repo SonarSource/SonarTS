@@ -34,9 +34,6 @@ export interface FalsyConstraint extends Constraint {
   kind: ConstraintKind.Falsy;
 }
 
-const truthyConstraint: TruthyConstraint = { kind: ConstraintKind.Truthy };
-const falsyConstraint: FalsyConstraint = { kind: ConstraintKind.Falsy };
-
 export function isTruthyConstraint(constraint: Constraint): constraint is TruthyConstraint {
   return constraint.kind === ConstraintKind.Truthy;
 }
@@ -45,12 +42,12 @@ export function isFalsyConstraint(constraint: Constraint): constraint is FalsyCo
   return constraint.kind === ConstraintKind.Falsy;
 }
 
-export function getTruthyConstraint(): TruthyConstraint {
-  return truthyConstraint;
+export function truthyConstraint(): TruthyConstraint {
+  return { kind: ConstraintKind.Truthy };
 }
 
-export function getFalsyConstraint(): FalsyConstraint {
-  return falsyConstraint;
+export function falsyConstraint(): FalsyConstraint {
+  return { kind: ConstraintKind.Falsy };
 }
 
 export function isEqualConstraints(a: Constraint, b: Constraint): boolean {
