@@ -1,6 +1,6 @@
 # no-useless-cast
 
-The TypeScript compiler automatically casts a variable to the relevant type inside conditionals where it is possible to infer (usage of `typeof`, `instanceof` etc). These compiler feature makes casts and not-null assertions unnecessary.
+The TypeScript compiler automatically casts a variable to the relevant type inside conditionals where it is possible to infer (usage of `typeof`, `instanceof` etc). This compiler feature makes casts and not-null assertions unnecessary.
 
 
 ## Noncompliant Code Example
