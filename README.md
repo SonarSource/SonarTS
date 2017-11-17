@@ -23,7 +23,7 @@ How does it work?
 * Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
-* Boolean expressions should not be gratuitous ([`no-gratuitous-expressions`])
+* Conditions should not always evaluate to "true" or to "false" ([`no-gratuitous-expressions`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Functions should not have identical implementations ([`no-identical-functions`])

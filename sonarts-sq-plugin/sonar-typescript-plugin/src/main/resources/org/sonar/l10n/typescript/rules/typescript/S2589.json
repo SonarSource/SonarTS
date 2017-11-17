@@ -1,0 +1,21 @@
+{
+  "title": "Conditions should not always evaluate to 'true' or to 'false'",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "10min"
+  },
+  "tags": [
+    "cwe",
+    "misra",
+    "cert",
+    "redundant"
+  ],
+  "standards": [
+    "CWE"
+  ],
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-2589",
+  "sqKey": "S2589"
+}

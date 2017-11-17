@@ -1,20 +1,16 @@
 # no-gratuitous-expressions
 
-Curly braces can be omitted from a one-line block, such as with an `if` statement or `for` loop, but doing so can be misleading and induce bugs. 
-
-This rule raises an issue when the whitespacing of the lines after a one line block indicates an intent to include those lines in the block, but the omission of curly braces means the lines will be unconditionally executed once.
+If an expression doesn't change the evaluation of the condition, then it is either unnecessary, and condition can be removed, or it makes some code being never executed. In any case, the code should be refactored.
 
 ## Noncompliant Code Example
 
 ```typescript
-a = false;
-if (a) { // Noncompliant
-  doSomething(); // never executed
-}
-
-if (!a || b) { // Noncompliant; "!a" is always "true", "b" is never evaluated
-  doSomething();
-} else {
-  doSomethingElse(); // never executed
+function checkState(state: boolean) {
+  if (state) {
+    console.log("Checking the state");
+    if (state) { // Noncompliant, condition is always true
+      doSomething();
+    }
+  }
 }
 ```

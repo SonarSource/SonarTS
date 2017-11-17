@@ -69,6 +69,7 @@ import org.sonar.plugin.typescript.rules.NoEmptyInterface;
 import org.sonar.plugin.typescript.rules.NoEmptyNestedBlocks;
 import org.sonar.plugin.typescript.rules.NoEval;
 import org.sonar.plugin.typescript.rules.NoForInArray;
+import org.sonar.plugin.typescript.rules.NoGratuitousExpressions;
 import org.sonar.plugin.typescript.rules.NoIdenticalConditions;
 import org.sonar.plugin.typescript.rules.NoIdenticalExpressions;
 import org.sonar.plugin.typescript.rules.NoIdenticalFunctions;
@@ -221,6 +222,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoEmptyNestedBlocks.class)
       .add(NoEval.class)
       .add(NoForInArray.class)
+      .add(NoGratuitousExpressions.class)
       .add(NoIdenticalConditions.class)
       .add(NoIdenticalExpressions.class)
       .add(NoIdenticalFunctions.class)
