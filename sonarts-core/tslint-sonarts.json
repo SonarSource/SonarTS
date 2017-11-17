@@ -29,6 +29,7 @@
     "no-use-of-empty-return-value": true,
     "no-useless-cast": true,
     "no-useless-increment": true,
-    "no-variable-usage-before-declaration": true
+    "no-variable-usage-before-declaration": true,
+    "use-type-alias": true
   }
 }
