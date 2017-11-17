@@ -58,7 +58,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
     super.visitCaseClause(node);
   }
 
-  private checkStatements(statements: Array<ts.Statement>) {
+  private checkStatements(statements: ts.NodeArray<ts.Statement>) {
     const usedKeys: Map<string, KeyWriteCollectionUsage> = new Map();
     let collection: ts.Symbol | null = null;
     statements.forEach(statement => {
