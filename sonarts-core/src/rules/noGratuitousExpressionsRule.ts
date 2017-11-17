@@ -31,14 +31,15 @@ import { firstLocalAncestor, FUNCTION_LIKE, is } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
-    ruleName: "no-unreachable-block",
-    description: "Conditionally executed blocks should be reachable",
+    ruleName: "no-gratuitous-expressions",
+    description: "Boolean expressions should not be gratuitous",
     rationale: tslint.Utils.dedent`
-      Conditional expressions which are always "true" or "false" can lead to dead code. Such code is always buggy and 
-      should never be used in production.`,
+      If a boolean expression doesn't change the evaluation of the condition, then it is entirely unnecessary, and can 
+      be removed. If it is gratuitous because it does not match the programmer's intent, then it's a bug and 
+      the expression should be fixed.`,
     optionsDescription: "",
     options: null,
-    rspecKey: "RSPEC-2583",
+    rspecKey: "RSPEC-2589",
     type: "functionality",
     typescriptOnly: false,
   };

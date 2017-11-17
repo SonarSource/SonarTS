@@ -23,6 +23,7 @@ How does it work?
 * Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
+* Boolean expressions should not be gratuitous ([`no-gratuitous-expressions`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Functions should not have identical implementations ([`no-identical-functions`])
@@ -36,7 +37,6 @@ How does it work?
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
-* Conditionally executed blocks should be reachable ([`no-unreachable-block`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
@@ -53,6 +53,7 @@ How does it work?
 [`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
 [`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
 [`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
+[`no-gratuitous-expressions`]: ./sonarts-core/docs/rules/no-gratuitous-expressions.md
 [`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./sonarts-core/docs/rules/no-identical-expressions.md
 [`no-identical-functions`]: ./sonarts-core/docs/rules/no-identical-functions.md
@@ -66,7 +67,6 @@ How does it work?
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
 [`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
-[`no-unreachable-block`]: ./sonarts-core/docs/rules/no-unreachable-block.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
 [`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md
 [`no-useless-cast`]: ./sonarts-core/docs/rules/no-useless-cast.md

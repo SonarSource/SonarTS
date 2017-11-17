@@ -1,4 +1,4 @@
-# no-unreachable-block
+# no-gratuitous-expressions
 
 Curly braces can be omitted from a one-line block, such as with an `if` statement or `for` loop, but doing so can be misleading and induce bugs. 
 
