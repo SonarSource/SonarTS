@@ -23,13 +23,14 @@ import * as tsutils from "tsutils";
 import * as tslint from "tslint";
 import { is, descendants } from "../../src/utils/navigation";
 import { parseString } from "../../src/utils/parser";
-import { BranchingProgramPointCallback, execute, ExecutionResult } from "../../src/se/SymbolicExecution";
+import { execute, ExecutionResult } from "../../src/se/SymbolicExecution";
 import { ProgramState, createInitialState } from "../../src/se/programStates";
 import { isEqual } from "lodash";
 import { SymbolicValue, simpleSymbolicValue } from "../../src/se/symbolicValues";
 import { build } from "../../src/cfg/builder";
 import { isFunctionDeclaration } from "tsutils";
 import { Constraint } from "../../src/se/constraints";
+import { SymbolTableBuilder } from "../../src/symbols/builder";
 
 export function inspectStack(source: string) {
   const { result } = executeFromSource(source);
@@ -66,7 +67,7 @@ export function executeOneFunction(source: string): { result: ExecutionResult; p
   ) as ts.FunctionDeclaration;
   const result = execute(
     build(Array.from(node.body.statements)),
-    program,
+    SymbolTableBuilder.build(sourceFile, program),
     createInitialState(node as ts.FunctionDeclaration, program),
   );
   return { result, program };
@@ -85,7 +86,11 @@ export function inspectSVFromResult(result: ExecutionResult, program: ts.Program
 
 function executeFromSource(source: string) {
   const { sourceFile, program } = parse(source);
-  const result = execute(build(Array.from(sourceFile.statements))!, program, ProgramState.empty());
+  const result = execute(
+    build(Array.from(sourceFile.statements))!,
+    SymbolTableBuilder.build(sourceFile, program),
+    ProgramState.empty(),
+  );
   if (!result) {
     throw new Error("Symbolic execution did not return any result.");
   }

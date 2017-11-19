@@ -21,6 +21,7 @@ import * as ts from "typescript";
 import { ControlFlowGraph, CfgBlock, CfgBranchingBlock } from "../cfg/cfg";
 import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
+import { SymbolTable } from "../symbols/table";
 import { is, CONDITIONAL_STATEMENTS, LOOP_STATEMENTS } from "../utils/navigation";
 
 const BLOCK_VISITS_LIMIT = 1000;
@@ -35,7 +36,7 @@ export interface ExecutionResult {
 
 export function execute(
   cfg: ControlFlowGraph,
-  program: ts.Program,
+  symbols: SymbolTable,
   initialState: ProgramState,
   shouldTrackSymbol: (symbol: ts.Symbol) => boolean = () => true,
 ): ExecutionResult | undefined {
@@ -100,7 +101,7 @@ export function execute(
 
   function visitProgramPoint(programPoint: ts.Node, programState: ProgramState) {
     addToProgramNodes(programPoint, programState);
-    return applyExecutors(programPoint, programState, program, shouldTrackSymbol);
+    return applyExecutors(programPoint, programState, symbols, shouldTrackSymbol);
   }
 
   function addToProgramNodes(programPoint: ts.Node, programState: ProgramState) {

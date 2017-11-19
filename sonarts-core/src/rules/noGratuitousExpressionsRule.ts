@@ -100,7 +100,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   ) {
     const cfg = build(statements);
     if (cfg) {
-      const result = execute(cfg, this.getProgram(), initialState, shouldTrackSymbol);
+      const result = execute(cfg, this.symbols, initialState, shouldTrackSymbol);
       if (result) {
         result.branchingProgramNodes.forEach((states, branchingProgramPoint) => {
           if (this.ifAllProgramStateConstraints(states, isTruthy)) {

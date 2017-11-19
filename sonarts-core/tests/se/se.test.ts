@@ -64,6 +64,11 @@ describe("Assignment", () => {
     const values = inspectSV(`let x; let y; x = y = 0; _inspect(x);`);
     expect(values["x"]).toEqual([numericLiteralSymbolicValue("0")]);
   });
+
+  it("assigns unknown to all destructuring identifiers", () => {
+    const values = inspectSV(`let x; ({x} = foo()); _inspect(x);`);
+    expect(values["x"]).toEqual([simpleSymbolicValue()]);
+  });
 });
 
 describe("Increments Decrements", () => {

@@ -239,11 +239,10 @@ function hmmm(y: any) {
   const x = (y < 1 && 1) || y;
 }
 
-// FP!
 function destructuring() {
   let x;
   ({ x } = foo());
   if (x) {
-    //^  {{This condition always evaluates to "false".}} False Positive
+    //OK assigned to unknown
   }
 }

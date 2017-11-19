@@ -28,15 +28,16 @@ import {
 import { ProgramState } from "./programStates";
 import { PostfixUnaryExpression } from "typescript";
 import { isIdentifier } from "tsutils";
+import { SymbolTable } from "../symbols/table";
+import { collectLeftHandIdentifiers } from "../utils/navigation";
 
 export function applyExecutors(
   programPoint: ts.Node,
   state: ProgramState,
-  program: ts.Program,
+  symbols: SymbolTable,
   shouldTrackSymbol: (symbol: ts.Symbol) => boolean = () => true,
 ): ProgramState {
   const { parent } = programPoint;
-  const { getSymbolAtLocation } = program.getTypeChecker();
 
   // TODO is there a better way to handle this?
   // special case: `let x;`
@@ -79,7 +80,7 @@ export function applyExecutors(
   return state.pushSV(simpleSymbolicValue());
 
   function identifier(identifier: ts.Identifier) {
-    const symbol = program.getTypeChecker().getSymbolAtLocation(identifier);
+    const symbol = symbolAt(identifier);
     let sv = (symbol && state.sv(symbol)) || simpleSymbolicValue();
     return state.pushSV(sv);
   }
@@ -89,35 +90,33 @@ export function applyExecutors(
   }
 
   function binaryExpression(expression: ts.BinaryExpression) {
-    if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
-      let [value, nextState] = state.popSV();
-      const variable = getSymbolAtLocation(expression.left as ts.Identifier);
-      if (!variable) {
-        return nextState;
-      }
+    if (tsutils.isAssignmentKind(expression.operatorToken.kind)) {
+      return collectLeftHandIdentifiers(expression.left).identifiers.reduce((state, identifier) => {
+        if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+          let [value, nextState] = state.popSV();
+          const variable = symbolAt(identifier);
+          if (!variable) {
+            return nextState;
+          }
 
-      if (!value) {
-        throw new Error("Assignment without value");
-      }
-      return nextState.pushSV(value).setSV(variable, value);
-    } else if (
-      // any other kinds of assignment, like +=, |=, etc.
-      expression.operatorToken.kind > ts.SyntaxKind.EqualsToken &&
-      expression.operatorToken.kind <= ts.SyntaxKind.CaretEqualsToken
-    ) {
-      const variable = getSymbolAtLocation(expression.left as ts.Identifier);
-      const value = simpleSymbolicValue();
-      return variable ? state.pushSV(value).setSV(variable, value) : state;
+          if (!value) {
+            throw new Error("Assignment without value");
+          }
+          return nextState.pushSV(value).setSV(variable, value);
+        } else {
+          const variable = symbolAt(identifier);
+          const value = simpleSymbolicValue();
+          return variable ? state.pushSV(value).setSV(variable, value) : state;
+        }
+      }, state);
     }
-
     return state.pushSV(simpleSymbolicValue());
   }
 
   function variableDeclaration(declaration: ts.VariableDeclaration) {
     if (tsutils.isIdentifier(declaration.name)) {
       let [value, nextState] = state.popSV();
-      const { getSymbolAtLocation } = program.getTypeChecker();
-      const variable = getSymbolAtLocation(declaration.name);
+      const variable = symbolAt(declaration.name);
       if (!variable || !shouldTrackSymbol(variable)) {
         return nextState;
       }
@@ -151,11 +150,15 @@ export function applyExecutors(
     const operand = unary.operand;
     const sv = simpleSymbolicValue();
     if (isIdentifier(operand)) {
-      const symbol = getSymbolAtLocation(operand);
+      const symbol = symbolAt(operand);
       if (symbol) {
         nextState = nextState.setSV(symbol, sv);
       }
     }
     return nextState.popSV()[1].pushSV(sv);
+  }
+
+  function symbolAt(node: ts.Node) {
+    return (symbols.getUsage(node) || { symbol: null }).symbol;
   }
 }
