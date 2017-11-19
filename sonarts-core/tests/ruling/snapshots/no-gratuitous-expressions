@@ -1,7 +1,6 @@
 src/TypeScript/src/compiler/binder.ts: 393,393,393,393
 src/TypeScript/src/compiler/moduleNameResolver.ts: 884,884,884,884,884
 src/TypeScript/src/compiler/transformers/ts.ts: 1518,1518,1518,1518
-src/TypeScript/src/server/editorServices.ts: 1340,1340
 src/angular/packages/benchpress/src/metric/perflog_metric.ts: 319
 src/postgraphql/src/postgres/inventory/paginator/PgCollectionPaginator.ts: 72,77
 src/rxjs/src/Subscription.ts: 96
