@@ -116,6 +116,7 @@ import org.sonar.plugin.typescript.rules.TripleEquals;
 import org.sonar.plugin.typescript.rules.TypeScriptRule;
 import org.sonar.plugin.typescript.rules.UseDefaultTypeParameter;
 import org.sonar.plugin.typescript.rules.UseIsnan;
+import org.sonar.plugin.typescript.rules.UseTypeAlias;
 import org.sonar.plugin.typescript.rules.VariableName;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 
@@ -262,13 +263,14 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(OneLine.class)
       .add(PreferForOf.class)
       .add(PreferTemplate.class)
+      .add(Quotemark.class)
       .add(RestrictPlusOperands.class)
       .add(Semicolon.class)
       .add(TripleEquals.class)
       .add(VariableName.class)
       .add(UseIsnan.class)
       .add(UseDefaultTypeParameter.class)
-      .add(Quotemark.class)
+      .add(UseTypeAlias.class)
       .build();
   }
 

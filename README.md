@@ -43,6 +43,7 @@ How does it work?
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
+* Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
 
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
 [`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
@@ -73,6 +74,7 @@ How does it work?
 [`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
 [`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
+[`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
