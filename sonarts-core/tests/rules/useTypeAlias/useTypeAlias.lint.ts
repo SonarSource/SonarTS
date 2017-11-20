@@ -35,3 +35,8 @@ interface C {
   name: string;
   b: number;
 }
+
+// ok, ignore usage inside type alias
+type Alias = number | number[] | undefined;
+function one(x: number | number[] | undefined) {}
+function two(x: number | number[] | undefined) {}
