@@ -78,6 +78,7 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "immutable": "^3.8.2"
+    "immutable": "^3.8.2",
+    "tsutils": "^2.12.2"
   }
 }
