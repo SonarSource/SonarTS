@@ -62,7 +62,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     } else if (!isUndefinedOrNull(typeAtLocation)) {
       this.addFailureAtNode(node, Rule.MESSAGE_ASSERTION);
     }
-    
+
     super.visitNonNullExpression(node);
   }
 
