@@ -21,11 +21,11 @@ package org.sonar.plugin.typescript.rules;
 
 import org.sonar.check.Rule;
 
-@Rule(key = "S4323")
-public class UseTypeAlias extends TypeScriptRule {
+@Rule(key = "S2589")
+public class NoGratuitousExpressions extends TypeScriptRule {
 
   @Override
   public String tsLintKey() {
-    return "use-type-alias";
+    return "no-gratuitous-expressions";
   }
 }

@@ -212,7 +212,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
 
       if (
         this.methodWithNoSideEffect(objectType, methodName) &&
-        !this.isReplaceWithCallBack(methodName, node.arguments)
+        !this.isReplaceWithCallBack(methodName, Array.from(node.arguments))
       ) {
         this.addFailureAtNode(node, Walker.message(methodName));
       }
@@ -252,7 +252,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
     return null;
   }
 
-  private isReplaceWithCallBack(methodName: string, callArguments: ts.NodeArray<ts.Expression>): boolean {
+  private isReplaceWithCallBack(methodName: string, callArguments: ts.Expression[]): boolean {
     if (methodName === "replace" && callArguments.length > 1) {
       const secondArgumentKind = callArguments[1].kind;
       return (

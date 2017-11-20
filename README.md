@@ -23,6 +23,7 @@ How does it work?
 * Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
+* Conditions should not always evaluate to "true" or to "false" ([`no-gratuitous-expressions`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Functions should not have identical implementations ([`no-identical-functions`])
@@ -32,7 +33,6 @@ How does it work?
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
-* Redundant pairs of parentheses should be removed ([`no-redundant-parentheses`])
 * Conditionals should start on new lines ([`no-same-line-conditional`])
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
@@ -43,7 +43,6 @@ How does it work?
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
-* Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
 
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
 [`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
@@ -54,6 +53,7 @@ How does it work?
 [`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
 [`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
 [`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
+[`no-gratuitous-expressions`]: ./sonarts-core/docs/rules/no-gratuitous-expressions.md
 [`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./sonarts-core/docs/rules/no-identical-expressions.md
 [`no-identical-functions`]: ./sonarts-core/docs/rules/no-identical-functions.md
@@ -63,7 +63,6 @@ How does it work?
 [`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
 [`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
-[`no-redundant-parentheses`]: ./sonarts-core/docs/rules/no-redundant-parentheses.md
 [`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
@@ -74,7 +73,6 @@ How does it work?
 [`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
 [`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
-[`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 

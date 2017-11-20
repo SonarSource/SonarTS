@@ -210,7 +210,13 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   private static isCollectionName(str: string): boolean {
-    const collections = new Set(["Array", "Set", "Map", "WeakSet", "WeakMap"]);
+    const collections = new Set([
+      "Array",
+      "Set",
+      "Map",
+      "WeakSet",
+      "WeakMap",
+    ]);
     return collections.has(str);
   }
 }
