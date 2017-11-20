@@ -19,9 +19,9 @@
  */
 import * as Lint from "tslint";
 import * as ts from "typescript";
-import {SonarRuleMetaData} from "../sonarRule";
-import {descendants, is, isAssignment} from "../utils/navigation";
-import {nodeToSonarLine} from "../runner/sonar-utils";
+import { SonarRuleMetaData } from "../sonarRule";
+import { descendants, is, isAssignment } from "../utils/navigation";
+import { nodeToSonarLine } from "../runner/sonar-utils";
 
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -42,7 +42,6 @@ export class Rule extends Lint.Rules.TypedRule {
 }
 
 class Walker extends Lint.ProgramAwareRuleWalker {
-
   protected visitSourceFile(node: ts.SourceFile): void {
     this.checkStatements(node.statements);
     super.visitSourceFile(node);
@@ -82,10 +81,12 @@ class Walker extends Lint.ProgramAwareRuleWalker {
   private keyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
     if (is(node, ts.SyntaxKind.ExpressionStatement)) {
       const expression = (node as ts.ExpressionStatement).expression;
-      return this.arrayKeyWriteUsage(expression)
-          || this.mapKeyWriteUsage(expression)
-          || this.setKeyWriteUsage(expression)
-          || this.objectKeyWriteUsage(expression);
+      return (
+        this.arrayKeyWriteUsage(expression) ||
+        this.mapKeyWriteUsage(expression) ||
+        this.setKeyWriteUsage(expression) ||
+        this.objectKeyWriteUsage(expression)
+      );
     }
   }
 
@@ -106,8 +107,8 @@ class Walker extends Lint.ProgramAwareRuleWalker {
 
   private usedInRhs(rhs: ts.Expression, symbol: ts.Symbol) {
     return descendants(rhs)
-        .filter(child => child.kind === ts.SyntaxKind.Identifier)
-        .some(id => this.getTypeChecker().getSymbolAtLocation(id) === symbol);
+      .filter(child => child.kind === ts.SyntaxKind.Identifier)
+      .some(id => this.getTypeChecker().getSymbolAtLocation(id) === symbol);
   }
 
   private mapKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {

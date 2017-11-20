@@ -29,7 +29,7 @@
                         <configuration>
                             <installDirectory>../../../sonarts-core</installDirectory>
                             <nodeVersion>v8.1.2</nodeVersion>
-                            <yarnVersion>v1.1.0</yarnVersion>
+                            <yarnVersion>v1.3.2</yarnVersion>
                         </configuration>
                         <executions>
                             <execution>

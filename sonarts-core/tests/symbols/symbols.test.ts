@@ -108,7 +108,11 @@ it("read-writes", () => {
 });
 
 it("same symbol for shorthand property", () => {
-  const declSymbol = symbols.getUsage(getNode(sourceFile, "x", 81)).symbol;
-  const usageSymbol = symbols.getUsage(getNode(sourceFile, "x", 82)).symbol;
-  expect(declSymbol === usageSymbol).toBe(true);
+  const declX = symbols.getUsage(getNode(sourceFile, "x", 81)).symbol;
+  const usageX = symbols.getUsage(getNode(sourceFile, "x", 82)).symbol;
+  expect(declX).toBe(usageX);
+
+  const declA = symbols.getUsage(getNode(sourceFile, "a", 73)).symbol;
+  const usageA = symbols.getUsage(getNode(sourceFile, "a", 74)).symbol;
+  expect(declA).toBe(usageA);
 });

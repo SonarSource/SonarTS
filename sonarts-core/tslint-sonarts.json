@@ -10,6 +10,7 @@
     "no-element-overwrite": true,
     "no-empty-destructuring": true,
     "no-empty-nested-blocks": false,
+    "no-gratuitous-expressions": true,
     "no-identical-conditions": true,
     "no-identical-expressions": true,
     "no-identical-functions": true,
