@@ -229,12 +229,12 @@ class CfgBuilder {
       "do while(" + doWhileLoop.expression.getText() + ")",
       doBlockStart,
       current,
+      doWhileLoop,
     );
     const whileConditionStartBlock = this.buildExpression(whileBlockEnd, doWhileLoop.expression);
     doBlockEnd.addSuccessor(whileConditionStartBlockPlaceholder);
     whileConditionStartBlockPlaceholder.addSuccessor(whileConditionStartBlock);
     whileConditionStartBlock.loopingStatement = doWhileLoop;
-    whileConditionStartBlock.branchingElement = doWhileLoop;
     this.breakables.pop();
     return this.createBlockPredecessorOf(doBlockStart);
   }
@@ -251,7 +251,6 @@ class CfgBuilder {
     loopStartPlaceholder.addSuccessor(loopStart);
     loopBottom.addSuccessor(loopStartPlaceholder);
     loopStartPlaceholder.loopingStatement = whileLoop;
-    loopStartPlaceholder.branchingElement = whileLoop;
     this.breakables.pop();
     return this.createBlockPredecessorOf(loopStartPlaceholder);
   }
@@ -268,6 +267,7 @@ class CfgBuilder {
         "while(" + whileLoop.expression.getText() + ")",
         firstLoopStatementBlock,
         current,
+        whileLoop,
       );
     }
   }
@@ -277,13 +277,12 @@ class CfgBuilder {
     const continueTarget = this.createBlock();
     this.createLoopBreakable(current, continueTarget, forEach);
     const loopBodyStart = this.buildStatement(loopBodyEnd, forEach.statement);
-    const branchingBlock = this.createBranchingBlock(this.forEachLoopLabel(forEach), loopBodyStart, current);
+    const branchingBlock = this.createBranchingBlock(this.forEachLoopLabel(forEach), loopBodyStart, current, forEach);
     const initializerStart = this.buildForInitializer(branchingBlock, forEach.initializer);
     const loopStart = this.buildExpression(this.createBlockPredecessorOf(initializerStart), forEach.expression);
     loopBodyEnd.addSuccessor(initializerStart);
     continueTarget.addSuccessor(initializerStart);
     initializerStart.loopingStatement = forEach;
-    initializerStart.branchingElement = forEach;
     this.breakables.pop();
     return loopStart;
   }
@@ -305,10 +304,13 @@ class CfgBuilder {
     );
     let loopRoot: CfgBlock;
     if (forLoop.condition) {
-      loopRoot = this.buildExpression(
-        this.createBranchingBlock(this.forLoopLabel(forLoop), firstBlockInLoopStatement, current),
-        forLoop.condition,
+      const conditionRoot = this.createBranchingBlock(
+        this.forLoopLabel(forLoop),
+        firstBlockInLoopStatement,
+        current,
+        forLoop,
       );
+      loopRoot = this.buildExpression(conditionRoot, forLoop.condition);
     } else {
       loopRoot = this.createBlockPredecessorOf(firstBlockInLoopStatement);
     }
@@ -318,7 +320,6 @@ class CfgBuilder {
     }
     loopBottom.addSuccessor(loopRoot);
     loopRoot.loopingStatement = forLoop;
-    loopRoot.branchingElement = forLoop;
 
     if (forLoop.incrementor) {
       continueTarget.addSuccessor(lastBlockInLoopStatement);
@@ -338,11 +339,13 @@ class CfgBuilder {
       whenFalse = this.buildStatement(this.createBlockPredecessorOf(current), ifStatement.elseStatement);
     }
     const whenTrue = this.buildStatement(this.createBlockPredecessorOf(current), ifStatement.thenStatement);
-    const expression = this.buildExpression(
-      this.createBranchingBlock("if (" + ifStatement.expression.getText() + ")", whenTrue, whenFalse),
-      ifStatement.expression,
+    const ifRoot = this.createBranchingBlock(
+      "if (" + ifStatement.expression.getText() + ")",
+      whenTrue,
+      whenFalse,
+      ifStatement,
     );
-    expression.branchingElement = ifStatement;
+    const expression = this.buildExpression(ifRoot, ifStatement.expression);
     return expression;
   }
 
@@ -370,9 +373,9 @@ class CfgBuilder {
           caseClause.expression.getText(),
           currentClauseStatementsStart,
           nextBlock,
+          switchStatement,
         );
         const currentClauseExpressionStart = this.buildExpression(currentClauseExpressionEnd, caseClause.expression);
-        currentClauseExpressionStart.branchingElement = switchStatement;
         nextBlock = currentClauseExpressionStart;
       } else {
         (defaultBlockEnd as CfgGenericBlock).addSuccessor(currentClauseStatementsStart);
@@ -453,12 +456,9 @@ class CfgBuilder {
         const conditionalExpression = expression as ts.ConditionalExpression;
         const whenFalse = this.buildExpression(this.createBlockPredecessorOf(current), conditionalExpression.whenFalse);
         const whenTrue = this.buildExpression(this.createBlockPredecessorOf(current), conditionalExpression.whenTrue);
-        const branching = this.buildExpression(
-          this.createBranchingBlock(expression.getText(), whenTrue, whenFalse),
-          conditionalExpression.condition,
-        );
-        branching.branchingElement = expression;
-        return branching;
+        const endOfConditional = this.createBranchingBlock(expression.getText(), whenTrue, whenFalse, expression);
+        const startOfConditional = this.buildExpression(endOfConditional, conditionalExpression.condition);
+        return startOfConditional;
 
       case SyntaxKind.BinaryExpression:
         return this.buildBinaryExpression(current, expression as ts.BinaryExpression);
@@ -660,8 +660,7 @@ class CfgBuilder {
           whenTrue = this.createBlockPredecessorOf(current);
         }
         whenTrue = this.buildExpression(whenTrue, expression.right);
-        const branching = this.createBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
-        branching.branchingElement = expression;
+        const branching = this.createBranchingBlock(expression.left.getText(), whenTrue, whenFalse, expression);
         return this.buildExpression(branching, expression.left);
       }
       case SyntaxKind.BarBarToken: {
@@ -673,8 +672,7 @@ class CfgBuilder {
           whenFalse = this.createBlockPredecessorOf(current);
         }
         whenFalse = this.buildExpression(whenFalse, expression.right);
-        const branching = this.createBranchingBlock(expression.left.getText(), whenTrue, whenFalse);
-        branching.branchingElement = expression;
+        const branching = this.createBranchingBlock(expression.left.getText(), whenTrue, whenFalse, expression);
         return this.buildExpression(branching, expression.left);
       }
       case SyntaxKind.EqualsToken: {
@@ -729,8 +727,9 @@ class CfgBuilder {
     branchingLabel: string,
     trueSuccessor: CfgBlock,
     falseSuccessor: CfgBlock,
+    branchingElement: ts.Node,
   ): CfgBranchingBlock {
-    const block = new CfgBranchingBlock(branchingLabel, trueSuccessor, falseSuccessor);
+    const block = new CfgBranchingBlock(branchingLabel, trueSuccessor, falseSuccessor, branchingElement);
     this.blocks.push(block);
     return block;
   }

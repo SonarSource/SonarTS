@@ -70,8 +70,7 @@ export class ControlFlowGraph {
           }
         }
         if (block.branchingElement) {
-          // TODO not sure why `block` and `successor` can have same `branchingElement`
-          if (successor.branchingElement !== block.branchingElement) {
+          if (!successor.branchingElement) {
             successor.branchingElement = block.branchingElement;
           } else {
             throw new Error(
@@ -128,7 +127,7 @@ export interface CfgBlock {
 export abstract class CfgBlockWithPredecessors {
   public predecessors: CfgBlock[] = [];
   public loopingStatement: ts.IterationStatement | undefined;
-  public branchingElement: ts.Node | undefined;
+  public branchingElement: ts.Node | undefined = undefined;
 
   public replacePredecessor(what: CfgBlock, withWhat: CfgBlock): void {
     const index = this.predecessors.indexOf(what);
@@ -202,11 +201,12 @@ export class CfgBranchingBlock extends CfgBlockWithElements implements CfgBlock 
   private trueSuccessor: CfgBlock;
   private falseSuccessor: CfgBlock;
 
-  constructor(branchingLabel: string, trueSuccessor: CfgBlock, falseSuccessor: CfgBlock) {
+  constructor(branchingLabel: string, trueSuccessor: CfgBlock, falseSuccessor: CfgBlock, branchingElement: ts.Node) {
     super();
     this.branchingLabel = branchingLabel;
     this.trueSuccessor = trueSuccessor;
     this.falseSuccessor = falseSuccessor;
+    this.branchingElement = branchingElement;
   }
 
   public getTrueSuccessor(): CfgBlock {
