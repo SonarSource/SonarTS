@@ -1,5 +1,4 @@
 src/Joust/ts/components/game/TwoPlayerGame.tsx: 40,58
-src/Joust/ts/components/GameWrapper.tsx: 118
 src/Joust/ts/TexturePreloader.ts: 26
 src/Joust/ts/Launcher.tsx: 434
 src/TypeScript/src/compiler/core.ts: 135,135,135,135,135
