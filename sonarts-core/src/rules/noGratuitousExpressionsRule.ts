@@ -32,11 +32,11 @@ import { firstLocalAncestor, FUNCTION_LIKE, is } from "../utils/navigation";
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-gratuitous-expressions",
-    description: "Boolean expressions should not be gratuitous",
+    description: 'Conditions should not always evaluate to "true" or to "false" ',
     rationale: tslint.Utils.dedent`
-      If a boolean expression doesn't change the evaluation of the condition, then it is entirely unnecessary, and can 
-      be removed. If it is gratuitous because it does not match the programmer's intent, then it's a bug and 
-      the expression should be fixed.`,
+      If an expression doesn't change the evaluation of the condition,
+      then it is either unnecessary, and condition can be removed,
+      or it makes some code being never executed. In any case, the code should be refactored.`,
     optionsDescription: "",
     options: null,
     rspecKey: "RSPEC-2589",
@@ -68,13 +68,13 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     if (is(node, ...FUNCTION_LIKE)) {
       const functionLike = node as ts.FunctionLikeDeclaration;
       const statements = this.getStatements(functionLike);
-      const initialState = createInitialState(functionLike, this.getProgram());
-      const shouldTrackSymbol = (symbol: ts.Symbol) =>
-        this.symbols
-          .allUsages(symbol)
-          .filter(usage => usage.is(UsageFlag.WRITE))
-          .every(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) === functionLike);
       if (statements) {
+        const initialState = createInitialState(functionLike, this.getProgram());
+        const shouldTrackSymbol = (symbol: ts.Symbol) =>
+          this.symbols
+            .allUsages(symbol)
+            .filter(usage => usage.is(UsageFlag.WRITE))
+            .every(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) === functionLike);
         this.runForStatements(Array.from(statements), initialState, shouldTrackSymbol);
       }
     }
