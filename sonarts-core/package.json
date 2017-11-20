@@ -22,7 +22,12 @@
     "type": "git",
     "url": "git+https://github.com/SonarSource/SonarTS.git"
   },
-  "keywords": ["sonarts", "sonarqube", "typescript", "tslint"],
+  "keywords": [
+    "sonarts",
+    "sonarqube",
+    "typescript",
+    "tslint"
+  ],
   "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/SonarSource/SonarTS/issues"
@@ -57,7 +62,12 @@
     "webpack-dev-server": "2.9.4"
   },
   "license-check-config": {
-    "src": ["src/**/*.ts", "tests/**/*.ts", "!tests/**/*.lint.ts", "!node_modules/**/*"],
+    "src": [
+      "src/**/*.ts",
+      "tests/**/*.ts",
+      "!tests/**/*.lint.ts",
+      "!node_modules/**/*"
+    ],
     "path": "HEADER",
     "blocking": true,
     "logInfo": false,
@@ -66,5 +76,8 @@
   "prettier": {
     "printWidth": 120,
     "trailingComma": "all"
+  },
+  "dependencies": {
+    "immutable": "^3.8.2"
   }
 }
