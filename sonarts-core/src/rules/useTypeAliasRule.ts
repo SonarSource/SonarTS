@@ -19,13 +19,12 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import {SonarRuleMetaData} from "../sonarRule";
-import {is} from "../utils/navigation";
-import {RuleFailure} from "tslint";
-import {nodeToSonarLine} from "../runner/sonar-utils";
+import { RuleFailure } from "tslint";
+import { SonarRuleMetaData } from "../sonarRule";
+import { is } from "../utils/navigation";
+import { nodeToSonarLine } from "../runner/sonar-utils";
 
 export class Rule extends tslint.Rules.TypedRule {
-
   public static metadata: SonarRuleMetaData = {
     ruleName: "use-type-alias",
     description: "Type aliases should be used",
@@ -48,7 +47,6 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
-
   private unionOrIntersectionTypeUsage: Map<ts.Type, ts.TypeNode[]> = new Map();
 
   protected visitNode(node: ts.Node): void {
@@ -75,16 +73,14 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     super.visitNode(node);
   }
 
-
-
   protected visitTypeAliasDeclaration(_: ts.TypeAliasDeclaration): void {
     // cut the visit
   }
 
   private static message(type: ts.Type, alsoUsed: number[]) {
-    const uniqueLines = Array.from(new Set(alsoUsed)).sort((a,b) => a - b);
+    const uniqueLines = Array.from(new Set(alsoUsed)).sort((a, b) => a - b);
     const lines = uniqueLines.length > 1 ? ` It is also used on lines ${uniqueLines}.` : "";
-    const typeKind = (type.flags & ts.TypeFlags.Union) ? "union" : "intersection";
+    const typeKind = type.flags & ts.TypeFlags.Union ? "union" : "intersection";
     return `Replace this ${typeKind} type with a type alias.${lines}`;
   }
 }
