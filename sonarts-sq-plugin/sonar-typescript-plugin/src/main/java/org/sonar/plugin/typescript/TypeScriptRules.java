@@ -69,6 +69,7 @@ import org.sonar.plugin.typescript.rules.NoEmptyInterface;
 import org.sonar.plugin.typescript.rules.NoEmptyNestedBlocks;
 import org.sonar.plugin.typescript.rules.NoEval;
 import org.sonar.plugin.typescript.rules.NoForInArray;
+import org.sonar.plugin.typescript.rules.NoGratuitousExpressions;
 import org.sonar.plugin.typescript.rules.NoIdenticalConditions;
 import org.sonar.plugin.typescript.rules.NoIdenticalExpressions;
 import org.sonar.plugin.typescript.rules.NoIdenticalFunctions;
@@ -85,7 +86,6 @@ import org.sonar.plugin.typescript.rules.NoMisspelledOperator;
 import org.sonar.plugin.typescript.rules.NoMisusedNew;
 import org.sonar.plugin.typescript.rules.NoMultilineStringLiterals;
 import org.sonar.plugin.typescript.rules.NoNonNullAssertion;
-import org.sonar.plugin.typescript.rules.NoRedundantParentheses;
 import org.sonar.plugin.typescript.rules.NoRequireImports;
 import org.sonar.plugin.typescript.rules.NoReturnAwait;
 import org.sonar.plugin.typescript.rules.NoSameLineConditional;
@@ -116,7 +116,6 @@ import org.sonar.plugin.typescript.rules.TripleEquals;
 import org.sonar.plugin.typescript.rules.TypeScriptRule;
 import org.sonar.plugin.typescript.rules.UseDefaultTypeParameter;
 import org.sonar.plugin.typescript.rules.UseIsnan;
-import org.sonar.plugin.typescript.rules.UseTypeAlias;
 import org.sonar.plugin.typescript.rules.VariableName;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
 
@@ -223,6 +222,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoEmptyNestedBlocks.class)
       .add(NoEval.class)
       .add(NoForInArray.class)
+      .add(NoGratuitousExpressions.class)
       .add(NoIdenticalConditions.class)
       .add(NoIdenticalExpressions.class)
       .add(NoIdenticalFunctions.class)
@@ -239,7 +239,6 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(NoMisusedNew.class)
       .add(NoMultilineStringLiterals.class)
       .add(NoNonNullAssertion.class)
-      .add(NoRedundantParentheses.class)
       .add(NoRequireImports.class)
       .add(NoReturnAwait.class)
       .add(NoSameLineConditional.class)
@@ -263,14 +262,13 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       .add(OneLine.class)
       .add(PreferForOf.class)
       .add(PreferTemplate.class)
-      .add(Quotemark.class)
       .add(RestrictPlusOperands.class)
       .add(Semicolon.class)
       .add(TripleEquals.class)
       .add(VariableName.class)
       .add(UseIsnan.class)
       .add(UseDefaultTypeParameter.class)
-      .add(UseTypeAlias.class)
+      .add(Quotemark.class)
       .build();
   }
 

@@ -63,7 +63,7 @@ class Walker extends tslint.RuleWalker {
   public visitSwitchStatement(node: ts.SwitchStatement) {
     const { branches, endsWithDefault } = this.collectSwitchBranches(node);
 
-    if (endsWithDefault && this.allDuplicated(branches)) {
+    if (endsWithDefault && this.allDuplicated(Array.from(branches))) {
       this.addFailureAtNode(node, Rule.MESSAGE);
     }
 

@@ -10,6 +10,7 @@
     "no-element-overwrite": true,
     "no-empty-destructuring": true,
     "no-empty-nested-blocks": false,
+    "no-gratuitous-expressions": true,
     "no-identical-conditions": true,
     "no-identical-expressions": true,
     "no-identical-functions": true,
@@ -19,7 +20,6 @@
     "no-misleading-array-reverse": true,
     "no-misspelled-operator": true,
     "no-multiline-string-literals": true,
-    "no-redundant-parentheses": true,
     "no-same-line-conditional": true,
     "no-self-assignment": true,
     "no-unconditional-jump": true,
@@ -29,7 +29,6 @@
     "no-use-of-empty-return-value": true,
     "no-useless-cast": true,
     "no-useless-increment": true,
-    "no-variable-usage-before-declaration": true,
-    "use-type-alias": true
+    "no-variable-usage-before-declaration": true
   }
 }
