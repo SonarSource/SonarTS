@@ -4,28 +4,32 @@ Union and intersection types are very convenient but can make code a bit harder 
 
 ## Noncompliant Code Example
 ```typescript
-function foo(x:string|null|number) {
+function foo(x: string | number | null) { // Noncompliant
   // ...
 }
-function bar(x:string|null|number) { // Noncompliant
+
+function bar(x: string | number | null) {
   // ...
 }
-function zoo(): string|null|number {
-  return null;
+
+function zoo(): string | number | null {
+  // ...
 }
 ```
 
 ## Compliant Solution
 ```typescript
-type MyType = string | null | number;
+type MyType = string | number | null;
 
 function foo(x: MyType) {
   // ...
 }
+
 function bar(x: MyType) {
   // ...
 }
-function zoo():  MyType {
-  return null;
+
+function zoo(): MyType {
+  // ...
 }
 ```
