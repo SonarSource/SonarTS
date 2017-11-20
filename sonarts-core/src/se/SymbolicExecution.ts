@@ -52,11 +52,8 @@ export function execute(
   }
 
   function visitBlock(block: CfgBlock, programState: ProgramState) {
-    if (block instanceof CfgBranchingBlock && block.getElements().length > 0) {
-      const existingStates = programNodes.get(block.getElements()[0]) || [];
-      if (existingStates.find(existingState => programState.isEqualTo(existingState))) {
-        return;
-      }
+    if (programBlockAlreadyVisited(block, programState)) {
+      return;
     }
     if (visitsLimitBreached()) {
       return;
@@ -66,6 +63,20 @@ export function execute(
       programState = visitProgramPoint(programPoint, programState);
     }
 
+    visitSuccessors(block, programState);
+  }
+
+  function programBlockAlreadyVisited(block: CfgBlock, programState: ProgramState) {
+    if (block instanceof CfgBranchingBlock && block.getElements().length > 0) {
+      const existingStates = programNodes.get(block.getElements()[0]) || [];
+      if (existingStates.find(existingState => programState.isEqualTo(existingState))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function visitSuccessors(block: CfgBlock, programState: ProgramState) {
     // ignore for-of, for-in and switch, because we can't constrain right element
     if (block instanceof CfgBranchingBlock && !isForInOfLoop(block) && !isSwitch(block)) {
       addToBranchingNodes(block, programState);

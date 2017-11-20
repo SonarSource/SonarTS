@@ -104,7 +104,7 @@ export class ProgramState {
   }
 
   hasEmptyStack(): boolean {
-    return this.expressionStack.length == 0;
+    return this.expressionStack.length === 0;
   }
 
   toString() {
@@ -127,7 +127,7 @@ export class ProgramState {
   }
 
   private areSymbolsEqual(another: ProgramState) {
-    if (this.symbolicValues.size != another.symbolicValues.size) {
+    if (this.symbolicValues.size !== another.symbolicValues.size) {
       return false;
     }
     const res = this.symbolicValues.keySeq().equals(another.symbolicValues.keySeq());
