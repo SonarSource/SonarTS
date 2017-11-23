@@ -10,7 +10,8 @@ How does it work?
 * The [TypeScript compiler](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) provides [**AST**](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and **type** information
 * On top of it we build the **symbol model** and the [**control flow**](https://en.wikipedia.org/wiki/Control_flow_graph) model
 * Some rules are based on AST equivalence (like [no-all-duplicated-branches][`no-all-duplicated-branches`] or [no-identical-expressions][`no-identical-expressions`]).
-* And finally we use **live variable analysis** to detect [dead stores][`no-dead-store`]
+* We use **[live variable analysis](https://en.wikipedia.org/wiki/Live_variable_analysis)** to detect [dead stores][`no-dead-store`]
+* Experimentally, some of the rules are progressively starting to use **[symbolic execution](https://en.wikipedia.org/wiki/Symbolic_execution)** to catch data-flow-related bugs [`no-gratuitous-expressions`]
 
 ## Rules
 
