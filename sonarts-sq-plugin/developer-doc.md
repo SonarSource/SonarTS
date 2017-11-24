@@ -11,3 +11,27 @@
 * If the rule belongs to a default profile, add it to the relevant one(s)
 * Add rule class to `TypeScriptRules.getRuleClasses()`
 * Run all tests and fix the red ones (some tests are there explicitly to check some basic mistakes when creating a new rule)
+
+## Releasing
+
+### 1 - Releasing tslint-sonarts npm package
+* login to npm with `npm adduser`
+* create new branch, e.g. `1.2.0`, add upstream
+* run this to publish package
+```
+cd sonarts-core
+yarn build
+np --any-branch
+```
+* run `./build.sh` from project root
+* commit changes of `sonarts-sq-plugin/sonar-typescript-plugin/sonarts-bundle/package-lock.json` and `sonarts-sq-plugin/sonar-typescript-plugin/sonarts-bundle/package.json`
+* create PR from this branch
+* merge it
+
+### 2 - Releasing SonarTS SQ plugin
+* perform release of SQ plugin as usual (one click-release from burgr)
+* while preparering for next iteration (bumping version of maven), update version in sonar-project.properties
+* create GitHub release for the tag of this SQ release
+* tweet something!:)
+
+

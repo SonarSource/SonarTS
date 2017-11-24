@@ -105,12 +105,12 @@ SonarTS is available as plugin for SonarQube. [SonarQube](https://www.sonarqube.
 Thanks to the platform, SonarTS provides additional features:
 * Code coverage import
 * Duplication detection
-* Different metrics
-* More rules
+* Various metrics 
+* More [rules](https://rules.sonarsource.com/typescript)
 
 See the documentation [here](https://docs.sonarqube.org/display/PLUG/SonarTS) and example project [here](https://github.com/SonarSource/SonarTS-example/).
 
-Also available online on :cloud: [sonarcloud.io](https://sonarcloud.io/)
+Also available online on :cloud: [SonarCloud](https://sonarcloud.io/)
 
 ## Contribution
 
