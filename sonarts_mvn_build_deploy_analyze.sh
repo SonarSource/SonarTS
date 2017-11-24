@@ -34,9 +34,6 @@ if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; 
   
   cd sonarts-sq-plugin
   export MAVEN_OPTS="-Xmx1536m -Xms128m"
-  # Analyze with SNAPSHOT version as long as SQ does not correctly handle
-  # purge of release data
-  CURRENT_VERSION=`maven_expression "project.version"`
 
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
   mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
@@ -48,7 +45,6 @@ if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; 
   sonar-scanner \
       -Dsonar.host.url=$SONAR_HOST_URL \
       -Dsonar.login=$SONAR_TOKEN \
-      -Dsonar.projectVersion=$CURRENT_VERSION \
       -Dsonar.analysis.buildNumber=$TRAVIS_BUILD_NUMBER \
       -Dsonar.analysis.pipeline=$TRAVIS_BUILD_NUMBER \
       -Dsonar.analysis.sha1=$TRAVIS_COMMIT  \
@@ -65,9 +61,6 @@ elif [[ "${TRAVIS_BRANCH}" == "branch-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "fals
   git fetch --unshallow || true
 
   export MAVEN_OPTS="-Xmx1536m -Xms128m" 
-
-  # get current version from pom
-  CURRENT_VERSION=`maven_expression "project.version"`
   
   echo "======= Found SNAPSHOT version ======="
   cd sonarts-sq-plugin
