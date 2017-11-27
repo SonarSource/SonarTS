@@ -30,7 +30,7 @@ np --any-branch
 
 ### 2 - Releasing SonarTS SQ plugin
 * perform release of SQ plugin as usual (one click-release from burgr)
-* while preparering for next iteration (bumping version of maven), update version in sonar-project.properties
+* Prepare for next iteration (bump version of maven) and update version in sonar-project.properties
 * create GitHub release for the tag of this SQ release
 * tweet something!:)
 
