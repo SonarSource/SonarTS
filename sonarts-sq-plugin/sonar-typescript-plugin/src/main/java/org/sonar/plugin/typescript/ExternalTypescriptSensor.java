@@ -19,17 +19,19 @@
  */
 package org.sonar.plugin.typescript;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
@@ -104,14 +106,14 @@ public class ExternalTypescriptSensor implements Sensor {
   }
 
   private void analyze(
-    Iterable<InputFile> inputFiles, SensorContext sensorContext, TypeScriptRules typeScriptRules, ExecutableBundle executableBundle, @Nullable File localTypescript
-  ) {
+    Iterable<InputFile> inputFiles, SensorContext sensorContext, TypeScriptRules typeScriptRules, ExecutableBundle executableBundle, @Nullable File localTypescript) {
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
-    Multimap<String, InputFile> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
+    Map<String, List<InputFile>> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
 
-    for (String tsconfigPath : inputFileByTsconfig.keySet()) {
-      Collection<InputFile> inputFilesForThisConfig = inputFileByTsconfig.get(tsconfigPath);
+    for (Map.Entry<String, List<InputFile>> e : inputFileByTsconfig.entrySet()) {
+      String tsconfigPath = e.getKey();
+      Collection<InputFile> inputFilesForThisConfig = e.getValue();
       LOG.debug(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
 
       SonarTSRunnerCommand command = executableBundle.getSonarTsRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
@@ -140,15 +142,15 @@ public class ExternalTypescriptSensor implements Sensor {
     return fileSystem.inputFiles(mainFilePredicate);
   }
 
-  private static Multimap<String, InputFile> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
-    Multimap<String, InputFile> inputFileByTsconfig = ArrayListMultimap.create();
+  private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
+    Map<String, List<InputFile>> inputFileByTsconfig = new HashMap<>();
 
     for (InputFile inputFile : inputFiles) {
       File tsConfig = findTsConfig(inputFile, projectBaseDir);
       if (tsConfig == null) {
         LOG.error("No tsconfig.json file found for " + inputFile.absolutePath() + " (looking up the directories tree). This file will not be analyzed.");
       } else {
-        inputFileByTsconfig.put(tsConfig.getAbsolutePath(), inputFile);
+        inputFileByTsconfig.computeIfAbsent(tsConfig.getAbsolutePath(), x -> new ArrayList<>()).add(inputFile);
       }
     }
     return inputFileByTsconfig;
@@ -217,7 +219,7 @@ public class ExternalTypescriptSensor implements Sensor {
     saveMetric(sensorContext, inputFile, CoreMetrics.NCLOC, sonarTSRunnerResponse.ncloc.length);
     saveMetric(sensorContext, inputFile, CoreMetrics.COMMENT_LINES, sonarTSRunnerResponse.commentLines.length);
 
-    noSonarFilter.noSonarInFile(inputFile, Sets.newHashSet(sonarTSRunnerResponse.nosonarLines));
+    noSonarFilter.noSonarInFile(inputFile, Arrays.stream(sonarTSRunnerResponse.nosonarLines).collect(Collectors.toSet()));
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(inputFile);
     for (int line : sonarTSRunnerResponse.ncloc) {

@@ -19,12 +19,12 @@
  */
 package org.sonar.plugin.typescript.executable;
 
-import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.StreamSupport;
 import org.sonar.api.batch.fs.InputFile;
 
 public class SonarTSRunnerCommand {
@@ -49,7 +49,7 @@ public class SonarTSRunnerCommand {
   }
 
   public String toJsonRequest() {
-    String[] filepaths = Iterables.toArray(Iterables.transform(files, InputFile::absolutePath), String.class);
+    String[] filepaths = StreamSupport.stream(files.spliterator(), false).map(InputFile::absolutePath).toArray(String[]::new);
     SonarTSRequest requestToRunner = new SonarTSRequest(filepaths);
     if (tsconfig != null) {
       requestToRunner.tsconfig = this.tsconfig;
