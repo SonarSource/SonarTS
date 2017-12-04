@@ -19,15 +19,15 @@
  */
 package org.sonar.plugin.typescript.lcov;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
@@ -48,7 +48,7 @@ public final class LCOVParser {
   private static final String BRDA = "BRDA:";
 
   private final SensorContext context;
-  private final List<String> unresolvedPaths = Lists.newArrayList();
+  private final List<String> unresolvedPaths = new ArrayList<>();
 
   private static final Logger LOG = Loggers.get(LCOVParser.class);
 
@@ -57,10 +57,10 @@ public final class LCOVParser {
   }
 
   public void parseReportsAndSaveCoverage(List<File> files) {
-    final List<String> lines=new LinkedList<>();
+    final List<String> lines = new LinkedList<>();
 
-    for(File file: files) {
-      try (Stream<String> fileLines = Files.lines(file.toPath())){
+    for (File file : files) {
+      try (Stream<String> fileLines = Files.lines(file.toPath())) {
         lines.addAll(fileLines.collect(Collectors.toList()));
 
       } catch (IOException e) {
@@ -75,7 +75,7 @@ public final class LCOVParser {
   }
 
   private void parse(List<String> lines) {
-    final Map<InputFile, FileData> files = Maps.newHashMap();
+    final Map<InputFile, FileData> files = new HashMap<>();
     FileData fileData = null;
     int reportLineNum = 0;
 
@@ -155,12 +155,12 @@ public final class LCOVParser {
     /**
      * line number -> branch number -> taken
      */
-    private Map<Integer, Map<String, Integer>> branches = Maps.newHashMap();
+    private Map<Integer, Map<String, Integer>> branches = new HashMap<>();
 
     /**
      * line number -> execution count
      */
-    private Map<Integer, Integer> hits = Maps.newHashMap();
+    private Map<Integer, Integer> hits = new HashMap<>();
 
     /**
      * Number of lines in the file
@@ -181,18 +181,18 @@ public final class LCOVParser {
 
       Map<String, Integer> branchesForLine = branches.get(lineNumber);
       if (branchesForLine == null) {
-        branchesForLine = Maps.newHashMap();
+        branchesForLine = new HashMap<>();
         branches.put(lineNumber, branchesForLine);
       }
       Integer currentValue = branchesForLine.get(branchNumber);
-      branchesForLine.put(branchNumber, MoreObjects.firstNonNull(currentValue, 0) + taken);
+      branchesForLine.put(branchNumber, Optional.ofNullable(currentValue).orElse(0) + taken);
     }
 
     void addLine(Integer lineNumber, Integer executionCount) {
       checkLine(lineNumber);
 
       Integer currentValue = hits.get(lineNumber);
-      hits.put(lineNumber, MoreObjects.firstNonNull(currentValue, 0) + executionCount);
+      hits.put(lineNumber, Optional.ofNullable(currentValue).orElse(0) + executionCount);
     }
 
     void save(NewCoverage newCoverage) {

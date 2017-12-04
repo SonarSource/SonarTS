@@ -114,7 +114,7 @@ public class TypeScriptRulesTest {
     TypeScriptRules rules = new TypeScriptRules(new CheckFactory(new TestActiveRules()));
     for (TypeScriptRule rule : rules) {
       assertThatThrownBy(() -> rules.ruleKeyFromTsLintKey(rule.tsLintKey()))
-        .isInstanceOf(NullPointerException.class)
+        .isInstanceOf(IllegalStateException.class)
         .hasMessage("Unknown tslint rule or rule not enabled " + rule.tsLintKey());
     }
   }
