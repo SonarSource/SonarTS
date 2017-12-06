@@ -35,3 +35,7 @@ let arr = [];
 
 let notArray: any;
 notArray = notArray.reverse();
+
+let n:number[] = [];
+   n = [...n];
+// ^^^^^^^^^^   {{Remove or correct this useless self-assignment.}}

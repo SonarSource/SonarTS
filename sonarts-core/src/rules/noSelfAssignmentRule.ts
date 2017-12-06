@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SpreadElement } from "typescript";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -51,7 +52,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       if (this.isIdentifier(expression.right) && expression.left.text === expression.right.text) {
         this.addFailureAtNode(expression, Rule.formatMessage());
       }
-
+      if (this.isArrayWithSpreadExpressionOnly(expression.right, expression.left.text)) {
+        this.addFailureAtNode(expression, Rule.formatMessage());
+      }
       if (this.isArrayReverseAssignment(expression.left, expression.right)) {
         // a = a.reverse()
         this.addFailureAtNode(expression, Rule.formatMessage());
@@ -67,6 +70,25 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private isIdentifier(expression: ts.Expression): expression is ts.Identifier {
     return expression.kind === ts.SyntaxKind.Identifier;
+  }
+
+  private isArrayWithSpreadExpressionOnly(expression: ts.Expression, variableName: string) : boolean {
+    if (expression.kind !== ts.SyntaxKind.ArrayLiteralExpression) {
+      return false;
+    }
+      
+    let expressionChildNodes = expression.getChildren();
+    if (expressionChildNodes.length !== 3 || expressionChildNodes[1].kind !== ts.SyntaxKind.SyntaxList) {
+      return false;
+    }
+
+    let syntaxListChildNodes = expressionChildNodes[1].getChildren()
+    if (syntaxListChildNodes.length !== 1) {
+      return false;
+    }
+    
+    let spread = syntaxListChildNodes[0] as SpreadElement;
+    return spread && spread.expression.getText() === variableName;
   }
 
   private isArrayReverseAssignment(left: ts.Identifier, right: ts.Expression): boolean {
