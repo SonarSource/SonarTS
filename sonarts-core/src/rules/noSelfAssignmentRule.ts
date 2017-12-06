@@ -20,7 +20,9 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { SpreadElement } from "typescript";
+import { SpreadElement, ArrayLiteralExpression } from "typescript";
+import areEquivalent from "../utils/areEquivalent";
+import { is } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -48,50 +50,53 @@ export class Rule extends tslint.Rules.TypedRule {
 
 class Walker extends tslint.ProgramAwareRuleWalker {
   public visitBinaryExpression(expression: ts.BinaryExpression) {
-    if (this.isAssignment(expression) && this.isIdentifier(expression.left)) {
-      if (this.isIdentifier(expression.right) && expression.left.text === expression.right.text) {
-        this.addFailureAtNode(expression, Rule.formatMessage());
-      }
-      if (this.isArrayWithSpreadExpressionOnly(expression.right, expression.left.text)) {
-        this.addFailureAtNode(expression, Rule.formatMessage());
-      }
-      if (this.isArrayReverseAssignment(expression.left, expression.right)) {
-        // a = a.reverse()
-        this.addFailureAtNode(expression, Rule.formatMessage());
-      }
+    if (this.isDetectedPattern(expression) && this.shouldReportFailure(expression)) {
+      this.addFailureAtNode(expression, Rule.formatMessage());
     }
 
     super.visitBinaryExpression(expression);
   }
 
+  private isDetectedPattern(expression: ts.BinaryExpression): boolean {
+    return this.isAssignment(expression) &&
+          (this.isIdentifier(expression.left) || this.isPropertyWithNoAccessors(expression.left));
+  }
+
+  private shouldReportFailure(expression: ts.BinaryExpression): boolean {
+    return areEquivalent(expression.left, expression.right) ||
+           this.isArrayWithSpreadExpressionOnly(expression.right, expression.left) ||
+           this.isArrayReverseAssignment(expression.left, expression.right);
+  }
+
   private isAssignment(expression: ts.BinaryExpression) {
-    return expression.operatorToken.kind === ts.SyntaxKind.EqualsToken;
+    return is(expression.operatorToken, ts.SyntaxKind.EqualsToken);
   }
 
-  private isIdentifier(expression: ts.Expression): expression is ts.Identifier {
-    return expression.kind === ts.SyntaxKind.Identifier;
+  private isIdentifier(expression: ts.Expression) {
+    return is(expression, ts.SyntaxKind.Identifier);
   }
 
-  private isArrayWithSpreadExpressionOnly(expression: ts.Expression, variableName: string) : boolean {
-    if (expression.kind !== ts.SyntaxKind.ArrayLiteralExpression) {
-      return false;
-    }
-      
-    let expressionChildNodes = expression.getChildren();
-    if (expressionChildNodes.length !== 3 || expressionChildNodes[1].kind !== ts.SyntaxKind.SyntaxList) {
-      return false;
-    }
-
-    let syntaxListChildNodes = expressionChildNodes[1].getChildren()
-    if (syntaxListChildNodes.length !== 1) {
-      return false;
-    }
-    
-    let spread = syntaxListChildNodes[0] as SpreadElement;
-    return spread && spread.expression.getText() === variableName;
+  private isPropertyWithNoAccessors(expression: ts.Expression) {
+    return is(expression, ts.SyntaxKind.PropertyAccessExpression) && !this.hasAccessors(expression);
   }
 
-  private isArrayReverseAssignment(left: ts.Identifier, right: ts.Expression): boolean {
+  private hasAccessors(node: ts.Node) {
+    const symbol = this.getTypeChecker().getSymbolAtLocation(node);
+    const declarations = symbol && symbol.declarations;
+    return declarations && declarations.some(declaration => is(declaration, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor))
+  }
+
+  private isArrayWithSpreadExpressionOnly(expression: ts.Expression, variable: ts.Node) : boolean {
+    const arrayLiteral = expression as ArrayLiteralExpression;
+    if (!arrayLiteral || !arrayLiteral.elements || arrayLiteral.elements.length !== 1) {
+      return false;
+    }
+
+    const spread = arrayLiteral.elements[0] as SpreadElement;
+    return spread && spread.expression && areEquivalent(spread.expression, variable);
+  }
+
+  private isArrayReverseAssignment(left: ts.Expression, right: ts.Expression): boolean {
     // in case of `a = a.reverse()`, left is `a` and right is `a.reverse()`
     return (
       this.isCallExpression(right) &&
@@ -99,7 +104,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       this.isIdentifier(right.expression.expression) &&
       this.isArray(right.expression.expression) &&
       right.expression.name.text === "reverse" &&
-      right.expression.expression.text === left.text
+      areEquivalent(right.expression.expression, left)
     );
   }
 
