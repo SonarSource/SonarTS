@@ -99,10 +99,15 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       this.isCallExpression(right) &&
       this.isPropertyAccessExpression(right.expression) &&
       this.isIdentifier(right.expression.expression) &&
-      this.isArray(right.expression.expression) &&
-      right.expression.name.text === "reverse" &&
-      areEquivalent(right.expression.expression, left)
+        this.isArraySortOrReverse(right) &&
+        areEquivalent(right.expression.expression, left)
     );
+  }
+
+  private isArraySortOrReverse(callExpression: ts.CallExpression): boolean {
+    const methodName = callExpression.expression.name.text
+    return this.isArray(callExpression.expression.expression) &&
+           (methodName === "reverse" || methodName == "sort")
   }
 
   private isCallExpression(expression: ts.Expression): expression is ts.CallExpression {

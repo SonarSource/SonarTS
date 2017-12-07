@@ -53,11 +53,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     // then check that:
     // * callee is a property access expression
     // * left part of callee is array
-    // * the property name is "reverse": `foo.reverse()`
-    if (
-      this.isPropertyAccessExpression(callExpression.expression) &&
-      this.isArray(callExpression.expression.expression) &&
-      callExpression.expression.name.text === "reverse"
+    // * the property name is "reverse" or "sort": `foo.reverse()`
+    if (this.isPropertyAccessExpression(callExpression.expression) &&
+        this.isArraySortOrReverse(callExpression)
     ) {
       // store `foo` from `foo.reverse()`, or `foo.bar` from `foo.bar.reverse()`, etc
       const reversedArray = callExpression.expression.expression;
@@ -77,6 +75,12 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
 
     super.visitCallExpression(callExpression);
+  }
+
+  private isArraySortOrReverse(callExpression: ts.callExpression): boolean {
+    const methodName = callExpression.expression.name.text
+    return this.isArray(callExpression.expression.expression) &&
+           (methodName === "reverse" || methodName == "sort")
   }
 
   private isPropertyAccessExpression(node: ts.Node): node is ts.PropertyAccessExpression {
