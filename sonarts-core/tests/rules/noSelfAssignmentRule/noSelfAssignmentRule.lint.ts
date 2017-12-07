@@ -20,7 +20,8 @@ x = this.x;
 
   a.b.x = a.b.x;
 //^^^^^^^^^^^^^   {{Remove or correct this useless self-assignment.}}
-x[i] = x[i]; // OK
+  x[i] = x[i];
+//^^^^^^^^^^^  {{Remove or correct this useless self-assignment.}}
 
 x += x;
 
@@ -52,9 +53,12 @@ class Foo2 {
 
 class A {
   private x = "";
+  private arr = [];
   private _y = "";
 
   update() {
+    this.arr[0] = this.arr[0];
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^ {{Remove or correct this useless self-assignment.}}
     this.x = this.x;
 //  ^^^^^^^^^^^^^^^    {{Remove or correct this useless self-assignment.}}
     

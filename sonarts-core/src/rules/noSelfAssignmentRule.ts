@@ -50,22 +50,19 @@ export class Rule extends tslint.Rules.TypedRule {
 
 class Walker extends tslint.ProgramAwareRuleWalker {
   public visitBinaryExpression(expression: ts.BinaryExpression) {
-    if (this.isDetectedPattern(expression) && this.shouldReportFailure(expression)) {
+    if (this.isAssignment(expression) && !this.hasAccessors(expression.left) && this.isSelfAssignment(expression)) {
       this.addFailureAtNode(expression, Rule.formatMessage());
     }
 
     super.visitBinaryExpression(expression);
   }
 
-  private isDetectedPattern(expression: ts.BinaryExpression): boolean {
-    return this.isAssignment(expression) &&
-          (this.isIdentifier(expression.left) || this.isPropertyWithNoAccessors(expression.left));
-  }
-
-  private shouldReportFailure(expression: ts.BinaryExpression): boolean {
-    return areEquivalent(expression.left, expression.right) ||
-           this.isArrayWithSpreadExpressionOnly(expression.right, expression.left) ||
-           this.isArrayReverseAssignment(expression.left, expression.right);
+  private isSelfAssignment(expression: ts.BinaryExpression): boolean {
+    return (
+      areEquivalent(expression.left, expression.right) ||
+      this.isArrayWithSpreadExpressionOnly(expression.right, expression.left) ||
+      this.isArrayReverseAssignment(expression.left, expression.right)
+    );
   }
 
   private isAssignment(expression: ts.BinaryExpression) {
@@ -76,24 +73,25 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     return is(expression, ts.SyntaxKind.Identifier);
   }
 
-  private isPropertyWithNoAccessors(expression: ts.Expression) {
-    return is(expression, ts.SyntaxKind.PropertyAccessExpression) && !this.hasAccessors(expression);
-  }
-
   private hasAccessors(node: ts.Node) {
     const symbol = this.getTypeChecker().getSymbolAtLocation(node);
     const declarations = symbol && symbol.declarations;
-    return declarations && declarations.some(declaration => is(declaration, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor))
+    return (
+      declarations &&
+      declarations.some(declaration => is(declaration, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor))
+    );
   }
 
-  private isArrayWithSpreadExpressionOnly(expression: ts.Expression, variable: ts.Node) : boolean {
-    const arrayLiteral = expression as ArrayLiteralExpression;
-    if (!arrayLiteral || !arrayLiteral.elements || arrayLiteral.elements.length !== 1) {
-      return false;
+  private isArrayWithSpreadExpressionOnly(expression: ts.Expression, variable: ts.Node): boolean {
+    if (is(expression, ts.SyntaxKind.ArrayLiteralExpression)) {
+      const elements = (expression as ArrayLiteralExpression).elements;
+
+      if (elements.length === 1 && is(elements[0], ts.SyntaxKind.SpreadElement)) {
+        return areEquivalent((elements[0] as SpreadElement).expression, variable);
+      }
     }
 
-    const spread = arrayLiteral.elements[0] as SpreadElement;
-    return spread && spread.expression && areEquivalent(spread.expression, variable);
+    return false;
   }
 
   private isArrayReverseAssignment(left: ts.Expression, right: ts.Expression): boolean {
