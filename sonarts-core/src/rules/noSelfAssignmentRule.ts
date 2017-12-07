@@ -20,7 +20,6 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { SpreadElement, ArrayLiteralExpression } from "typescript";
 import areEquivalent from "../utils/areEquivalent";
 import { is } from "../utils/navigation";
 
@@ -84,10 +83,10 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private isArrayWithSpreadExpressionOnly(expression: ts.Expression, variable: ts.Node): boolean {
     if (is(expression, ts.SyntaxKind.ArrayLiteralExpression)) {
-      const elements = (expression as ArrayLiteralExpression).elements;
+      const elements = (expression as ts.ArrayLiteralExpression).elements;
 
       if (elements.length === 1 && is(elements[0], ts.SyntaxKind.SpreadElement)) {
-        return areEquivalent((elements[0] as SpreadElement).expression, variable);
+        return areEquivalent((elements[0] as ts.SpreadElement).expression, variable);
       }
     }
 
