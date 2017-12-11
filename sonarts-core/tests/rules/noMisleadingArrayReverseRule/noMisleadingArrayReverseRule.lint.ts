@@ -5,6 +5,8 @@ let d;
 
 const b = a.reverse();
 //        ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
+const bb = a.sort();
+//         ^^^^^^^^  {{Move this array "sort" operation to a separate statement.}}
 
 // ok, there is `slice`
 a.slice().reverse().forEach(() => {});
@@ -17,6 +19,7 @@ a.map(() => true).reverse();
 
 // ok, excluded
 a = a.reverse();
+a = a.sort();
 
 d = a.reverse();
 //  ^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
@@ -53,6 +56,10 @@ class Bar {
   public method() {
     const b = this.field.reverse();
     //        ^^^^^^^^^^^^^^^^^^^^  {{Move this array "reverse" operation to a separate statement.}}
+
+    const bb = this.field.sort();
+    //         ^^^^^^^^^^^^^^^^^  {{Move this array "sort" operation to a separate statement.}}
+
 
     // ok
     this.field.reverse();

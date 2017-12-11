@@ -99,15 +99,14 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       this.isCallExpression(right) &&
       this.isPropertyAccessExpression(right.expression) &&
       this.isIdentifier(right.expression.expression) &&
-        this.isArraySortOrReverse(right) &&
-        areEquivalent(right.expression.expression, left)
+      this.isArrayMutatingCall(right.expression) &&
+      areEquivalent(right.expression.expression, left)
     );
   }
 
-  private isArraySortOrReverse(callExpression: ts.CallExpression): boolean {
-    const methodName = callExpression.expression.name.text
-    return this.isArray(callExpression.expression.expression) &&
-           (methodName === "reverse" || methodName == "sort")
+  private isArrayMutatingCall(expression: ts.PropertyAccessExpression): boolean {
+    return nav.isArray(expression.expression, this.getTypeChecker()) && 
+           nav.ARRAY_MUTATING_CALLS.includes(expression.name.text);
   }
 
   private isCallExpression(expression: ts.Expression): expression is ts.CallExpression {
@@ -116,10 +115,5 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private isPropertyAccessExpression(expression: ts.Expression): expression is ts.PropertyAccessExpression {
     return expression.kind === ts.SyntaxKind.PropertyAccessExpression;
-  }
-
-  private isArray(node: ts.Node): boolean {
-    const type = this.getTypeChecker().getTypeAtLocation(node);
-    return !!type.symbol && type.symbol.name === "Array";
   }
 }

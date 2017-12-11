@@ -21,11 +21,12 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { firstLocalAncestor } from "../utils/navigation";
+const nav = require("../utils/navigation");
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-misleading-array-reverse",
-    description: '"Array.reverse" should not be used misleadingly',
+    description: 'Array-mutating methods should not be used misleadingly',
     rationale: tslint.Utils.dedent`
       Many of JavaScript's Array methods return an altered version of the array while leaving the source array intact.
       Array.reverse() is not one of those. Instead, it alters the source array in addition to returning the altered
@@ -39,7 +40,10 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public static MESSAGE = 'Move this array "reverse" operation to a separate statement.';
+  public static getMessage(methodName: string) : string
+  {
+    return `Move this array "${methodName}" operation to a separate statement.`;
+  }
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
@@ -53,43 +57,37 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     // then check that:
     // * callee is a property access expression
     // * left part of callee is array
-    // * the property name is "reverse" or "sort": `foo.reverse()`
+    // * the property is mutating, e.g."reverse" or "sort": `foo.reverse()`
     if (this.isPropertyAccessExpression(callExpression.expression) &&
-        this.isArraySortOrReverse(callExpression)
+        this.isArrayMutatingCall(callExpression.expression)
     ) {
-      // store `foo` from `foo.reverse()`, or `foo.bar` from `foo.bar.reverse()`, etc
-      const reversedArray = callExpression.expression.expression;
+      // store `foo` from `foo.reverse()`, `foo.sort()`, or `foo.bar` from `foo.bar.reverse()`, etc
+      const mutatedArray = callExpression.expression.expression;
 
       if (
         // check that the left part of the property access expression is:
         // * identifier: `foo.reverse()`
         // * another property access expression: `foo.bar.reverse()`
-        this.isIdentifierOrPropertyAccessExpression(reversedArray) &&
+        this.isIdentifierOrPropertyAccessExpression(mutatedArray) &&
         // exlude case `a = a.reverse()`
-        !this.isReverseInSelfAssignment(reversedArray, callExpression.parent) &&
+        !this.isReverseInSelfAssignment(mutatedArray, callExpression.parent) &&
         // check if we face one of the forbidden usages
         this.isForbiddenOperation(callExpression)
       ) {
-        this.addFailureAtNode(callExpression, Rule.MESSAGE);
+        this.addFailureAtNode(callExpression, Rule.getMessage(callExpression.expression.name.text));
       }
     }
 
     super.visitCallExpression(callExpression);
   }
 
-  private isArraySortOrReverse(callExpression: ts.callExpression): boolean {
-    const methodName = callExpression.expression.name.text
-    return this.isArray(callExpression.expression.expression) &&
-           (methodName === "reverse" || methodName == "sort")
+  private isArrayMutatingCall(expression: ts.PropertyAccessExpression): boolean {
+    return nav.isArray(expression.expression, this.getTypeChecker()) && 
+           nav.ARRAY_MUTATING_CALLS.includes(expression.name.text);
   }
 
   private isPropertyAccessExpression(node: ts.Node): node is ts.PropertyAccessExpression {
     return node.kind === ts.SyntaxKind.PropertyAccessExpression;
-  }
-
-  private isArray(node: ts.Node): boolean {
-    const type = this.getTypeChecker().getTypeAtLocation(node);
-    return !!type.symbol && type.symbol.name === "Array";
   }
 
   private isIdentifier(node: ts.Node): node is ts.Identifier {
