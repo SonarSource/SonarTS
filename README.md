@@ -127,7 +127,7 @@ Also available online on :cloud: [SonarCloud](https://sonarcloud.io/)
 ### Testing
 
 The awesome [jest](http://facebook.github.io/jest/) test runner is used. There is just a 
-[little configuration](https://github.com/SonarSource/SonarTS/blob/master/jest.config.js) required 
+[small configuration step](https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/jest.config.js) required 
 to enable TypeScript support.
 
 To run unit tests:
