@@ -12,6 +12,8 @@ standalone statements or preceded by a call that duplicates the original array.
 let b = a.reverse(); // Noncompliant
 
 a = a.reverse(); // Noncompliant
+
+let d = c.sort(); // Noncompliant
 ```
 
 ## Compliant Code Example
@@ -20,4 +22,6 @@ a = a.reverse(); // Noncompliant
 let b = [...a].reverse();
 
 a.reverse();
+
+c.sort(); // this sorts array in place
 ```

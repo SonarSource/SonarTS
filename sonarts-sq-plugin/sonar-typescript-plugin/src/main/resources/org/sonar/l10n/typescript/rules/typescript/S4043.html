@@ -4,11 +4,14 @@ likely not what was intended. </p>
 <h2>Noncompliant Code Example</h2>
 <pre>
 var b = a.reverse(); // Noncompliant
+var d = c.sort(); // Noncompliant
 </pre>
 <h2>Compliant Solution</h2>
 <pre>
 var b = [...a].reverse();  // de-structure and create a new array, so reverse doesn't impact 'a'
 
 a.reverse();
+
+c.sort(); // this sorts array in place
 </pre>
 
