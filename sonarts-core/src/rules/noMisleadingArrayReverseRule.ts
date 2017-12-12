@@ -21,12 +21,12 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { firstLocalAncestor } from "../utils/navigation";
-const nav = require("../utils/navigation");
+import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-misleading-array-reverse",
-    description: 'Array-mutating methods should not be used misleadingly',
+    description: "Array-mutating methods should not be used misleadingly",
     rationale: tslint.Utils.dedent`
       Many of JavaScript's Array methods return an altered version of the array while leaving the source array intact.
       Array.reverse() is not one of those. Instead, it alters the source array in addition to returning the altered
@@ -40,8 +40,7 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public static getMessage(methodName: string) : string
-  {
+  public static getMessage(methodName: string): string {
     return `Move this array "${methodName}" operation to a separate statement.`;
   }
 
@@ -58,8 +57,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     // * callee is a property access expression
     // * left part of callee is array
     // * the property is mutating, e.g."reverse" or "sort": `foo.reverse()`
-    if (this.isPropertyAccessExpression(callExpression.expression) &&
-        this.isArrayMutatingCall(callExpression.expression)
+    if (
+      this.isPropertyAccessExpression(callExpression.expression) &&
+      this.isArrayMutatingCall(callExpression.expression)
     ) {
       // store `foo` from `foo.reverse()`, `foo.sort()`, or `foo.bar` from `foo.bar.reverse()`, etc
       const mutatedArray = callExpression.expression.expression;
@@ -82,8 +82,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private isArrayMutatingCall(expression: ts.PropertyAccessExpression): boolean {
-    return nav.isArray(expression.expression, this.getTypeChecker()) && 
-           nav.ARRAY_MUTATING_CALLS.includes(expression.name.text);
+    return isArray(expression.expression, this.getTypeChecker()) && ARRAY_MUTATING_CALLS.includes(expression.name.text);
   }
 
   private isPropertyAccessExpression(node: ts.Node): node is ts.PropertyAccessExpression {

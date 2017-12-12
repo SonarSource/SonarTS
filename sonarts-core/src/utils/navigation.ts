@@ -213,16 +213,6 @@ export function constructorOf(clazz: ts.ClassDeclaration | ts.ClassExpression): 
   return clazz.members.find(member => member.kind === ts.SyntaxKind.Constructor) as ts.ConstructorDeclaration;
 }
 
-export function isArray(node: ts.Node, typeChecker: ts.TypeChecker): boolean {
-  const type = typeChecker.getTypeAtLocation(node);
-  return !!type.symbol && type.symbol.name === "Array";
-}
-
-export const ARRAY_MUTATING_CALLS = [
-  "reverse",
-  "sort"
-];
-
 export const FUNCTION_LIKE = [
   Kind.FunctionDeclaration,
   Kind.FunctionExpression,
