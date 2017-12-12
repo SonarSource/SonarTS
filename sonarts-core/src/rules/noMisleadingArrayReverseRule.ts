@@ -29,8 +29,7 @@ export class Rule extends tslint.Rules.TypedRule {
     description: "Array-mutating methods should not be used misleadingly",
     rationale: tslint.Utils.dedent`
       Many of JavaScript's Array methods return an altered version of the array while leaving the source array intact.
-      Array.reverse() is not one of those. Instead, it alters the source array in addition to returning the altered
-      version.
+      reverse and sort are not one of these. Instead, they alter the source array in addition to returning the altered version, which is likely not what was intended.
       To make sure maintainers are explicitly aware of this change to the original array, calls to reverse() should be
       standalone statements or preceded by a call that duplicates the original array.`,
     optionsDescription: "",
