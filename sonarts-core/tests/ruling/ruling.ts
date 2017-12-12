@@ -138,23 +138,19 @@ function getProgramFiles(program: ts.Program): ts.SourceFile[] {
 }
 
 function addErrorsToResults(results: Results, ruleName: string, fileName: string, errorLines: number[]): Results {
+  const nextResults = { ...results };
+  if (!(ruleName in nextResults)) {
+    nextResults[ruleName] = {};
+  }
+
   if (errorLines.length > 0) {
-    const nextResults = { ...results };
-
-    if (!(ruleName in nextResults)) {
-      nextResults[ruleName] = {};
-    }
-
     if (!(fileName in nextResults[ruleName])) {
       nextResults[ruleName][fileName] = [];
     }
 
     nextResults[ruleName][fileName] = [...nextResults[ruleName][fileName], ...errorLines];
-
-    return nextResults;
-  } else {
-    return results;
   }
+  return nextResults;
 }
 
 function getFileNameForSnapshot(path: string): string {
