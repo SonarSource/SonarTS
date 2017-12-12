@@ -6,6 +6,8 @@ Many of JavaScript's Array methods return an altered version of the array while 
 To make sure maintainers are explicitly aware of this change to the original array, calls to `reverse()` should be 
 standalone statements or preceded by a call that duplicates the original array.
 
+This rule raises an issue when the return values of these methods are assigned, which could lead maintainers to overlook the fact that the original value is altered.
+
 ## Noncompliant Code Example
 
 ```typescript
