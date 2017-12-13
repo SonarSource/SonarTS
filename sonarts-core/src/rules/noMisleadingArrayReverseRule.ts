@@ -21,15 +21,15 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { firstLocalAncestor } from "../utils/navigation";
+import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-misleading-array-reverse",
-    description: '"Array.reverse" should not be used misleadingly',
+    description: "Array-mutating methods should not be used misleadingly",
     rationale: tslint.Utils.dedent`
       Many of JavaScript's Array methods return an altered version of the array while leaving the source array intact.
-      Array.reverse() is not one of those. Instead, it alters the source array in addition to returning the altered
-      version.
+      reverse and sort are not one of these. Instead, they alter the source array in addition to returning the altered version, which is likely not what was intended.
       To make sure maintainers are explicitly aware of this change to the original array, calls to reverse() should be
       standalone statements or preceded by a call that duplicates the original array.`,
     optionsDescription: "",
@@ -39,7 +39,9 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public static MESSAGE = 'Move this array "reverse" operation to a separate statement.';
+  public static getMessage(methodName: string): string {
+    return `Move this array "${methodName}" operation to a separate statement.`;
+  }
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
@@ -53,39 +55,37 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     // then check that:
     // * callee is a property access expression
     // * left part of callee is array
-    // * the property name is "reverse": `foo.reverse()`
+    // * the property is mutating, e.g."reverse" or "sort": `foo.reverse()`
     if (
       this.isPropertyAccessExpression(callExpression.expression) &&
-      this.isArray(callExpression.expression.expression) &&
-      callExpression.expression.name.text === "reverse"
+      this.isArrayMutatingCall(callExpression.expression)
     ) {
-      // store `foo` from `foo.reverse()`, or `foo.bar` from `foo.bar.reverse()`, etc
-      const reversedArray = callExpression.expression.expression;
+      // store `foo` from `foo.reverse()`, `foo.sort()`, or `foo.bar` from `foo.bar.reverse()`, etc
+      const mutatedArray = callExpression.expression.expression;
 
       if (
         // check that the left part of the property access expression is:
         // * identifier: `foo.reverse()`
         // * another property access expression: `foo.bar.reverse()`
-        this.isIdentifierOrPropertyAccessExpression(reversedArray) &&
+        this.isIdentifierOrPropertyAccessExpression(mutatedArray) &&
         // exlude case `a = a.reverse()`
-        !this.isReverseInSelfAssignment(reversedArray, callExpression.parent) &&
+        !this.isReverseInSelfAssignment(mutatedArray, callExpression.parent) &&
         // check if we face one of the forbidden usages
         this.isForbiddenOperation(callExpression)
       ) {
-        this.addFailureAtNode(callExpression, Rule.MESSAGE);
+        this.addFailureAtNode(callExpression, Rule.getMessage(callExpression.expression.name.text));
       }
     }
 
     super.visitCallExpression(callExpression);
   }
 
-  private isPropertyAccessExpression(node: ts.Node): node is ts.PropertyAccessExpression {
-    return node.kind === ts.SyntaxKind.PropertyAccessExpression;
+  private isArrayMutatingCall(expression: ts.PropertyAccessExpression): boolean {
+    return isArray(expression.expression, this.getTypeChecker()) && ARRAY_MUTATING_CALLS.includes(expression.name.text);
   }
 
-  private isArray(node: ts.Node): boolean {
-    const type = this.getTypeChecker().getTypeAtLocation(node);
-    return !!type.symbol && type.symbol.name === "Array";
+  private isPropertyAccessExpression(node: ts.Node): node is ts.PropertyAccessExpression {
+    return node.kind === ts.SyntaxKind.PropertyAccessExpression;
   }
 
   private isIdentifier(node: ts.Node): node is ts.Identifier {

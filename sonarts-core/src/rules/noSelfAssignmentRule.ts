@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { is } from "../utils/navigation";
+import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -99,10 +100,13 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       this.isCallExpression(right) &&
       this.isPropertyAccessExpression(right.expression) &&
       this.isIdentifier(right.expression.expression) &&
-      this.isArray(right.expression.expression) &&
-      right.expression.name.text === "reverse" &&
+      this.isArrayMutatingCall(right.expression) &&
       areEquivalent(right.expression.expression, left)
     );
+  }
+
+  private isArrayMutatingCall(expression: ts.PropertyAccessExpression): boolean {
+    return isArray(expression.expression, this.getTypeChecker()) && ARRAY_MUTATING_CALLS.includes(expression.name.text);
   }
 
   private isCallExpression(expression: ts.Expression): expression is ts.CallExpression {
@@ -111,10 +115,5 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private isPropertyAccessExpression(expression: ts.Expression): expression is ts.PropertyAccessExpression {
     return expression.kind === ts.SyntaxKind.PropertyAccessExpression;
-  }
-
-  private isArray(node: ts.Node): boolean {
-    const type = this.getTypeChecker().getTypeAtLocation(node);
-    return !!type.symbol && type.symbol.name === "Array";
   }
 }
