@@ -106,8 +106,30 @@ export function applyExecutors(
           return variable ? state.pushSV(value).setSV(variable, value) : state;
         }
       }, state);
+    } else if (
+      expression.operatorToken.kind == ts.SyntaxKind.EqualsEqualsToken ||
+      expression.operatorToken.kind == ts.SyntaxKind.EqualsEqualsEqualsToken
+    ) {
+      return equalityExpression(state, function(state) { return state.constrainToTruthy() })
+    } else if (
+      expression.operatorToken.kind == ts.SyntaxKind.ExclamationEqualsToken ||
+      expression.operatorToken.kind == ts.SyntaxKind.ExclamationEqualsEqualsToken
+    ) {
+      return equalityExpression(state, function(state) { return state.constrainToFalsy() })
     }
     return state.pushSV(simpleSymbolicValue());
+  }
+
+  function equalityExpression(programState: ProgramState, constrainer: (state: ProgramState) => ProgramState | undefined): ProgramState{
+    const [sv1, oncePoppedState] = programState.popSV();
+    const [sv2, twicePoppedState] = oncePoppedState.popSV();
+
+    const stateWithExpressionSV = twicePoppedState.pushSV(simpleSymbolicValue());
+    const constrainedState = constrainer(stateWithExpressionSV);
+    if (!constrainedState) {
+      throw new Error("New SV could not be constrained");
+    }
+    return sv1 && sv2 && sv1 == sv2 ? constrainedState : stateWithExpressionSV;
   }
 
   function variableDeclaration(declaration: ts.VariableDeclaration) {
