@@ -11,6 +11,16 @@
 
 set -euo pipefail
 
+#install maven
+function configureTravis {
+  mkdir -p ~/.local
+  curl -sSL https://github.com/SonarSource/travis-utils/tarball/v42 | tar zx --strip-components 1 -C ~/.local
+  source ~/.local/bin/install
+}
+
+configureTravis
+. ~/.local/bin/installMaven35
+
 #install sonar-scanner
 pushd ~ > /dev/null
 if [ ! -d "sonar-scanner-3.0.3.778-linux/bin" ]; then
