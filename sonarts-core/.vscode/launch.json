@@ -7,10 +7,21 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Jest Tests",
+      "name": "All Tests",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
       "args": [
         "-i"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Current Open Test",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "-i",
+        "${fileBasenameNoExtension}"
       ],
       "internalConsoleOptions": "openOnSessionStart"
     }
