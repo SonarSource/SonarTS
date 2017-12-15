@@ -18,10 +18,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as path from "path";
-import { start } from "../../src/runner/language-service";
+import { start, createService, FileCache } from "../../src/runner/language-service";
 import * as net from "net";
+import * as nav from "../../src/utils/navigation";
+import * as ts from "typescript";
+import { Identifier, LanguageService } from "typescript";
 
-it("should ping", done => {
+it.skip("should survive within a server", done => {
   const port = start([
     "/home/carlobottiglieri/dev/SonarTS/sonarts-core/src/runner/incremental-compilation-project/file1.ts",
   ]);
@@ -30,7 +33,8 @@ it("should ping", done => {
     console.log("Connected");
     client.write(
       JSON.stringify({
-        file: "/home/carlobottiglieri/dev/SonarTS/sonarts-core/src/runner/incremental-compilation-project/file1.ts",
+        file:
+          "/home/carlobottiglieri/dev/SonarTS/sonarts-core/tests/runner/fixtures/incremental-compilation-project/file1.ts",
         content: `
         import { foo } from "./file2";
         let y:string = foo();`,
@@ -48,3 +52,40 @@ it("should ping", done => {
     done();
   });
 });
+
+it("should return type information", () => {
+  const file1 =
+    "/home/carlobottiglieri/dev/SonarTS/sonarts-core/tests/runner/fixtures/incremental-compilation-project/file1.ts";
+  const file2 =
+    "/home/carlobottiglieri/dev/SonarTS/sonarts-core/tests/runner/fixtures/incremental-compilation-project/file2.ts";
+  const cache = new FileCache();
+  const service = createService([file1], {}, cache);
+  expect(getType(service, file1, "x")).toBe("number");
+
+  cache.newContent({
+    file: file2,
+    content: `export function foo() { return "0"; }`,
+  });
+
+  cache.newContent({
+    file: file1,
+    content: `
+    import { foo } from "./file2";
+    const x = foo();`,
+  });
+
+  expect(getType(service, file1, "x")).toBe("string");
+});
+
+function getType(service: LanguageService, file: string, identifierName: string) {
+  const program = service.getProgram();
+  const sourceFile = program.getSourceFile(file);
+  const xNode = nav
+    .descendants(sourceFile)
+    .filter(descendant => nav.is(descendant, ts.SyntaxKind.Identifier))
+    .map(descendant => descendant as Identifier)
+    .find(identifier => identifier.getText() == identifierName);
+
+  const typeChecker = program.getTypeChecker();
+  return typeChecker.typeToString(typeChecker.getTypeAtLocation(xNode));
+}

@@ -22,13 +22,12 @@ import * as ts from "typescript";
 import * as net from "net";
 
 export function start(rootFileNames: string[]): number {
-  const holder = { file: "hello", content: "" };
-  const service = createService(rootFileNames, {}, holder);
+  const cache = new FileCache();
+  const service = createService(rootFileNames, {}, cache);
   const server = net.createServer(socket => {
     socket.on("data", data => {
       const update = JSON.parse(data.toString());
-      holder.file = update.file;
-      holder.content = update.content;
+      cache.newContent(update);
       socket.write(
         service
           .getProgram()
@@ -45,25 +44,18 @@ export function start(rootFileNames: string[]): number {
   return port;
 }
 
-function createService(
+export function createService(
   rootFileNames: string[],
   options: ts.CompilerOptions,
-  holder: { file: string; content: string },
+  cache: FileCache,
 ): ts.LanguageService {
-  const files: ts.MapLike<{ version: number }> = {};
-
-  // initialize the list of files
-  rootFileNames.forEach(fileName => {
-    files[fileName] = { version: 0 };
-  });
-
-  // Create the language service host to allow the LS to communicate with the host
   const servicesHost: ts.LanguageServiceHost = {
     getScriptFileNames: () => rootFileNames,
-    getScriptVersion: fileName => files[fileName] && files[fileName].version.toString(),
+    getScriptVersion: fileName => cache.version(fileName),
     getScriptSnapshot: fileName => {
-      if (holder.file == fileName) {
-        return ts.ScriptSnapshot.fromString(holder.content);
+      const cached = cache.retrieve(fileName);
+      if (cached) {
+        return ts.ScriptSnapshot.fromString(cached);
       }
 
       if (!fs.existsSync(fileName)) {
@@ -82,4 +74,30 @@ function createService(
 
   // Create the language service files
   return ts.createLanguageService(servicesHost, ts.createDocumentRegistry());
+}
+
+export class FileCache {
+  private files: ts.MapLike<VersionedContent> = {};
+
+  newContent(update: { file: string; content: string }): void {
+    const previous = this.files[update.file];
+    let version = 0;
+    if (previous) {
+      version = previous.version + 1;
+    }
+    this.files[update.file] = { content: update.content, version };
+  }
+
+  version(file: string) {
+    return this.files[file] && this.files[file].version.toString();
+  }
+
+  retrieve(file: string): string | undefined {
+    return this.files[file] && this.files[file].content;
+  }
+}
+
+interface VersionedContent {
+  content: string;
+  version: number;
 }
