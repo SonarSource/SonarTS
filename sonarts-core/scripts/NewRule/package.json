@@ -1,0 +1,10 @@
+{
+  "name": "nodejs-console-app1",
+  "version": "0.0.0",
+  "description": "NodejsConsoleApp1",
+  "main": "src/main.js",
+  "dependencies": {
+    "@types/node": "^8.0.57",
+    "typescript": "^2.6.2"
+  }
+}
