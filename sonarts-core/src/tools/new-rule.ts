@@ -1,32 +1,66 @@
-import fs = require("fs");
+import * as fs from "fs";
+
+const rootFolder = `${__dirname}/../../..`;
+const rspecRuleFolder = `${rootFolder}/sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/typescript`;
+
+if (process.argv.length != 5) {
+    showHelp();
+    throw new Error("invalid number of arguments");
+}
+
+let rspecId = process.argv[2];
+const ruleClassName = process.argv[3];
+let isTypescriptOnly: boolean = process.argv[4] == "true";
+
+verifyClassName(ruleClassName);
+verifyRspecId(rspecId);
+
+const ruleNameDash: string = getDashName(ruleClassName);
+const { ruleTitle, rspecKey } = getRuleTitleAndRspecKey(rspecRuleFolder, rspecId);
+
+//// From README.md:
+//- Add rule key to tslint-sonarts.json
+updateSonarTsJson(rootFolder, ruleNameDash);
+
+//- Create file for rule implementation in src/rules. File name should start with lower case and have suffix Rule
+//- Create test folder in test/rules with the name of the rule file
+//- In this folder create files <rule file name>.test.ts and <rule file name>.lint.ts
+createFiles(rootFolder, ruleClassName, ruleNameDash, ruleTitle, rspecKey, isTypescriptOnly);
+
+//- In folder docs/rules create rule documentation file <rule key>.md
+const ruleDescription: string = getDescription(rspecRuleFolder, rspecId);
+fs.writeFileSync(`${rootFolder}/sonarts-core/docs/rules/${ruleNameDash}.md`, ruleDescription);
+
+//- In README.md add reference to the documentation file.
+updateReadme(rootFolder, ruleTitle, ruleNameDash);
+
 
 function showHelp() {
-  console.log("");
-  console.log("Before using the script, first run the rule API from SonarTS folder. For example:");
-  console.log(
-    "java -jar /tools/rule-api-1.17.0.1017.jar generate -language ts -rule S4043 -preserve-filenames -no-language-in-filenames ",
-  );
-  console.log("");
-  console.log("Usage:");
-  console.log("node main.ts RSPEC-KEY className isTypescriptOnly");
-  console.log("");
-  console.log("Example:");
-  console.log("node main.ts S4043 myFirstAwesomeRule true");
-  console.log("");
+    console.log(
+`
+Before using the script, first run the rule API from SonarTS folder. For example:
+    "java -jar /tools/rule-api-1.17.0.1017.jar generate -language ts -rule S4043 -preserve-filenames -no-language-in-filenames
+
+Usage:
+    RSPEC-KEY className isTypescriptOnly
+
+Example:
+    S4043 myFirstAwesomeRule true
+`);
 }
 
 function escapeRegExp(str: string) {
   return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
 
-function replace(text: string, dictionary): string {
+function replace(text: string, dictionary: any): string {
   for (let tok in dictionary) {
     text = text.replace(new RegExp(escapeRegExp(tok), "g"), dictionary[tok]);
   }
   return text;
 }
 
-function copyWithReplace(src: string, dest: string, dict) {
+function copyWithReplace(src: string, dest: string, dict: any) {
   let content = fs.readFileSync(src).toString();
   let newContent = replace(content, dict);
   fs.writeFileSync(dest, newContent);
@@ -40,29 +74,28 @@ function createFiles(
   rspecKey: string,
   isTypescriptOnly: boolean,
 ) {
-  const templatesFolder = `${__dirname}/../templates`;
-  const ruleTemplatePath = `${templatesFolder}/rule_template.ts`;
+  const templatesFolder = `${rootFolder}/sonarts-core/resources/new-rule-templates`;
 
-  let dict = {};
-  dict["___RULE_NAME_DASH___"] = ruleNameDash;
-  dict["___RULE_CLASS_NAME___"] = ruleClassName;
-  dict["___RULE_TITLE___"] = ruleTitle;
-  dict["___RSPEC_KEY___"] = rspecKey;
-  dict["___IS_TYPESCRIPT_ONLY___"] = isTypescriptOnly;
+  let ruleMetadata: any = {};
+  ruleMetadata["___RULE_NAME_DASH___"] = ruleNameDash;
+  ruleMetadata["___RULE_CLASS_NAME___"] = ruleClassName;
+  ruleMetadata["___RULE_TITLE___"] = ruleTitle;
+  ruleMetadata["___RSPEC_KEY___"] = rspecKey;
+  ruleMetadata["___IS_TYPESCRIPT_ONLY___"] = isTypescriptOnly;
 
   copyWithReplace(
-    `${templatesFolder}/rule_template.ts`,
+    `${templatesFolder}/rule.template_ts`,
     `${rootFolder}/sonarts-core/src/rules/${ruleClassName}.ts`,
-    dict,
+      ruleMetadata,
   );
 
   const testPath = `${rootFolder}/sonarts-core/tests/rules/${ruleClassName}`;
 
-  fs.mkdirSync(`${testPath}`);
+  fs.mkdirSync(testPath);
 
-  copyWithReplace(`${templatesFolder}/testCase_template.ts`, `${testPath}/${ruleClassName}.test.ts`, dict);
+  copyWithReplace(`${templatesFolder}/testCase.template_ts`, `${testPath}/${ruleClassName}.lint.ts`, ruleMetadata);
 
-  copyWithReplace(`${templatesFolder}/unitTest_template.ts`, `${testPath}/${ruleClassName}.lint.ts`, dict);
+  copyWithReplace(`${templatesFolder}/unitTest.template_ts`, `${testPath}/${ruleClassName}.test.ts`, ruleMetadata);
 }
 
 function updateSonarTsJson(rootFolder: string, ruleNameDash: string) {
@@ -86,7 +119,7 @@ function getRuleTitleAndRspecKey(rspecRuleFolder: string, rspecId: string) {
 
 function getDescription(rspecRuleFolder: string, rspecId: string) {
   try {
-    let replaceDict = {};
+    let replaceDict: any = {};
     replaceDict["<em>"] = "";
     replaceDict["</em>"] = "";
     replaceDict["<p>"] = "";
@@ -111,13 +144,13 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
   const readmePath = `${rootFolder}/README.md`;
   let readme = fs.readFileSync(readmePath).toString();
 
-  var lines = readme.split("\n");
+  const lines = readme.split("\n");
 
-  let result = new Array();
+  let result = [];
 
-  let resultsBlock1 = new Array();
-  let resultsBlock2 = new Array();
-  let resultsBlock3 = new Array();
+  let resultsBlock1 = [];
+  let resultsBlock2 = [];
+  let resultsBlock3 = [];
 
   let ruleValue = `* ${ruleTitle} ([\`${ruleNameDash}\`])`;
   resultsBlock1.push(ruleValue);
@@ -182,7 +215,7 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
     throw new Error("could not parse README.md!");
   }
 
-  var dict2 = {};
+  var dict2: any = {};
   for (let i = 0; i < resultsBlock1.length; i++) {
     dict2[resultsBlock2[i]] = resultsBlock1[i];
   }
@@ -231,37 +264,3 @@ function verifyRspecId(rspecId: string) {
 function getDashName(ruleClassName: string) {
   return ruleClassName.slice(0, -4).replace(/([A-Z])/g, letter => "-" + letter.toLowerCase());
 }
-
-const rootFolder = `${__dirname}/../../../..`;
-const rspecRuleFolder = `${rootFolder}/sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/typescript`;
-
-if (process.argv.length != 5) {
-  showHelp();
-  throw new Error("invalid number of arguments");
-}
-
-let rspecId = process.argv[2];
-const ruleClassName = process.argv[3];
-let isTypescriptOnly: boolean = process.argv[4] == "true";
-
-verifyClassName(ruleClassName);
-verifyRspecId(rspecId);
-
-const ruleNameDash: string = getDashName(ruleClassName);
-const { ruleTitle, rspecKey } = getRuleTitleAndRspecKey(rspecRuleFolder, rspecId);
-
-//// From README.md:
-//- Add rule key to tslint-sonarts.json
-updateSonarTsJson(rootFolder, ruleNameDash);
-
-//- Create file for rule implementation in src/rules. File name should start with lower case and have suffix Rule
-//- Create test folder in test/rules with the name of the rule file
-//- In this folder create files <rule file name>.test.ts and <rule file name>.lint.ts
-createFiles(rootFolder, ruleClassName, ruleNameDash, ruleTitle, rspecKey, isTypescriptOnly);
-
-//- In folder docs/rules create rule documentation file <rule key>.md
-const ruleDescription: string = getDescription(rspecRuleFolder, rspecId);
-fs.writeFileSync(`${rootFolder}/sonarts-core/docs/rules/${ruleNameDash}.md`, ruleDescription);
-
-//- In README.md add reference to the documentation file.
-updateReadme(rootFolder, ruleTitle, ruleNameDash);
