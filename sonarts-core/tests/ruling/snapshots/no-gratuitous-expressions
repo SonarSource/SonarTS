@@ -1,9 +1,16 @@
+src/TypeScript/src/compiler/utilities.ts: 2945,2945,2945,2945
 src/TypeScript/src/compiler/binder.ts: 393,393,393,393
 src/TypeScript/src/compiler/moduleNameResolver.ts: 884,884,884,884,884
+src/TypeScript/src/compiler/checker.ts: 2121,2121,2121,2121
 src/TypeScript/src/compiler/transformers/ts.ts: 1518,1518,1518,1518
-src/angular/packages/benchpress/src/metric/perflog_metric.ts: 319
+src/angular/packages/common/src/pipes/date_pipe.ts: 106
+src/angular/packages/upgrade/static/src/common/util.ts: 83
+src/angular/packages/upgrade/src/common/util.ts: 83
+src/console/src/utils/polyfils.ts: 62
+src/console/src/views/models/FieldPopup/FieldPopupState.ts: 260
 src/postgraphql/src/postgres/inventory/paginator/PgCollectionPaginator.ts: 72,77
 src/rxjs/src/Subscription.ts: 96
 src/rxjs/src/observable/TimerObservable.ts: 92
+src/vscode/src/vs/editor/common/model/editableTextModel.ts: 218
 src/vscode/src/vs/workbench/browser/parts/editor/titleControl.ts: 344
 src/vscode/src/vs/workbench/parts/debug/electron-browser/debugService.ts: 401
