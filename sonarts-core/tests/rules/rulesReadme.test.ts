@@ -19,12 +19,11 @@
  */
 import * as fs from "fs";
 import * as path from "path";
-import { Utils } from "tslint";
 
 it("should contain all rules listed in extension", () => {
   const profileFilePath = path.join(__dirname, "../../tslint-sonarts.json");
   const profile = JSON.parse(fs.readFileSync(profileFilePath, "utf8"));
   const readmeFilePath = path.join(__dirname, "../../../README.md");
   const readme = fs.readFileSync(readmeFilePath, "utf8");
-  const configuredRules = Object.keys(profile.rules).forEach((ruleName, _) => expect(readme).toContain(ruleName));
+  Object.keys(profile.rules).forEach((ruleName, _) => expect(readme).toContain(ruleName));
 });

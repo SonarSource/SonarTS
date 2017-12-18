@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as tslint from "tslint";
 import * as ts from "typescript";
 import { ControlFlowGraph } from "../../src/cfg/cfg";
 import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
@@ -447,10 +446,6 @@ function buildVisFromSource(source: string, scriptKind: ts.ScriptKind = ts.Scrip
   const sourceFile = parseString(source, scriptKind);
   const cfg = ControlFlowGraph.fromStatements(Array.from(sourceFile.statements));
   return takeData(toVis(cfg));
-}
-
-function takeSingleLabel(data: VisData) {
-  return data.nodes.get(0).label;
 }
 
 function takeData(data: VisData) {

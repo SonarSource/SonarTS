@@ -24,7 +24,7 @@ it("should process full input", () => {
   const filepath = path.join(__dirname, "./fixtures/runner_project/sample.lint.ts");
   const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
   const result = processRequest(inputForRequest(filepath, tsconfig));
-  result.forEach(r => r.issues.forEach(i => (i.name = path.normalize(i.name))));
+  result.forEach((r: any) => r.issues.forEach((i: any) => (i.name = path.normalize(i.name))));
 
   expect(result).toEqual([
     {

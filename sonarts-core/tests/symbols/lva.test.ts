@@ -17,12 +17,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as path from "path";
 import * as ts from "typescript";
-import { ControlFlowGraph } from "../../src/cfg/cfg";
-import { SymbolTableBuilder } from "../../src/symbols/builder";
 import { LiveVariableAnalyzer, LVAReturn } from "../../src/symbols/lva";
-import { SymbolTable, UsageFlag } from "../../src/symbols/table";
+import { SymbolTable } from "../../src/symbols/table";
 import { descendants, FUNCTION_LIKE, is } from "../../src/utils/navigation";
 import { buildSymbolTable, getNode } from "./test_utils";
 import { FunctionLikeDeclaration } from "typescript";

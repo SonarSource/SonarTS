@@ -1,1 +1,1 @@
-export const IMPORTED_ARRAY = [];
+export const IMPORTED_ARRAY: number[] = [];

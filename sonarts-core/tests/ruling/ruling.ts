@@ -25,7 +25,7 @@ import { executeRule } from "../../src/runner/rules";
 import * as tslint from "tslint";
 import * as ts from "typescript";
 
-interface Results {
+export interface Results {
   [rule: string]: {
     [file: string]: number[];
   };

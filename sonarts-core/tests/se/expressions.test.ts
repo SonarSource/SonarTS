@@ -54,7 +54,7 @@ it("postfix increment", () => {
 });
 
 it("does not push value to the stack", () => {
-  const { top, empty } = inspectStack(`let x = foo(); _inspect(_);`);
+  const { empty } = inspectStack(`let x = foo(); _inspect(_);`);
   expect(empty).toBe(true);
 });
 

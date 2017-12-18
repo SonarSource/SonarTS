@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { CfgBlock, CfgBlockWithPredecessors, CfgGenericBlock } from "../../src/cfg/cfg";
+import { CfgGenericBlock } from "../../src/cfg/cfg";
 
 it("should create simple label", () => {
   const block = new CfgGenericBlock();

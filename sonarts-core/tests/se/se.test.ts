@@ -17,10 +17,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { isEqual } from "lodash";
 import { inspectSV, inspectSVFromResult, executeOneFunction } from "../utils/seTestUtils";
 import { simpleSymbolicValue, undefinedSymbolicValue, numericLiteralSymbolicValue } from "../../src/se/symbolicValues";
-import { inspect } from "util";
 
 describe("Variable Declaration", () => {
   it("creates unknown symbolic value", () => {

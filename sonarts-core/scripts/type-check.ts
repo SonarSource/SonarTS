@@ -17,22 +17,31 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as path from "path";
-import * as tslint from "tslint";
-import { getIssues } from "../../src/runner/rules";
+import { exec } from "child_process";
+import { promisify } from "util";
+import * as ora from "ora";
 
-it("should run sonarts rules", () => {
-  const sampleFile = path.join(__dirname, "./fixtures/runner_project/identical_expressions_and_deadstore.lint.ts");
-  const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
-  const program = tslint.Linter.createProgram(tsconfig);
+const execPromise = promisify(exec);
 
-  const issues = getIssues(
-    [
-      { ruleName: "no-identical-expressions", ruleArguments: [], ruleSeverity: "error", disabledIntervals: [] },
-      { ruleName: "no-dead-store", ruleArguments: [], ruleSeverity: "error", disabledIntervals: [] },
-    ],
-    program,
-    program.getSourceFile(sampleFile),
-  );
-  expect(issues.issues.length).toBe(2);
-});
+async function runTSC(configPath: string) {
+  const spinner = ora(`Type checking "${configPath}"`).start();
+  try {
+    await execPromise(`./node_modules/.bin/tsc -p ${configPath}`);
+    spinner.succeed();
+  } catch (error) {
+    spinner.fail();
+    console.error(error.stdout);
+    process.exit(1);
+  }
+}
+
+async function runAll() {
+  await runTSC(".");
+  await runTSC("tests");
+}
+
+if (process.argv.length > 2) {
+  runTSC(process.argv[2]);
+} else {
+  runAll();
+}

@@ -17,24 +17,19 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { join } from "path";
 import * as ts from "typescript";
 import * as tsutils from "tsutils";
-import * as tslint from "tslint";
 import { is, descendants } from "../../src/utils/navigation";
-import { parseString } from "../../src/utils/parser";
 import { execute, ExecutionResult } from "../../src/se/SymbolicExecution";
 import { ProgramState, createInitialState } from "../../src/se/programStates";
-import { isEqual } from "lodash";
-import { SymbolicValue, simpleSymbolicValue } from "../../src/se/symbolicValues";
+import { SymbolicValue } from "../../src/se/symbolicValues";
 import { build } from "../../src/cfg/builder";
-import { isFunctionDeclaration } from "tsutils";
 import { Constraint } from "../../src/se/constraints";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
 
 export function inspectStack(source: string) {
   const { result } = executeFromSource(source);
-  const { programPoint, programStates } = findInspectCall(result);
+  const { programStates } = findInspectCall(result);
   if (programStates.length !== 1) {
     throw new Error(`Expected 1 result, but got ${programStates.length}`);
   }
