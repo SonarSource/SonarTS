@@ -4,7 +4,9 @@
 .scannerwork/
 .idea/
 *.iml
-.vscode/
+.vscode/*
+*/.vscode/*
+!/sonarts-core/.vscode/launch.json
 
 # ---- NPM pack
 */**/tslint-sonarts-*.tgz

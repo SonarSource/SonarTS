@@ -1,12 +1,13 @@
 # SonarTS [![Build Status](https://travis-ci.org/SonarSource/SonarTS.svg?branch=master)](https://travis-ci.org/SonarSource/SonarTS) [![NPM version](https://badge.fury.io/js/tslint-sonarts.svg)](http://badge.fury.io/js/tslint-sonarts) [![Quality Gate](https://next.sonarqube.com/sonarqube/api/badges/gate?key=sonarts)](https://next.sonarqube.com/sonarqube/dashboard?id=sonarts) [![Coverage](https://next.sonarqube.com/sonarqube/api/badges/measure?key=sonarts&metric=coverage)](https://next.sonarqube.com/sonarqube/component_measures/domain/Coverage?id=sonarts)
+
 Static code analyzer for TypeScript detecting bugs and suspicious patterns in your code.
 
 **Follow us on [twitter](https://twitter.com/sonardash)** <br>
 
-*[To analyze pure JavaScript code, see SonarJS](https://github.com/SonarSource/sonarjs)*
-
+_[To analyze pure JavaScript code, see SonarJS](https://github.com/SonarSource/sonarjs)_
 
 How does it work?
+
 * The [TypeScript compiler](https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API) provides [**AST**](https://en.wikipedia.org/wiki/Abstract_syntax_tree) and **type** information
 * On top of it we build the **symbol model** and the [**control flow**](https://en.wikipedia.org/wiki/Control_flow_graph) model
 * Some rules are based on AST equivalence (like [no-all-duplicated-branches][`no-all-duplicated-branches`] or [no-identical-expressions][`no-identical-expressions`]).
@@ -78,108 +79,42 @@ How does it work?
 [`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
-
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
 ## Use in TSLint
+
 * If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).
 * Install `tslint-sonarts`
+
 ```sh
 npm install tslint-sonarts      # install in your project
 npm install tslint-sonarts -g   # or install globally
 ```
 
 * Add `tslint-sonarts` to your `tslint.json` `extends` property:
+
 ```javascript
 {
   "extends": ["tslint:recommended", "tslint-sonarts"]
 }
 ```
+
 * Some of the rules in SonarTS require type information. So in order to provide as much value as possible run TSLint with **type-checker**, for example:
+
 ```
 tslint --type-check --project tsconfig.json -c tslint.json 'src/**/*.ts'
 ```
 
 ## Use in SonarQube
-SonarTS is available as plugin for SonarQube. [SonarQube](https://www.sonarqube.org/) is an open source platform for continuous inspection of code quality. 
+
+SonarTS is available as plugin for SonarQube. [SonarQube](https://www.sonarqube.org/) is an open source platform for continuous inspection of code quality.
 Thanks to the platform, SonarTS provides additional features:
+
 * Code coverage import
 * Duplication detection
-* Various metrics 
+* Various metrics
 * More [rules](https://rules.sonarsource.com/typescript)
 
 See the documentation [here](https://docs.sonarqube.org/display/PLUG/SonarTS) and example project [here](https://github.com/SonarSource/SonarTS-example/).
 
 Also available online on :cloud: [SonarCloud](https://sonarcloud.io/)
-
-## Contribution
-
-### Create New Rule
-
-* Create file for rule implementation in `src/rules`. File name should start with lower case and have suffix `Rule`
-* Create test folder in `test/rules` with the name of the rule file
-* In this folder create files `<rule file name>.test.ts` and `<rule file name>.lint.ts`
-* Run [Ruling](#ruling) test
-* Add rule key to `tslint-sonarts.json`
-* In folder `docs/rules` create rule documentation file `<rule key>.md`
-* In `README.md` add reference to the documentation file.
-
-### Testing
-
-The awesome [jest](http://facebook.github.io/jest/) test runner is used. There is just a 
-[small configuration step](https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/jest.config.js) required 
-to enable TypeScript support.
-
-To run unit tests:
-```
-cd sonarts-core
-yarn test
-```
-
-To run unit tests in watch mode:
-```
-cd sonarts-core
-yarn test --watch
-```
-
-And finally to run unit tests with coverage:
-```
-cd sonarts-core
-yarn test --coverage
-```
-When you run tests with coverage, the `coverage/` directory will be created at the root. You can
-open the web version of the coverage report `coverage/lcov-report/index.html` to see which lines are covered by tests.
-
-To run unit tests for SQ plugin part of the project
-```
-cd sonarts-sq-plugin
-mvn clean install
-```
-
-To build SQ plugin part of the project
-```
-./build.sh
-```
-
-### <a name="ruling"></a>Ruling
-
-The ruling test is a special integration test which launches the analysis of a large code base, 
-and then compares those results to the set of expected issues (stored as snapshot files). 
-To have this code base locally:
-```
- git submodule init
- git submodule update
-```
-
-To run the ruling test:
-```
-cd sonarts-core
-yarn ruling
-yarn ruling --rule <RuleFileName> # to run ruling for a single rule
-yarn ruling --update # to update the snapshots
-yarn ruling --rule <RuleFileName> --update # it is possible to combine both options
-```
-
-### Tools we use
-* Visual Studio Code
-* Prettier (and its extension for VSCode)
