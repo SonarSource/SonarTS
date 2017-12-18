@@ -20,7 +20,7 @@
 import * as path from "path";
 import * as ts from "typescript";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
-import { SymbolTable, UsageFlag } from "../../src/symbols/table";
+import { SymbolTable } from "../../src/symbols/table";
 import { descendants, is } from "../../src/utils/navigation";
 import { parseFile } from "../../src/utils/parser";
 

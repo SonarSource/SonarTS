@@ -18,10 +18,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as fs from "fs";
-import * as glob from "glob";
 import * as path from "path";
 import * as tslint from "tslint";
-import * as ts from "typescript";
 import { parseFile, parseString } from "../src/utils/parser";
 
 const RULE_OPTIONS: tslint.IOptions = {
@@ -81,7 +79,7 @@ function runRuleOnFile(Rule: any, file: string): LintError[] {
 }
 
 function parseErrorsFromMarkup(source: string): LintError[] {
-  const errors = [];
+  const errors: LintError[] = [];
 
   source.split("\n").forEach((line, lineNum) => {
     if (/\^.*{{/.test(line)) {

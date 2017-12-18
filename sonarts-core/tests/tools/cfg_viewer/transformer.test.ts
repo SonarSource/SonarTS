@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as tslint from "tslint";
 import * as ts from "typescript";
 import { DataSet } from "vis";
 import * as cfg from "../../../src/cfg/cfg";
@@ -88,14 +87,13 @@ it("should create unique edge ids", () => {
   });
 });
 
-// prettier removes dangling comma below
-// prettier-ignore
 function branchingBlock(
   trueSuccessor: cfg.CfgBlock,
   falseSuccessor: cfg.CfgBlock,
-  ...elements: string[],
+  ...elements: string[]
 ): cfg.CfgBranchingBlock {
-  const block = new cfg.CfgBranchingBlock("branching", trueSuccessor, falseSuccessor);
+  const branchingElement = ts.createNode(ts.SyntaxKind.IfStatement);
+  const block = new cfg.CfgBranchingBlock("branching", trueSuccessor, falseSuccessor, branchingElement);
   addElements(block, ...elements);
   return block;
 }

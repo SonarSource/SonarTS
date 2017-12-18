@@ -19,7 +19,6 @@
  */
 import * as fs from "fs";
 import * as path from "path";
-import * as ts from "typescript";
 import * as metrics from "../../src/runner/metrics";
 import { parseString } from "../../src/utils/parser";
 

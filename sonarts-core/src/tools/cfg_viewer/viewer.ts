@@ -38,7 +38,6 @@ class Viewer {
       return;
     }
 
-    // tslint:disable-next-line:no-unused-expression
     new Network(this.container, toVisData(graph), {
       height: "500px",
       width: "1000px",
