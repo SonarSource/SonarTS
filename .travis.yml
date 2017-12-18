@@ -9,7 +9,15 @@ jdk:
 git:
   submodules: false
 
-script: ./sonarts-core/travis.sh && ./sonarts-sq-plugin/travis.sh && ./sonarts_mvn_build_deploy_analyze.sh
+jobs:
+  include:
+    - stage: test
+      script: cd sonarts-core && yarn install && yarn test-ts-versions 2.2
+    - script: cd sonarts-core && yarn install && yarn test-ts-versions 2.3
+    - script: cd sonarts-core && yarn install && yarn test-ts-versions 2.4
+    - script: cd sonarts-core && yarn install && yarn test-ts-versions 2.5
+    - stage: build
+      script: ./sonarts-core/travis.sh && ./sonarts-sq-plugin/travis.sh && ./sonarts_mvn_build_deploy_analyze.sh
 
 cache: # yarn
   directories:

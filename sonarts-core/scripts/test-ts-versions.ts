@@ -59,8 +59,10 @@ async function runAll() {
   await runTestsWithTS("2.2");
 }
 
+let runner = process.argv.length > 2 ? runTestsWithTS(process.argv[2]) : runAll();
+
 // install previous TS version after all tests
-runAll().then(
+runner.then(
   () => {
     installTS(current);
   },
