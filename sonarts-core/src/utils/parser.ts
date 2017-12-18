@@ -35,15 +35,16 @@ export function parseString(source: string, scriptKind: ts.ScriptKind = ts.Scrip
  * @throws if parsing error
  */
 export function parseFile(filename: string): { sourceFile: ts.SourceFile; program: ts.Program } {
-  const compilerOptions = { strict: true, target: TARGET };
+  const compilerOptions: ts.CompilerOptions = { strictNullChecks: true, target: TARGET };
   const program = ts.createProgram([filename], compilerOptions);
 
   const syntacticDiagnostics = program.getSyntacticDiagnostics();
   if (syntacticDiagnostics.length > 0) {
     const firstError = syntacticDiagnostics[0];
-    if (firstError.file != null && firstError.start != null) {
+    // ignore parsing errors without location, as well as errors in `node_modules`
+    if (firstError.file != null && firstError.start != null && !firstError.file.fileName.includes("node_modules")) {
       const pos = firstError.file.getLineAndCharacterOfPosition(firstError.start);
-      throw new Error(`Parsing error at position [${pos.line + 1}, ${pos.character}]`);
+      throw new Error(`Parsing error at position [${pos.line + 1}, ${pos.character}];`);
     }
   }
 

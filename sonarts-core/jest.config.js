@@ -2,6 +2,7 @@ module.exports = {
   globals: {
     "ts-jest": {
       skipBabel: true,
+      tsConfigFile: "tests/tsconfig.empty.json",
     },
   },
   mapCoverage: true,
