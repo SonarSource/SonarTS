@@ -18,8 +18,8 @@
     "build-local": "yarn build && yarn test",
     "test": "jest --forceExit",
     "ruling": "ts-node tests/ruling/index.ts",
-    "format": "prettier --write '{src,tests}/**/!(*.lint).ts'",
-    "check-format": "prettier --list-different '{src,tests}/**/!(*.lint).ts'",
+    "format": "prettier --write \"{src,tests}/**/!(*.lint).ts\"",
+    "check-format": "prettier --list-different \"{src,tests}/**/!(*.lint).ts\"",
     "compile-sources": "tsc -p .",
     "type-check-tests": "tsc -p tests --noEmit"
   },
