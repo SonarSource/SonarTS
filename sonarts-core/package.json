@@ -11,13 +11,15 @@
     "clear": "rm -rf lib/*",
     "prepack": "yarn build && cp ../README.md .",
     "postpack": "rm README.md",
-    "build": "yarn install && yarn license-check &&  yarn clear && yarn compile-sources && yarn type-check-tests",
+    "build":
+      "yarn install && yarn license-check && yarn check-format && yarn clear && yarn compile-sources && yarn type-check-tests",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer && webpack",
     "build-ci": "yarn build && yarn test --coverage",
     "build-local": "yarn build && yarn test",
     "test": "jest --forceExit",
     "ruling": "ts-node tests/ruling/index.ts",
     "format": "prettier --write '{src,tests}/**/!(*.lint).ts'",
+    "check-format": "prettier --list-different '{src,tests}/**/!(*.lint).ts'",
     "compile-sources": "tsc -p .",
     "type-check-tests": "tsc -p tests --noEmit"
   },
