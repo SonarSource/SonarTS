@@ -19,24 +19,27 @@
  */
 package org.sonar.plugin.typescript;
 
-import org.junit.Test;
-import org.sonar.api.Plugin;
-import org.sonar.api.SonarQubeSide;
-import org.sonar.api.SonarRuntime;
-import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.utils.Version;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.fs.InputFileFilter;
+import org.sonar.api.config.Configuration;
+import org.sonar.api.utils.WildcardPattern;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class TypeScriptExclusionsFileFilter implements InputFileFilter {
 
-public class TypeScriptPluginTest {
+  private final Configuration configuration;
 
-  @Test
-  public void count_extensions() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SCANNER);
-    Plugin.Context context = new Plugin.Context(runtime);
-    Plugin underTest = new TypeScriptPlugin();
-    underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(13);
+  public TypeScriptExclusionsFileFilter(Configuration configuration) {
+    this.configuration = configuration;
   }
 
+  @Override
+  public boolean accept(InputFile inputFile) {
+    if (!TypeScriptLanguage.KEY.equals(inputFile.language())) {
+      return true;
+    }
+    String[] excludedPatterns = this.configuration.getStringArray(TypeScriptPlugin.TS_EXCLUSIONS_KEY);
+    String relativePath = inputFile.uri().toString();
+    return !WildcardPattern.match(WildcardPattern.create(excludedPatterns), relativePath);
+  }
 }
+

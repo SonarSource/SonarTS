@@ -39,6 +39,9 @@ public class TypeScriptPlugin implements Plugin {
   public static final String NODE_EXECUTABLE = "sonar.typescript.node";
   private static final String NODE_EXECUTABLE_DEFAULT = "node";
 
+  public static final String TS_EXCLUSIONS_KEY = "sonar.typescript.exclusions";
+  public static final String TS_EXCLUSIONS_DEFAULT_VALUE = "**/node_modules/**";
+
   @Override
   public void define(Context context) {
     context.addExtensions(
@@ -50,6 +53,7 @@ public class TypeScriptPlugin implements Plugin {
       SonarWayRecommendedProfile.class,
       TypeScriptRulesDefinition.class,
       LCOVCoverageSensor.class,
+      TypeScriptExclusionsFileFilter.class,
       PropertyDefinition.builder(FILE_SUFFIXES_KEY)
         .defaultValue(FILE_SUFFIXES_DEFVALUE)
         .name("File Suffixes")
@@ -75,6 +79,15 @@ public class TypeScriptPlugin implements Plugin {
         .subCategory(GENERAL_SUBCATEGORY)
         .category(TYPESCRIPT_CATEGORY)
         .onQualifiers(Qualifiers.PROJECT)
+        .build(),
+      PropertyDefinition.builder(TS_EXCLUSIONS_KEY)
+        .defaultValue(TS_EXCLUSIONS_DEFAULT_VALUE)
+        .name("TypeScript Exclusions")
+        .description("List of file path patterns to be excluded from analysis of TypeScript files.")
+        .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
+        .subCategory(GENERAL_SUBCATEGORY)
+        .multiValues(true)
+        .category(TYPESCRIPT_CATEGORY)
         .build()
     );
   }
