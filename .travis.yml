@@ -9,7 +9,7 @@ jdk:
 git:
   submodules: false
 
-script: ./sonarts-core/travis.sh && ./sonarts-sq-plugin/travis.sh && ./sonarts_mvn_build_deploy_analyze.sh
+script: ./tslint-sonarts/travis.sh && ./sonarts-sq-plugin/travis.sh && ./sonarts_mvn_build_deploy_analyze.sh
 
 cache: # yarn
   directories:

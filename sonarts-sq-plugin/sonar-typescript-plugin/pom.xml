@@ -124,7 +124,7 @@
                             <rules>
                                 <requireFilesSize>
                                     <minsize>1000000</minsize>
-                                    <maxsize>2000000</maxsize>
+                                    <maxsize>3000000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>
@@ -157,6 +157,15 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>rollup</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

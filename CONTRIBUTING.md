@@ -13,27 +13,27 @@
 ## Testing
 
 The [jest](http://facebook.github.io/jest/) test runner is used. There is just a
-[small configuration step](https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/jest.config.js) required
+[small configuration step](https://github.com/SonarSource/SonarTS/blob/master/tslint-sonarts/jest.config.js) required
 to enable TypeScript support.
 
 To run unit tests:
 
 ```
-cd sonarts-core
+cd tslint-sonarts
 yarn test
 ```
 
 To run unit tests in watch mode:
 
 ```
-cd sonarts-core
+cd tslint-sonarts
 yarn test --watch
 ```
 
 And finally to run unit tests with coverage:
 
 ```
-cd sonarts-core
+cd tslint-sonarts
 yarn test --coverage
 ```
 
@@ -67,7 +67,7 @@ To have this code base locally:
 To run the ruling test:
 
 ```
-cd sonarts-core
+cd tslint-sonarts
 yarn ruling
 yarn ruling --rule <RuleFileName> # to run ruling for a single rule
 yarn ruling --update # to update the snapshots

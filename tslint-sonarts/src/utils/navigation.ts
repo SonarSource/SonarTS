@@ -136,6 +136,50 @@ function isToken(node: ts.Node): boolean {
   return node.kind <= ts.SyntaxKind.OfKeyword;
 }
 
+export function isArrowFunction(node: ts.Node): node is ts.ArrowFunction {
+  return node.kind === ts.SyntaxKind.ArrowFunction;
+}
+
+export function isBlock(node: ts.Node): node is ts.Block {
+  return node.kind === ts.SyntaxKind.Block;
+}
+
+export function isVariableDeclaration(node: ts.Node): node is ts.VariableDeclaration {
+  return node.kind === ts.SyntaxKind.VariableDeclaration;
+}
+
+export function isNumericLiteral(node: ts.Node): node is ts.NumericLiteral {
+  return node.kind === ts.SyntaxKind.NumericLiteral;
+}
+
+export function isIdentifier(node: ts.Node): node is ts.Identifier {
+  return node.kind === ts.SyntaxKind.Identifier;
+}
+
+export function isBinaryExpression(node: ts.Node): node is ts.BinaryExpression {
+  return node.kind === ts.SyntaxKind.BinaryExpression;
+}
+
+export function isCallExpression(node: ts.Node): node is ts.CallExpression {
+  return node.kind === ts.SyntaxKind.CallExpression;
+}
+
+export function isObjectLiteralExpression(node: ts.Node): node is ts.ObjectLiteralExpression {
+  return node.kind === ts.SyntaxKind.ObjectLiteralExpression;
+}
+
+export function isPropertyAccessExpression(node: ts.Node): node is ts.PropertyAccessExpression {
+  return node.kind === ts.SyntaxKind.PropertyAccessExpression;
+}
+
+export function isPostfixUnaryExpression(node: ts.Node): node is ts.PostfixUnaryExpression {
+  return node.kind === ts.SyntaxKind.PostfixUnaryExpression;
+}
+
+export function isAssignmentKind(kind: ts.SyntaxKind) {
+  return kind >= ts.SyntaxKind.FirstAssignment && kind <= ts.SyntaxKind.LastAssignment;
+}
+
 export function localAncestorsChain(node: ts.Node): ts.Node[] {
   return ancestorsChain(node, ...FUNCTION_LIKE);
 }

@@ -18,7 +18,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import * as tsutils from "tsutils";
 import {
   numericLiteralSymbolicValue,
   simpleSymbolicValue,
@@ -26,10 +25,19 @@ import {
   objectLiteralSymbolicValue,
 } from "./symbolicValues";
 import { ProgramState } from "./programStates";
-import { PostfixUnaryExpression } from "typescript";
-import { isIdentifier } from "tsutils";
+import { PostfixUnaryExpression, isCallExpression } from "typescript";
 import { SymbolTable } from "../symbols/table";
-import { collectLeftHandIdentifiers } from "../utils/navigation";
+import {
+  collectLeftHandIdentifiers,
+  isVariableDeclaration,
+  isNumericLiteral,
+  isIdentifier,
+  isBinaryExpression,
+  isObjectLiteralExpression,
+  isPropertyAccessExpression,
+  isPostfixUnaryExpression,
+  isAssignmentKind,
+} from "../utils/navigation";
 
 export function applyExecutors(
   programPoint: ts.Node,
@@ -41,39 +49,39 @@ export function applyExecutors(
 
   // TODO is there a better way to handle this?
   // special case: `let x;`
-  if (parent && tsutils.isVariableDeclaration(parent) && parent.name === programPoint) {
+  if (parent && isVariableDeclaration(parent) && parent.name === programPoint) {
     return variableDeclaration(parent);
   }
 
-  if (tsutils.isNumericLiteral(programPoint)) {
+  if (isNumericLiteral(programPoint)) {
     return numeralLiteral(programPoint);
   }
 
-  if (tsutils.isIdentifier(programPoint)) {
+  if (isIdentifier(programPoint)) {
     return identifier(programPoint);
   }
 
-  if (tsutils.isBinaryExpression(programPoint)) {
+  if (isBinaryExpression(programPoint)) {
     return binaryExpression(programPoint);
   }
 
-  if (tsutils.isVariableDeclaration(programPoint)) {
+  if (isVariableDeclaration(programPoint)) {
     return variableDeclaration(programPoint);
   }
 
-  if (tsutils.isCallExpression(programPoint)) {
+  if (isCallExpression(programPoint)) {
     return callExpression(programPoint);
   }
 
-  if (tsutils.isObjectLiteralExpression(programPoint)) {
+  if (isObjectLiteralExpression(programPoint)) {
     return objectLiteralExpression();
   }
 
-  if (tsutils.isPropertyAccessExpression(programPoint)) {
+  if (isPropertyAccessExpression(programPoint)) {
     return propertyAccessExpression();
   }
 
-  if (tsutils.isPostfixUnaryExpression(programPoint)) {
+  if (isPostfixUnaryExpression(programPoint)) {
     return postfixUnaryExpression(programPoint);
   }
 
@@ -90,7 +98,7 @@ export function applyExecutors(
   }
 
   function binaryExpression(expression: ts.BinaryExpression) {
-    if (tsutils.isAssignmentKind(expression.operatorToken.kind)) {
+    if (isAssignmentKind(expression.operatorToken.kind)) {
       return collectLeftHandIdentifiers(expression.left).identifiers.reduce((state, identifier) => {
         if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
           let [value, nextState] = state.popSV();
@@ -114,7 +122,7 @@ export function applyExecutors(
   }
 
   function variableDeclaration(declaration: ts.VariableDeclaration) {
-    if (tsutils.isIdentifier(declaration.name)) {
+    if (isIdentifier(declaration.name)) {
       let [value, nextState] = state.popSV();
       const variable = symbolAt(declaration.name);
       if (!variable || !shouldTrackSymbol(variable)) {

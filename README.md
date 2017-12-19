@@ -48,37 +48,37 @@ How does it work?
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
 
-[`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
-[`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
-[`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
-[`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
-[`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md
-[`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
-[`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
-[`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
-[`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
-[`no-gratuitous-expressions`]: ./sonarts-core/docs/rules/no-gratuitous-expressions.md
-[`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
-[`no-identical-expressions`]: ./sonarts-core/docs/rules/no-identical-expressions.md
-[`no-identical-functions`]: ./sonarts-core/docs/rules/no-identical-functions.md
-[`no-ignored-initial-value`]: ./sonarts-core/docs/rules/no-ignored-initial-value.md
-[`no-ignored-return`]: ./sonarts-core/docs/rules/no-ignored-return.md
-[`no-inconsistent-return`]: ./sonarts-core/docs/rules/no-inconsistent-return.md
-[`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
-[`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
-[`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
-[`no-redundant-parentheses`]: ./sonarts-core/docs/rules/no-redundant-parentheses.md
-[`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
-[`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
-[`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
-[`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
-[`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
-[`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md
-[`no-useless-cast`]: ./sonarts-core/docs/rules/no-useless-cast.md
-[`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
-[`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
-[`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
-[`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
+[`no-accessor-field-mismatch`]: ./tslint-sonarts/docs/rules/no-accessor-field-mismatch.md
+[`no-all-duplicated-branches`]: ./tslint-sonarts/docs/rules/no-all-duplicated-branches.md
+[`no-array-delete`]: ./tslint-sonarts/docs/rules/no-array-delete.md
+[`no-collection-size-mischeck`]: ./tslint-sonarts/docs/rules/no-collection-size-mischeck.md
+[`no-dead-store`]: ./tslint-sonarts/docs/rules/no-dead-store.md
+[`no-duplicated-branches`]: ./tslint-sonarts/docs/rules/no-duplicated-branches.md
+[`no-element-overwrite`]: tslint-sonarts/docs/rules/no-element-overwrite.md
+[`no-empty-destructuring`]: ./tslint-sonarts/docs/rules/no-empty-destructuring.md
+[`no-empty-nested-blocks`]: ./tslint-sonarts/docs/rules/no-empty-nested-blocks.md
+[`no-gratuitous-expressions`]: ./tslint-sonarts/docs/rules/no-gratuitous-expressions.md
+[`no-identical-conditions`]: ./tslint-sonarts/docs/rules/no-identical-conditions.md
+[`no-identical-expressions`]: ./tslint-sonarts/docs/rules/no-identical-expressions.md
+[`no-identical-functions`]: ./tslint-sonarts/docs/rules/no-identical-functions.md
+[`no-ignored-initial-value`]: ./tslint-sonarts/docs/rules/no-ignored-initial-value.md
+[`no-ignored-return`]: ./tslint-sonarts/docs/rules/no-ignored-return.md
+[`no-inconsistent-return`]: ./tslint-sonarts/docs/rules/no-inconsistent-return.md
+[`no-misleading-array-reverse`]: ./tslint-sonarts/docs/rules/no-misleading-array-reverse.md
+[`no-misspelled-operator`]: ./tslint-sonarts/docs/rules/no-misspelled-operator.md
+[`no-multiline-string-literals`]: ./tslint-sonarts/docs/rules/no-multiline-string-literals.md
+[`no-redundant-parentheses`]: ./tslint-sonarts/docs/rules/no-redundant-parentheses.md
+[`no-same-line-conditional`]: ./tslint-sonarts/docs/rules/no-same-line-conditional.md
+[`no-self-assignment`]: ./tslint-sonarts/docs/rules/no-self-assignment.md
+[`no-unconditional-jump`]: ./tslint-sonarts/docs/rules/no-unconditional-jump.md
+[`no-unenclosed-multiline-block`]: ./tslint-sonarts/docs/rules/no-unenclosed-multiline-block.md
+[`no-unthrown-error`]: ./tslint-sonarts/docs/rules/no-unthrown-error.md
+[`no-unused-array`]: ./tslint-sonarts/docs/rules/no-unused-array.md
+[`no-useless-cast`]: ./tslint-sonarts/docs/rules/no-useless-cast.md
+[`no-useless-increment`]: ./tslint-sonarts/docs/rules/no-useless-increment.md
+[`no-use-of-empty-return-value`]: ./tslint-sonarts/docs/rules/no-use-of-empty-return-value.md
+[`no-variable-usage-before-declaration`]: ./tslint-sonarts/docs/rules/no-variable-usage-before-declaration.md
+[`use-type-alias`]: ./tslint-sonarts/docs/rules/use-type-alias.md
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
 ## Use in TSLint

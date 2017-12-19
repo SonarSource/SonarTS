@@ -34,8 +34,7 @@
   },
   "homepage": "https://github.com/SonarSource/SonarTS",
   "dependencies": {
-    "immutable": "^3.8.2",
-    "tsutils": "^2.12.2"
+    "immutable": "^3.8.2"
   },
   "peerDependencies": {
     "tslint": "^5.1.0",

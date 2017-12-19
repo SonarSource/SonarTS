@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eou pipefail
 
-cd sonarts-core
+cd tslint-sonarts
 
 rm -f tslint-sonarts-*.tgz
 yarn build-local
@@ -12,8 +12,8 @@ cd ..
 cd sonarts-sq-plugin
 
 cd sonar-typescript-plugin/sonarts-bundle
-npm install ../../../sonarts-core/tslint-sonarts-*.tgz
-rm ../../../sonarts-core/tslint-sonarts-*.tgz
+npm install ../../../tslint-sonarts/tslint-sonarts-*.tgz
+rm ../../../tslint-sonarts/tslint-sonarts-*.tgz
 cd ../../
 
 mvn clean install -B -e -V
