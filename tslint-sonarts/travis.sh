@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-cd sonarts-core
+cd tslint-sonarts
 yarn build-ci
 npm pack
 cd ..

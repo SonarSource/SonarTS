@@ -6,7 +6,7 @@
 *.iml
 .vscode/*
 */.vscode/*
-!/sonarts-core/.vscode/launch.json
+!/tslint-sonarts/.vscode/launch.json
 
 # ---- NPM pack
 */**/tslint-sonarts-*.tgz

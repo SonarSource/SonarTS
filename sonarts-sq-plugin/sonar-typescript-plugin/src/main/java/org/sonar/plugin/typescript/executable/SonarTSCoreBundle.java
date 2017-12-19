@@ -41,7 +41,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
 
   private static final Logger LOG = Loggers.get(SonarTSCoreBundle.class);
 
-  // relative location inside sonarts-core bundle
+  // relative location inside tslint-sonarts bundle
   private static final String SONAR_LOCATION = "node_modules/tslint-sonarts/bin/tsrunner";
   private final Settings settings;
 
@@ -68,7 +68,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   }
 
   /**
-   * Extracting "sonarts-core.zip" (containing typescript, tslint and tslint-sonarts)
+   * Extracting "tslint-sonarts.zip" (containing typescript, tslint and tslint-sonarts)
    * to deployDestination (".sonar" directory of the analyzed project).
    */
   private void deploy() {
