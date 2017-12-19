@@ -19,30 +19,6 @@
  */
 import * as fs from "fs";
 import * as ts from "typescript";
-import * as net from "net";
-
-export function start(rootFileNames: string[]): number {
-  const cache = new FileCache();
-  const service = createService(rootFileNames, {}, cache);
-  const server = net.createServer(socket => {
-    socket.on("data", data => {
-      const update = JSON.parse(data.toString());
-      cache.newContent(update);
-      socket.write(
-        service
-          .getProgram()
-          .getSourceFile(update.file)
-          .getFullText(),
-      );
-      socket.write(
-        "\n" + JSON.stringify(service.getSemanticDiagnostics(update.file).map(diagnostic => diagnostic.messageText)),
-      );
-    });
-  });
-  const port = 55555;
-  server.listen(port, "localhost");
-  return port;
-}
 
 export function createService(
   rootFileNames: string[],

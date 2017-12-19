@@ -17,47 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as path from "path";
-import { start, createService, FileCache } from "../../src/runner/language-service";
-import * as net from "net";
+import { createService, FileCache } from "../../src/runner/language-service";
 import * as nav from "../../src/utils/navigation";
 import * as ts from "typescript";
 import { Identifier, LanguageService } from "typescript";
-
-it.skip("should survive within a server", done => {
-  const port = start([
-    "/home/carlobottiglieri/dev/SonarTS/sonarts-core/src/runner/incremental-compilation-project/file1.ts",
-  ]);
-  var client = new net.Socket();
-  client.connect(port, "localhost", function() {
-    console.log("Connected");
-    client.write(
-      JSON.stringify({
-        file:
-          "/home/carlobottiglieri/dev/SonarTS/sonarts-core/tests/runner/fixtures/incremental-compilation-project/file1.ts",
-        content: `
-        import { foo } from "./file2";
-        let y:string = foo();`,
-      }),
-    );
-  });
-
-  client.on("data", function(data) {
-    console.log("Received: " + data);
-  });
-
-  client.on("close", function() {
-    console.log("Connection closed");
-    client.destroy(); // kill client after server's response
-    done();
-  });
-});
+import * as path from "path";
 
 it("should return type information", () => {
-  const file1 =
-    "/home/carlobottiglieri/dev/SonarTS/sonarts-core/tests/runner/fixtures/incremental-compilation-project/file1.ts";
-  const file2 =
-    "/home/carlobottiglieri/dev/SonarTS/sonarts-core/tests/runner/fixtures/incremental-compilation-project/file2.ts";
+  const file1 = path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts");
+  const file2 = path.join(__dirname, "fixtures/incremental-compilation-project/file2.ts");
   const cache = new FileCache();
   const service = createService([file1], {}, cache);
   expect(getType(service, file1, "x")).toBe("number");
