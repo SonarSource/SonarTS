@@ -19,7 +19,6 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import * as tsutils from "tsutils";
 import { SonarRuleMetaData } from "../sonarRule";
 import { execute } from "../se/SymbolicExecution";
 import { build } from "../cfg/builder";
@@ -27,7 +26,7 @@ import { ProgramState, createInitialState } from "../se/programStates";
 import { isTruthy, Constraint, isFalsy } from "../se/constraints";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable, UsageFlag } from "../symbols/table";
-import { firstLocalAncestor, FUNCTION_LIKE, is } from "../utils/navigation";
+import { firstLocalAncestor, FUNCTION_LIKE, is, isArrowFunction, isBlock } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -82,9 +81,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private getStatements(functionLike: ts.FunctionLikeDeclaration) {
-    if (tsutils.isArrowFunction(functionLike)) {
+    if (isArrowFunction(functionLike)) {
       // `body` can be a block or an expression
-      if (tsutils.isBlock(functionLike.body)) {
+      if (isBlock(functionLike.body)) {
         return functionLike.body.statements;
       }
     } else {
