@@ -118,3 +118,8 @@ Thanks to the platform, SonarTS provides additional features:
 See the documentation [here](https://docs.sonarqube.org/display/PLUG/SonarTS) and example project [here](https://github.com/SonarSource/SonarTS-example/).
 
 Also available online on :cloud: [SonarCloud](https://sonarcloud.io/)
+
+## Contributing
+
+You want to participate to the development of our TypeScript analyzer?
+Have a look at our [contributor](./CONTRIBUTING.md) guide!
