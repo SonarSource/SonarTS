@@ -42,7 +42,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   private static final Logger LOG = Loggers.get(SonarTSCoreBundle.class);
 
   // relative location inside tslint-sonarts bundle
-  private static final String SONAR_LOCATION = "node_modules/tslint-sonarts/bin/tsrunner";
+  private static final String SONAR_LOCATION = "bundle.js";
   private final Settings settings;
 
   private File deployDestination;

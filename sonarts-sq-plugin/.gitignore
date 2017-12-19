@@ -1,6 +1,7 @@
 # npm
 node_modules/
 !/sonar-typescript-plugin/src/test/resources/foo/node_modules
+sonar-typescript-plugin/sonarts-bundle/bundle.js
 
 # Maven
 target/
