@@ -4,9 +4,7 @@ set -eou pipefail
 cd sonarts-core
 
 rm -f tslint-sonarts-*.tgz
-yarn build
-yarn test
-yarn license-check
+yarn build-local
 npm pack
 
 cd ..
