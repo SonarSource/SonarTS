@@ -20,8 +20,8 @@
 package org.sonar.plugin.typescript.executable;
 
 import java.io.File;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 
 public interface ExecutableBundleFactory {
-  ExecutableBundle createAndDeploy(File deployDestination, Settings settings);
+  ExecutableBundle createAndDeploy(File deployDestination, Configuration configuration);
 }

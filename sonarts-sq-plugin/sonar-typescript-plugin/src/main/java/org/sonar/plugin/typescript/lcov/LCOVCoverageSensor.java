@@ -37,7 +37,7 @@ public class LCOVCoverageSensor implements Sensor {
 
   @Override
   public void execute(SensorContext context) {
-    List<String> reportPaths = Arrays.asList(context.settings().getStringArray(TypeScriptPlugin.LCOV_REPORT_PATHS));
+    List<String> reportPaths = Arrays.asList(context.config().getStringArray(TypeScriptPlugin.LCOV_REPORT_PATHS));
 
     if (!reportPaths.isEmpty()) {
       saveMeasureFromLCOVFile(context, reportPaths);
