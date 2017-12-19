@@ -38,8 +38,8 @@ import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.plugin.typescript.rules.AdjacentOverloadSignatures;
 import org.sonar.plugin.typescript.rules.AwaitPromise;
 import org.sonar.plugin.typescript.rules.ClassName;
+import org.sonar.plugin.typescript.rules.CognitiveComplexity;
 import org.sonar.plugin.typescript.rules.Curly;
-import org.sonar.plugin.typescript.rules.MccabeComplexity;
 import org.sonar.plugin.typescript.rules.Deprecation;
 import org.sonar.plugin.typescript.rules.Eofline;
 import org.sonar.plugin.typescript.rules.FileHeader;
@@ -47,6 +47,7 @@ import org.sonar.plugin.typescript.rules.Indent;
 import org.sonar.plugin.typescript.rules.LabelPosition;
 import org.sonar.plugin.typescript.rules.MaxFileLineCount;
 import org.sonar.plugin.typescript.rules.MaxLineLength;
+import org.sonar.plugin.typescript.rules.MccabeComplexity;
 import org.sonar.plugin.typescript.rules.NoAccessorFieldMismatch;
 import org.sonar.plugin.typescript.rules.NoAllDuplicatedBranches;
 import org.sonar.plugin.typescript.rules.NoAngleBracketTypeAssertion;
@@ -201,7 +202,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       AwaitPromise.class,
       ClassName.class,
       Curly.class,
-      MccabeComplexity.class,
+      CognitiveComplexity.class,
       Deprecation.class,
       Eofline.class,
       FileHeader.class,
@@ -209,6 +210,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       LabelPosition.class,
       MaxFileLineCount.class,
       MaxLineLength.class,
+      MccabeComplexity.class,
       NoAccessorFieldMismatch.class,
       NoAllDuplicatedBranches.class,
       NoAngleBracketTypeAssertion.class,

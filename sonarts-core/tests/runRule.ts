@@ -51,6 +51,24 @@ export interface RuleRunResult {
  */
 export default function runRule(Rule: any, testFileName: string, ...ruleArguments: any[]): RuleRunResult {
   const lintFileName = getLintFileName(testFileName);
+  return checkRule(Rule, lintFileName, ruleArguments);
+}
+
+/**
+ * Run rule againts a specific lint file from a test directory
+ * Use from the test: runRule(Rule, "myTestDir", "myTestFile"), ommitting '.lint.ts' suffix on test file
+ */
+export function runRuleWithLintFile(
+  Rule: any,
+  testDirName: string,
+  testFileName: string,
+  ...ruleArguments: any[]
+): RuleRunResult {
+  const lintFileName = getLintFileName(testFileName, testDirName);
+  return checkRule(Rule, lintFileName, ruleArguments);
+}
+
+function checkRule(Rule: any, lintFileName: string, ruleArguments: any[]) {
   const source = fs.readFileSync(lintFileName, "utf-8");
   const actualErrors = runRuleOnFile(Rule, lintFileName, ruleArguments);
   const expectedErrors = parseErrorsFromMarkup(source);
@@ -62,7 +80,7 @@ function byLine(e1: LintError, e2: LintError) {
 }
 
 // used for unit test
-function runRuleOnFile(Rule: any, file: string, ...ruleArguments: any[]): LintError[] {
+function runRuleOnFile(Rule: any, file: string, ruleArguments: any[]): LintError[] {
   const rule = new Rule(RULE_OPTIONS);
   rule.ruleArguments = ruleArguments;
   const source = fs.readFileSync(file, "utf-8");
@@ -117,10 +135,11 @@ function parseErrorsFromMarkup(source: string): LintError[] {
   return errors;
 }
 
-function getLintFileName(testFileName: string): string {
+function getLintFileName(testFileName: string, ruleName?: string): string {
   const baseName = path.basename(testFileName, ".test.ts");
+  const ruleNameDir = ruleName ? ruleName : baseName;
   for (const ext of ["ts", "tsx"]) {
-    const file = path.join(__dirname, `./rules/${baseName}/${baseName}.lint.${ext}`);
+    const file = path.join(__dirname, `./rules/${ruleNameDir}/${baseName}.lint.${ext}`);
     if (fs.existsSync(file)) {
       return file;
     }
