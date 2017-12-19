@@ -21,6 +21,7 @@
     "no-misspelled-operator": true,
     "no-multiline-string-literals": true,
     "no-redundant-parentheses": true,
+    "no-return-type-any": true,
     "no-same-line-conditional": true,
     "no-self-assignment": true,
     "no-unconditional-jump": true,

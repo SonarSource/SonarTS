@@ -36,6 +36,7 @@ How does it work?
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
 * Redundant pairs of parentheses should be removed ([`no-redundant-parentheses`])
+* Primitive return types should be used ([`no-return-type-any`]) ([`requires type-check`])
 * Conditionals should start on new lines ([`no-same-line-conditional`])
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
@@ -68,6 +69,7 @@ How does it work?
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
 [`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
 [`no-redundant-parentheses`]: ./sonarts-core/docs/rules/no-redundant-parentheses.md
+[`no-return-type-any`]: ./sonarts-core/docs/rules/no-return-type-any.md
 [`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
