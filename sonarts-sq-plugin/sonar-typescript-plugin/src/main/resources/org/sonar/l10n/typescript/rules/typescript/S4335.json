@@ -1,0 +1,13 @@
+{
+  "title": "Type intersections should not be empty",
+  "type": "BUG",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "pitfall"
+  ],
+  "defaultSeverity": "Critical"
+}
