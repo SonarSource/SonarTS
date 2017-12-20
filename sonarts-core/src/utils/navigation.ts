@@ -213,6 +213,32 @@ export function constructorOf(clazz: ts.ClassDeclaration | ts.ClassExpression): 
   return clazz.members.find(member => member.kind === ts.SyntaxKind.Constructor) as ts.ConstructorDeclaration;
 }
 
+/**
+ * Returns
+ * - function name token for methods and accessors
+ * - "function" keyword for function declarations and expressions 
+ * - "=>" for arrow function
+ */
+export function functionLikeMainToken(functionNode: ts.FunctionLikeDeclaration): ts.Node {
+  switch (functionNode.kind) {
+    case Kind.FunctionDeclaration:
+    case Kind.FunctionExpression:
+      return getFirstChild(functionNode, ts.SyntaxKind.FunctionKeyword)!;
+    case Kind.ArrowFunction:
+      return functionNode.equalsGreaterThanToken;
+    case Kind.Constructor:
+      return getFirstChild(functionNode, ts.SyntaxKind.ConstructorKeyword)!;
+    case Kind.MethodDeclaration:
+    case Kind.GetAccessor:
+    case Kind.SetAccessor:
+      return (functionNode as ts.MethodDeclaration).name;
+  }
+}
+
+export function getFirstChild(node: ts.Node, childKind: ts.SyntaxKind): ts.Node | undefined {
+  return node.getChildren().find(child => child.kind === childKind);
+}
+
 export const FUNCTION_LIKE = [
   Kind.FunctionDeclaration,
   Kind.FunctionExpression,

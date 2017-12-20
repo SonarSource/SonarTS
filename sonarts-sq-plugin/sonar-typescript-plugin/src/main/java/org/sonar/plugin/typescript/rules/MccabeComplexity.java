@@ -24,7 +24,7 @@ import org.sonar.check.Rule;
 import org.sonar.check.RuleProperty;
 
 @Rule(key = "S1541")
-public class CyclomaticComplexity extends TypeScriptRule {
+public class MccabeComplexity extends TypeScriptRule {
 
   private static final int DEFAULT_THRESHOLD = 10;
 
@@ -41,6 +41,6 @@ public class CyclomaticComplexity extends TypeScriptRule {
 
   @Override
   public String tsLintKey() {
-    return "cyclomatic-complexity";
+    return "mccabe-complexity";
   }
 }

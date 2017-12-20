@@ -24,11 +24,11 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CyclomaticComplexityTest {
+public class MccabeComplexityTest {
 
   @Test
   public void default_configuration() throws Exception {
-    CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity();
+    MccabeComplexity cyclomaticComplexity = new MccabeComplexity();
     cyclomaticComplexity.enable();
     String configuration = new Gson().toJson(cyclomaticComplexity.configuration());
     assertThat(configuration).isEqualTo("[10]");
@@ -36,7 +36,7 @@ public class CyclomaticComplexityTest {
 
   @Test
   public void custom_configuration() throws Exception {
-    CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity();
+    MccabeComplexity cyclomaticComplexity = new MccabeComplexity();
     cyclomaticComplexity.enable();
     cyclomaticComplexity.threshold = 5;
     String configuration = new Gson().toJson(cyclomaticComplexity.configuration());

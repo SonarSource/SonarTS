@@ -16,6 +16,7 @@ How does it work?
 
 ## Rules
 
+* Functions should not be too complex ([`mccabe-complexity`])
 * Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
@@ -49,6 +50,7 @@ How does it work?
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
 
+[`mccabe-complexity`]: ./sonarts-core/docs/rules/mccabe-complexity.md
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
 [`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
 [`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
