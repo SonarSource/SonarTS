@@ -31,7 +31,7 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.fs.InputFile;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.TypeScriptPlugin;
@@ -43,25 +43,25 @@ public class SonarTSCoreBundle implements ExecutableBundle {
 
   // relative location inside sonarts-core bundle
   private static final String SONAR_LOCATION = "node_modules/tslint-sonarts/bin/tsrunner";
-  private final Settings settings;
+  private final Configuration configuration;
 
   private File deployDestination;
   private String bundleLocation;
   private File tsMetricsExecutable;
 
-  private SonarTSCoreBundle(String bundleLocation, File deployDestination, Settings settings) {
+  private SonarTSCoreBundle(String bundleLocation, File deployDestination, Configuration configuration) {
     this.bundleLocation = bundleLocation;
     this.deployDestination = deployDestination;
-    this.settings = settings;
+    this.configuration = configuration;
 
     File sonartsCoreDir = new File(deployDestination, "sonarts-bundle");
 
     this.tsMetricsExecutable = new File(sonartsCoreDir, SONAR_LOCATION);
   }
 
-  static SonarTSCoreBundle createAndDeploy(String bundleLocation, File deployDestination, Settings settings) {
+  static SonarTSCoreBundle createAndDeploy(String bundleLocation, File deployDestination, Configuration configuration) {
     LOG.debug(String.format("Deploying bundle from `%s` to `%s`", bundleLocation, deployDestination.getAbsolutePath()));
-    SonarTSCoreBundle sonarTSCoreBundle = new SonarTSCoreBundle(bundleLocation, deployDestination, settings);
+    SonarTSCoreBundle sonarTSCoreBundle = new SonarTSCoreBundle(bundleLocation, deployDestination, configuration);
     sonarTSCoreBundle.deploy();
 
     return sonarTSCoreBundle;
@@ -87,7 +87,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    */
   @Override
   public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
-    String nodeExecutable = settings.getString(TypeScriptPlugin.NODE_EXECUTABLE);
+    String nodeExecutable = configuration.get(TypeScriptPlugin.NODE_EXECUTABLE).get();
     SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, nodeExecutable, this.tsMetricsExecutable.getAbsolutePath());
     runnerCommand.setTsConfigPath(tsconfigPath);
     typeScriptRules.forEach(rule -> {

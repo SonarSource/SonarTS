@@ -97,7 +97,7 @@ public class ExternalTypescriptSensor implements Sensor {
       LOG.debug("Global one referenced in 'NODE_PATH' will be used");
     }
 
-    ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination, sensorContext.settings());
+    ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination, sensorContext.config());
 
     Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
 
@@ -148,7 +148,7 @@ public class ExternalTypescriptSensor implements Sensor {
     for (InputFile inputFile : inputFiles) {
       File tsConfig = findTsConfig(inputFile, projectBaseDir);
       if (tsConfig == null) {
-        LOG.error("No tsconfig.json file found for " + inputFile.absolutePath() + " (looking up the directories tree). This file will not be analyzed.");
+        LOG.error("No tsconfig.json file found for " + inputFile.uri() + " (looking up the directories tree). This file will not be analyzed.");
       } else {
         inputFileByTsconfig.computeIfAbsent(tsConfig.getAbsolutePath(), x -> new ArrayList<>()).add(inputFile);
       }

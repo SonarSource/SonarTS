@@ -40,7 +40,7 @@ import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
@@ -64,7 +64,7 @@ import static org.mockito.Mockito.when;
 
 public class ExternalTypescriptSensorTest {
 
-  private static final File BASE_DIR = new File("src/test/resources");
+  private static final File BASE_DIR = new File("src/test/resources").getAbsoluteFile();
   private static String node;
 
   private FileLinesContext fileLinesContext;
@@ -223,7 +223,7 @@ public class ExternalTypescriptSensorTest {
 
     executeSensor(sensorContext, testBundle);
 
-    assertThat(logTester.logs()).contains("No tsconfig.json file found for " + inputFile.absolutePath() + " (looking up the directories tree). This file will not be analyzed.");
+    assertThat(logTester.logs()).contains("No tsconfig.json file found for " + inputFile.uri() + " (looking up the directories tree). This file will not be analyzed.");
   }
 
   @Test
@@ -239,7 +239,7 @@ public class ExternalTypescriptSensorTest {
   @Test
   public void should_log_debug_if_no_local_typescript_found() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(new File(BASE_DIR, "dirWithoutTypeScript"));
-    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot());
+    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot().toPath());
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
 
     TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath());
@@ -253,7 +253,7 @@ public class ExternalTypescriptSensorTest {
   @Test
   public void should_log_error_if_no_typescript_found() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(new File(BASE_DIR, "dirWithoutTypeScript"));
-    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot());
+    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot().toPath());
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
 
     TestBundleFactory testBundle = new TestBundleFactory().command(node, resourceScript("/mockTypescriptNotFound.js"), testInputFile.absolutePath());
@@ -288,7 +288,7 @@ public class ExternalTypescriptSensorTest {
 
   private SensorContextTester createSensorContext() {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
-    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot());
+    sensorContext.fileSystem().setWorkDir(tmpDir.getRoot().toPath());
     return sensorContext;
   }
 
@@ -353,7 +353,7 @@ public class ExternalTypescriptSensorTest {
     }
 
     @Override
-    public ExecutableBundle createAndDeploy(File deployDestination, Settings settings) {
+    public ExecutableBundle createAndDeploy(File deployDestination, Configuration configuration) {
       return new TestBundle();
     }
 

@@ -30,8 +30,7 @@ import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.FileMetadata;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
-import org.sonar.api.config.MapSettings;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.plugin.typescript.TypeScriptPlugin;
 
@@ -43,14 +42,14 @@ public class LCOVCoverageSensorTest {
 
   private LCOVCoverageSensor lcovCoverageSensor = new LCOVCoverageSensor();
   private SensorContextTester context;
-  private File moduleBaseDir = new File(BASE_DIR);
+  private File moduleBaseDir = new File(BASE_DIR).getAbsoluteFile();
 
   @Rule
   public LogTester logTester = new LogTester();
 
   @Before
   public void init() throws IOException {
-    Settings settings = new MapSettings();
+    MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.LCOV_REPORT_PATHS, LCOV);
 
     context = SensorContextTester.create(moduleBaseDir);

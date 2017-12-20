@@ -22,7 +22,7 @@ package org.sonar.plugin.typescript.executable;
 import java.io.File;
 import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 import org.sonarsource.api.sonarlint.SonarLintSide;
 
 @BatchSide
@@ -37,7 +37,7 @@ public class SonarTSCoreBundleFactory implements ExecutableBundleFactory{
   }
 
   @Override
-  public SonarTSCoreBundle createAndDeploy(File deployDestination, Settings settings) {
-    return SonarTSCoreBundle.createAndDeploy(bundleLocation, deployDestination, settings);
+  public SonarTSCoreBundle createAndDeploy(File deployDestination, Configuration configuration) {
+    return SonarTSCoreBundle.createAndDeploy(bundleLocation, deployDestination, configuration);
   }
 }
