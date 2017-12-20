@@ -19,13 +19,13 @@
  */
 import * as ts from "typescript";
 import * as tsutils from "tsutils";
-import { is, descendants } from "../../src/utils/navigation";
-import { execute, ExecutionResult } from "../../src/se/SymbolicExecution";
-import { ProgramState, createInitialState } from "../../src/se/programStates";
-import { SymbolicValue } from "../../src/se/symbolicValues";
-import { build } from "../../src/cfg/builder";
-import { Constraint } from "../../src/se/constraints";
-import { SymbolTableBuilder } from "../../src/symbols/builder";
+import { is, descendants } from "../src/utils/navigation";
+import { execute, ExecutionResult } from "../src/se/SymbolicExecution";
+import { ProgramState, createInitialState } from "../src/se/programStates";
+import { SymbolicValue } from "../src/se/symbolicValues";
+import { build } from "../src/cfg/builder";
+import { Constraint } from "../src/se/constraints";
+import { SymbolTableBuilder } from "../src/symbols/builder";
 
 export function inspectStack(source: string) {
   const { result } = executeFromSource(source);
