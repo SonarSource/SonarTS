@@ -136,6 +136,10 @@ function isToken(node: ts.Node): boolean {
   return node.kind <= ts.SyntaxKind.OfKeyword;
 }
 
+export function isIntersectionTypeNode(node: ts.Node): node is ts.IntersectionTypeNode {
+  return node.kind === ts.SyntaxKind.IntersectionType;
+}
+
 export function localAncestorsChain(node: ts.Node): ts.Node[] {
   return ancestorsChain(node, ...FUNCTION_LIKE);
 }

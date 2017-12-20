@@ -31,6 +31,7 @@ How does it work?
 * Functions should not have identical implementations ([`no-identical-functions`])
 * Function parameters, caught exceptions and foreach variables' initial values should not be ignored ([`no-ignored-initial-value`]) ([`requires type-check`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
+* Type intersections should not be empty ([`no-impossible-intersection`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
@@ -64,6 +65,7 @@ How does it work?
 [`no-identical-functions`]: ./sonarts-core/docs/rules/no-identical-functions.md
 [`no-ignored-initial-value`]: ./sonarts-core/docs/rules/no-ignored-initial-value.md
 [`no-ignored-return`]: ./sonarts-core/docs/rules/no-ignored-return.md
+[`no-impossible-intersection`]: ./sonarts-core/docs/rules/no-impossible-intersection.md
 [`no-inconsistent-return`]: ./sonarts-core/docs/rules/no-inconsistent-return.md
 [`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
