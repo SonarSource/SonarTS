@@ -39,7 +39,7 @@ import org.sonar.plugin.typescript.rules.AdjacentOverloadSignatures;
 import org.sonar.plugin.typescript.rules.AwaitPromise;
 import org.sonar.plugin.typescript.rules.ClassName;
 import org.sonar.plugin.typescript.rules.Curly;
-import org.sonar.plugin.typescript.rules.CyclomaticComplexity;
+import org.sonar.plugin.typescript.rules.MccabeComplexity;
 import org.sonar.plugin.typescript.rules.Deprecation;
 import org.sonar.plugin.typescript.rules.Eofline;
 import org.sonar.plugin.typescript.rules.FileHeader;
@@ -200,7 +200,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       AwaitPromise.class,
       ClassName.class,
       Curly.class,
-      CyclomaticComplexity.class,
+      MccabeComplexity.class,
       Deprecation.class,
       Eofline.class,
       FileHeader.class,

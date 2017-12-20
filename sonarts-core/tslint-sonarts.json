@@ -1,6 +1,7 @@
 {
   "rulesDirectory": "./lib/rules",
   "rules": {
+    "mccabe-complexity": false,
     "no-accessor-field-mismatch": true,
     "no-all-duplicated-branches": true,
     "no-array-delete": true,

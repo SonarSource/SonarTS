@@ -49,10 +49,10 @@ export interface RuleRunResult {
  * Run rule againts a lint file
  * Use from the test: runRule(Rule, __filename) if lint file name matches the test file name
  */
-export default function runRule(Rule: any, testFileName: string): RuleRunResult {
+export default function runRule(Rule: any, testFileName: string, ...ruleArguments: any[]): RuleRunResult {
   const lintFileName = getLintFileName(testFileName);
   const source = fs.readFileSync(lintFileName, "utf-8");
-  const actualErrors = runRuleOnFile(Rule, lintFileName);
+  const actualErrors = runRuleOnFile(Rule, lintFileName, ruleArguments);
   const expectedErrors = parseErrorsFromMarkup(source);
   return { actualErrors: actualErrors.sort(byLine), expectedErrors: expectedErrors.sort(byLine) };
 }
@@ -62,8 +62,9 @@ function byLine(e1: LintError, e2: LintError) {
 }
 
 // used for unit test
-function runRuleOnFile(Rule: any, file: string): LintError[] {
+function runRuleOnFile(Rule: any, file: string, ...ruleArguments: any[]): LintError[] {
   const rule = new Rule(RULE_OPTIONS);
+  rule.ruleArguments = ruleArguments;
   const source = fs.readFileSync(file, "utf-8");
 
   let failures: tslint.RuleFailure[];
