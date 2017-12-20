@@ -218,6 +218,7 @@ public class ExternalTypescriptSensor implements Sensor {
     saveMetric(sensorContext, inputFile, CoreMetrics.STATEMENTS, sonarTSRunnerResponse.statements);
     saveMetric(sensorContext, inputFile, CoreMetrics.NCLOC, sonarTSRunnerResponse.ncloc.length);
     saveMetric(sensorContext, inputFile, CoreMetrics.COMMENT_LINES, sonarTSRunnerResponse.commentLines.length);
+    saveMetric(sensorContext, inputFile, CoreMetrics.COMPLEXITY, sonarTSRunnerResponse.complexity);
 
     noSonarFilter.noSonarInFile(inputFile, Arrays.stream(sonarTSRunnerResponse.nosonarLines).collect(Collectors.toSet()));
 
@@ -335,6 +336,7 @@ public class ExternalTypescriptSensor implements Sensor {
     int functions = 0;
     int statements = 0;
     int classes = 0;
+    int complexity = 0;
   }
 
   private static class Highlight {

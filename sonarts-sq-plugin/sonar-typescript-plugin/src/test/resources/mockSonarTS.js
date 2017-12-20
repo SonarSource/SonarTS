@@ -44,7 +44,8 @@ var result = [{
     "executableLines": [5, 7],
     "statements":100,
     "functions":10,
-    "classes":1
+    "classes":1,
+    "complexity": 42
 }];
 
 process.stdin.on('data', function () {

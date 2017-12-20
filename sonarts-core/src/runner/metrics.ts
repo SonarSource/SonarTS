@@ -20,6 +20,7 @@
 import * as ts from "typescript";
 import { getComments, getCommentsAfter, getText, is, lineAndCharacter } from "../utils/navigation";
 import { toSonarLine } from "./sonar-utils";
+import { getOverallComplexity } from "../utils/complexity";
 
 export default function getMetrics(sourceFile: ts.SourceFile): Metrics {
   return {
@@ -29,6 +30,7 @@ export default function getMetrics(sourceFile: ts.SourceFile): Metrics {
     functions: countFunctions(sourceFile),
     statements: countStatements(sourceFile),
     classes: countClasses(sourceFile),
+    complexity: getOverallComplexity(sourceFile).length,
   };
 }
 
@@ -40,6 +42,7 @@ export interface Metrics {
   functions: number;
   statements: number;
   classes: number;
+  complexity: number;
 }
 
 export function findLinesOfCode(sourceFile: ts.SourceFile): number[] {
