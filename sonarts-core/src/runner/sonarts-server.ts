@@ -17,8 +17,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as fs from "fs";
-import * as ts from "typescript";
 import * as net from "net";
 import { createService, FileCache } from "./language-service";
 import * as rules from "./rules";
@@ -38,7 +36,7 @@ export function start(): number {
               ruleName: "no-identical-expressions",
               ruleArguments: [],
               ruleSeverity: "error",
-              disabledIntervals: null,
+              disabledIntervals: [],
             },
           ],
           program,
