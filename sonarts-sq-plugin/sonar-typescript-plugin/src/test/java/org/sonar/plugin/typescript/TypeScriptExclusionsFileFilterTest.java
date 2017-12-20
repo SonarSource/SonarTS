@@ -37,7 +37,7 @@ public class TypeScriptExclusionsFileFilterTest {
     assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isFalse();
     assertThat(filter.accept(inputFile("node_modules/my_lib_folder/my_lib.ts"))).isFalse();
     assertThat(filter.accept(inputFile("sub_module/node_modules/submodule_lib.ts"))).isFalse();
-    assertThat(filter.accept(inputFile("sub_module2/bower_components/bower_lib/lib.ts"))).isTrue();
+    assertThat(filter.accept(inputFile("sub_module2/bower_components/bower_lib/lib.ts"))).isFalse();
   }
 
   @Test
