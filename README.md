@@ -46,6 +46,7 @@ How does it work?
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
+* Types without members should not be used in type intersections ([`no-useless-intersection`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
@@ -80,6 +81,7 @@ How does it work?
 [`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md
 [`no-useless-cast`]: ./sonarts-core/docs/rules/no-useless-cast.md
 [`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
+[`no-useless-intersection`]: ./sonarts-core/docs/rules/no-useless-intersection.md
 [`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
