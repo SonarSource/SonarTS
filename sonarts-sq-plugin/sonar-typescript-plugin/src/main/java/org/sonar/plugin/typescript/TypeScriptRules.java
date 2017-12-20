@@ -104,6 +104,7 @@ import org.sonar.plugin.typescript.rules.NoUnusedExpression;
 import org.sonar.plugin.typescript.rules.NoUseOfEmptyReturnValue;
 import org.sonar.plugin.typescript.rules.NoUselessCast;
 import org.sonar.plugin.typescript.rules.NoUselessIncrement;
+import org.sonar.plugin.typescript.rules.NoUselessIntersection;
 import org.sonar.plugin.typescript.rules.NoVarKeyword;
 import org.sonar.plugin.typescript.rules.NoVariableUsageBeforeDeclaration;
 import org.sonar.plugin.typescript.rules.ObjectLiteralShorthand;
@@ -264,6 +265,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoUnusedArray.class,
       NoUselessCast.class,
       NoUselessIncrement.class,
+      NoUselessIntersection.class,
       NoUseOfEmptyReturnValue.class,
       NoVarKeyword.class,
       NoVariableUsageBeforeDeclaration.class,

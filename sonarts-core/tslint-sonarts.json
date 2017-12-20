@@ -32,6 +32,7 @@
     "no-use-of-empty-return-value": true,
     "no-useless-cast": true,
     "no-useless-increment": true,
+    "no-useless-intersection": true,
     "no-variable-usage-before-declaration": true,
     "use-type-alias": true
   }
