@@ -60,10 +60,10 @@ class Walker extends Lint.RuleWalker {
 
   private checkStatements(statements: ts.Statement[]): void {
     statements.forEach((statement, index) => {
-      if (isIfStatement(statement) && index > 0) {
+      if (ts.isIfStatement(statement) && index > 0) {
         const previousStatement = statements[index - 1];
 
-        if (isIfStatement(previousStatement)) {
+        if (ts.isIfStatement(previousStatement)) {
           const ifTokenLine = lineAndCharacter(statement.getStart(), statement.getSourceFile()).line;
           const previousStatementLastLine = lineAndCharacter(previousStatement.getEnd(), statement.getSourceFile())
             .line;
@@ -73,9 +73,5 @@ class Walker extends Lint.RuleWalker {
         }
       }
     });
-
-    function isIfStatement(statement: ts.Statement): statement is ts.IfStatement {
-      return statement.kind === ts.SyntaxKind.IfStatement;
-    }
   }
 }

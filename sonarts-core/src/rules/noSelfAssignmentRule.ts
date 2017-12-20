@@ -97,8 +97,8 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   private isArrayReverseAssignment(left: ts.Expression, right: ts.Expression): boolean {
     // in case of `a = a.reverse()`, left is `a` and right is `a.reverse()`
     return (
-      this.isCallExpression(right) &&
-      this.isPropertyAccessExpression(right.expression) &&
+      ts.isCallExpression(right) &&
+      ts.isPropertyAccessExpression(right.expression) &&
       this.isIdentifier(right.expression.expression) &&
       this.isArrayMutatingCall(right.expression) &&
       areEquivalent(right.expression.expression, left)
@@ -107,13 +107,5 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private isArrayMutatingCall(expression: ts.PropertyAccessExpression): boolean {
     return isArray(expression.expression, this.getTypeChecker()) && ARRAY_MUTATING_CALLS.includes(expression.name.text);
-  }
-
-  private isCallExpression(expression: ts.Expression): expression is ts.CallExpression {
-    return expression.kind === ts.SyntaxKind.CallExpression;
-  }
-
-  private isPropertyAccessExpression(expression: ts.Expression): expression is ts.PropertyAccessExpression {
-    return expression.kind === ts.SyntaxKind.PropertyAccessExpression;
   }
 }

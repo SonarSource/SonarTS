@@ -57,7 +57,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     // * left part of callee is array
     // * the property is mutating, e.g."reverse" or "sort": `foo.reverse()`
     if (
-      this.isPropertyAccessExpression(callExpression.expression) &&
+      ts.isPropertyAccessExpression(callExpression.expression) &&
       this.isArrayMutatingCall(callExpression.expression)
     ) {
       // store `foo` from `foo.reverse()`, `foo.sort()`, or `foo.bar` from `foo.bar.reverse()`, etc
@@ -84,14 +84,6 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     return isArray(expression.expression, this.getTypeChecker()) && ARRAY_MUTATING_CALLS.includes(expression.name.text);
   }
 
-  private isPropertyAccessExpression(node: ts.Node): node is ts.PropertyAccessExpression {
-    return node.kind === ts.SyntaxKind.PropertyAccessExpression;
-  }
-
-  private isIdentifier(node: ts.Node): node is ts.Identifier {
-    return node.kind === ts.SyntaxKind.Identifier;
-  }
-
   private isGetAccessor(node: ts.Node): boolean {
     const symbol = this.getTypeChecker().getSymbolAtLocation(node);
     const declarations = symbol && symbol.declarations;
@@ -102,7 +94,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private isIdentifierOrPropertyAccessExpression(node: ts.Node): boolean {
     // exclude class getters from consideration
-    return this.isIdentifier(node) || (this.isPropertyAccessExpression(node) && !this.isGetAccessor(node));
+    return ts.isIdentifier(node) || (ts.isPropertyAccessExpression(node) && !this.isGetAccessor(node));
   }
 
   private isForbiddenOperation(node: ts.Node): boolean {
@@ -114,18 +106,15 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     );
   }
 
-  private isBinaryExpression(node?: ts.Node): node is ts.BinaryExpression {
-    return node != null && node.kind === ts.SyntaxKind.BinaryExpression;
-  }
-
   private isReverseInSelfAssignment(reversedArray: ts.Expression, node?: ts.Node): boolean {
     return (
       // check assignment
-      this.isBinaryExpression(node) &&
+      node !== undefined &&
+      ts.isBinaryExpression(node) &&
       node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
       // check that identifiers on both sides are the same
-      this.isIdentifier(node.left) &&
-      this.isIdentifier(reversedArray) &&
+      ts.isIdentifier(node.left) &&
+      ts.isIdentifier(reversedArray) &&
       node.left.text === reversedArray.text
     );
   }

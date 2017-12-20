@@ -106,7 +106,7 @@ class Walker extends tslint.RuleWalker {
     let statement = node.elseStatement;
 
     while (statement) {
-      if (this.isIfStatement(statement)) {
+      if (ts.isIfStatement(statement)) {
         branches.push(statement.thenStatement);
         statement = statement.elseStatement;
       } else {
@@ -116,14 +116,6 @@ class Walker extends tslint.RuleWalker {
     }
 
     return branches;
-  }
-
-  private isIfStatement(node: ts.Statement): node is ts.IfStatement {
-    return node.kind === ts.SyntaxKind.IfStatement;
-  }
-
-  private isBlock(node: ts.Node): node is ts.Block {
-    return node.kind === ts.SyntaxKind.Block;
   }
 
   private getLine(node: ts.Node): number {
@@ -141,6 +133,6 @@ class Walker extends tslint.RuleWalker {
   }
 
   private expandSingleBlockStatement(nodes: ts.Node[]) {
-    return nodes.length === 1 && this.isBlock(nodes[0]) ? Array.from((nodes[0] as ts.Block).statements) : nodes;
+    return nodes.length === 1 && ts.isBlock(nodes[0]) ? Array.from((nodes[0] as ts.Block).statements) : nodes;
   }
 }

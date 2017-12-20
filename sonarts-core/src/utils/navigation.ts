@@ -25,6 +25,10 @@ export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | 
   return node.getFirstToken();
 }
 
+export function isAssignmentKind(kind: ts.SyntaxKind) {
+  return kind >= ts.SyntaxKind.FirstAssignment && kind <= ts.SyntaxKind.LastAssignment;
+}
+
 export function isAssignment(node: ts.Node | undefined): node is ts.BinaryExpression {
   return (
     !!node &&

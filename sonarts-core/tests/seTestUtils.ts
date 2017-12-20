@@ -18,7 +18,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import * as tsutils from "tsutils";
 import { is, descendants } from "../src/utils/navigation";
 import { execute, ExecutionResult } from "../src/se/SymbolicExecution";
 import { ProgramState, createInitialState } from "../src/se/programStates";
@@ -41,7 +40,7 @@ export function inspectStack(source: string) {
 export function inspectConstraints(source: string): Constraint[] | undefined {
   const { result, program } = executeFromSource(source);
   const { programPoint, programStates } = findInspectCall(result);
-  const identifiers = programPoint.arguments.filter(tsutils.isIdentifier);
+  const identifiers = programPoint.arguments.filter(ts.isIdentifier);
   const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
   const constraints = programStates.map(programState => {
     const value = programState.sv(symbols[0]);
@@ -70,7 +69,7 @@ export function executeOneFunction(source: string): { result: ExecutionResult; p
 
 export function inspectSVFromResult(result: ExecutionResult, program: ts.Program) {
   const { programPoint, programStates } = findInspectCall(result);
-  const identifiers = programPoint.arguments.filter(tsutils.isIdentifier);
+  const identifiers = programPoint.arguments.filter(ts.isIdentifier);
   const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
   const sv: { [name: string]: SymbolicValue[] } = {};
   for (const symbol of symbols) {
@@ -106,8 +105,8 @@ function parse(source: string) {
 function findInspectCall(result: ExecutionResult) {
   for (const [programPoint, programStates] of result.programNodes.entries()) {
     if (
-      tsutils.isCallExpression(programPoint) &&
-      tsutils.isIdentifier(programPoint.expression) &&
+      ts.isCallExpression(programPoint) &&
+      ts.isIdentifier(programPoint.expression) &&
       programPoint.expression.text === "_inspect"
     ) {
       return { programPoint, programStates };

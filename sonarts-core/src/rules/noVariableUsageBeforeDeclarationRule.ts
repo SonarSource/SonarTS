@@ -80,7 +80,7 @@ function collectDeclarations(sourceFile: ts.SourceFile, program: ts.Program): Ma
       return;
     }
 
-    if (isVariableDeclarationList(node) && isVar(node)) {
+    if (ts.isVariableDeclarationList(node) && isVar(node)) {
       node.declarations.forEach(process);
     }
 
@@ -110,7 +110,7 @@ function collectUsages(sourceFile: ts.SourceFile, program: ts.Program): Map<ts.S
       return;
     }
 
-    if (isIdentifier(node)) {
+    if (ts.isIdentifier(node)) {
       process(node);
     }
 
@@ -127,20 +127,12 @@ function collectUsages(sourceFile: ts.SourceFile, program: ts.Program): Map<ts.S
   }
 }
 
-function isVariableDeclarationList(node: ts.Node): node is ts.VariableDeclarationList {
-  return node.kind === ts.SyntaxKind.VariableDeclarationList;
-}
-
 function isVar(node: ts.VariableDeclarationList): boolean {
   return (node.flags & ts.NodeFlags.Let) === 0 && (node.flags & ts.NodeFlags.Const) === 0;
 }
 
 function getLine(node: ts.Node, sourceFile: ts.SourceFile): number {
   return sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line;
-}
-
-function isIdentifier(node: ts.Node): node is ts.Identifier {
-  return node.kind === ts.SyntaxKind.Identifier;
 }
 
 function getSymbol(node: ts.Node, program: ts.Program): ts.Symbol | undefined {

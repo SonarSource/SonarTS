@@ -58,7 +58,7 @@ class Walker extends tslint.RuleWalker {
     const condition = node.expression;
     let statement = node.elseStatement;
     while (statement) {
-      if (this.isIfStatement(statement)) {
+      if (ts.isIfStatement(statement)) {
         if (areEquivalent(condition, statement.expression)) {
           const { line } = this.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
           this.addFailureAtNode(statement.expression, Rule.formatMessage("branch", line + 1));
@@ -73,7 +73,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   public visitSwitchStatement(node: ts.SwitchStatement) {
-    const clauses = node.caseBlock.clauses.filter(this.isCase) as ts.CaseClause[];
+    const clauses = node.caseBlock.clauses.filter(ts.isCaseClause) as ts.CaseClause[];
 
     for (let i = 0; i < clauses.length; i++) {
       for (let j = i + 1; j < clauses.length; j++) {
@@ -85,13 +85,5 @@ class Walker extends tslint.RuleWalker {
     }
 
     super.visitSwitchStatement(node);
-  }
-
-  private isIfStatement(statement: ts.Statement): statement is ts.IfStatement {
-    return statement.kind === ts.SyntaxKind.IfStatement;
-  }
-
-  private isCase(clause: ts.CaseOrDefaultClause): clause is ts.CaseClause {
-    return clause.kind === ts.SyntaxKind.CaseClause;
   }
 }

@@ -19,7 +19,6 @@
  */
 import * as tslint from "tslint";
 import * as ts from "typescript";
-import * as tsutils from "tsutils";
 import { SonarRuleMetaData } from "../sonarRule";
 import { execute } from "../se/SymbolicExecution";
 import { build } from "../cfg/builder";
@@ -82,9 +81,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private getStatements(functionLike: ts.FunctionLikeDeclaration) {
-    if (tsutils.isArrowFunction(functionLike)) {
+    if (ts.isArrowFunction(functionLike)) {
       // `body` can be a block or an expression
-      if (tsutils.isBlock(functionLike.body)) {
+      if (ts.isBlock(functionLike.body)) {
         return functionLike.body.statements;
       }
     } else {
