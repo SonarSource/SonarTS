@@ -86,7 +86,7 @@ class Walker extends tslint.RuleWalker {
     let statement = node.elseStatement;
 
     while (statement) {
-      if (this.isIfStatement(statement)) {
+      if (ts.isIfStatement(statement)) {
         branches.push(statement.thenStatement);
         statement = statement.elseStatement;
       } else {
@@ -123,10 +123,6 @@ class Walker extends tslint.RuleWalker {
 
   private allDuplicated(branches: Branch[]) {
     return branches.length > 1 && branches.slice(1).every((branch, index) => areEquivalent(branches[index], branch));
-  }
-
-  private isIfStatement(node: ts.Statement): node is ts.IfStatement {
-    return node.kind === ts.SyntaxKind.IfStatement;
   }
 }
 

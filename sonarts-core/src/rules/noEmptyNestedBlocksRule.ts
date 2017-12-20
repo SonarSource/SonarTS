@@ -74,8 +74,8 @@ class Walker extends tslint.RuleWalker {
     );
   }
 
-  private isCatchClause(node?: ts.Node): node is ts.CatchClause {
-    return node != null && node.kind === ts.SyntaxKind.CatchClause;
+  private isCatchClause(node?: ts.Node) {
+    return node != null && ts.isCatchClause(node);
   }
 
   private hasComments(node: ts.Block): boolean {

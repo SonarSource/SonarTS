@@ -46,8 +46,8 @@ export class Rule extends tslint.Rules.TypedRule {
 class Walker extends tslint.ProgramAwareRuleWalker {
   public visitNode(node: ts.Node) {
     if (
-      this.isDeleteExpression(node) &&
-      this.isElementAccessExpression(node.expression) &&
+      ts.isDeleteExpression(node) &&
+      ts.isElementAccessExpression(node.expression) &&
       this.isArray(node.expression.expression)
     ) {
       this.raiseIssue(node);
@@ -61,14 +61,6 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     if (deleteKeyword) {
       this.addFailureAtNode(deleteKeyword, Rule.MESSAGE);
     }
-  }
-
-  private isDeleteExpression(node: ts.Node): node is ts.DeleteExpression {
-    return node.kind === ts.SyntaxKind.DeleteExpression;
-  }
-
-  private isElementAccessExpression(node: ts.Node): node is ts.ElementAccessExpression {
-    return node.kind === ts.SyntaxKind.ElementAccessExpression;
   }
 
   private isArray(node: ts.Node): boolean {

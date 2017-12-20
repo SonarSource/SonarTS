@@ -67,7 +67,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       return false;
     }
 
-    if (this.isBinaryExpression(parent)) {
+    if (ts.isBinaryExpression(parent)) {
       if (
         parent.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken ||
         parent.operatorToken.kind === ts.SyntaxKind.BarBarToken
@@ -99,10 +99,6 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       return this.getParentIgnoreParenthesis(parent);
     }
     return parent;
-  }
-
-  private isBinaryExpression(node: ts.Node): node is ts.BinaryExpression {
-    return node.kind === ts.SyntaxKind.BinaryExpression;
   }
 
   private endOfPropertyChain(expression: ts.Expression): ts.Expression {

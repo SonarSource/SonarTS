@@ -59,7 +59,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   private getAllReturns(body: ts.Block) {
     const returns: ts.ReturnStatement[] = [];
     const visitNode = (node: ts.Node) => {
-      if (isReturn(node)) {
+      if (ts.isReturnStatement(node)) {
         returns.push(node);
       } else if (!is(node, ...FUNCTION_LIKE)) {
         node.forEachChild(visitNode);
@@ -84,10 +84,6 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     }
     return false;
   }
-}
-
-function isReturn(node: ts.Node): node is ts.ReturnStatement {
-  return node.kind === ts.SyntaxKind.ReturnStatement;
 }
 
 function isPrimitiveType({ flags }: ts.Type) {
