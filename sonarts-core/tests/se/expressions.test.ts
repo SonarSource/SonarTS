@@ -23,7 +23,7 @@ import {
   simpleSymbolicValue,
   objectLiteralSymbolicValue,
   numericLiteralSymbolicValue,
-} from "../../src/se/symbolicValues";
+} from "se/symbolicValues";
 
 it("assignment", () => {
   check(`let a; _inspect(a = 0);`, numericLiteralSymbolicValue("0"), true);

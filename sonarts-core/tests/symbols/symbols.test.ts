@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { UsageFlag } from "../../src/symbols/table";
+import { UsageFlag } from "symbols/table";
 import { buildSymbolTable, getNode } from "./test_utils";
 
 const { symbols, sourceFile } = buildSymbolTable("sample_symbols.lint.ts");

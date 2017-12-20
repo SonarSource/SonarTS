@@ -18,9 +18,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { LiveVariableAnalyzer, LVAReturn } from "../../src/symbols/lva";
-import { SymbolTable } from "../../src/symbols/table";
-import { descendants, FUNCTION_LIKE, is } from "../../src/utils/navigation";
+import { LiveVariableAnalyzer, LVAReturn } from "symbols/lva";
+import { SymbolTable } from "symbols/table";
+import { descendants, FUNCTION_LIKE, is } from "utils/navigation";
 import { buildSymbolTable, getNode } from "./test_utils";
 import { FunctionLikeDeclaration } from "typescript";
 

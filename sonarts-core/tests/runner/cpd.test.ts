@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import getCpdTokens, { CpdToken } from "../../src/runner/cpd";
-import { parseString } from "../../src/utils/parser";
+import getCpdTokens, { CpdToken } from "runner/cpd";
+import { parseString } from "utils/parser";
 
 it("should not skip any token", () => {
   const result = actual(

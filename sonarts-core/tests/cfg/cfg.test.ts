@@ -18,9 +18,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { ControlFlowGraph } from "../../src/cfg/cfg";
-import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
-import { parseString } from "../../src/utils/parser";
+import { ControlFlowGraph } from "cfg/cfg";
+import toVis, { VisData } from "tools/cfg_viewer/transformer";
+import { parseString } from "utils/parser";
 
 it("empty file", () => {
   expect(buildVisFromSource("")).toMatchSnapshot();

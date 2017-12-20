@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { inspectSV, inspectSVFromResult, executeOneFunction } from "../utils/seTestUtils";
-import { simpleSymbolicValue, undefinedSymbolicValue, numericLiteralSymbolicValue } from "../../src/se/symbolicValues";
+import { simpleSymbolicValue, undefinedSymbolicValue, numericLiteralSymbolicValue } from "se/symbolicValues";
 
 describe("Variable Declaration", () => {
   it("creates unknown symbolic value", () => {

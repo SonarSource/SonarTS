@@ -18,12 +18,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as fs from "fs";
+import * as path from "path";
 import * as glob from "glob";
 import * as lodash from "lodash";
-import * as path from "path";
-import { executeRule } from "../../src/runner/rules";
 import * as tslint from "tslint";
 import * as ts from "typescript";
+import { executeRule } from "runner/rules";
 
 export interface Results {
   [rule: string]: {

@@ -19,7 +19,7 @@
  */
 import * as path from "path";
 import * as tslint from "tslint";
-import { getIssues } from "../../src/runner/rules";
+import { getIssues } from "runner/rules";
 
 it("should run sonarts rules", () => {
   const sampleFile = path.join(__dirname, "./fixtures/runner_project/identical_expressions_and_deadstore.lint.ts");

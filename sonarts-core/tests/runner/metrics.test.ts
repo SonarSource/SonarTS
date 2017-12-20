@@ -19,8 +19,8 @@
  */
 import * as fs from "fs";
 import * as path from "path";
-import * as metrics from "../../src/runner/metrics";
-import { parseString } from "../../src/utils/parser";
+import * as metrics from "runner/metrics";
+import { parseString } from "utils/parser";
 
 it("should return lines of code and comment lines", () => {
   const sourceFile = parseString(

@@ -18,7 +18,7 @@
 * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 import { inspectConstraints } from "../utils/seTestUtils";
-import { Constraint, truthyConstraint, falsyConstraint } from "../../src/se/constraints";
+import { Constraint, truthyConstraint, falsyConstraint } from "se/constraints";
 
 describe("If", () => {
   it("constrains condition to TRUTHY for THEN branch", () => {

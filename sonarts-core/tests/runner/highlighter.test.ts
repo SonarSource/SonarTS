@@ -17,8 +17,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import getHighlighting, { HighlightedToken, SonarTypeOfText } from "../../src/runner/highlighter";
-import { parseString } from "../../src/utils/parser";
+import getHighlighting, { HighlightedToken, SonarTypeOfText } from "runner/highlighter";
+import { parseString } from "utils/parser";
 
 it("should highlight keywords", () => {
   const result = actual(
