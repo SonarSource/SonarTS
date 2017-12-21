@@ -52,18 +52,14 @@ export class Rule extends tslint.Rules.TypedRule {
 class Walker extends tslint.ProgramAwareRuleWalker {
   protected visitNode(node: ts.Node) {
     if (ts.isIntersectionTypeNode(node)) {
-      const types = node.types.map(typeNode => ({
-        node: typeNode,
-        type: this.getTypeChecker().getTypeFromTypeNode(typeNode),
-      }));
-
-      const anyOrNeverType = types.find(({ node }) => ["any", "never"].includes(node.getText()));
-      if (anyOrNeverType) {
-        this.addFailureAtNode(node, Rule.formatAnyOrNeverMessage(anyOrNeverType.node.getText()));
+      const anyOrNever = node.types.find(typeNode => ["any", "never"].includes(typeNode.getText()));
+      if (anyOrNever) {
+        this.addFailureAtNode(node, Rule.formatAnyOrNeverMessage(anyOrNever.getText()));
       } else {
-        types.forEach(({ node, type }) => {
+        node.types.forEach(typeNode => {
+          const type = this.getTypeChecker().getTypeFromTypeNode(typeNode);
           if (isTypeWithoutMembers(type)) {
-            this.addFailureAtNode(node, Rule.MESSAGE);
+            this.addFailureAtNode(typeNode, Rule.MESSAGE);
           }
         });
       }
