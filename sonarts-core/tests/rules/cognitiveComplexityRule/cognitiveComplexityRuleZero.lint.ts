@@ -37,24 +37,24 @@ class MyTestClass {
   }
 }
 
-function if_else_complexity(condition: boolean) {
-//       ^^^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 3 to the 0 allowed.}}
+  function if_else_complexity(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 3 to the 0 allowed.}}
     if (condition) {        // +1
     } else if (condition) { // +1
     } else {                // +1
     }
 }
 
-function else_nesting(condition: boolean) {
-//       ^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 4 to the 0 allowed.}}
+  function else_nesting(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 4 to the 0 allowed.}}
   if (condition) {        // +1
   } else {                // +1 (nesting level +1)
     if (condition) {}     // +2
   }
 }
 
-function else_nested(condition: boolean) {
-//       ^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 4 to the 0 allowed.}}
+  function else_nested(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 4 to the 0 allowed.}}
   if (condition) {        // +1 (nesting level +1)
     if (condition) {      // +2
     } else {              // +1
@@ -62,24 +62,24 @@ function else_nested(condition: boolean) {
   }
 }
 
-function if_nested(condition: boolean) {
-//       ^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 6 to the 0 allowed.}}
+  function if_nested(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 6 to the 0 allowed.}}
   if (condition)       // +1 (nesting level +1)
     if (condition)     // +2 (nesting level +1)
       if (condition) { // +3
       }
 }
 
-function else_if_nesting(condition: boolean) {
-//       ^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 4 to the 0 allowed.}}
+  function else_if_nesting(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 4 to the 0 allowed.}}
   if (condition) {           // +1
   } else if (condition)      // +1 (nesting level +1)
     if (condition) {         // +2
     }
 }
 
-function switch_statement(condition: boolean, expr: string) {
-//       ^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 6 to the 0 allowed.}}
+  function switch_statement(condition: boolean, expr: string) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 6 to the 0 allowed.}}
   if (condition) {         // +1 (nesting level +1)
     switch (expr) {        // +2 (nesting level +1)
      case "1":
@@ -93,8 +93,8 @@ function switch_statement(condition: boolean, expr: string) {
   }
 }
 
-function loops_complexity(condition: boolean, obj: string[]) {
-//       ^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 17 to the 0 allowed.}}
+  function loops_complexity(condition: boolean, obj: string[]) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 17 to the 0 allowed.}}
   while (condition) {                // +1 (nesting level +1)
     if (condition) { }               // +2
   }
@@ -117,8 +117,8 @@ function loops_complexity(condition: boolean, obj: string[]) {
   }
 }
 
-function try_catch(condition: boolean) {
-//       ^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 5 to the 0 allowed.}}
+  function try_catch(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 5 to the 0 allowed.}}
   try {
     if (condition) { }   // +1
   } catch (someError) {  // +1 (nesting level +1)
@@ -128,8 +128,8 @@ function try_catch(condition: boolean) {
   }
 }
 
-function try_finally(condition: boolean) {
-//       ^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.}}
+  function try_finally(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.}}
   try {
     if (condition) { } // +1
   } finally {
@@ -137,8 +137,8 @@ function try_finally(condition: boolean) {
   }
 }
 
-function nested_try_catch(condition: boolean) {
-//       ^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 3 to the 0 allowed.}}
+  function nested_try_catch(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 3 to the 0 allowed.}}
   try {
     if (condition) {        // +1 (nesting level +1)
       try {}
@@ -148,8 +148,8 @@ function nested_try_catch(condition: boolean) {
 }
 
 
-function jump_statements_no_complexity(condition: boolean) {
-//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 6 to the 0 allowed.}}
+  function jump_statements_no_complexity(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 6 to the 0 allowed.}}
   if (condition)         // +1
     return;
   else if (condition)    // +1
@@ -164,8 +164,8 @@ function jump_statements_no_complexity(condition: boolean) {
   }
 }
 
-function break_continue_with_label(condition: boolean) {
-//       ^^^^^^^^^^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 3 to the 0 allowed.}}
+  function break_continue_with_label(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 3 to the 0 allowed.}}
   label:
   while (condition) { // +1
       break label;    // +1
@@ -173,8 +173,8 @@ function break_continue_with_label(condition: boolean) {
   }
 }
 
-function recursion(condition: boolean): number {
-//       ^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.}}
+  function recursion(condition: boolean): number {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.}}
   if (condition)
     return 42;
   else
@@ -183,7 +183,7 @@ function recursion(condition: boolean): number {
 
 function nesting_func_no_complexity(condition: boolean) {  // Ok
   function nested_func() {
-//         ^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
     if (condition) { }   // +1
   }
 }
@@ -197,19 +197,19 @@ function nesting_class_no_complexity(condition: boolean) {  // Ok
   }
 }
 
-function nesting_func_with_complexity(condition: boolean) {
-//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
+  function nesting_func_with_complexity(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
   if (condition) { }         // +1
 
   // excluded from parent but still individually evaluated
   function nested_func() {
-//         ^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
     if (condition) { }       // +1
   }
 }
 
-function nesting_func_with_function_expression(condition: boolean) {
-//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 7 to the 0 allowed.}}
+  function nesting_func_with_function_expression(condition: boolean) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 7 to the 0 allowed.}}
   if (condition) { }                       // +1
 
   // function expression are counted as part of the method
@@ -222,21 +222,21 @@ function nesting_func_with_function_expression(condition: boolean) {
   }
 }
 
-function conditional_expression(condition: boolean, trueValue: string, falseValue: string): string {
-//       ^^^^^^^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
+  function conditional_expression(condition: boolean, trueValue: string, falseValue: string): string {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
   return condition ? trueValue : falseValue;
 }
 
-function nested_conditional_expression(condition1: boolean, condition2: boolean, condition3: boolean, trueValue: string, falseValue: string) {
-//       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 11 to the 0 allowed.}}
+  function nested_conditional_expression(condition1: boolean, condition2: boolean, condition3: boolean, trueValue: string, falseValue: string) {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 11 to the 0 allowed.}}
   let x;
   x = condition1 ? (condition2 ? trueValue : falseValue) : falseValue;                            // +3
   x = condition1 ? trueValue : (condition2 ? trueValue : falseValue);                             // +3
   x = condition1 ? (condition2 ? trueValue : falseValue) : (condition3 ? trueValue : falseValue); // +5
 }
 
-function and_or() {
-//       ^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 12 to the 0 allowed.}}
+  function and_or() {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 12 to the 0 allowed.}}
   foo(1 && 2 && 3 && 4); // +1
 
   foo((1 && 2) && (3 && 4)); // +1

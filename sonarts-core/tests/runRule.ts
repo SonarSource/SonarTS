@@ -60,11 +60,11 @@ export default function runRule(Rule: any, testFileName: string, ...ruleArgument
  */
 export function runRuleWithLintFile(
   Rule: any,
-  testDirName: string,
+  testDirectoryName: string,
   testFileName: string,
   ...ruleArguments: any[]
 ): RuleRunResult {
-  const lintFileName = getLintFileName(testFileName, testDirName);
+  const lintFileName = getLintFileName(testFileName, testDirectoryName);
   return checkRule(Rule, lintFileName, ruleArguments);
 }
 
@@ -135,11 +135,11 @@ function parseErrorsFromMarkup(source: string): LintError[] {
   return errors;
 }
 
-function getLintFileName(testFileName: string, ruleName?: string): string {
+function getLintFileName(testFileName: string, testDirectoryName?: string): string {
   const baseName = path.basename(testFileName, ".test.ts");
-  const ruleNameDir = ruleName ? ruleName : baseName;
+  const testDir = testDirectoryName ? testDirectoryName : baseName;
   for (const ext of ["ts", "tsx"]) {
-    const file = path.join(__dirname, `./rules/${ruleNameDir}/${baseName}.lint.${ext}`);
+    const file = path.join(__dirname, `./rules/${testDir}/${baseName}.lint.${ext}`);
     if (fs.existsSync(file)) {
       return file;
     }

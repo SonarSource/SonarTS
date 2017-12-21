@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { is } from "../utils/navigation";
+import { is, functionLikeMainToken, drillDownThroughParenthesis } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -75,7 +75,7 @@ class FunctionWalker extends tslint.RuleWalker {
         const complexity = this.getComplexity(body);
         if (complexity > this.threshold) {
           this.addFailureAtNode(
-            FunctionWalker.reportNode(node),
+            functionLikeMainToken(node as ts.FunctionLikeDeclaration),
             FunctionWalker.getMessage(node, complexity, this.threshold),
           );
         }
@@ -85,34 +85,9 @@ class FunctionWalker extends tslint.RuleWalker {
   }
 
   private getComplexity(node: ts.Node): number {
-    let complexityWalker = new ComplexityWalker(this.getSourceFile(), this.getOptions());
+    let complexityWalker = new ComplexityWalker();
     complexityWalker.walk(node);
     return complexityWalker.getComplexity();
-  }
-
-  private static reportNode(node: ts.Node): ts.Node {
-    let reportNode;
-    switch (node.kind) {
-      case ts.SyntaxKind.FunctionDeclaration:
-        reportNode = (node as ts.FunctionDeclaration).name;
-        break;
-      case ts.SyntaxKind.MethodDeclaration:
-        reportNode = (node as ts.MethodDeclaration).name;
-        break;
-      case ts.SyntaxKind.Constructor:
-        reportNode = node.getFirstToken();
-        break;
-      case ts.SyntaxKind.GetAccessor:
-        reportNode = (node as ts.GetAccessorDeclaration).name;
-        break;
-      case ts.SyntaxKind.SetAccessor:
-        reportNode = (node as ts.SetAccessorDeclaration).name;
-        break;
-    }
-    if (!reportNode) {
-      return node;
-    }
-    return reportNode;
   }
 
   private static getMessage(node: ts.Node, complexity: number, threshold: number): string {
@@ -135,17 +110,17 @@ class FunctionWalker extends tslint.RuleWalker {
   }
 }
 
-class ComplexityWalker extends tslint.RuleWalker {
+class ComplexityWalker extends tslint.SyntaxWalker {
   private complexity = 0;
   private nesting = 0;
-  private logicalOperationsToIgnore: ts.Node[] = [];
+  private logicalOperationsToIgnore: ts.BinaryExpression[] = [];
 
   public getComplexity(): number {
     return this.complexity;
   }
 
   public visitIfStatement(node: ts.IfStatement): void {
-    if (this.isEleseIf(node)) {
+    if (this.isElseIf(node)) {
       this.addComplexityWithoutNesting();
     } else {
       this.addComplexityWithNesting();
@@ -164,12 +139,11 @@ class ComplexityWalker extends tslint.RuleWalker {
     }
   }
 
-  private isEleseIf(node: ts.IfStatement): boolean {
-    return (
-      !!node.parent &&
-      is(node.parent, ts.SyntaxKind.IfStatement) &&
-      node === (node.parent as ts.IfStatement).elseStatement
-    );
+  private isElseIf(node: ts.IfStatement): boolean {
+    if (node.parent) {
+      return is(node.parent, ts.SyntaxKind.IfStatement) && node === (node.parent as ts.IfStatement).elseStatement;
+    }
+    return false;
   }
 
   public visitSwitchStatement(node: ts.SwitchStatement): void {
@@ -249,17 +223,17 @@ class ComplexityWalker extends tslint.RuleWalker {
   }
 
   public visitBinaryExpression(node: ts.BinaryExpression): void {
-    const opertator = node.operatorToken;
-    if (is(opertator, ts.SyntaxKind.AmpersandAmpersandToken, ts.SyntaxKind.BarBarToken)) {
-      const leftChild = ComplexityWalker.skipParentheses(node.left);
-      const rightChild = ComplexityWalker.skipParentheses(node.right);
+    const operator = node.operatorToken;
+    if (is(operator, ts.SyntaxKind.AmpersandAmpersandToken, ts.SyntaxKind.BarBarToken)) {
+      const leftChild = drillDownThroughParenthesis(node.left);
+      const rightChild = drillDownThroughParenthesis(node.right);
 
-      const leftChildOfSameKind = ComplexityWalker.isOperator(leftChild, opertator.kind);
-      const rightChildOfSameKind = ComplexityWalker.isOperator(rightChild, opertator.kind);
+      const leftChildOfSameKind = ComplexityWalker.isOperator(leftChild, operator.kind);
+      const rightChildOfSameKind = ComplexityWalker.isOperator(rightChild, operator.kind);
 
       // move always to the leftmost operator
       if (rightChildOfSameKind) {
-        this.logicalOperationsToIgnore.push(rightChild);
+        this.logicalOperationsToIgnore.push(rightChild as ts.BinaryExpression);
       }
 
       if (!this.isIgnoredOperation(node) && !leftChildOfSameKind) {
@@ -276,19 +250,12 @@ class ComplexityWalker extends tslint.RuleWalker {
     return false;
   }
 
-  private static skipParentheses(node: ts.Node): ts.Node {
-    if (is(node, ts.SyntaxKind.ParenthesizedExpression)) {
-      return (node as ts.ParenthesizedExpression).expression;
-    }
-    return node;
-  }
-
-  private isIgnoredOperation(node: ts.Node): boolean {
+  private isIgnoredOperation(node: ts.BinaryExpression): boolean {
     return this.logicalOperationsToIgnore.indexOf(node) > -1;
   }
 
   private walkNodes(nodes: (ts.Node | undefined)[]) {
-    for (var node of nodes) {
+    for (const node of nodes) {
       if (node) {
         this.walk(node);
       }

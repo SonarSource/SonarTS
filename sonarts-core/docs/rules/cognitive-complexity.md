@@ -5,3 +5,11 @@ Cognitive Complexity is a measure of how hard the control flow of a function is 
 ## See
 
 * [Cognitive Complexity](http://redirect.sonarsource.com/doc/cognitive-complexity.html)
+
+## Configuration
+
+The maximum authorized complexity can be provided. Default is 15.
+```json
+"cognitive-complexity": true
+"cognitive-complexity": [true, 10]
+```
