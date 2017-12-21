@@ -38,12 +38,10 @@ export class LiveVariableAnalyzer {
   constructor(private readonly symbols: SymbolTable) {}
 
   public analyzeFunction(root: ts.FunctionLikeDeclaration): LVAReturn | undefined {
-    if (!is(root.body, ts.SyntaxKind.Block)) {
-      return;
+    if (root.body && ts.isBlock(root.body)) {
+      const cfg = ControlFlowGraph.fromStatements(Array.from(root.body.statements));
+      return cfg && this.analyze(root, cfg);
     }
-    const cfg = ControlFlowGraph.fromStatements(Array.from((root.body as ts.Block).statements));
-    if (!cfg) return;
-    return this.analyze(root, cfg);
   }
 
   public analyze(root: ts.Node, cfg: ControlFlowGraph): LVAReturn | undefined {
@@ -86,7 +84,7 @@ export class LiveVariableAnalyzer {
   }
 
   private trackUsage(usage: Usage | undefined, availableReads: Set<ts.Symbol>) {
-    if (usage && !this.isUsedInNestedFunctions(usage.symbol)) {
+    if (usage && !this.isUsedInNestedFunctionOrClass(usage.symbol)) {
       if (usage.is(UsageFlag.WRITE)) {
         if (availableReads.has(usage.symbol)) {
           this.deadUsages.delete(usage);
@@ -101,10 +99,18 @@ export class LiveVariableAnalyzer {
     }
   }
 
-  private isUsedInNestedFunctions(symbol: ts.Symbol): boolean {
+  private isUsedInNestedFunctionOrClass(symbol: ts.Symbol) {
     return this.symbols
       .allUsages(symbol)
-      .some(usage => firstLocalAncestor(usage.node, ...LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE) !== this.root);
+      .some(
+        usage =>
+          firstLocalAncestor(
+            usage.node,
+            ...LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE,
+            ts.SyntaxKind.ClassDeclaration,
+            ts.SyntaxKind.ClassExpression,
+          ) !== this.root,
+      );
   }
 
   private successorSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {

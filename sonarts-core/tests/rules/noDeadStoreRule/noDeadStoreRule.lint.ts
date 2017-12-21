@@ -94,3 +94,22 @@ class MyClass {
   }
 
 }
+
+function readInNestedClassExpression(param: any) {
+  // OK, used in nested class
+  const castedParam = param as any;
+  return class { innerProperty = castedParam; };
+}
+
+function writtenInNestedClassDeclaration(param: any) {
+  // OK, used in nested class
+  let castedParam = param as any;
+  class X { m() { castedParam = 1 }; };
+}
+
+function classDecorator(param:any) {
+  // OK, used in nested class
+  const castedParam = param as any;
+  @MyDecorator(castedParam)
+  class X {};
+}

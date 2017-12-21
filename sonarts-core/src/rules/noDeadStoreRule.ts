@@ -71,9 +71,8 @@ class Walker extends tslint.ProgramAwareRuleWalker {
         const { deadUsages } = lvaReturn;
 
         descendants(node)
-          .filter(descendant => is(descendant, ts.SyntaxKind.Identifier))
-          .forEach(descendant => {
-            const identifier = descendant as ts.Identifier;
+          .filter(ts.isIdentifier)
+          .forEach(identifier => {
             const usage = this.symbols.getUsage(identifier);
             if (usage && deadUsages.has(usage) && !this.isException(usage)) {
               this.addFailureAtNode(identifier, Rule.formatMessage(identifier));
@@ -86,28 +85,32 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private isException(usage: Usage) {
-    if (!this.symbols.allUsages(usage.symbol).some(u => (u.flags & UsageFlag.DECLARATION) > 0)) return true;
-    const parent = floatToTopParenthesis(usage.node).parent;
-    if (is(parent, ts.SyntaxKind.BindingElement, ts.SyntaxKind.VariableDeclaration)) {
-      return isBasicValue((parent as ts.BindingElement | ts.VariableDeclaration).initializer);
+    if (!this.symbols.allUsages(usage.symbol).some(u => (u.flags & UsageFlag.DECLARATION) > 0)) {
+      return true;
+    }
+    const { parent } = floatToTopParenthesis(usage.node);
+    if (parent && (ts.isBindingElement(parent) || ts.isVariableDeclaration(parent))) {
+      return parent.initializer !== undefined && isBasicValue(parent.initializer);
     }
     return false;
   }
 }
 
-function isBasicValue(expression: ts.Expression | undefined): boolean {
-  if (!expression) return false;
-  if (is(expression, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.NullKeyword)) return true;
-  if (is(expression, ts.SyntaxKind.NumericLiteral, ts.SyntaxKind.StringLiteral))
-    return Rule.BASIC_VALUES.includes((expression as ts.LiteralExpression).getText());
-  if (is(expression, ts.SyntaxKind.PrefixUnaryExpression)) {
-    const unary = expression as ts.PrefixUnaryExpression;
-    if (unary.operator === ts.SyntaxKind.MinusToken) return isBasicValue(unary.operand);
-    return false;
+function isBasicValue(expression: ts.Expression): boolean {
+  if (is(expression, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.NullKeyword)) {
+    return true;
   }
-  if (is(expression, ts.SyntaxKind.ArrayLiteralExpression))
-    return (expression as ts.ArrayLiteralExpression).elements.length === 0;
-  if (is(expression, ts.SyntaxKind.ObjectLiteralExpression))
-    return (expression as ts.ObjectLiteralExpression).properties.length === 0;
+  if (ts.isLiteralExpression(expression)) {
+    return Rule.BASIC_VALUES.includes(expression.getText());
+  }
+  if (ts.isPrefixUnaryExpression(expression)) {
+    return expression.operator === ts.SyntaxKind.MinusToken && isBasicValue(expression.operand);
+  }
+  if (ts.isArrayLiteralExpression(expression)) {
+    return expression.elements.length === 0;
+  }
+  if (ts.isObjectLiteralExpression(expression)) {
+    return expression.properties.length === 0;
+  }
   return false;
 }

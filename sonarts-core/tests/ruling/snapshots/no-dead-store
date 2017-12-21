@@ -15,7 +15,6 @@ src/TypeScript/src/harness/unittests/services/patternMatcher.ts: 471
 src/angular/aio/src/app/documents/document.service.spec.ts: 181
 src/angular/packages/animations/browser/test/engine/dom_animation_engine_spec.ts: 519
 src/angular/packages/core/testing/src/fake_async.ts: 125
-src/angular/packages/core/testing/src/test_bed.ts: 318,319,320,321
 src/angular/packages/benchpress/test/metric/user_metric_spec.ts: 21
 src/angular/packages/benchpress/test/webdriver/chrome_driver_extension_spec.ts: 23,24
 src/angular/packages/compiler/src/expression_parser/parser.ts: 718
@@ -30,20 +29,17 @@ src/angular/packages/compiler/test/aot/jit_summaries_spec.ts: 274
 src/angular/packages/compiler/test/aot/static_symbol_resolver_spec.ts: 18,131
 src/angular/packages/compiler/test/css_parser/css_parser_spec.ts: 71
 src/angular/packages/compiler/test/i18n/serializers/xtb_spec.ts: 129
-src/angular/packages/core/test/application_ref_spec.ts: 58
 src/angular/packages/core/test/fake_async_spec.ts: 207
 src/angular/packages/core/test/animation/animation_integration_spec.ts: 201,202
 src/angular/packages/core/test/change_detection/differs/default_iterable_differ_spec.ts: 312,337,360,380,401,422,448
 src/angular/packages/core/test/linker/entry_components_integration_spec.ts: 51
 src/angular/packages/core/test/linker/integration_spec.ts: 303,347
-src/angular/packages/core/test/linker/source_map_integration_node_only_spec.ts: 224
 src/angular/packages/core/test/view/component_view_spec.ts: 83,93,115,149,240,251,274,290
 src/angular/packages/core/test/view/element_spec.ts: 215,238,261,288
 src/angular/packages/core/test/view/embedded_view_spec.ts: 137
 src/angular/packages/core/test/view/provider_spec.ts: 259,277,367,369,391,432,491
 src/angular/packages/core/test/view/pure_expression_spec.ts: 39,76,116
 src/angular/packages/core/test/view/text_spec.ts: 76
-src/angular/packages/examples/core/ts/metadata/lifecycle_hooks_spec.ts: 130
 src/angular/packages/upgrade/static/src/static/upgrade_module.ts: 160
 src/angular/packages/forms/test/reactive_integration_spec.ts: 1866
 src/angular/packages/language-service/src/completions.ts: 33,444
@@ -57,7 +53,6 @@ src/angular/packages/router/test/integration.spec.ts: 2372
 src/angular/packages/upgrade/src/static/upgrade_module.ts: 160
 src/angular/packages/upgrade/test/dynamic/upgrade_spec.ts: 228,446,693,757,821,882
 src/angular/tools/@angular/tsc-wrapped/test/tsc.spec.ts: 30,44
-src/ant-design/components/locale-provider/injectLocale.tsx: 14
 src/ant-design/components/table/Table.tsx: 472
 src/console/src/actions/databrowser/ui.ts: 31
 src/console/src/views/FunctionsView/FunctionPopup/functionPopupState.ts: 8
@@ -65,8 +60,6 @@ src/console/src/views/FunctionsView/FunctionPopup/WebhookEditor.tsx: 33
 src/console/src/views/FunctionsView/FunctionPopup/RequestPipelineFunctionInput.tsx: 116,118
 src/console/src/views/FunctionsView/FunctionPopup/RequestPipelineFunction.tsx: 47,48,48
 src/console/src/views/FunctionsView/FunctionPopup/FunctionPopup.tsx: 304
-src/console/src/views/PermissionsView/PermissionPopup/PermissionConditions.tsx: 100,101,102,104,106,113,115
-src/console/src/views/PermissionsView/PermissionPopup/PermissionPopup.tsx: 155
 src/console/src/views/models/FieldPopup/FieldPopupFooter.tsx: 60
 src/console/src/views/models/FieldPopup/BaseSettings.tsx: 65,273,273
 src/console/src/views/models/DatabrowserView/Cell/SelectNodesCell/Table/headerRenderer.tsx: 16
@@ -74,6 +67,8 @@ src/console/src/views/models/DatabrowserView/Cell/SelectNodesCell/Table/Table.ts
 src/console/src/views/models/DatabrowserView/Cell/cellgenerator.tsx: 72,75
 src/console/src/views/models/FieldPopup/AdvancedSettings.tsx: 59
 src/console/src/views/models/FieldPopup/Constraints.tsx: 56,57,58,59,61
+src/console/src/views/PermissionsView/PermissionPopup/PermissionConditions.tsx: 100,101,102,104,106,113,115
+src/console/src/views/PermissionsView/PermissionPopup/PermissionPopup.tsx: 155
 src/console/src/views/ProjectRootView/AddModelPopup.tsx: 58
 src/console/src/views/ProjectRootView/SideNav.tsx: 276,357
 src/console/src/components/ResizableBox.tsx: 27,27,52,53,53
