@@ -1,7 +1,5 @@
-// tslint:disable
-
-  function inconsistent(p: boolean) {
-//^^^^^^^^  {{Refactor this function to use "return" consistently}}
+export function inconsistent(p: boolean) {
+//     ^^^^^^^^  {{Refactor this function to use "return" consistently}}
     if (p) {
       return true;
     }
@@ -122,7 +120,7 @@ class A {
   private _value: number;
 
   get value(): number {
-//^^^  {{Refactor this function to use "return" consistently}}
+//    ^^^^^  {{Refactor this function to use "return" consistently}}
     if (this._value) {
       return this._value;
     } else {
