@@ -2,6 +2,7 @@
   "rulesDirectory": "./lib/rules",
   "rules": {
     "mccabe-complexity": false,
+    "cognitive-complexity": true,
     "no-accessor-field-mismatch": true,
     "no-all-duplicated-branches": true,
     "no-array-delete": true,
