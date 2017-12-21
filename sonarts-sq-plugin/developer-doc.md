@@ -11,6 +11,7 @@
 * If the rule belongs to a default profile, add it to the relevant one(s)
 * Add rule class to `TypeScriptRules.getRuleClasses()`
 * Run all tests and fix the red ones (some tests are there explicitly to check some basic mistakes when creating a new rule)
+* On RSPEC page of the rule fill `Tools` -> `TSLint-SonarTS` or `TSLint` with the tslint rule-key (use first one if the rule is part of tslint-sonarts)
 
 ## Releasing
 
