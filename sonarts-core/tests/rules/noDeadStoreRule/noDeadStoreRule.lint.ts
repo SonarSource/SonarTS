@@ -95,16 +95,16 @@ class MyClass {
 
 }
 
-function nextedClassExpression(param: any) {
+function readInNestedClassExpression(param: any) {
   // OK, used in nested class
   const castedParam = param as any;
   return class { innerProperty = castedParam; };
 }
 
-function nestedClassDeclaration(param: any) {
+function writtenInNestedClassDeclaration(param: any) {
   // OK, used in nested class
-  const castedParam = param as any;
-  class X { innerProperty = castedParam; };
+  let castedParam = param as any;
+  class X { m() { castedParam = 1 }; };
 }
 
 function classDecorator(param:any) {
