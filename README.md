@@ -46,7 +46,7 @@ How does it work?
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
-* Types without members should not be used in type intersections ([`no-useless-intersection`])
+* Types without members, 'any' and 'never' should not be used in type intersections ([`no-useless-intersection`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])

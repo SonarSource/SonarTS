@@ -23,11 +23,11 @@ interface Empty {}
 function withEmptyInterface(x: { a: string } & Empty) {}
 //                                             ^^^^^ {{Remove this type without members or change this type intersection.}}
 
-// OK, `x` has type `any`
-function withAny(x: { a: string } & any) {}
+function withAny(x: any & { a: string }) {}
+//                  ^^^^^^^^^^^^^^^^^^^ {{Simplify this intersection as it always has type "any".}}
 
-// OK, `x` has type `never`
 function withNever(x: boolean & never) {}
+//                    ^^^^^^^^^^^^^^^ {{Simplify this intersection as it always has type "never".}}
 
 // OK
 function twoPrimitives(x: string & number) {}

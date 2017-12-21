@@ -25,11 +25,12 @@ import { isNullType, isUndefinedType, isVoidType } from "../utils/navigation";
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-useless-intersection",
-    description: "Types without members should not be used in type intersections",
+    description: "Types without members, 'any' and 'never' should not be used in type intersections",
     rationale: tslint.Utils.dedent`
       An intersection type combines multiple types into one. This allows you to add together existing types to get a 
       single type that has all the features you need. However an intersection with a type without members doesn't 
-      change the resulting type. This is almost certainly an error.`,
+      change the resulting type. In the opposite the usage of any or never as part of an intersection will always 
+      results in any or never respectively. This is almost certainly an error.`,
     optionsDescription: "",
     options: null,
     rspecKey: "RSPEC-4335",
@@ -39,6 +40,10 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public static MESSAGE = "Remove this type without members or change this type intersection.";
 
+  public static formatAnyOrNeverMessage(type: string) {
+    return `Simplify this intersection as it always has type "${type}".`;
+  }
+
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
   }
@@ -47,11 +52,17 @@ export class Rule extends tslint.Rules.TypedRule {
 class Walker extends tslint.ProgramAwareRuleWalker {
   protected visitNode(node: ts.Node) {
     if (ts.isIntersectionTypeNode(node)) {
-      node.types.forEach(typeNode => {
-        if (isTypeWithoutMembers(this.getTypeChecker().getTypeFromTypeNode(typeNode))) {
-          this.addFailureAtNode(typeNode, Rule.MESSAGE);
-        }
-      });
+      const anyOrNever = node.types.find(typeNode => ["any", "never"].includes(typeNode.getText()));
+      if (anyOrNever) {
+        this.addFailureAtNode(node, Rule.formatAnyOrNeverMessage(anyOrNever.getText()));
+      } else {
+        node.types.forEach(typeNode => {
+          const type = this.getTypeChecker().getTypeFromTypeNode(typeNode);
+          if (isTypeWithoutMembers(type)) {
+            this.addFailureAtNode(typeNode, Rule.MESSAGE);
+          }
+        });
+      }
     }
     super.visitNode(node);
   }
