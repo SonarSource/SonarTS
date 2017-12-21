@@ -1,5 +1,3 @@
-// tslint:disable
-
 function simple() {
   let x = 0;  // OK, we except 0
   x = 42;

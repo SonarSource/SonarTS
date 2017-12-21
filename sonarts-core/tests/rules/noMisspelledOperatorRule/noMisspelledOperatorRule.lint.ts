@@ -1,5 +1,3 @@
-// tslint:disable
-
 let x1 = 0;
 
 x1 =- 3;

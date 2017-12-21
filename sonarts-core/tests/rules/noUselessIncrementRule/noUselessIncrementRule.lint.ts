@@ -1,4 +1,3 @@
-// tslint:disable
 let i = 42;
 let a = {b: 42};
 

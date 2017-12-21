@@ -1,5 +1,3 @@
-// tslint:disable
-
 function issueWhenIdenticalOperands() {
 
   a == b && a == b

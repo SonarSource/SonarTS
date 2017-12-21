@@ -1,4 +1,4 @@
-// tslint:disable
+
 // DECLARATIONS
 var variable;
 const constant = 42;

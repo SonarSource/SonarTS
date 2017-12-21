@@ -1,5 +1,3 @@
-// tslint:disable
-
 let arr = [];
 let arrConst = new Array();
 let mySet = new Set();

@@ -1,5 +1,3 @@
-// tslint:disable
-
 let x, y, a, i;
 
 x = 1;

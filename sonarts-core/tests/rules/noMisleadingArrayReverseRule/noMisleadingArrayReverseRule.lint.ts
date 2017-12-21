@@ -1,5 +1,3 @@
-// tslint:disable
-
 let a = [];
 let d;
 
