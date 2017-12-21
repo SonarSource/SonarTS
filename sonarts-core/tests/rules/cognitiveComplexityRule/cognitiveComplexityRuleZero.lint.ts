@@ -5,6 +5,15 @@ interface MyTestInterface {
   doStuff(value: string): void;
 }
 
+function with_nested_class() {
+  let myClass = class {
+    public simple_complexity(condition: boolean): void {
+      //   ^^^^^^^^^^^^^^^^^ {{Refactor this method to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
+          if (condition) { }
+    }
+  }
+}
+
 class MyTestClass {
 
   private _field: string;
@@ -209,15 +218,15 @@ function nesting_class_no_complexity(condition: boolean) {  // Ok
 }
 
   function nesting_func_with_function_expression(condition: boolean) {
-//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 7 to the 0 allowed.}}
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 5 to the 0 allowed.}}
   if (condition) { }                       // +1
 
   // function expression are counted as part of the method
-  let function_expression = function() {   // +1 (nesting level +1)
+  let function_expression = function() {   // (nesting level +1)
     if (condition) { }                     // +2
   }
 
-  let lambda_expression = (x:boolean) => { // +1 (nesting level +1)
+  let lambda_expression = (x:boolean) => { // (nesting level +1)
     if (x) { }                             // +2
   }
 }

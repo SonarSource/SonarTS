@@ -57,6 +57,7 @@ it("should process full input", () => {
       functions: 1,
       classes: 0,
       complexity: 1,
+      cognitiveComplexity: 0,
     },
   ]);
 });
