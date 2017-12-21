@@ -23,6 +23,9 @@ interface Empty {}
 function withEmptyInterface(x: { a: string } & Empty) {}
 //                                             ^^^^^ {{Remove this type without members or change this type intersection.}}
 
+// OK, `x` has type `any`
+function withAny(x: { a: string } & any) {}
+
 // OK, `x` has type `never`
 function withNever(x: boolean & never) {}
 
