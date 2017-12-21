@@ -1,5 +1,5 @@
 {
-  "title": "Types without members should not be used in type intersections",
+  "title": "Types without members, 'any' and 'never' should not be used in type intersections",
   "type": "BUG",
   "status": "ready",
   "remediation": {
