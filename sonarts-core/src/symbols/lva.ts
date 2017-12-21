@@ -38,12 +38,10 @@ export class LiveVariableAnalyzer {
   constructor(private readonly symbols: SymbolTable) {}
 
   public analyzeFunction(root: ts.FunctionLikeDeclaration): LVAReturn | undefined {
-    if (!is(root.body, ts.SyntaxKind.Block)) {
-      return;
+    if (root.body && ts.isBlock(root.body)) {
+      const cfg = ControlFlowGraph.fromStatements(Array.from(root.body.statements));
+      return cfg && this.analyze(root, cfg);
     }
-    const cfg = ControlFlowGraph.fromStatements(Array.from((root.body as ts.Block).statements));
-    if (!cfg) return;
-    return this.analyze(root, cfg);
   }
 
   public analyze(root: ts.Node, cfg: ControlFlowGraph): LVAReturn | undefined {
@@ -101,7 +99,7 @@ export class LiveVariableAnalyzer {
     }
   }
 
-  private isUsedInNestedFunctions(symbol: ts.Symbol): boolean {
+  private isUsedInNestedFunctions(symbol: ts.Symbol) {
     return this.symbols
       .allUsages(symbol)
       .some(usage => firstLocalAncestor(usage.node, ...LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE) !== this.root);

@@ -179,6 +179,7 @@ export function drillDownThroughParenthesis(node: ts.Node): ts.Node {
   return node;
 }
 
+/** Returns all descendants of the `node`, including tokens */
 export function descendants(node: ts.Node): ts.Node[] {
   const children = node.getChildren();
   let collectedDescendants = children;
