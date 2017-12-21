@@ -1,5 +1,3 @@
-// tslint:disable
-
 function simple() {
   let x = 0;  // OK, we except 0
   x = 42;
@@ -95,4 +93,23 @@ class MyClass {
     console = new Console();
   }
 
+}
+
+function nextedClassExpression(param: any) {
+  // OK, used in nested class
+  const castedParam = param as any;
+  return class { innerProperty = castedParam; };
+}
+
+function nestedClassDeclaration(param: any) {
+  // OK, used in nested class
+  const castedParam = param as any;
+  class X { innerProperty = castedParam; };
+}
+
+function classDecorator(param:any) {
+  // OK, used in nested class
+  const castedParam = param as any;
+  @MyDecorator(castedParam)
+  class X {};
 }

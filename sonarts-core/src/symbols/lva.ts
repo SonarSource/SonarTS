@@ -84,7 +84,7 @@ export class LiveVariableAnalyzer {
   }
 
   private trackUsage(usage: Usage | undefined, availableReads: Set<ts.Symbol>) {
-    if (usage && !this.isUsedInNestedFunctions(usage.symbol)) {
+    if (usage && !this.isUsedInNestedFunctionOrClass(usage.symbol)) {
       if (usage.is(UsageFlag.WRITE)) {
         if (availableReads.has(usage.symbol)) {
           this.deadUsages.delete(usage);
@@ -99,10 +99,18 @@ export class LiveVariableAnalyzer {
     }
   }
 
-  private isUsedInNestedFunctions(symbol: ts.Symbol) {
+  private isUsedInNestedFunctionOrClass(symbol: ts.Symbol) {
     return this.symbols
       .allUsages(symbol)
-      .some(usage => firstLocalAncestor(usage.node, ...LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE) !== this.root);
+      .some(
+        usage =>
+          firstLocalAncestor(
+            usage.node,
+            ...LiveVariableAnalyzer.FUNCTION_OR_SOURCE_FILE,
+            ts.SyntaxKind.ClassDeclaration,
+            ts.SyntaxKind.ClassExpression,
+          ) !== this.root,
+      );
   }
 
   private successorSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
