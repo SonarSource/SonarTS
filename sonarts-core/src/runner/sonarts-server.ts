@@ -48,5 +48,6 @@ export function start(): number {
   });
   const port = 55555;
   server.listen(port, "localhost");
+  console.log("SonarTS Server started on port " + port + " from folder " + __dirname);
   return port;
 }

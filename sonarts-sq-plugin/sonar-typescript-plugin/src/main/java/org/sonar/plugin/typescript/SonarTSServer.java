@@ -42,6 +42,10 @@ public class SonarTSServer implements Startable {
   private TempFolder tempFolder;
   private ExecutableBundleFactory bundleFactory;
 
+  public SonarTSServer(TempFolder tempFolder, ExecutableBundleFactory bundleFactory) {
+    this(null, tempFolder, bundleFactory);
+  }
+
   public SonarTSServer(Configuration configuration, TempFolder tempFolder, ExecutableBundleFactory bundleFactory) {
     this.configuration = configuration;
     this.tempFolder = tempFolder;
@@ -50,13 +54,17 @@ public class SonarTSServer implements Startable {
 
   @Override
   public void start() {
-    if (true) {
-      throw new RuntimeException("BOOOOOM");
+    LOG.warn("Attempting SonarTS Server Start");
+    if (configuration == null) {
+      LOG.warn("Skipping server start due to null configuration");
+      return;
     }
     final ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir("sonarts"), configuration);
     ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand());
     // TODO consider adding NODE_PATH
+    LOG.error("SonarTS Server Started!!");
     try {
+      processBuilder.inheritIO();
       processBuilder.start();
     } catch (IOException e) {
       LOG.error("Failed to start SonarTS Server", e);
