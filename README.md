@@ -90,6 +90,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Local variables should not be declared and then immediately returned or thrown ([`prefer-immediate-return`]) ([`requires type-check`])
 * Optional property declarations should use '?' syntax ([`prefer-optional`])
 * Shorthand promises should be used ([`prefer-promise-shorthand`])
+* Type guards should be used ([`prefer-type-guard`])
 * Wrapper objects should not be used for primitive types ([`use-primitive-type`]) ([`requires type-check`])
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
 
@@ -154,6 +155,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`prefer-immediate-return`]: ./sonarts-core/docs/rules/prefer-immediate-return.md
 [`prefer-optional`]: ./sonarts-core/docs/rules/prefer-optional.md
 [`prefer-promise-shorthand`]: ./sonarts-core/docs/rules/prefer-promise-shorthand.md
+[`prefer-type-guard`]: ./sonarts-core/docs/rules/prefer-type-guard.md
 [`use-primitive-type`]: ./sonarts-core/docs/rules/use-primitive-type.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
 
