@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { is, FUNCTION_LIKE, functionLikeMainToken } from "../utils/navigation";
-import { getFunctionComplexityNodes } from "../utils/complexity";
+import { getFunctionComplexityNodes } from "../utils/cyclomaticComplexity";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {

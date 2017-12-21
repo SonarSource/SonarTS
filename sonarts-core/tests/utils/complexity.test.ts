@@ -18,7 +18,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { parseString } from "../../src/utils/parser";
-import { getOverallComplexity } from "../../src/utils/complexity";
+import { getOverallComplexity } from "../../src/utils/cyclomaticComplexity";
+import { getOverallCognitiveComplexity } from "../../src/utils/cognitiveComplexity";
 
 it("should count complexity not skipping functions", () => {
   const sourceFile = parseString(
@@ -31,4 +32,21 @@ it("should count complexity not skipping functions", () => {
 
   expect(fileComplexityNodes.length).toEqual(3);
   expect(fileComplexityNodes.map(node => node.getText())).toEqual(["&&", "function", "||"]);
+});
+
+it("should count cognitive complexity for file", () => {
+  const sourceFile = parseString(
+    `
+    let bar = function() { 1 && 2; } // +2
+    1 && 2; // +1
+    function foo() { 1 || 2; } // +1
+    class {
+      foo: number = 1 && 2 // +1
+      bar() {
+        1 && 2; // +1
+      }
+    }
+    `,
+  );
+  expect(getOverallCognitiveComplexity(sourceFile)).toEqual(6);
 });
