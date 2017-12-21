@@ -1,5 +1,3 @@
-// tslint:disable
-
 let something, doSomething;
 
 if (something) {}

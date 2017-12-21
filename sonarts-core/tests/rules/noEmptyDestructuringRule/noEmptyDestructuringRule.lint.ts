@@ -1,5 +1,3 @@
-// tslint:disable
-
 let a, b, first, second, third;
 
 var {} = obj;

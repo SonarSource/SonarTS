@@ -1,5 +1,3 @@
-// tslint:disable
-
 let foo, es6;
 
 function parameterUsages() {

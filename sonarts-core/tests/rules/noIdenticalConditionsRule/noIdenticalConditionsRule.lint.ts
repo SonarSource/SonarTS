@@ -1,4 +1,4 @@
-// tslint:disable
+
 
 let a, b;
 

@@ -1,5 +1,3 @@
-// tslint:disable
-
 while(foo()) {
   bar();
   if (baz()) {
