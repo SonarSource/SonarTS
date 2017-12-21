@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { CfgBlock, ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
+import { functionLikeMainToken } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -41,30 +42,30 @@ export class Rule extends tslint.Rules.AbstractRule {
 class Walker extends tslint.RuleWalker {
   public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
     if (!func.body) return;
-    this.checkFunctionLikeDeclaration(func.getFirstToken(), func.body, func.type);
+    this.checkFunctionLikeDeclaration(func, func.body, func.type);
   }
 
   public visitMethodDeclaration(meth: ts.MethodDeclaration) {
     if (!meth.body) return;
-    this.checkFunctionLikeDeclaration(
-      meth.asteriskToken ? meth.getChildAt(1) : meth.getFirstToken(),
-      meth.body,
-      meth.type,
-    );
+    this.checkFunctionLikeDeclaration(meth, meth.body, meth.type);
   }
 
   public visitGetAccessor(accessor: ts.AccessorDeclaration) {
     if (!accessor.body) return;
-    this.checkFunctionLikeDeclaration(accessor.getFirstToken(), accessor.body, accessor.type);
+    this.checkFunctionLikeDeclaration(accessor, accessor.body, accessor.type);
   }
 
   public visitArrowFunction(func: ts.ArrowFunction) {
     if (func.body.kind === ts.SyntaxKind.Block) {
-      this.checkFunctionLikeDeclaration(func.equalsGreaterThanToken, func.body as ts.Block, func.type);
+      this.checkFunctionLikeDeclaration(func, func.body as ts.Block, func.type);
     }
   }
 
-  private checkFunctionLikeDeclaration(issuePositionToken: ts.Node, body: ts.Block, returnType?: ts.TypeNode) {
+  private checkFunctionLikeDeclaration(
+    functionNode: ts.FunctionLikeDeclaration,
+    body: ts.Block,
+    returnType?: ts.TypeNode,
+  ) {
     if (this.declaredReturnTypeContainsVoidTypes(returnType)) return;
     const cfg = ControlFlowGraph.fromStatements(Array.from(body.statements));
     if (cfg) {
@@ -74,9 +75,8 @@ class Walker extends tslint.RuleWalker {
       const hasExplicit = predecessors.find(this.lastElementIsExplicitReturn);
       const hasImplicit = predecessors.find(this.lastElementIsNotExplicitReturn);
       if (hasExplicit && hasImplicit) {
-        this.addFailureAt(
-          issuePositionToken.getStart(),
-          issuePositionToken.getWidth(),
+        this.addFailureAtNode(
+          functionLikeMainToken(functionNode),
           'Refactor this function to use "return" consistently',
         );
       }
