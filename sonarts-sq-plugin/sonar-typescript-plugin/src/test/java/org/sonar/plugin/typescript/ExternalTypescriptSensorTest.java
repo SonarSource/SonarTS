@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -416,6 +417,11 @@ public class ExternalTypescriptSensorTest {
       @Override
       public String getNodeExecutable() {
         return customNodeExecutable != null ? customNodeExecutable : node;
+      }
+
+      @Override
+      public List<String> getSonarTSServerCommand() {
+        return Collections.emptyList();
       }
     }
   }

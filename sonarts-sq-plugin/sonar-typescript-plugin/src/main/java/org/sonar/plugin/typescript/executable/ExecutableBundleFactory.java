@@ -20,8 +20,10 @@
 package org.sonar.plugin.typescript.executable;
 
 import java.io.File;
+import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.config.Configuration;
 
+@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 public interface ExecutableBundleFactory {
   ExecutableBundle createAndDeploy(File deployDestination, Configuration configuration);
 }

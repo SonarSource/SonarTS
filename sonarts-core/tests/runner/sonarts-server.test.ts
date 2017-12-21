@@ -25,7 +25,6 @@ it("run analysis on provided content", done => {
   const port = start();
   var client = new net.Socket();
   client.connect(port, "localhost", function() {
-    console.log("Connected");
     client.write(
       JSON.stringify({
         operation: "analyze",

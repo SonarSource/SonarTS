@@ -1,6 +1,6 @@
 /*
- * SonarQube JavaScript Plugin
- * Copyright (C) 2011-2017 SonarSource SA
+ * SonarTS
+ * Copyright (C) 2017-2017 SonarSource SA
  * mailto:info AT sonarsource DOT com
  *
  * This program is free software; you can redistribute it and/or
@@ -22,31 +22,38 @@ package org.sonar.plugin.typescript;
 import java.io.IOException;
 import org.sonar.api.Startable;
 import org.sonar.api.batch.InstantiationStrategy;
-import org.sonar.api.config.Settings;
+import org.sonar.api.batch.ScannerSide;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.TempFolder;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
+import org.sonarsource.api.sonarlint.SonarLintSide;
 
-@InstantiationStrategy("PER_BATCH")
+@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
+@ScannerSide
+@SonarLintSide
 public class SonarTSServer implements Startable {
 
   private static final Logger LOG = Loggers.get(ExternalTypescriptSensor.class);
 
-  private Settings settings;
+  private Configuration configuration;
   private TempFolder tempFolder;
   private ExecutableBundleFactory bundleFactory;
 
-  public SonarTSServer(Settings settings, TempFolder tempFolder, ExecutableBundleFactory bundleFactory) {
-    this.settings = settings;
+  public SonarTSServer(Configuration configuration, TempFolder tempFolder, ExecutableBundleFactory bundleFactory) {
+    this.configuration = configuration;
     this.tempFolder = tempFolder;
     this.bundleFactory = bundleFactory;
   }
 
   @Override
   public void start() {
-    final ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir("sonarts"), settings);
+    if (true) {
+      throw new RuntimeException("BOOOOOM");
+    }
+    final ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir("sonarts"), configuration);
     ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand());
     // TODO consider adding NODE_PATH
     try {

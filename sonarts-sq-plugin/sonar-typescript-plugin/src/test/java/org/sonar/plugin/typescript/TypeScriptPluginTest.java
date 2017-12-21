@@ -36,7 +36,7 @@ public class TypeScriptPluginTest {
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(13);
+    assertThat(context.getExtensions()).hasSize(14);
   }
 
 }

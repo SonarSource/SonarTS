@@ -114,7 +114,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
 
   @Override
   public List<String> getSonarTSServerCommand() {
-    return Arrays.asList(settings.getString(TypeScriptPlugin.NODE_EXECUTABLE), this.sonartsServer.getAbsolutePath());
+    return Arrays.asList(configuration.get(TypeScriptPlugin.NODE_EXECUTABLE).get(), this.sonartsServer.getAbsolutePath());
   }
 
   private File copyTo(File targetPath) throws IOException {
