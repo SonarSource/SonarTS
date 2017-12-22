@@ -266,3 +266,10 @@ function nesting_class_no_complexity(condition: boolean) {  // Ok
   foo(1 && 2 &&
         !(3 && 4)); // +2
 }
+
+  function nested_function_expression_with_boolean() {
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.}}
+  let foo = function(a: boolean, b:boolean) {
+    return a && b; // +2 (incl. +1 from nesting)
+  };
+}

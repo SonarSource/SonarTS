@@ -176,31 +176,48 @@ class ComplexityWalker extends tslint.SyntaxWalker {
   }
 
   public visitBinaryExpression(node: ts.BinaryExpression): void {
-    const operator = node.operatorToken;
-    if (is(operator, ts.SyntaxKind.AmpersandAmpersandToken, ts.SyntaxKind.BarBarToken)) {
-      const leftChild = drillDownThroughParenthesis(node.left);
-      const rightChild = drillDownThroughParenthesis(node.right);
+    if (ComplexityWalker.isAndOrOr(node) && !this.isIgnoredOperation(node)) {
+      const flattenedLogicalExpressions = this.flattenLogicalExpression(node);
 
-      const leftChildOfSameKind = ComplexityWalker.isOperator(leftChild, operator.kind);
-      const rightChildOfSameKind = ComplexityWalker.isOperator(rightChild, operator.kind);
-
-      // move always to the leftmost operator
-      if (rightChildOfSameKind) {
-        this.logicalOperationsToIgnore.push(rightChild as ts.BinaryExpression);
+      let previous;
+      let flattenedComplexity = 0;
+      for (const current of flattenedLogicalExpressions) {
+        if (!previous || !is(previous.operatorToken, current.operatorToken.kind)) {
+          flattenedComplexity++;
+        }
+        previous = current;
       }
-
-      if (!this.isIgnoredOperation(node) && !leftChildOfSameKind) {
-        this.addComplexityWithoutNesting();
-      }
+      this.addComplexityWithNesting(flattenedComplexity);
     }
     super.visitBinaryExpression(node);
   }
 
-  private static isOperator(node: ts.Node, operatorKind: ts.BinaryOperator): boolean {
+  private static isAndOrOr(node: ts.Node): boolean {
     if (is(node, ts.SyntaxKind.BinaryExpression)) {
-      return is((node as ts.BinaryExpression).operatorToken, operatorKind);
+      return is(
+        (node as ts.BinaryExpression).operatorToken,
+        ts.SyntaxKind.AmpersandAmpersandToken,
+        ts.SyntaxKind.BarBarToken,
+      );
     }
     return false;
+  }
+
+  private flattenLogicalExpression(node: ts.Node): ts.BinaryExpression[] {
+    if (ComplexityWalker.isAndOrOr(node)) {
+      const binaryExpression = node as ts.BinaryExpression;
+
+      this.logicalOperationsToIgnore.push(binaryExpression);
+
+      const leftChild = drillDownThroughParenthesis(binaryExpression.left);
+      const rightChild = drillDownThroughParenthesis(binaryExpression.right);
+
+      return this.flattenLogicalExpression(leftChild)
+        .concat([binaryExpression])
+        .concat(this.flattenLogicalExpression(rightChild));
+    }
+
+    return [];
   }
 
   private isIgnoredOperation(node: ts.BinaryExpression): boolean {
@@ -225,7 +242,8 @@ class ComplexityWalker extends tslint.SyntaxWalker {
     this.complexity += 1;
   }
 
-  private addComplexityWithNesting(): void {
-    this.complexity += this.nesting + 1;
+  private addComplexityWithNesting(value?: number): void {
+    const addition = value ? value : 1;
+    this.complexity += this.nesting + addition;
   }
 }
