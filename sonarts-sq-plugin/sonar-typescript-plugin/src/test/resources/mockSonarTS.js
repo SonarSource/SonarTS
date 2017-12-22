@@ -45,7 +45,8 @@ var result = [{
     "statements":100,
     "functions":10,
     "classes":1,
-    "complexity": 42
+    "complexity": 42,
+    "cognitiveComplexity": 22
 }];
 
 process.stdin.on('data', function () {

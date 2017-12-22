@@ -137,6 +137,7 @@ public class ExternalTypescriptSensorTest {
     assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(10);
     assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.CLASSES).value()).isEqualTo(1);
     assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.COMPLEXITY).value()).isEqualTo(42);
+    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY).value()).isEqualTo(22);
 
     List<TokensLine> cpd = sensorContext.cpdTokens(testInputFile.key());
     assertThat(cpd).hasSize(1);

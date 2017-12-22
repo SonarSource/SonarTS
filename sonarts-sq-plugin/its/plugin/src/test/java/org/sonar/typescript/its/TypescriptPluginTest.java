@@ -77,6 +77,7 @@ public class TypescriptPluginTest {
 
     // Complexity
     assertThat(getProjectMeasureAsDouble("complexity")).isEqualTo(3.0);
+    assertThat(getProjectMeasureAsDouble("cognitive_complexity")).isEqualTo(2.0);
 
     // Duplication
     assertThat(getProjectMeasureAsDouble("duplicated_lines")).isEqualTo(0.0);
