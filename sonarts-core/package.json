@@ -1,6 +1,6 @@
 {
   "name": "tslint-sonarts",
-  "version": "1.2.0",
+  "version": "1.3.0-0",
   "description": "SonarTS rules for TSLint",
   "main": "tslint-sonarts.json",
   "bin": {
@@ -11,8 +11,7 @@
     "clear": "rm -rf lib/*",
     "prepack": "yarn build && cp ../README.md .",
     "postpack": "rm README.md",
-    "build":
-      "yarn install && yarn license-check && yarn check-format && yarn clear && yarn compile-sources && yarn type-check-tests",
+    "build": "yarn install && yarn license-check && yarn check-format && yarn clear && yarn compile-sources && yarn type-check-tests",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer && webpack",
     "build-ci": "yarn build && yarn test --coverage",
     "build-local": "yarn build && yarn test",
@@ -27,7 +26,12 @@
     "type": "git",
     "url": "git+https://github.com/SonarSource/SonarTS.git"
   },
-  "keywords": ["sonarts", "sonarqube", "typescript", "tslint"],
+  "keywords": [
+    "sonarts",
+    "sonarqube",
+    "typescript",
+    "tslint"
+  ],
   "license": "LGPL-3.0",
   "bugs": {
     "url": "https://github.com/SonarSource/SonarTS/issues"
@@ -65,7 +69,12 @@
     "webpack-dev-server": "2.9.4"
   },
   "license-check-config": {
-    "src": ["src/**/*.ts", "tests/**/*.ts", "!tests/**/*.lint.ts", "!node_modules/**/*"],
+    "src": [
+      "src/**/*.ts",
+      "tests/**/*.ts",
+      "!tests/**/*.lint.ts",
+      "!node_modules/**/*"
+    ],
     "path": "HEADER",
     "blocking": true,
     "logInfo": false,
