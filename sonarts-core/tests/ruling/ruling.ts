@@ -25,6 +25,7 @@ import { executeRule } from "../../src/runner/rules";
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { createProgram } from "../../src/utils/parser";
+import { SonarIssue } from "../../src/utils/issues";
 
 export interface Results {
   [rule: string]: {
@@ -57,7 +58,10 @@ export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: stri
       rules.forEach(Rule => {
         const rule = initRule(Rule);
         const errorLines = executeRule(rule, file, program).map(
-          failure => failure.getStartPosition().getLineAndCharacter().line + 1,
+          failure =>
+            failure instanceof SonarIssue
+              ? failure.primaryLocation.startLine
+              : failure.getStartPosition().getLineAndCharacter().line + 1,
         );
         const ruleName = (Rule as any).metadata.ruleName;
         results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);

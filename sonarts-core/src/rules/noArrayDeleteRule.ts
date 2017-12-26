@@ -20,8 +20,9 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SonarRule, SonarRuleVisitor } from "../utils/issues";
 
-export class Rule extends tslint.Rules.TypedRule {
+export class Rule extends SonarRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-array-delete",
     description: '"delete" should not be used on arrays',
@@ -38,12 +39,12 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public static MESSAGE = 'Remove this use of "delete".';
 
-  public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+  public ruleVisitor(): typeof SonarRuleVisitor {
+    return Visitor;
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitNode(node: ts.Node) {
     if (
       ts.isDeleteExpression(node) &&
@@ -59,12 +60,12 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   private raiseIssue(node: ts.DeleteExpression) {
     const deleteKeyword = node.getChildren().find(child => child.kind === ts.SyntaxKind.DeleteKeyword);
     if (deleteKeyword) {
-      this.addFailureAtNode(deleteKeyword, Rule.MESSAGE);
+      this.addIssue(deleteKeyword, Rule.MESSAGE);
     }
   }
 
   private isArray(node: ts.Node): boolean {
-    const type = this.getTypeChecker().getTypeAtLocation(node);
+    const type = this.program.getTypeChecker().getTypeAtLocation(node);
     return !!type.symbol && type.symbol.name === "Array";
   }
 }
