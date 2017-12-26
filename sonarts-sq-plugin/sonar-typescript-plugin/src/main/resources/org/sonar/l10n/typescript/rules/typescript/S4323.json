@@ -7,7 +7,7 @@
     "constantCost": "5min"
   },
   "tags": [
-    
+    "proficiency"
   ],
   "defaultSeverity": "Minor",
   "ruleSpecification": "RSPEC-4323",

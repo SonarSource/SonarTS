@@ -9,5 +9,7 @@
   "tags": [
     "proficiency"
   ],
-  "defaultSeverity": "Minor"
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-4324",
+  "sqKey": "S4324"
 }

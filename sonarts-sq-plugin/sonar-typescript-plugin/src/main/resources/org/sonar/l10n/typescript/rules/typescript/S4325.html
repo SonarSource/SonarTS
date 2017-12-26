@@ -1,5 +1,5 @@
-<p>The TypeScript compiler automatically casts a variable to the relevant type inside conditionals where it is possible to infer (usage of
-<code>typeof</code>, <code>instanceof</code> etc). These compiler feature makes casts and not-<code>null</code> assertions unnecessary.</p>
+<p>The TypeScript compiler automatically casts a variable to the relevant type inside conditionals where it is possible to infer the type (because
+<code>typeof</code>, <code>instanceof</code>, etc was used). This compiler feature makes casts and not-<code>null</code> assertions unnecessary.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
 function getName(x?: string | UserName) {
