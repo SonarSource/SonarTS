@@ -32,6 +32,7 @@ import { SymbolTable, Usage, UsageFlag } from "./table";
 export class LiveVariableAnalyzer {
   private blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
   private deadUsages: Set<Usage> = new Set();
+  private usedInNestedFunctionOrClass: Map<ts.Symbol, boolean> = new Map();
   private root: ts.FunctionLikeDeclaration | ts.SourceFile;
   private static readonly FUNCTION_OR_SOURCE_FILE = [...FUNCTION_LIKE, ts.SyntaxKind.SourceFile];
 
@@ -100,7 +101,11 @@ export class LiveVariableAnalyzer {
   }
 
   private isUsedInNestedFunctionOrClass(symbol: ts.Symbol) {
-    return this.symbols
+    const cached = this.usedInNestedFunctionOrClass.get(symbol);
+    if (cached !== undefined) {
+      return cached;
+    }
+    const used = this.symbols
       .allUsages(symbol)
       .some(
         usage =>
@@ -111,6 +116,8 @@ export class LiveVariableAnalyzer {
             ts.SyntaxKind.ClassExpression,
           ) !== this.root,
       );
+    this.usedInNestedFunctionOrClass.set(symbol, used);
+    return used;
   }
 
   private successorSymbolsWithAvailableReads(block: CfgBlock): Set<ts.Symbol> {
