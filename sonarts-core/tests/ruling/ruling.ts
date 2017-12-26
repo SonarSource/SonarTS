@@ -24,6 +24,7 @@ import * as path from "path";
 import { executeRule } from "../../src/runner/rules";
 import * as tslint from "tslint";
 import * as ts from "typescript";
+import { createProgram } from "../../src/utils/parser";
 
 export interface Results {
   [rule: string]: {
@@ -50,7 +51,7 @@ export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: stri
   console.log("Analyzing:");
   tsConfigFiles.forEach(tsConfigFile => {
     console.log("  *", getFileNameForSnapshot(tsConfigFile));
-    const program = getProgram(tsConfigFile);
+    const program = createProgram(tsConfigFile);
     const files = lodash.sortBy(getProgramFiles(program));
     files.forEach(file => {
       rules.forEach(Rule => {
@@ -127,10 +128,6 @@ function initRule(Rule: any): tslint.IRule {
     ruleSeverity: "error",
   };
   return new Rule(RULE_OPTIONS);
-}
-
-function getProgram(tsConfigFile: string): ts.Program {
-  return tslint.Linter.createProgram(tsConfigFile);
 }
 
 function getProgramFiles(program: ts.Program): ts.SourceFile[] {

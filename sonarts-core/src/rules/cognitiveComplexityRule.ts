@@ -49,7 +49,7 @@ export class Rule extends tslint.Rules.AbstractRule {
     const walker = new tslint.RuleWalker(sourceFile, this.getOptions());
 
     const functionCollector = new FunctionCollector();
-    functionCollector.walk(sourceFile);
+    functionCollector.visit(sourceFile);
 
     functionCollector.functionComplexities.forEach(functionComplexity => {
       if (functionComplexity.complexity > this.threshold) {

@@ -19,17 +19,17 @@
  */
 
 import * as ts from "typescript";
-import * as tslint from "tslint";
 import * as rules from "./rules";
 import getMetrics from "./metrics";
 import getHighlighting from "./highlighter";
 import getCpdTokens from "./cpd";
+import { createProgram } from "../utils/parser";
 
 const sensors: Array<(sourceFile: ts.SourceFile) => any> = [getHighlighting, getMetrics, getCpdTokens];
 
 export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);
-  let program = tslint.Linter.createProgram(input.tsconfig);
+  let program = createProgram(input.tsconfig);
 
   let output = input.filepaths.map((filepath: string) => {
     const sourceFile = program.getSourceFile(filepath);
