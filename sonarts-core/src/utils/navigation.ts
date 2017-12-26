@@ -30,57 +30,50 @@ export function isAssignmentKind(kind: ts.SyntaxKind) {
 }
 
 export function isAssignment(node: ts.Node | undefined): node is ts.BinaryExpression {
-  return (
-    !!node &&
-    node.kind === ts.SyntaxKind.BinaryExpression &&
-    (node as ts.BinaryExpression).operatorToken.kind === ts.SyntaxKind.EqualsToken
-  );
-}
-
-export function getIdentifier(node: ts.Node): ts.Identifier | undefined {
-  node = drillDownThroughParenthesis(node);
-  if (node.kind === ts.SyntaxKind.Identifier) return node as ts.Identifier;
-  return undefined;
+  return !!node && ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.EqualsToken;
 }
 
 export function collectLeftHandIdentifiers(
-  node: ts.Node,
+  node: ts.Expression,
 ): { identifiers: ts.Identifier[]; nonIdentifiers: ts.Expression[] } {
   const identifiers: ts.Identifier[] = [];
   const nonIdentifiers: ts.Expression[] = [];
-  collectIdentifiersAndNonIdentifiers(node);
+  collectFromExpression(node);
   identifiers.reverse();
   nonIdentifiers.reverse();
   return { identifiers, nonIdentifiers };
 
-  function collectIdentifiersAndNonIdentifiers(node: ts.Node) {
+  function collectFromExpression(node: ts.Expression) {
     node = drillDownThroughParenthesis(node);
-    if (node.kind === ts.SyntaxKind.Identifier) {
-      identifiers.push(node as ts.Identifier);
-    } else if (node.kind === ts.SyntaxKind.ObjectLiteralExpression) {
-      (node as ts.ObjectLiteralExpression).properties.forEach(property => {
-        collectIdentifiersAndNonIdentifiers(property);
-      });
-    } else if (node.kind === ts.SyntaxKind.ArrayLiteralExpression) {
-      (node as ts.ArrayLiteralExpression).elements.forEach(element => {
-        collectIdentifiersAndNonIdentifiers(element);
-      });
-    } else if (is(node, ts.SyntaxKind.PropertyAssignment)) {
-      collectIdentifiersAndNonIdentifiers((node as ts.PropertyAssignment).initializer);
-    } else if (is(node, ts.SyntaxKind.ShorthandPropertyAssignment)) {
-      const propertyAssignment = node as ts.ShorthandPropertyAssignment;
-      collectIdentifiersAndNonIdentifiers(propertyAssignment.name);
-      if (propertyAssignment.objectAssignmentInitializer) {
-        nonIdentifiers.push(propertyAssignment.objectAssignmentInitializer);
-      }
-    } else if (is(node, ts.SyntaxKind.SpreadAssignment, ts.SyntaxKind.SpreadElement)) {
-      collectIdentifiersAndNonIdentifiers((node as ts.SpreadAssignment).expression);
-    } else if (is(node, ts.SyntaxKind.BinaryExpression)) {
-      collectIdentifiersAndNonIdentifiers((node as ts.BinaryExpression).left);
-      nonIdentifiers.push((node as ts.BinaryExpression).right);
+    if (ts.isIdentifier(node)) {
+      identifiers.push(node);
+    } else if (ts.isObjectLiteralExpression(node)) {
+      collectFromObjectLiteralExpression(node);
+    } else if (ts.isArrayLiteralExpression(node)) {
+      node.elements.forEach(element => collectFromExpression(element));
+    } else if (ts.isSpreadElement(node)) {
+      collectFromExpression(node.expression);
+    } else if (ts.isBinaryExpression(node)) {
+      collectFromExpression(node.left);
+      nonIdentifiers.push(node.right);
     } else {
-      nonIdentifiers.push(node as ts.Expression);
+      nonIdentifiers.push(node);
     }
+  }
+
+  function collectFromObjectLiteralExpression(node: ts.ObjectLiteralExpression) {
+    node.properties.forEach(property => {
+      if (ts.isPropertyAssignment(property)) {
+        collectFromExpression(property.initializer);
+      } else if (ts.isShorthandPropertyAssignment(property)) {
+        collectFromExpression(property.name);
+        if (property.objectAssignmentInitializer) {
+          nonIdentifiers.push(property.objectAssignmentInitializer);
+        }
+      } else if (ts.isSpreadAssignment(property)) {
+        collectFromExpression(property.expression);
+      }
+    });
   }
 }
 
@@ -127,13 +120,11 @@ export function lineAndCharacter(pos: number, file: ts.SourceFile): ts.LineAndCh
 }
 
 export function is(node: ts.Node | undefined, ...kinds: ts.SyntaxKind[]): boolean {
-  if (!node) return false;
-  for (const kind of kinds) {
-    if (node.kind === kind) {
-      return true;
-    }
-  }
-  return false;
+  return node !== undefined && kinds.includes(node.kind);
+}
+
+export function isFunctionLikeDeclaration(node: ts.Node): node is ts.FunctionLikeDeclaration {
+  return is(node, ...FUNCTION_LIKE);
 }
 
 function isToken(node: ts.Node): boolean {
@@ -173,10 +164,8 @@ export function floatToTopParenthesis(node: ts.Node): ts.Node {
   return node;
 }
 
-export function drillDownThroughParenthesis(node: ts.Node): ts.Node {
-  if (is(node, ts.SyntaxKind.ParenthesizedExpression))
-    return drillDownThroughParenthesis((node as ts.ParenthesizedExpression).expression);
-  return node;
+export function drillDownThroughParenthesis(node: ts.Expression): ts.Expression {
+  return ts.isParenthesizedExpression(node) ? drillDownThroughParenthesis(node.expression) : node;
 }
 
 /** Returns all descendants of the `node`, including tokens */

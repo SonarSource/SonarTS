@@ -73,7 +73,7 @@ export class LiveVariableAnalyzer {
     const availableReads = this.successorSymbolsWithAvailableReads(block);
     [...block.getElements()].reverse().forEach(element => {
       if (isAssignment(element)) {
-        collectLeftHandIdentifiers((element as ts.BinaryExpression).left).identifiers.forEach(identifier => {
+        collectLeftHandIdentifiers(element.left).identifiers.forEach(identifier => {
           this.trackUsage(this.symbols.getUsage(identifier), availableReads);
         });
       } else {
