@@ -33,6 +33,9 @@
     "url": "https://github.com/SonarSource/SonarTS/issues"
   },
   "homepage": "https://github.com/SonarSource/SonarTS",
+  "engines": {
+    "node": ">=6"
+  },
   "dependencies": {
     "immutable": "^3.8.2"
   },

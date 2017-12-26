@@ -87,6 +87,10 @@ How does it work?
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
+## Prerequisites
+
+Node.js (>=6.x).
+
 ## Use in TSLint
 
 * If you don't have TSLint yet configured for your project follow [these instructions](https://github.com/palantir/tslint#installation--usage).
