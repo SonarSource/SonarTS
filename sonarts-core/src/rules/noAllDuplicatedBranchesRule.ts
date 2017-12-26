@@ -21,8 +21,9 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
+import { SonarRule, SonarRuleVisitor } from "../utils/issues";
 
-export class Rule extends tslint.Rules.AbstractRule {
+export class Rule extends SonarRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-all-duplicated-branches",
     description: "All branches in a conditional structure should not have exactly the same implementation",
@@ -41,19 +42,19 @@ export class Rule extends tslint.Rules.AbstractRule {
   public static MESSAGE = "Remove this conditional structure or edit its code blocks so that they're not all the same.";
   public static MESSAGE_CONDITIONAL_EXPRESSION = 'This conditional operation returns the same value whether the condition is "true" or "false".';
 
-  public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+  public ruleVisitor(): typeof SonarRuleVisitor {
+    return Visitor;
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitIfStatement(node: ts.IfStatement) {
     // don't visit `else if` statements
     if (!node.parent || node.parent.kind !== ts.SyntaxKind.IfStatement) {
       const { branches, endsWithElse } = this.collectIfBranches(node);
 
       if (endsWithElse && this.allDuplicated(branches)) {
-        this.addFailureAtNode(node, Rule.MESSAGE);
+        this.addIssue(node, Rule.MESSAGE);
       }
     }
 
@@ -64,7 +65,7 @@ class Walker extends tslint.RuleWalker {
     const { branches, endsWithDefault } = this.collectSwitchBranches(node);
 
     if (endsWithDefault && this.allDuplicated(Array.from(branches))) {
-      this.addFailureAtNode(node, Rule.MESSAGE);
+      this.addIssue(node, Rule.MESSAGE);
     }
 
     super.visitSwitchStatement(node);
@@ -74,7 +75,7 @@ class Walker extends tslint.RuleWalker {
     const branches = [node.whenTrue, node.whenFalse];
 
     if (this.allDuplicated(branches)) {
-      this.addFailureAtNode(node, Rule.MESSAGE_CONDITIONAL_EXPRESSION);
+      this.addIssue(node, Rule.MESSAGE_CONDITIONAL_EXPRESSION);
     }
 
     super.visitConditionalExpression(node);
