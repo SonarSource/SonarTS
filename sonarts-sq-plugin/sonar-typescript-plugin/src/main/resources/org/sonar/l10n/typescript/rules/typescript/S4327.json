@@ -1,5 +1,5 @@
 {
-  "title": "\"this\" should not be assigned to a variable",
+  "title": "\"this\" should not be assigned to variables",
   "type": "CODE_SMELL",
   "status": "ready",
   "remediation": {
