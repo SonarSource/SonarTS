@@ -111,6 +111,7 @@ import org.sonar.plugin.typescript.rules.NoVariableUsageBeforeDeclaration;
 import org.sonar.plugin.typescript.rules.ObjectLiteralShorthand;
 import org.sonar.plugin.typescript.rules.OneLine;
 import org.sonar.plugin.typescript.rules.PreferForOf;
+import org.sonar.plugin.typescript.rules.PreferImmediateReturn;
 import org.sonar.plugin.typescript.rules.PreferTemplate;
 import org.sonar.plugin.typescript.rules.Quotemark;
 import org.sonar.plugin.typescript.rules.RestrictPlusOperands;
@@ -274,6 +275,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       ObjectLiteralShorthand.class,
       OneLine.class,
       PreferForOf.class,
+      PreferImmediateReturn.class,
       PreferTemplate.class,
       Quotemark.class,
       RestrictPlusOperands.class,
