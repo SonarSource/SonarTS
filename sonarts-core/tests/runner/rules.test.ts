@@ -18,13 +18,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as path from "path";
-import * as tslint from "tslint";
 import { getIssues } from "../../src/runner/rules";
+import { createProgram } from "../../src/utils/parser";
 
 it("should run sonarts rules", () => {
   const sampleFile = path.join(__dirname, "./fixtures/runner_project/identical_expressions_and_deadstore.lint.ts");
   const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
-  const program = tslint.Linter.createProgram(tsconfig);
+  const program = createProgram(tsconfig);
 
   const issues = getIssues(
     [

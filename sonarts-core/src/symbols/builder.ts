@@ -17,17 +17,17 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as tslint from "tslint";
 import * as ts from "typescript";
 import { collectLeftHandIdentifiers, is, isAssignment } from "../utils/navigation";
 import { SymbolTable, UsageFlag } from "./table";
+import { TreeVisitor } from "../utils/visitor";
 
-export class SymbolTableBuilder extends tslint.SyntaxWalker {
+export class SymbolTableBuilder extends TreeVisitor {
   private table = new SymbolTable();
 
   public static build(sourceFile: ts.SourceFile, program: ts.Program): SymbolTable {
     const builder = new SymbolTableBuilder(program);
-    builder.walk(sourceFile);
+    builder.visit(sourceFile);
     return builder.table;
   }
 

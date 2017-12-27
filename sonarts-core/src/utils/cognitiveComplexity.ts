@@ -18,16 +18,16 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import * as tslint from "tslint";
+import { TreeVisitor } from "../utils/visitor";
 import { is, drillDownThroughParenthesis } from "../utils/navigation";
 
 export function getOverallCognitiveComplexity(node: ts.SourceFile): number {
   let complexityWalker = new ComplexityWalker();
-  complexityWalker.walk(node);
+  complexityWalker.visit(node);
   let fileComplexity = complexityWalker.getComplexity();
 
   const functionCollector = new FunctionCollector();
-  functionCollector.walk(node);
+  functionCollector.visit(node);
 
   functionCollector.functionComplexities.forEach(
     functionComplexity => (fileComplexity += functionComplexity.complexity),
@@ -38,7 +38,7 @@ export function getOverallCognitiveComplexity(node: ts.SourceFile): number {
 
 function getFunctionCognitiveComplexity(node: ts.FunctionLikeDeclaration): number {
   let complexityWalker = new ComplexityWalker();
-  complexityWalker.walk(node.body!);
+  complexityWalker.visit(node.body!);
   return complexityWalker.getComplexity();
 }
 
@@ -51,7 +51,7 @@ const TARGETED_KINDS = [
   ts.SyntaxKind.SetAccessor,
 ];
 
-export class FunctionCollector extends tslint.SyntaxWalker {
+export class FunctionCollector extends TreeVisitor {
   public functionComplexities: { functionNode: ts.FunctionLikeDeclaration; complexity: number }[] = [];
 
   public visitNode(node: ts.Node): void {
@@ -67,7 +67,7 @@ export class FunctionCollector extends tslint.SyntaxWalker {
   }
 }
 
-class ComplexityWalker extends tslint.SyntaxWalker {
+class ComplexityWalker extends TreeVisitor {
   private complexity = 0;
   private nesting = 0;
   private logicalOperationsToIgnore: ts.BinaryExpression[] = [];
@@ -89,12 +89,12 @@ class ComplexityWalker extends tslint.SyntaxWalker {
       this.addComplexityWithNesting();
     }
 
-    this.walk(node.expression);
+    this.visit(node.expression);
     this.visitWithNesting(node.thenStatement);
 
     if (node.elseStatement) {
       if (is(node.elseStatement, ts.SyntaxKind.IfStatement)) {
-        this.walk(node.elseStatement);
+        this.visit(node.elseStatement);
       } else {
         this.addComplexityWithoutNesting();
         this.visitWithNesting(node.elseStatement);
@@ -111,7 +111,7 @@ class ComplexityWalker extends tslint.SyntaxWalker {
 
   public visitSwitchStatement(node: ts.SwitchStatement): void {
     this.addComplexityWithNesting();
-    this.walk(node.expression);
+    this.visit(node.expression);
     this.visitWithNesting(node.caseBlock);
   }
 
@@ -170,7 +170,7 @@ class ComplexityWalker extends tslint.SyntaxWalker {
 
   public visitConditionalExpression(node: ts.ConditionalExpression): void {
     this.addComplexityWithNesting();
-    this.walk(node.condition);
+    this.visit(node.condition);
     this.visitWithNesting(node.whenTrue);
     this.visitWithNesting(node.whenFalse);
   }
@@ -227,14 +227,14 @@ class ComplexityWalker extends tslint.SyntaxWalker {
   private walkNodes(nodes: (ts.Node | undefined)[]) {
     for (const node of nodes) {
       if (node) {
-        this.walk(node);
+        this.visit(node);
       }
     }
   }
 
   private visitWithNesting(node: ts.Node): void {
     this.nesting++;
-    this.walk(node);
+    this.visit(node);
     this.nesting--;
   }
 

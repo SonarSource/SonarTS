@@ -19,7 +19,6 @@
  */
 import * as fs from "fs";
 import * as path from "path";
-import { Utils } from "tslint";
 
 it("should contain all implemented rules", () => {
   const rulesPath = path.join(__dirname, "../../src/rules");
@@ -27,7 +26,7 @@ it("should contain all implemented rules", () => {
   const profile = JSON.parse(fs.readFileSync(profileFilePath, "utf8"));
   const configuredRules = Object.keys(profile.rules)
     .map((key, _) => key)
-    .map(Utils.camelize)
+    .map(camelize)
     .sort();
   const existingRules = fs
     .readdirSync(rulesPath)
@@ -35,3 +34,10 @@ it("should contain all implemented rules", () => {
     .sort();
   expect(existingRules).toEqual(configuredRules);
 });
+
+function camelize(str: string) {
+  return str
+    .split("-")
+    .map((part, index) => (index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
+    .join("");
+}
