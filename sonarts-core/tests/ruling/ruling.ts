@@ -25,7 +25,7 @@ import { executeRule } from "../../src/runner/rules";
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { createProgram } from "../../src/utils/parser";
-import { SonarIssue } from "../../src/utils/issues";
+import { SonarIssue } from "../../src/utils/sonar-analysis";
 
 export interface Results {
   [rule: string]: {

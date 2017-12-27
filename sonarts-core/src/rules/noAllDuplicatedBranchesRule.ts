@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { SonarRule, SonarRuleVisitor } from "../utils/issues";
+import { SonarRule, SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends SonarRule {
   public static metadata: SonarRuleMetaData = {

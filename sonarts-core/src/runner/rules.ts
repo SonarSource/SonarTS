@@ -20,7 +20,7 @@
 import * as path from "path";
 import * as ts from "typescript";
 import * as tslint from "tslint";
-import { SonarRule, SonarIssue } from "../utils/issues";
+import { SonarRule, SonarIssue } from "../utils/sonar-analysis";
 
 const SONARTS_RULES_FOLDER = path.join(__dirname, "../../lib/rules");
 
