@@ -30,8 +30,9 @@ export class SymbolTable {
 
     const usage = new Usage(symbol, flags, node);
     this.usages.set(node, usage);
-    if (!this.usagesBySymbol.has(symbol)) this.usagesBySymbol.set(symbol, []);
-    this.usagesBySymbol.get(symbol)!.push(usage);
+    const bySymbol = this.usagesBySymbol.get(symbol) || [];
+    bySymbol.push(usage);
+    this.usagesBySymbol.set(symbol, bySymbol);
   }
 
   public getUsage(node: ts.Node): Usage | undefined {
@@ -39,7 +40,7 @@ export class SymbolTable {
   }
 
   public allUsages(symbol: ts.Symbol): Usage[] {
-    return this.usagesBySymbol.has(symbol) ? this.usagesBySymbol.get(symbol)! : [];
+    return this.usagesBySymbol.get(symbol) || [];
   }
 
   public getSymbols(): ts.Symbol[] {

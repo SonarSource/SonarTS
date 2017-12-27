@@ -46,12 +46,6 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     super.visitBinaryExpression(node);
   }
 
-  private registerWriteUsageForAssignment(node: ts.Node) {
-    collectLeftHandIdentifiers(node).identifiers.forEach(identifier =>
-      this.registerUsageIfMissing(identifier, UsageFlag.WRITE),
-    );
-  }
-
   protected visitVariableDeclaration(node: ts.VariableDeclaration) {
     this.addVariable(node);
     super.visitVariableDeclaration(node);
@@ -123,42 +117,45 @@ export class SymbolTableBuilder extends tslint.SyntaxWalker {
     super.visitModuleDeclaration(node);
   }
 
+  private registerWriteUsageForAssignment(node: ts.Expression) {
+    collectLeftHandIdentifiers(node).identifiers.forEach(identifier =>
+      this.registerUsageIfMissing(identifier, UsageFlag.WRITE),
+    );
+  }
+
   private addVariable(
-    node: ts.VariableDeclaration | ts.ParameterDeclaration | ts.BindingElement | ts.PropertyDeclaration,
+    node: ts.VariableDeclaration | ts.ParameterDeclaration | ts.PropertyDeclaration | ts.BindingElement,
   ) {
     const declarationName = node.name;
-    if (declarationName.kind === ts.SyntaxKind.Identifier) {
+    if (ts.isIdentifier(declarationName)) {
       let usageFlags = UsageFlag.DECLARATION;
       if (
         node.initializer ||
         is(node, ts.SyntaxKind.Parameter) ||
-        (node.parent && is(node.parent, ts.SyntaxKind.ObjectBindingPattern, ts.SyntaxKind.ArrayBindingPattern))
-      )
+        is(node.parent, ts.SyntaxKind.ObjectBindingPattern, ts.SyntaxKind.ArrayBindingPattern)
+      ) {
         usageFlags += UsageFlag.WRITE;
+      }
       this.registerUsageIfMissing(declarationName, usageFlags);
-    } else if (declarationName.kind === ts.SyntaxKind.ArrayBindingPattern) {
-      declarationName.elements.forEach(element => {
-        if (element.kind === ts.SyntaxKind.BindingElement) {
+    } else if (ts.isArrayBindingPattern(declarationName) || ts.isObjectBindingPattern(declarationName)) {
+      Array.from(declarationName.elements).forEach(element => {
+        if (ts.isBindingElement(element)) {
           this.addVariable(element);
         }
-      });
-    } else if (declarationName.kind === ts.SyntaxKind.ObjectBindingPattern) {
-      declarationName.elements.forEach(element => {
-        this.addVariable(element);
       });
     }
   }
 
-  private registerUsageIfMissing(node: ts.Node, flags: UsageFlag): void {
-    if (node.kind !== ts.SyntaxKind.ParenthesizedExpression) {
+  private registerUsageIfMissing(node: ts.Expression, flags: UsageFlag): void {
+    if (ts.isParenthesizedExpression(node)) {
+      this.registerUsageIfMissing(node.expression, flags);
+    } else {
       let symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
 
       if (node.parent && node.parent.kind === ts.SyntaxKind.ShorthandPropertyAssignment) {
         symbol = this.program.getTypeChecker().getShorthandAssignmentValueSymbol(node.parent);
       }
       if (symbol) this.table.registerUsageIfMissing(symbol, node, flags);
-    } else {
-      this.registerUsageIfMissing((node as ts.ParenthesizedExpression).expression, flags);
     }
   }
 }

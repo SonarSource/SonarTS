@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable, UsageFlag } from "../symbols/table";
 import { SonarRuleMetaData } from "../sonarRule";
-import { is, FUNCTION_LIKE, descendants, ancestorsChain } from "../utils/navigation";
+import { FUNCTION_LIKE, descendants, ancestorsChain, isFunctionLikeDeclaration } from "../utils/navigation";
 import { LiveVariableAnalyzer, LVAReturn } from "../symbols/lva";
 import { ControlFlowGraph } from "../cfg/cfg";
 
@@ -60,25 +60,26 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     this.lva = new LiveVariableAnalyzer(this.symbols);
   }
 
-  protected visitNode(node: ts.Node): void {
-    if (is(node, ...FUNCTION_LIKE)) {
-      const functionLike = node as ts.FunctionLikeDeclaration;
-      const lvaReturn = this.lva.analyzeFunction(functionLike);
-      this.check(functionLike.body!, lvaReturn, ...functionLike.parameters);
-    } else if (is(node, ts.SyntaxKind.CatchClause)) {
-      const catchClause = node as ts.CatchClause;
-      const cfg = ControlFlowGraph.fromStatements(Array.from(catchClause.block.statements));
-      if (!cfg) return;
-      const lvaReturn = this.lva.analyze(catchClause.block, cfg);
-      if (catchClause.variableDeclaration) {
-        this.check(catchClause.block, lvaReturn, catchClause.variableDeclaration);
+  protected visitNode(node: ts.Node) {
+    if (isFunctionLikeDeclaration(node)) {
+      if (node.body) {
+        const lvaReturn = this.lva.analyzeFunction(node);
+        this.check(node.body, lvaReturn, ...node.parameters);
       }
-    } else if (is(node, ts.SyntaxKind.ForInStatement, ts.SyntaxKind.ForOfStatement)) {
-      const iterationStatement = node as ts.IterationStatement;
-      const cfg = ControlFlowGraph.fromStatements([iterationStatement.statement]);
-      if (!cfg) return;
-      const lvaReturn = this.lva.analyze(iterationStatement, cfg);
-      this.check(iterationStatement.statement, lvaReturn, (iterationStatement as ts.ForInStatement).initializer);
+    } else if (ts.isCatchClause(node)) {
+      if (node.variableDeclaration) {
+        const cfg = ControlFlowGraph.fromStatements(Array.from(node.block.statements));
+        if (cfg) {
+          const lvaReturn = this.lva.analyze(node.block, cfg);
+          this.check(node.block, lvaReturn, node.variableDeclaration);
+        }
+      }
+    } else if (ts.isForInStatement(node) || ts.isForOfStatement(node)) {
+      const cfg = ControlFlowGraph.fromStatements([node.statement]);
+      if (cfg) {
+        const lvaReturn = this.lva.analyze(node, cfg);
+        this.check(node.statement, lvaReturn, node.initializer);
+      }
     }
 
     super.visitNode(node);
@@ -93,9 +94,8 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
     nodesToCheck.forEach(parameter => {
       descendants(parameter)
-        .filter(descendant => is(descendant, ts.SyntaxKind.Identifier))
-        .forEach(descendant => {
-          const identifier = descendant as ts.Identifier;
+        .filter(ts.isIdentifier)
+        .forEach(identifier => {
           const symbol = this.getTypeChecker().getSymbolAtLocation(identifier);
           if (
             symbol &&
