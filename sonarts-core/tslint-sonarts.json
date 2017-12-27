@@ -37,6 +37,7 @@
     "no-useless-intersection": true,
     "no-variable-usage-before-declaration": true,
     "prefer-immediate-return": true,
+    "use-primitive-type": true,
     "use-type-alias": true
   }
 }

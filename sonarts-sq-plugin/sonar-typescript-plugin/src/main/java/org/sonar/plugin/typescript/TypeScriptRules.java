@@ -57,7 +57,6 @@ import org.sonar.plugin.typescript.rules.NoArrayDelete;
 import org.sonar.plugin.typescript.rules.NoCaseWithOr;
 import org.sonar.plugin.typescript.rules.NoCollectionSizeMischeck;
 import org.sonar.plugin.typescript.rules.NoConsole;
-import org.sonar.plugin.typescript.rules.NoConstruct;
 import org.sonar.plugin.typescript.rules.NoDeadStore;
 import org.sonar.plugin.typescript.rules.NoDebugger;
 import org.sonar.plugin.typescript.rules.NoDuplicateImports;
@@ -121,6 +120,7 @@ import org.sonar.plugin.typescript.rules.TripleEquals;
 import org.sonar.plugin.typescript.rules.TypeScriptRule;
 import org.sonar.plugin.typescript.rules.UseDefaultTypeParameter;
 import org.sonar.plugin.typescript.rules.UseIsnan;
+import org.sonar.plugin.typescript.rules.UsePrimitiveType;
 import org.sonar.plugin.typescript.rules.UseTypeAlias;
 import org.sonar.plugin.typescript.rules.VariableName;
 import org.sonarsource.analyzer.commons.RuleMetadataLoader;
@@ -222,7 +222,6 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoCaseWithOr.class,
       NoCollectionSizeMischeck.class,
       NoConsole.class,
-      NoConstruct.class,
       NoDeadStore.class,
       NoDebugger.class,
       NoDuplicateImports.class,
@@ -286,6 +285,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       VariableName.class,
       UseIsnan.class,
       UseDefaultTypeParameter.class,
+      UsePrimitiveType.class,
       UseTypeAlias.class));
   }
 
