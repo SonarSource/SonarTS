@@ -61,6 +61,12 @@ class Booleans {
   //                   ^^^^^^^ {{Replace this 'Boolean' wrapper object with primitive type 'boolean'.}}
 }
 
+function union(p: String | number) {}
+//                ^^^^^^ {{Replace this 'String' wrapper object with primitive type 'string'.}}
+
+function intersection(p: String & number) {}
+//                       ^^^^^^ {{Replace this 'String' wrapper object with primitive type 'string'.}}
+
 // override built-in String type
 namespace inner {
   type String = number;

@@ -20,7 +20,6 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { isFunctionLikeDeclaration } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -46,34 +45,25 @@ export class Rule extends tslint.Rules.TypedRule {
 
 class Walker extends tslint.ProgramAwareRuleWalker {
   protected visitNode(node: ts.Node) {
-    if (ts.isNewExpression(node)) {
-      this.checkNewExpression(node);
-    } else if (isFunctionLikeDeclaration(node)) {
-      node.parameters.forEach(parameter => this.checkTypeNode(parameter.type));
-    } else if (ts.isVariableDeclaration(node) || ts.isPropertyDeclaration(node)) {
-      this.checkTypeNode(node.type);
-    }
-
-    super.visitNode(node);
-  }
-
-  private checkNewExpression(node: ts.NewExpression) {
-    if (ts.isIdentifier(node.expression) && this.isPrimitiveWrapper(node.expression.text)) {
-      this.addFailureAtNode(node, `Remove this use of '${node.expression.text}' constructor.`);
-    }
-  }
-
-  private checkTypeNode(typeNode?: ts.TypeNode) {
-    if (typeNode) {
-      const type = this.getTypeChecker().getTypeFromTypeNode(typeNode);
+    // TODO create and use `visitTypeNode` in visitor
+    if (ts.isTypeNode(node)) {
+      const type = this.getTypeChecker().getTypeFromTypeNode(node);
       const symbol = type.getSymbol();
       if (symbol && this.isPrimitiveWrapper(symbol.name)) {
         this.addFailureAtNode(
-          typeNode,
-          `Replace this '${symbol.name}' wrapper object with primitive type '${symbol.name.toLowerCase()}'.`,
+          node,
+          `Replace this '${node.getText()}' wrapper object with primitive type '${node.getText().toLowerCase()}'.`,
         );
       }
     }
+    super.visitNode(node);
+  }
+
+  protected visitNewExpression(node: ts.NewExpression) {
+    if (ts.isIdentifier(node.expression) && this.isPrimitiveWrapper(node.expression.text)) {
+      this.addFailureAtNode(node, `Remove this use of '${node.expression.text}' constructor.`);
+    }
+    super.visitNewExpression(node);
   }
 
   private isPrimitiveWrapper(name: string) {
