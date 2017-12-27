@@ -34,6 +34,7 @@ How does it work?
 * Function parameters, caught exceptions and foreach variables' initial values should not be ignored ([`no-ignored-initial-value`]) ([`requires type-check`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
+* Logical OR should not be used in switch cases ([`no-logical-or-in-switch-case`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
@@ -70,6 +71,7 @@ How does it work?
 [`no-ignored-initial-value`]: ./sonarts-core/docs/rules/no-ignored-initial-value.md
 [`no-ignored-return`]: ./sonarts-core/docs/rules/no-ignored-return.md
 [`no-inconsistent-return`]: ./sonarts-core/docs/rules/no-inconsistent-return.md
+[`no-logical-or-in-switch-case`]: ./sonarts-core/docs/rules/no-logical-or-in-switch-case.md
 [`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
 [`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md

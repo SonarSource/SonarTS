@@ -1,0 +1,30 @@
+<p>The logical OR operator (<code>||</code>) will not work in a <code>switch</code> <code>case</code> as one might think, only the first argument will
+be considered at execution time.</p>
+<h2>Noncompliant Code Example</h2>
+<pre>
+switch (x) {
+  case 1 || 2: // Noncompliant; only '1' is handled
+    doSomething(x);
+    break;
+  case 3:
+    doAnotherThing(x);
+    break;
+  default:
+    console.log("Boom!");  // this happens when x is 2
+}
+</pre>
+<h2>Compliant Solution</h2>
+<pre>
+switch (x) {
+  case 1:
+  case 2:
+    doSomething(x);
+    break;
+  case 3:
+    doAnotherThing(x);
+    break;
+  default:
+    console.log("Boom!");
+}
+</pre>
+

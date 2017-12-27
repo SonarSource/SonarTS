@@ -1,0 +1,13 @@
+{
+  "title": "Logical OR should not be used in switch cases",
+  "type": "BUG",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    
+  ],
+  "defaultSeverity": "Major"
+}
