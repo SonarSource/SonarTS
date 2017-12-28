@@ -22,10 +22,10 @@ package org.sonar.plugin.typescript.rules;
 import org.sonar.check.Rule;
 
 @Rule(key = "S1533")
-public class NoConstruct extends TypeScriptRule {
+public class UsePrimitiveType extends TypeScriptRule {
 
   @Override
   public String tsLintKey() {
-    return "no-construct";
+    return "use-primitive-type";
   }
 }
