@@ -20,7 +20,6 @@
 import * as path from "path";
 import * as ts from "typescript";
 import * as tslint from "tslint";
-import { SonarRule, SonarIssue } from "../utils/sonar-analysis";
 
 const SONARTS_RULES_FOLDER = path.join(__dirname, "../../lib/rules");
 
@@ -30,22 +29,14 @@ export function getIssues(
   sourceFile: ts.SourceFile,
 ): { issues: any[] } {
   const rules = tslint.loadRules(ruleConfigs, SONARTS_RULES_FOLDER);
-  let issues: (tslint.RuleFailure | SonarIssue)[] = [];
+  let issues: tslint.RuleFailure[] = [];
   rules.forEach(rule => (issues = issues.concat(executeRule(rule, sourceFile, program))));
   return { issues: issues.map(issue => issue.toJson()) };
 }
 
-export function executeRule(
-  rule: tslint.IRule,
-  sourceFile: ts.SourceFile,
-  program: ts.Program,
-): (tslint.RuleFailure | SonarIssue)[] {
+export function executeRule(rule: tslint.IRule, sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
   try {
-    if (isSonarRule(rule)) {
-      return (rule as SonarRule).applyWithSonar(sourceFile, program);
-    } else {
-      return isTypedRule(rule) ? rule.applyWithProgram(sourceFile, program) : rule.apply(sourceFile);
-    }
+    return isTypedRule(rule) ? rule.applyWithProgram(sourceFile, program) : rule.apply(sourceFile);
   } catch (error) {
     console.error("Rule error during analysis of : " + sourceFile.fileName, error);
     return [];
@@ -54,8 +45,4 @@ export function executeRule(
 
 function isTypedRule(rule: tslint.IRule): rule is tslint.ITypedRule {
   return "applyWithProgram" in rule;
-}
-
-function isSonarRule(rule: tslint.IRule) {
-  return "applyWithSonar" in rule;
 }

@@ -20,9 +20,9 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { SonarRule, SonarRuleVisitor } from "../utils/sonar-analysis";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
-export class Rule extends SonarRule {
+export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-array-delete",
     description: '"delete" should not be used on arrays',
@@ -39,12 +39,12 @@ export class Rule extends SonarRule {
 
   public static MESSAGE = 'Remove this use of "delete".';
 
-  public ruleVisitor(): typeof SonarRuleVisitor {
-    return Visitor;
+  public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Visitor extends SonarRuleVisitor {
+class Visitor extends TypedSonarRuleVisitor {
   public visitNode(node: ts.Node) {
     if (
       ts.isDeleteExpression(node) &&

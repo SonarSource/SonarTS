@@ -24,42 +24,14 @@ import { toSonarLine } from "../runner/sonar-utils";
 import { TreeVisitor } from "./visitor";
 import * as tslint from "tslint";
 
-export abstract class SonarRule extends tslint.Rules.TypedRule {
-  public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return convertToTslintFailures(this.applyWithSonar(sourceFile, program));
-  }
-
-  public applyWithSonar(sourceFile: ts.SourceFile, program: ts.Program): SonarIssue[] {
-    const VisitorClass = this.ruleVisitor();
-    const visitor = new VisitorClass(this.getOptions().ruleName, program);
-    visitor.visit(sourceFile);
-    return visitor.getIssues();
-  }
-
-  abstract ruleVisitor(): typeof SonarRuleVisitor;
-}
-
-function convertToTslintFailures(issues: SonarIssue[]): tslint.RuleFailure[] {
-  return issues.map(issue => {
-    const node = issue.primaryLocation.getNode();
-    return new tslint.RuleFailure(
-      node.getSourceFile(),
-      node.getStart(),
-      node.getEnd(),
-      issue.primaryLocation.getMessage()!,
-      issue.ruleName,
-    );
-  });
-}
-
 export class SonarRuleVisitor extends TreeVisitor {
   private issues: SonarIssue[] = [];
 
-  public constructor(private ruleName: string, protected program: ts.Program) {
+  public constructor(private ruleName: string) {
     super();
   }
 
-  public getIssues() {
+  public getIssues(): tslint.RuleFailure[] {
     return this.issues;
   }
 
@@ -70,6 +42,11 @@ export class SonarRuleVisitor extends TreeVisitor {
   }
 }
 
+export class TypedSonarRuleVisitor extends SonarRuleVisitor {
+  public constructor(ruleName: string, protected program: ts.Program) {
+    super(ruleName);
+  }
+}
 export class IssueLocation {
   private node: ts.Node;
   private message?: string;
@@ -110,26 +87,41 @@ export class IssueLocation {
   }
 }
 
-export class SonarIssue {
+export class SonarIssue extends tslint.RuleFailure {
   private cost?: number;
   public readonly primaryLocation: IssueLocation;
-  public readonly ruleName: string;
   private secondaryLocations: IssueLocation[] = [];
 
   public constructor(primaryLocation: IssueLocation, ruleName: string) {
+    super(
+      primaryLocation.getNode().getSourceFile(),
+      primaryLocation.getNode().getStart(),
+      primaryLocation.getNode().getEnd(),
+      primaryLocation.getMessage()!,
+      ruleName,
+    );
+
     this.primaryLocation = primaryLocation;
-    this.ruleName = ruleName;
   }
 
   public toJson() {
     return {
-      failure: this.primaryLocation.getMessage(),
-      startPosition: { line: this.primaryLocation.startLine, character: this.primaryLocation.startColumn },
-      endPosition: { line: this.primaryLocation.endLine, character: this.primaryLocation.endColumn },
+      failure: this.primaryLocation.getMessage()!,
+      startPosition: {
+        line: this.primaryLocation.startLine,
+        character: this.primaryLocation.startColumn,
+        position: this.primaryLocation.getNode().getStart(),
+      },
+      endPosition: {
+        line: this.primaryLocation.endLine,
+        character: this.primaryLocation.endColumn,
+        position: this.primaryLocation.getNode().getEnd(),
+      },
       name: this.primaryLocation.getNode().getSourceFile().fileName,
-      ruleName: this.ruleName,
+      ruleName: this.getRuleName(),
       cost: this.cost,
       secondaryLocation: this.secondaryLocations,
+      ruleSeverity: "",
     };
   }
 
@@ -141,9 +133,5 @@ export class SonarIssue {
   public addSecondaryLocation(secondaryLocation: IssueLocation): SonarIssue {
     this.secondaryLocations.push(secondaryLocation);
     return this;
-  }
-
-  public getStartPosition() {
-    return this.primaryLocation.getNode().getStart();
   }
 }
