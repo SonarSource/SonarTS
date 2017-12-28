@@ -1,3 +1,5 @@
+function doSomething(x?:any) {}
+
 function simple() {
   let x = 0;  // OK, we except 0
   x = 42;
@@ -113,3 +115,15 @@ function classDecorator(param:any) {
   @MyDecorator(castedParam)
   class X {};
 }
+
+function destructuring(x: any) {
+  // OK, used for omitting properties
+  const { omit, ...other } = x;
+  doSomething(other);
+
+  const { omit2, ...other2 } = x;
+  //                ^^^^^^ {{Remove this useless assignment to local variable "other2".}}    
+  doSomething(omit2)
+}
+
+export default 1;
