@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { isNullType, isUndefinedType, isVoidType } from "../utils/navigation";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -45,26 +46,25 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
-  protected visitNode(node: ts.Node) {
-    if (ts.isIntersectionTypeNode(node)) {
-      const anyOrNever = node.types.find(typeNode => ["any", "never"].includes(typeNode.getText()));
-      if (anyOrNever) {
-        this.addFailureAtNode(node, Rule.formatAnyOrNeverMessage(anyOrNever.getText()));
-      } else {
-        node.types.forEach(typeNode => {
-          const type = this.getTypeChecker().getTypeFromTypeNode(typeNode);
-          if (isTypeWithoutMembers(type)) {
-            this.addFailureAtNode(typeNode, Rule.MESSAGE);
-          }
-        });
-      }
+class Visitor extends TypedSonarRuleVisitor {
+  public visitIntersectionTypeNode(node: ts.IntersectionTypeNode) {
+    const anyOrNever = node.types.find(typeNode => ["any", "never"].includes(typeNode.getText()));
+    if (anyOrNever) {
+      this.addIssue(node, Rule.formatAnyOrNeverMessage(anyOrNever.getText()));
+    } else {
+      node.types.forEach(typeNode => {
+        const type = this.program.getTypeChecker().getTypeFromTypeNode(typeNode);
+        if (isTypeWithoutMembers(type)) {
+          this.addIssue(typeNode, Rule.MESSAGE);
+        }
+      });
     }
-    super.visitNode(node);
+
+    super.visitIntersectionTypeNode(node);
   }
 }
 

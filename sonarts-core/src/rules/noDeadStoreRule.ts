@@ -23,7 +23,8 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { LiveVariableAnalyzer } from "../symbols/lva";
 import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
-import { descendants, floatToTopParenthesis, is, isFunctionLikeDeclaration } from "../utils/navigation";
+import { descendants, floatToTopParenthesis, is } from "../utils/navigation";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -43,41 +44,31 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
+    return new Visitor(this.getOptions(), symbols).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
-  public constructor(
-    sourceFile: ts.SourceFile,
-    options: tslint.IOptions,
-    program: ts.Program,
-    private readonly symbols: SymbolTable,
-  ) {
-    super(sourceFile, options, program);
+class Visitor extends SonarRuleVisitor {
+  public constructor(options: tslint.IOptions, private readonly symbols: SymbolTable) {
+    super(options.ruleName);
   }
 
-  protected visitNode(node: ts.Node) {
-    if (isFunctionLikeDeclaration(node)) {
-      const lvaReturn = new LiveVariableAnalyzer(this.symbols).analyzeFunction(node);
-      if (lvaReturn) {
-        const { deadUsages } = lvaReturn;
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    const lvaReturn = new LiveVariableAnalyzer(this.symbols).analyzeFunction(node);
+    if (lvaReturn) {
+      const { deadUsages } = lvaReturn;
 
-        descendants(node)
-          .filter(ts.isIdentifier)
-          .forEach(identifier => {
-            const usage = this.symbols.getUsage(identifier);
-            if (usage && deadUsages.has(usage) && !this.isException(usage)) {
-              this.addFailureAtNode(
-                identifier,
-                `Remove this useless assignment to local variable "${identifier.text}".`,
-              );
-            }
-          });
-      }
+      descendants(node)
+        .filter(ts.isIdentifier)
+        .forEach(identifier => {
+          const usage = this.symbols.getUsage(identifier);
+          if (usage && deadUsages.has(usage) && !this.isException(usage)) {
+            this.addIssue(identifier, `Remove this useless assignment to local variable "${identifier.text}".`);
+          }
+        });
     }
 
-    super.visitNode(node);
+    super.visitFunctionLikeDeclaration(node);
   }
 
   private isException(usage: Usage) {

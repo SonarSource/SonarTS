@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -42,18 +43,18 @@ export class Rule extends tslint.Rules.AbstractRule {
   public static MESSAGE_CONDITIONAL_EXPRESSION = 'This conditional operation returns the same value whether the condition is "true" or "false".';
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitIfStatement(node: ts.IfStatement) {
     // don't visit `else if` statements
     if (!node.parent || node.parent.kind !== ts.SyntaxKind.IfStatement) {
       const { branches, endsWithElse } = this.collectIfBranches(node);
 
       if (endsWithElse && this.allDuplicated(branches)) {
-        this.addFailureAtNode(node, Rule.MESSAGE);
+        this.addIssue(node, Rule.MESSAGE);
       }
     }
 
@@ -64,7 +65,7 @@ class Walker extends tslint.RuleWalker {
     const { branches, endsWithDefault } = this.collectSwitchBranches(node);
 
     if (endsWithDefault && this.allDuplicated(Array.from(branches))) {
-      this.addFailureAtNode(node, Rule.MESSAGE);
+      this.addIssue(node, Rule.MESSAGE);
     }
 
     super.visitSwitchStatement(node);
@@ -74,7 +75,7 @@ class Walker extends tslint.RuleWalker {
     const branches = [node.whenTrue, node.whenFalse];
 
     if (this.allDuplicated(branches)) {
-      this.addFailureAtNode(node, Rule.MESSAGE_CONDITIONAL_EXPRESSION);
+      this.addIssue(node, Rule.MESSAGE_CONDITIONAL_EXPRESSION);
     }
 
     super.visitConditionalExpression(node);

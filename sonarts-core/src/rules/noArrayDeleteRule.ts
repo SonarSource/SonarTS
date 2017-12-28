@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -39,32 +40,27 @@ export class Rule extends tslint.Rules.TypedRule {
   public static MESSAGE = 'Remove this use of "delete".';
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
-  public visitNode(node: ts.Node) {
-    if (
-      ts.isDeleteExpression(node) &&
-      ts.isElementAccessExpression(node.expression) &&
-      this.isArray(node.expression.expression)
-    ) {
+class Visitor extends TypedSonarRuleVisitor {
+  public visitDeleteExpression(node: ts.DeleteExpression) {
+    if (ts.isElementAccessExpression(node.expression) && this.isArray(node.expression.expression)) {
       this.raiseIssue(node);
     }
-
-    super.visitNode(node);
+    super.visitDeleteExpression(node);
   }
 
   private raiseIssue(node: ts.DeleteExpression) {
     const deleteKeyword = node.getChildren().find(child => child.kind === ts.SyntaxKind.DeleteKeyword);
     if (deleteKeyword) {
-      this.addFailureAtNode(deleteKeyword, Rule.MESSAGE);
+      this.addIssue(deleteKeyword, Rule.MESSAGE);
     }
   }
 
   private isArray(node: ts.Node): boolean {
-    const type = this.getTypeChecker().getTypeAtLocation(node);
+    const type = this.program.getTypeChecker().getTypeAtLocation(node);
     return !!type.symbol && type.symbol.name === "Array";
   }
 }

@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { is } from "../utils/navigation";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -37,11 +38,11 @@ export class Rule extends tslint.Rules.TypedRule {
   public static MESSAGE_ASSERTION = "Remove this unnecessary not-null assertion.";
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Visitor extends TypedSonarRuleVisitor {
   // for some reason there is no specific "visit..." method for AsExpression
   visitNode(node: ts.Node): void {
     if (is(node, ts.SyntaxKind.AsExpression, ts.SyntaxKind.TypeAssertionExpression)) {
@@ -52,15 +53,15 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   visitNonNullExpression(node: ts.NonNullExpression): void {
-    const typeAtLocation = this.getTypeChecker().getTypeAtLocation(node.expression);
+    const typeAtLocation = this.program.getTypeChecker().getTypeAtLocation(node.expression);
 
     if (typeAtLocation.getFlags() & ts.TypeFlags.Union) {
       const { types } = typeAtLocation as ts.UnionType;
       if (!types.some(isUndefinedOrNull)) {
-        this.addFailureAtNode(node, Rule.MESSAGE_ASSERTION);
+        this.addIssue(node, Rule.MESSAGE_ASSERTION);
       }
     } else if (!isUndefinedOrNull(typeAtLocation)) {
-      this.addFailureAtNode(node, Rule.MESSAGE_ASSERTION);
+      this.addIssue(node, Rule.MESSAGE_ASSERTION);
     }
 
     super.visitNonNullExpression(node);
@@ -68,10 +69,10 @@ class Walker extends tslint.ProgramAwareRuleWalker {
 
   private checkTypeCasting(assertionExpression: ts.AssertionExpression) {
     const { expression, type } = assertionExpression;
-    const actualExpressionType = this.getTypeChecker().getTypeAtLocation(expression);
-    const typeToCast = this.getTypeChecker().getTypeFromTypeNode(type);
+    const actualExpressionType = this.program.getTypeChecker().getTypeAtLocation(expression);
+    const typeToCast = this.program.getTypeChecker().getTypeFromTypeNode(type);
     if (actualExpressionType === typeToCast) {
-      this.addFailureAtNode(assertionExpression, Rule.MESSAGE_CAST);
+      this.addIssue(assertionExpression, Rule.MESSAGE_CAST);
     }
   }
 }

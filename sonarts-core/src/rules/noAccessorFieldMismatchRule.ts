@@ -23,6 +23,7 @@ import * as ts from "typescript";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable } from "../symbols/table";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -37,18 +38,13 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
+    return new Visitor(this.getOptions(), symbols).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
-  constructor(
-    sourceFile: ts.SourceFile,
-    options: tslint.IOptions,
-    program: ts.Program,
-    private readonly symbols: SymbolTable,
-  ) {
-    super(sourceFile, options, program);
+class Visitor extends SonarRuleVisitor {
+  constructor(options: tslint.IOptions, private readonly symbols: SymbolTable) {
+    super(options.ruleName);
   }
 
   protected visitMethodDeclaration(method: ts.MethodDeclaration): void {
@@ -57,12 +53,12 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   protected visitSetAccessor(accessor: ts.AccessorDeclaration): void {
-    this.visitAccessor(accessor, { type: "setter", name: Walker.getName(accessor) });
+    this.visitAccessor(accessor, { type: "setter", name: Visitor.getName(accessor) });
     super.visitSetAccessor(accessor);
   }
 
   protected visitGetAccessor(accessor: ts.AccessorDeclaration): void {
-    this.visitAccessor(accessor, { type: "getter", name: Walker.getName(accessor) });
+    this.visitAccessor(accessor, { type: "getter", name: Visitor.getName(accessor) });
     super.visitGetAccessor(accessor);
   }
 
@@ -82,24 +78,24 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     let matchingField: Field | undefined;
     let accessorIsPublic: boolean;
     if (containingStructure.kind === ts.SyntaxKind.ObjectLiteralExpression) {
-      matchingField = Walker.matchingField(Array.from(containingStructure.properties), [], setterOrGetter.name);
+      matchingField = Visitor.matchingField(Array.from(containingStructure.properties), [], setterOrGetter.name);
       accessorIsPublic = true;
     } else {
-      matchingField = Walker.matchingField(
+      matchingField = Visitor.matchingField(
         Array.from(containingStructure.members),
-        Walker.fieldsDeclaredInConstructorParameters(containingStructure),
+        Visitor.fieldsDeclaredInConstructorParameters(containingStructure),
         setterOrGetter.name,
       );
-      accessorIsPublic = Walker.isPublic(accessor);
+      accessorIsPublic = Visitor.isPublic(accessor);
     }
     if (
       accessorIsPublic &&
       accessor.body &&
       matchingField &&
-      Walker.bodyIsSimple(accessor.body, setterOrGetter.type) &&
+      Visitor.bodyIsSimple(accessor.body, setterOrGetter.type) &&
       !this.fieldIsUsed(accessor, matchingField)
     ) {
-      this.addFailureAtNode(
+      this.addIssue(
         accessor.name,
         `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${matchingField.name!.getText()}'`,
       );
@@ -144,7 +140,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       )
       .map(element => element as Field)
       .concat(constructorDeclaredParameters)
-      .find(element => !!element.name && Walker.fieldNameMatches(element.name.getText(), targetName));
+      .find(element => !!element.name && Visitor.fieldNameMatches(element.name.getText(), targetName));
   }
 
   private static fieldNameMatches(fieldName: string, targetName: string): boolean {

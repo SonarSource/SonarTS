@@ -21,6 +21,7 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { is } from "../utils/navigation";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends Lint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -34,20 +35,18 @@ export class Rule extends Lint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends Lint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   private static readonly MESSAGE = "Remove these useless parentheses.";
 
-  visitNode(node: ts.Node): void {
-    if (is(node, ts.SyntaxKind.ParenthesizedExpression)) {
-      const parenthesizedExpression = node as ts.ParenthesizedExpression;
-      if (is(parenthesizedExpression.expression, ts.SyntaxKind.ParenthesizedExpression)) {
-        this.addFailureAtNode(node, Walker.MESSAGE);
-      }
+  public visitParenthesizedExpression(node: ts.ParenthesizedExpression) {
+    if (is(node.expression, ts.SyntaxKind.ParenthesizedExpression)) {
+      this.addIssue(node, Visitor.MESSAGE);
     }
-    super.visitNode(node);
+
+    super.visitParenthesizedExpression(node);
   }
 }

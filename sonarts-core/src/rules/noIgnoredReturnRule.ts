@@ -20,6 +20,7 @@
 import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -37,11 +38,11 @@ export class Rule extends Lint.Rules.TypedRule {
   };
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): Lint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends Lint.ProgramAwareRuleWalker {
+class Visitor extends TypedSonarRuleVisitor {
   private static message(methodName: string) {
     if (methodName === "map") {
       return `Consider using "forEach" instead of "map" as its return value is not being used here.`;
@@ -208,13 +209,13 @@ class Walker extends Lint.ProgramAwareRuleWalker {
       const propertyAccess = node.expression as ts.PropertyAccessExpression;
       const methodName = propertyAccess.name.text;
       const object = propertyAccess.expression;
-      const objectType = this.getTypeChecker().getTypeAtLocation(object);
+      const objectType = this.program.getTypeChecker().getTypeAtLocation(object);
 
       if (
         this.methodWithNoSideEffect(objectType, methodName) &&
         !this.isReplaceWithCallBack(methodName, Array.from(node.arguments))
       ) {
-        this.addFailureAtNode(node, Walker.message(methodName));
+        this.addIssue(node, Visitor.message(methodName));
       }
     }
 
@@ -231,8 +232,8 @@ class Walker extends Lint.ProgramAwareRuleWalker {
   }
 
   private typeToString(type: ts.Type): string | null {
-    const baseType = this.getTypeChecker().getBaseTypeOfLiteralType(type);
-    const typeAsString = this.getTypeChecker().typeToString(baseType);
+    const baseType = this.program.getTypeChecker().getBaseTypeOfLiteralType(type);
+    const typeAsString = this.program.getTypeChecker().typeToString(baseType);
     if (typeAsString === "number" || typeAsString === "string") {
       return typeAsString;
     }

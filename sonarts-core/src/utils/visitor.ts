@@ -23,6 +23,7 @@ import * as ts from "typescript";
 export class TreeVisitor {
   public visit(node: ts.Node) {
     this.visitNode(node);
+    return this;
   }
 
   protected visitAnyKeyword(node: ts.Node) {
@@ -113,6 +114,10 @@ export class TreeVisitor {
     this.visitChildren(node);
   }
 
+  protected visitDeleteExpression(node: ts.DeleteExpression) {
+    this.visitChildren(node);
+  }
+
   protected visitDoStatement(node: ts.DoStatement) {
     this.visitChildren(node);
   }
@@ -193,6 +198,10 @@ export class TreeVisitor {
     this.visitChildren(node);
   }
 
+  protected visitIntersectionTypeNode(node: ts.IntersectionTypeNode) {
+    this.visitChildren(node);
+  }
+
   protected visitJsxAttribute(node: ts.JsxAttribute) {
     this.visitChildren(node);
   }
@@ -254,6 +263,10 @@ export class TreeVisitor {
   }
 
   protected visitParameterDeclaration(node: ts.ParameterDeclaration) {
+    this.visitChildren(node);
+  }
+
+  protected visitParenthesizedExpression(node: ts.ParenthesizedExpression) {
     this.visitChildren(node);
   }
 
@@ -471,6 +484,10 @@ export class TreeVisitor {
         this.visitDefaultClause(node as ts.DefaultClause);
         break;
 
+      case ts.SyntaxKind.DeleteExpression:
+        this.visitDeleteExpression(node as ts.DeleteExpression);
+        break;
+
       case ts.SyntaxKind.DoStatement:
         this.visitDoStatement(node as ts.DoStatement);
         break;
@@ -539,6 +556,10 @@ export class TreeVisitor {
         this.visitInterfaceDeclaration(node as ts.InterfaceDeclaration);
         break;
 
+      case ts.SyntaxKind.IntersectionType:
+        this.visitIntersectionTypeNode(node as ts.IntersectionTypeNode);
+        break;
+
       case ts.SyntaxKind.JsxAttribute:
         this.visitJsxAttribute(node as ts.JsxAttribute);
         break;
@@ -601,6 +622,10 @@ export class TreeVisitor {
 
       case ts.SyntaxKind.Parameter:
         this.visitParameterDeclaration(node as ts.ParameterDeclaration);
+        break;
+
+      case ts.SyntaxKind.ParenthesizedExpression:
+        this.visitParenthesizedExpression(node as ts.ParenthesizedExpression);
         break;
 
       case ts.SyntaxKind.PostfixUnaryExpression:

@@ -38,7 +38,7 @@ export function parseString(source: string, scriptKind: ts.ScriptKind = ts.Scrip
  */
 export function parseFile(filename: string): { sourceFile: ts.SourceFile; program: ts.Program } {
   const compilerOptions = { strict: true, target: TARGET };
-  const program = ts.createProgram([filename], compilerOptions);
+  const program = ts.createProgram([filename], compilerOptions, ts.createCompilerHost(compilerOptions, true));
 
   const syntacticDiagnostics = program.getSyntacticDiagnostics();
   if (syntacticDiagnostics.length > 0) {

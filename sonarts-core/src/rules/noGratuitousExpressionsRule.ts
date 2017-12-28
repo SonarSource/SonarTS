@@ -26,7 +26,8 @@ import { ProgramState, createInitialState } from "../se/programStates";
 import { isTruthy, Constraint, isFalsy } from "../se/constraints";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable, UsageFlag } from "../symbols/table";
-import { firstLocalAncestor, FUNCTION_LIKE, is } from "../utils/navigation";
+import { firstLocalAncestor, FUNCTION_LIKE } from "../utils/navigation";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -49,35 +50,28 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
+    return new Visitor(this.getOptions(), program, symbols).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
-  public constructor(
-    sourceFile: ts.SourceFile,
-    options: tslint.IOptions,
-    program: ts.Program,
-    private readonly symbols: SymbolTable,
-  ) {
-    super(sourceFile, options, program);
+class Visitor extends TypedSonarRuleVisitor {
+  public constructor(options: tslint.IOptions, program: ts.Program, private readonly symbols: SymbolTable) {
+    super(options.ruleName, program);
   }
 
-  protected visitNode(node: ts.Node) {
-    if (is(node, ...FUNCTION_LIKE)) {
-      const functionLike = node as ts.FunctionLikeDeclaration;
-      const statements = this.getStatements(functionLike);
-      if (statements) {
-        const initialState = createInitialState(functionLike, this.getProgram());
-        const shouldTrackSymbol = (symbol: ts.Symbol) =>
-          this.symbols
-            .allUsages(symbol)
-            .filter(usage => usage.is(UsageFlag.WRITE))
-            .every(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) === functionLike);
-        this.runForStatements(Array.from(statements), initialState, shouldTrackSymbol);
-      }
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    const statements = this.getStatements(node);
+    if (statements) {
+      const initialState = createInitialState(node, this.program);
+      const shouldTrackSymbol = (symbol: ts.Symbol) =>
+        this.symbols
+          .allUsages(symbol)
+          .filter(usage => usage.is(UsageFlag.WRITE))
+          .every(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) === node);
+      this.runForStatements(Array.from(statements), initialState, shouldTrackSymbol);
     }
-    super.visitNode(node);
+
+    super.visitFunctionLikeDeclaration(node);
   }
 
   private getStatements(functionLike: ts.FunctionLikeDeclaration) {
@@ -103,9 +97,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       if (result) {
         result.branchingProgramNodes.forEach((states, branchingProgramPoint) => {
           if (this.ifAllProgramStateConstraints(states, isTruthy)) {
-            this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("true"));
+            this.addIssue(branchingProgramPoint, Rule.getMessage("true"));
           } else if (this.ifAllProgramStateConstraints(states, isFalsy)) {
-            this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("false"));
+            this.addIssue(branchingProgramPoint, Rule.getMessage("false"));
           }
         });
       }

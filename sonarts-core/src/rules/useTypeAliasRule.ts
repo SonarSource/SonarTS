@@ -23,6 +23,7 @@ import { RuleFailure } from "tslint";
 import { SonarRuleMetaData } from "../sonarRule";
 import { is } from "../utils/navigation";
 import { nodeToSonarLine } from "../runner/sonar-utils";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -42,17 +43,17 @@ export class Rule extends tslint.Rules.TypedRule {
   public static REPEATED_USAGE_THRESHOLD = 3;
 
   applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Visitor extends TypedSonarRuleVisitor {
   private unionOrIntersectionTypeUsage: Map<ts.Type, ts.TypeNode[]> = new Map();
 
   protected visitNode(node: ts.Node): void {
     if (is(node, ts.SyntaxKind.UnionType, ts.SyntaxKind.IntersectionType)) {
       const typeNode = node as ts.UnionOrIntersectionTypeNode;
-      const type = this.getTypeChecker().getTypeFromTypeNode(typeNode);
+      const type = this.program.getTypeChecker().getTypeFromTypeNode(typeNode);
 
       // number of types is determined from AST node, because real type will resolve type aliases
       if (isUnionOrIntersectionType(type) && typeNode.types.length >= Rule.NUMBER_OF_TYPES_THRESHOLD) {
@@ -66,7 +67,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
         if (typeUsages.length === Rule.REPEATED_USAGE_THRESHOLD) {
           const lines = typeUsages.map(u => nodeToSonarLine(u));
           lines.shift();
-          this.addFailureAtNode(typeUsages[0], Walker.message(type, lines));
+          this.addIssue(typeUsages[0], Visitor.message(type, lines));
         }
       }
     }

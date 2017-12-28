@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { FUNCTION_LIKE, is } from "../utils/navigation";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -40,17 +41,17 @@ export class Rule extends tslint.Rules.TypedRule {
   public static MESSAGE = "Remove this return type or change it to a more specific.";
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Visitor extends TypedSonarRuleVisitor {
   public visitFunctionDeclaration(node: ts.FunctionDeclaration) {
     // check existence of `node.body` to ignore function overload declarations
     if (node.type && node.type.kind === ts.SyntaxKind.AnyKeyword && node.body) {
       const returns = this.getAllReturns(node.body);
       if (returns.length > 0 && this.allReturnTypesEqual(returns)) {
-        this.addFailureAtNode(node.type, Rule.MESSAGE);
+        this.addIssue(node.type, Rule.MESSAGE);
       }
     }
     super.visitFunctionDeclaration(node);
@@ -70,7 +71,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private getReturnType(node: ts.ReturnStatement) {
-    const typeChecker = this.getProgram().getTypeChecker();
+    const typeChecker = this.program.getTypeChecker();
     return node.expression && typeChecker.getTypeAtLocation(node.expression);
   }
 

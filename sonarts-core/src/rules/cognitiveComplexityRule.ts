@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { functionLikeMainToken } from "../utils/navigation";
 import { FunctionCollector } from "../utils/cognitiveComplexity";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -46,21 +47,21 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    const walker = new tslint.RuleWalker(sourceFile, this.getOptions());
+    const visitor = new SonarRuleVisitor(this.getOptions().ruleName);
 
     const functionCollector = new FunctionCollector();
     functionCollector.visit(sourceFile);
 
     functionCollector.functionComplexities.forEach(functionComplexity => {
       if (functionComplexity.complexity > this.threshold) {
-        walker.addFailureAtNode(
+        visitor.addIssue(
           functionLikeMainToken(functionComplexity.functionNode),
           getMessage(functionComplexity.functionNode, functionComplexity.complexity, this.threshold),
         );
       }
     });
 
-    return walker.getFailures();
+    return visitor.getIssues();
   }
 
   public static DEFAULT_THRESHOLD = 15;

@@ -20,6 +20,7 @@
 import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -33,11 +34,11 @@ export class Rule extends Lint.Rules.TypedRule {
   };
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): Lint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends Lint.ProgramAwareRuleWalker {
+class Visitor extends TypedSonarRuleVisitor {
   private static readonly COLLECTION_TYPES = ["Array", "Map", "Set"];
 
   private static message(collection: string, property: string) {
@@ -54,7 +55,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
         const property = (node.left as ts.PropertyAccessExpression).name.text;
 
         if ((property === "length" || property === "size") && this.isCollection(object)) {
-          this.addFailureAtNode(node, Walker.message(object.getText(), property));
+          this.addIssue(node, Visitor.message(object.getText(), property));
         }
       }
     }
@@ -63,7 +64,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
   }
 
   private isCollection(object: ts.Node): boolean {
-    const type = this.getTypeChecker().getTypeAtLocation(object);
-    return !!type.symbol && Walker.COLLECTION_TYPES.includes(type.symbol.name);
+    const type = this.program.getTypeChecker().getTypeAtLocation(object);
+    return !!type.symbol && Visitor.COLLECTION_TYPES.includes(type.symbol.name);
   }
 }

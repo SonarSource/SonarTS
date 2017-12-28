@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -39,22 +40,22 @@ export class Rule extends tslint.Rules.AbstractRule {
   public static MESSAGE = "Use string concatenation rather than line continuation.";
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitStringLiteral(node: ts.StringLiteral) {
     if (this.isMultiline(node)) {
-      this.addFailureAtNode(node, Rule.MESSAGE);
+      this.addIssue(node, Rule.MESSAGE);
     }
 
     super.visitStringLiteral(node);
   }
 
   private isMultiline(node: ts.Node): boolean {
-    const startLine = this.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line;
-    const endLine = this.getSourceFile().getLineAndCharacterOfPosition(node.getEnd()).line;
+    const startLine = node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line;
+    const endLine = node.getSourceFile().getLineAndCharacterOfPosition(node.getEnd()).line;
     return endLine > startLine;
   }
 }

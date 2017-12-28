@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -39,20 +40,16 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   protected visitNode(node: ts.Node) {
-    // TODO create and use `visitTypeNode` in visitor
     if (ts.isTypeNode(node)) {
       const text = node.getText();
       if (this.isPrimitiveWrapper(text)) {
-        this.addFailureAtNode(
-          node,
-          `Replace this '${text}' wrapper object with primitive type '${text.toLowerCase()}'.`,
-        );
+        this.addIssue(node, `Replace this '${text}' wrapper object with primitive type '${text.toLowerCase()}'.`);
       }
     }
     super.visitNode(node);
@@ -60,7 +57,7 @@ class Walker extends tslint.RuleWalker {
 
   protected visitNewExpression(node: ts.NewExpression) {
     if (ts.isIdentifier(node.expression) && this.isPrimitiveWrapper(node.expression.text)) {
-      this.addFailureAtNode(node, `Remove this use of '${node.expression.text}' constructor.`);
+      this.addIssue(node, `Remove this use of '${node.expression.text}' constructor.`);
     }
     super.visitNewExpression(node);
   }

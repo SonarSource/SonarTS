@@ -23,6 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { firstAncestor, is, COMPOUND_ASSIGNMENTS } from "../utils/navigation";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { Usage, SymbolTable, UsageFlag } from "../symbols/table";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -47,7 +48,7 @@ export class Rule extends tslint.Rules.TypedRule {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
 
     // walker is created to only save issues
-    const walker = new tslint.RuleWalker(sourceFile, this.getOptions());
+    const visitor = new SonarRuleVisitor(this.getOptions().ruleName);
 
     // prettier-ignore
     symbols
@@ -90,9 +91,9 @@ export class Rule extends tslint.Rules.TypedRule {
       .filter(symbolAndDeclaration => !symbols.allUsages(symbolAndDeclaration.symbol).some(usage => Rule.isReadUsage(usage)))
       
       // raise issue
-      .forEach(symbolAndDeclaration => walker.addFailureAtNode(symbolAndDeclaration.declaration, Rule.MESSAGE));
+      .forEach(symbolAndDeclaration => visitor.addIssue(symbolAndDeclaration.declaration, Rule.MESSAGE));
 
-    return walker.getFailures();
+    return visitor.getIssues();
   }
 
   private static isExported(declaration: ts.Node): boolean {
