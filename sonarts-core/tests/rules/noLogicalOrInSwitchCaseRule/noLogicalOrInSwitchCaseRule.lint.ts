@@ -1,7 +1,7 @@
 function bar() {}
 function baz() {}
 
-function foo(x: any) {
+function foo(x: any, y: any, z: any) {
   switch (x) {
     case 1:
       return 1;
@@ -11,8 +11,14 @@ function foo(x: any) {
     case "a" || "b" || "c" || "d":
       // ^^^^^^^^^^^^^^^^^^^^^^^^ {{Explicitly specify 4 separate cases that fall through; currently this case clause only works for "a".}}
       return 3;
-    case bar() || baz(): // OK, not literals
+    case y || z || 1:
+      // ^^^^^^^^^^^ {{Explicitly specify 3 separate cases that fall through; currently this case clause only works for "y".}}
+      return 3;
+    case bar() || baz():
+      // ^^^^^^^^^^^^^^ {{Explicitly specify 2 separate cases that fall through; currently this case clause only works for "bar()".}}
       return 4;
+    case 5 && 6: // OK, not ||
+      return 6;
     default:
       return 5;
   }

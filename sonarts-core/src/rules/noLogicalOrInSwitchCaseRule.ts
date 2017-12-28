@@ -42,13 +42,13 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Walker extends tslint.RuleWalker {
   public visitCaseClause(node: ts.CaseClause) {
-    const chain = this.pickBarBarLiteralChain(node.expression);
+    const chain = this.pickBarBarChain(node.expression);
     if (chain !== undefined) {
       // avoid double quotes around string literals
       const left = ts.isStringLiteral(chain.left) ? chain.left.getText() : `"${chain.left.getText()}"`;
       this.addFailureAtNode(
         node.expression,
-        `Explicitly specify ${chain.elements} separate cases that fall through; ` +
+        `Explicitly specify ${chain.count} separate cases that fall through; ` +
           `currently this case clause only works for ${left}.`,
       );
     }
@@ -56,13 +56,13 @@ class Walker extends tslint.RuleWalker {
     super.visitCaseClause(node);
   }
 
-  private pickBarBarLiteralChain(expression: ts.Expression) {
+  private pickBarBarChain(expression: ts.Expression) {
     let current = expression;
-    let elements = 0;
-    while (ts.isBinaryExpression(current) && ts.isLiteralExpression(current.right)) {
-      elements++;
+    let count = 0;
+    while (ts.isBinaryExpression(current) && current.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
+      count++;
       current = current.left;
     }
-    return elements > 0 && ts.isLiteralExpression(current) ? { left: current, elements: elements + 1 } : undefined;
+    return count > 0 ? { left: current, count: count + 1 } : undefined;
   }
 }
