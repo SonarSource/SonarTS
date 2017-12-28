@@ -49,6 +49,7 @@ it("should process full input", () => {
         { startLine: 1, startCol: 12, endLine: 1, endCol: 13, image: "{" },
         { startLine: 1, startCol: 13, endLine: 1, endCol: 14, image: "}" },
       ],
+      symbols: [{ startLine: 1, startCol: 9, endLine: 1, endCol: 10, references: [] }],
       ncloc: [1],
       commentLines: [],
       nosonarLines: [],

@@ -91,7 +91,7 @@ function executeFromSource(source: string) {
   return { result, program };
 }
 
-function parse(source: string) {
+export function parse(source: string) {
   const filename = "filename.ts";
   const host: ts.CompilerHost = {
     ...ts.createCompilerHost({ strict: true }),
