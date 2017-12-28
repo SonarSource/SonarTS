@@ -126,7 +126,7 @@ public class ExternalTypescriptSensor implements Sensor {
         InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(response.filepath));
         if (inputFile != null) {
           saveHighlights(sensorContext, response.highlights, inputFile);
-          saveUsages(sensorContext, response.symbols, inputFile);
+          saveSymbols(sensorContext, response.symbols, inputFile);
           saveMetrics(sensorContext, response, inputFile);
           saveCpd(sensorContext, response.cpdTokens, inputFile);
           saveFailures(sensorContext, response.issues, typeScriptRules);
@@ -284,7 +284,7 @@ public class ExternalTypescriptSensor implements Sensor {
     highlighting.save();
   }
 
-  private void saveUsages(SensorContext sensorContext, Symbol[] symbols, InputFile inputFile) {
+  private static void saveSymbols(SensorContext sensorContext, Symbol[] symbols, InputFile inputFile) {
     NewSymbolTable newSymbolTable = sensorContext.newSymbolTable().onFile(inputFile);
     for (Symbol symbol : symbols) {
       NewSymbol newSymbol = newSymbolTable.newSymbol(symbol.startLine, symbol.startCol, symbol.endLine, symbol.endCol);
