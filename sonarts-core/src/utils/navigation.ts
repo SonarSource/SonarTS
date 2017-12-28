@@ -157,11 +157,7 @@ export function firstAncestor(
 }
 
 export function floatToTopParenthesis(node: ts.Node): ts.Node {
-  if (is(node, ts.SyntaxKind.ParenthesizedExpression)) {
-    if (node.parent) return floatToTopParenthesis(node.parent);
-    return node;
-  }
-  return node;
+  return ts.isParenthesizedExpression(node) && node.parent ? floatToTopParenthesis(node.parent) : node;
 }
 
 export function drillDownThroughParenthesis(node: ts.Expression): ts.Expression {

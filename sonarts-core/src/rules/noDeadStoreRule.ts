@@ -23,7 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { LiveVariableAnalyzer } from "../symbols/lva";
 import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
-import { descendants, floatToTopParenthesis, FUNCTION_LIKE, is } from "../utils/navigation";
+import { descendants, floatToTopParenthesis, is, isFunctionLikeDeclaration } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -41,16 +41,10 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public static formatMessage(deadIdentifier: ts.Identifier) {
-    return `Remove this useless assignment to local variable "${deadIdentifier.getText()}".`;
-  }
-
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
     return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
   }
-
-  public static BASIC_VALUES = ["0", "1", '""', "''"];
 }
 
 class Walker extends tslint.ProgramAwareRuleWalker {
@@ -63,10 +57,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
     super(sourceFile, options, program);
   }
 
-  protected visitNode(node: ts.Node): void {
-    if (is(node, ...FUNCTION_LIKE)) {
-      const functionLike = node as ts.FunctionLikeDeclaration;
-      const lvaReturn = new LiveVariableAnalyzer(this.symbols).analyzeFunction(functionLike);
+  protected visitNode(node: ts.Node) {
+    if (isFunctionLikeDeclaration(node)) {
+      const lvaReturn = new LiveVariableAnalyzer(this.symbols).analyzeFunction(node);
       if (lvaReturn) {
         const { deadUsages } = lvaReturn;
 
@@ -75,7 +68,10 @@ class Walker extends tslint.ProgramAwareRuleWalker {
           .forEach(identifier => {
             const usage = this.symbols.getUsage(identifier);
             if (usage && deadUsages.has(usage) && !this.isException(usage)) {
-              this.addFailureAtNode(identifier, Rule.formatMessage(identifier));
+              this.addFailureAtNode(
+                identifier,
+                `Remove this useless assignment to local variable "${identifier.text}".`,
+              );
             }
           });
       }
@@ -89,28 +85,41 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       return true;
     }
     const { parent } = floatToTopParenthesis(usage.node);
+    if (parent && this.isPartOfDestructiringWithRest(parent)) {
+      return true;
+    }
     if (parent && (ts.isBindingElement(parent) || ts.isVariableDeclaration(parent))) {
-      return parent.initializer !== undefined && isBasicValue(parent.initializer);
+      return parent.initializer !== undefined && this.isBasicValue(parent.initializer);
     }
     return false;
   }
-}
 
-function isBasicValue(expression: ts.Expression): boolean {
-  if (is(expression, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.NullKeyword)) {
-    return true;
+  private isPartOfDestructiringWithRest(node: ts.Node) {
+    return (
+      ts.isBindingElement(node) &&
+      node.dotDotDotToken === undefined &&
+      node.parent !== undefined &&
+      ts.isObjectBindingPattern(node.parent) &&
+      node.parent.elements[node.parent.elements.length - 1].dotDotDotToken !== undefined
+    );
   }
-  if (ts.isLiteralExpression(expression)) {
-    return Rule.BASIC_VALUES.includes(expression.getText());
+
+  private isBasicValue(expression: ts.Expression): boolean {
+    if (is(expression, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.NullKeyword)) {
+      return true;
+    }
+    if (ts.isLiteralExpression(expression)) {
+      return ["0", "1", '""', "''"].includes(expression.getText());
+    }
+    if (ts.isPrefixUnaryExpression(expression)) {
+      return expression.operator === ts.SyntaxKind.MinusToken && this.isBasicValue(expression.operand);
+    }
+    if (ts.isArrayLiteralExpression(expression)) {
+      return expression.elements.length === 0;
+    }
+    if (ts.isObjectLiteralExpression(expression)) {
+      return expression.properties.length === 0;
+    }
+    return false;
   }
-  if (ts.isPrefixUnaryExpression(expression)) {
-    return expression.operator === ts.SyntaxKind.MinusToken && isBasicValue(expression.operand);
-  }
-  if (ts.isArrayLiteralExpression(expression)) {
-    return expression.elements.length === 0;
-  }
-  if (ts.isObjectLiteralExpression(expression)) {
-    return expression.properties.length === 0;
-  }
-  return false;
 }

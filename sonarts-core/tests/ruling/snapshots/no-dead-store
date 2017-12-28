@@ -61,7 +61,7 @@ src/console/src/views/FunctionsView/FunctionPopup/RequestPipelineFunctionInput.t
 src/console/src/views/FunctionsView/FunctionPopup/RequestPipelineFunction.tsx: 47,48,48
 src/console/src/views/FunctionsView/FunctionPopup/FunctionPopup.tsx: 304
 src/console/src/views/models/FieldPopup/FieldPopupFooter.tsx: 60
-src/console/src/views/models/FieldPopup/BaseSettings.tsx: 65,273,273
+src/console/src/views/models/FieldPopup/BaseSettings.tsx: 65
 src/console/src/views/models/DatabrowserView/Cell/SelectNodesCell/Table/headerRenderer.tsx: 16
 src/console/src/views/models/DatabrowserView/Cell/SelectNodesCell/Table/Table.tsx: 52,215
 src/console/src/views/models/DatabrowserView/Cell/cellgenerator.tsx: 72,75
@@ -71,7 +71,7 @@ src/console/src/views/PermissionsView/PermissionPopup/PermissionConditions.tsx: 
 src/console/src/views/PermissionsView/PermissionPopup/PermissionPopup.tsx: 155
 src/console/src/views/ProjectRootView/AddModelPopup.tsx: 58
 src/console/src/views/ProjectRootView/SideNav.tsx: 276,357
-src/console/src/components/ResizableBox.tsx: 27,27,52,53,53
+src/console/src/components/ResizableBox.tsx: 27,27
 src/console/src/views/account/AccountView/SettingsTab.tsx: 46
 src/console/src/views/models/DatabrowserView/Cell.tsx: 418
 src/console/src/views/models/DatabrowserView/NewRow.tsx: 77
