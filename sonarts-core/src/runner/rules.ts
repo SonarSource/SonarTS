@@ -36,11 +36,7 @@ export function getIssues(
 
 export function executeRule(rule: tslint.IRule, sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
   try {
-    if (isTypedRule(rule)) {
-      return rule.applyWithProgram(sourceFile, program);
-    } else {
-      return rule.apply(sourceFile);
-    }
+    return isTypedRule(rule) ? rule.applyWithProgram(sourceFile, program) : rule.apply(sourceFile);
   } catch (error) {
     console.error("Rule error during analysis of : " + sourceFile.fileName, error);
     return [];

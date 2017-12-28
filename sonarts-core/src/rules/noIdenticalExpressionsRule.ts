@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -45,11 +46,11 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   private static EQUALITY_OPERATOR_TOKEN_KINDS = new Set([
     ts.SyntaxKind.EqualsEqualsToken, // ==
     ts.SyntaxKind.EqualsEqualsEqualsToken, // ===
@@ -75,7 +76,7 @@ class Walker extends tslint.RuleWalker {
 
   public visitBinaryExpression(node: ts.BinaryExpression) {
     if (this.hasRelevantOperator(node) && !this.isOneOntoOneShifting(node) && areEquivalent(node.left, node.right)) {
-      this.addFailureAtNode(node, Rule.formatMessage(node.operatorToken.getText()));
+      this.addIssue(node, Rule.formatMessage(node.operatorToken.getText()));
     }
 
     super.visitBinaryExpression(node);
@@ -83,8 +84,8 @@ class Walker extends tslint.RuleWalker {
 
   private hasRelevantOperator(node: ts.BinaryExpression) {
     return (
-      Walker.RELEVANT_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) ||
-      (Walker.EQUALITY_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) && !this.hasIdentifierOperands(node))
+      Visitor.RELEVANT_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) ||
+      (Visitor.EQUALITY_OPERATOR_TOKEN_KINDS.has(node.operatorToken.kind) && !this.hasIdentifierOperands(node))
     );
   }
 
