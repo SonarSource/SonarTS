@@ -6,6 +6,7 @@
     "no-accessor-field-mismatch": true,
     "no-all-duplicated-branches": true,
     "no-array-delete": true,
+    "no-case-with-or": true,
     "no-collection-size-mischeck": true,
     "no-dead-store": true,
     "no-duplicated-branches": true,
