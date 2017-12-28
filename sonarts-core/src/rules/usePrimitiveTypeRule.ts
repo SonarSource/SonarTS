@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 
-export class Rule extends tslint.Rules.TypedRule {
+export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "use-primitive-type",
     description: "Wrapper objects should not be used for primitive types",
@@ -38,21 +38,20 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: true,
   };
 
-  applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+  public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
+    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Walker extends tslint.RuleWalker {
   protected visitNode(node: ts.Node) {
     // TODO create and use `visitTypeNode` in visitor
     if (ts.isTypeNode(node)) {
-      const type = this.getTypeChecker().getTypeFromTypeNode(node);
-      const symbol = type.getSymbol();
-      if (symbol && this.isPrimitiveWrapper(symbol.name)) {
+      const text = node.getText();
+      if (this.isPrimitiveWrapper(text)) {
         this.addFailureAtNode(
           node,
-          `Replace this '${node.getText()}' wrapper object with primitive type '${node.getText().toLowerCase()}'.`,
+          `Replace this '${text}' wrapper object with primitive type '${text.toLowerCase()}'.`,
         );
       }
     }

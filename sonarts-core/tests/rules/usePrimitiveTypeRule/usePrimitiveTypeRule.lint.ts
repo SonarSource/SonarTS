@@ -68,15 +68,16 @@ function intersection(p: String & number) {}
 //                       ^^^^^^ {{Replace this 'String' wrapper object with primitive type 'string'.}}
 
 // override built-in String type
+// accepted FP
 namespace inner {
   type String = number;
   interface Number {}
 
   function stringTypeAlias(x: String) {
+    //                        ^^^^^^ {{Replace this 'String' wrapper object with primitive type 'string'.}}
     return x;
   }
 
-  // accepted FP
   function numberFP(x: Number) {
     //                 ^^^^^^ {{Replace this 'Number' wrapper object with primitive type 'number'.}}
     return x;
