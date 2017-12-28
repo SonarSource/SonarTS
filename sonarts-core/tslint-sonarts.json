@@ -35,6 +35,7 @@
     "no-useless-increment": true,
     "no-useless-intersection": true,
     "no-variable-usage-before-declaration": true,
+    "prefer-immediate-return": true,
     "use-type-alias": true
   }
 }

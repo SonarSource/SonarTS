@@ -50,6 +50,7 @@ How does it work?
 * Types without members, 'any' and 'never' should not be used in type intersections ([`no-useless-intersection`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
+* Local variables should not be declared and then immediately returned or thrown ([`prefer-immediate-return`]) ([`requires type-check`])
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
 
 [`cognitive-complexity`]: ./sonarts-core/docs/rules/cognitive-complexity.md
@@ -86,6 +87,7 @@ How does it work?
 [`no-useless-intersection`]: ./sonarts-core/docs/rules/no-useless-intersection.md
 [`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
+[`prefer-immediate-return`]: ./sonarts-core/docs/rules/prefer-immediate-return.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
