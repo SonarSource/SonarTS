@@ -1,4 +1,4 @@
-# no-logical-or-in-switch-case
+# no-case-with-or
 
 The logical OR operator (`||`) will not work in a `switch` `case` as one might think, only the first argument will be considered at execution time.
 

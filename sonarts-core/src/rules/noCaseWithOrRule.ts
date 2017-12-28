@@ -23,7 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
-    ruleName: "no-logical-or-in-switch-case",
+    ruleName: "no-case-with-or",
     description: "Logical OR should not be used in switch cases",
     rationale: tslint.Utils.dedent`
       The logical OR operator (||) will not work in a switch case as one might think, only the first argument will be 

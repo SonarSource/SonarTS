@@ -54,6 +54,7 @@ import org.sonar.plugin.typescript.rules.NoAngleBracketTypeAssertion;
 import org.sonar.plugin.typescript.rules.NoAny;
 import org.sonar.plugin.typescript.rules.NoArg;
 import org.sonar.plugin.typescript.rules.NoArrayDelete;
+import org.sonar.plugin.typescript.rules.NoCaseWithOr;
 import org.sonar.plugin.typescript.rules.NoCollectionSizeMischeck;
 import org.sonar.plugin.typescript.rules.NoConsole;
 import org.sonar.plugin.typescript.rules.NoConstruct;
@@ -80,7 +81,6 @@ import org.sonar.plugin.typescript.rules.NoInconsistentReturn;
 import org.sonar.plugin.typescript.rules.NoInferrableTypes;
 import org.sonar.plugin.typescript.rules.NoInternalModule;
 import org.sonar.plugin.typescript.rules.NoInvalidTemplateStrings;
-import org.sonar.plugin.typescript.rules.NoLogicalOrInSwitchCase;
 import org.sonar.plugin.typescript.rules.NoMagicNumbers;
 import org.sonar.plugin.typescript.rules.NoMisleadingArrayReverse;
 import org.sonar.plugin.typescript.rules.NoMisspelledOperator;
@@ -218,6 +218,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoAny.class,
       NoArg.class,
       NoArrayDelete.class,
+      NoCaseWithOr.class,
       NoCollectionSizeMischeck.class,
       NoConsole.class,
       NoConstruct.class,
@@ -244,7 +245,6 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoInconsistentReturn.class,
       NoInternalModule.class,
       NoInvalidTemplateStrings.class,
-      NoLogicalOrInSwitchCase.class,
       NoMagicNumbers.class,
       NoMisleadingArrayReverse.class,
       NoMisspelledOperator.class,
