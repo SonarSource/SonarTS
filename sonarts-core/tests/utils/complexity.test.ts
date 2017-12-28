@@ -22,7 +22,7 @@ import { getOverallComplexity } from "../../src/utils/cyclomaticComplexity";
 import { getOverallCognitiveComplexity } from "../../src/utils/cognitiveComplexity";
 
 it("should count complexity not skipping functions", () => {
-  const sourceFile = parseString(
+  const { sourceFile } = parseString(
     `
     1 && 2; // +1
     function foo() { 1 || 2; } // +2
@@ -35,7 +35,7 @@ it("should count complexity not skipping functions", () => {
 });
 
 it("should count cognitive complexity for file", () => {
-  const sourceFile = parseString(
+  const { sourceFile } = parseString(
     `
     let bar = function() { 1 && 2; } // +2 (incl. +1 from nesting)
     1 && 2; // +1

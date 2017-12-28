@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import getSymbolHighlighting, { SymbolHighlighting, TextRange } from "../../src/runner/symbolHighlighting";
-import { parse } from "../seTestUtils";
+import { parseString } from "../../src/utils/parser";
 
 it("should return symbols and their references", () => {
   const result = actual(`
@@ -50,6 +50,6 @@ function range(startLine: number, startCol: number, endLine: number, endCol: num
 }
 
 function actual(source: string) {
-  const { sourceFile, program } = parse(source);
+  const { sourceFile, program } = parseString(source);
   return getSymbolHighlighting(sourceFile, program).symbols;
 }

@@ -443,7 +443,7 @@ it("mix continue/break statement", () => {
 });
 
 function buildVisFromSource(source: string, scriptKind: ts.ScriptKind = ts.ScriptKind.TSX) {
-  const sourceFile = parseString(source, scriptKind);
+  const { sourceFile } = parseString(source, scriptKind);
   const cfg = ControlFlowGraph.fromStatements(Array.from(sourceFile.statements));
   return takeData(toVis(cfg));
 }

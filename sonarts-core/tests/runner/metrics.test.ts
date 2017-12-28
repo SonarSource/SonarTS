@@ -23,7 +23,7 @@ import * as metrics from "../../src/runner/metrics";
 import { parseString } from "../../src/utils/parser";
 
 it("should return lines of code and comment lines", () => {
-  const sourceFile = parseString(
+  const { sourceFile } = parseString(
     `/*
       * header comment is ignored
       */
@@ -44,7 +44,7 @@ it("should return lines of code and comment lines", () => {
 });
 
 it("should return NOSONAR lines", () => {
-  const sourceFile = parseString(
+  const { sourceFile } = parseString(
     `x; // NoSonar foo
      y; /* NOSONAR */
      // NOSONAR
@@ -57,12 +57,14 @@ it("should return NOSONAR lines", () => {
 
 it("should return executable lines", () => {
   // executable lines simply have trailling comments in the fixture file
-  const sourceFile = parseString(fs.readFileSync(path.join(__dirname, "./fixtures/executable-lines.lint.ts"), "utf-8"));
+  const { sourceFile } = parseString(
+    fs.readFileSync(path.join(__dirname, "./fixtures/executable-lines.lint.ts"), "utf-8"),
+  );
   expect(metrics.findExecutableLines(sourceFile)).toEqual(metrics.findCommentLines(sourceFile).commentLines);
 });
 
 it("should count classes", () => {
-  const sourceFile = parseString(
+  const { sourceFile } = parseString(
     `class A { // 1
        foo() {
          return class {}; // 2
@@ -73,7 +75,7 @@ it("should count classes", () => {
 });
 
 it("should count functions", () => {
-  const sourceFile = parseString(
+  const { sourceFile } = parseString(
     `class A {
        foo() { // 1
          return function(){};// 2
@@ -91,7 +93,7 @@ it("should count functions", () => {
 });
 
 it("should count statements", () => {
-  const sourceFile = parseString(`
+  const { sourceFile } = parseString(`
   let x = 42; // 1
   ; // 2
   foo(); // 3

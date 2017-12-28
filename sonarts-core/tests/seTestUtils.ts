@@ -25,6 +25,7 @@ import { SymbolicValue } from "../src/se/symbolicValues";
 import { build } from "../src/cfg/builder";
 import { Constraint } from "../src/se/constraints";
 import { SymbolTableBuilder } from "../src/symbols/builder";
+import { parseString } from "../src/utils/parser";
 
 export function inspectStack(source: string) {
   const { result } = executeFromSource(source);
@@ -55,7 +56,7 @@ export function inspectSV(source: string) {
 }
 
 export function executeOneFunction(source: string): { result: ExecutionResult; program: ts.Program } {
-  const { sourceFile, program } = parse(source);
+  const { sourceFile, program } = parseString(source);
   const node = descendants(sourceFile).find(node =>
     is(node, ts.SyntaxKind.FunctionDeclaration),
   ) as ts.FunctionDeclaration;
@@ -79,7 +80,7 @@ export function inspectSVFromResult(result: ExecutionResult, program: ts.Program
 }
 
 function executeFromSource(source: string) {
-  const { sourceFile, program } = parse(source);
+  const { sourceFile, program } = parseString(source);
   const result = execute(
     build(Array.from(sourceFile.statements))!,
     SymbolTableBuilder.build(sourceFile, program),
@@ -89,17 +90,6 @@ function executeFromSource(source: string) {
     throw new Error("Symbolic execution did not return any result.");
   }
   return { result, program };
-}
-
-export function parse(source: string) {
-  const filename = "filename.ts";
-  const host: ts.CompilerHost = {
-    ...ts.createCompilerHost({ strict: true }),
-    getSourceFile: () => ts.createSourceFile(filename, source, ts.ScriptTarget.Latest, true),
-    getCanonicalFileName: () => filename,
-  };
-  const program = ts.createProgram([], { strict: true }, host);
-  return { sourceFile: program.getSourceFiles()[0], program };
 }
 
 function findInspectCall(result: ExecutionResult) {
