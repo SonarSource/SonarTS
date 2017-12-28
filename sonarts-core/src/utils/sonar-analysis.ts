@@ -29,14 +29,11 @@ export abstract class SonarRule extends tslint.Rules.TypedRule {
     return convertToTslintFailures(this.applyWithSonar(sourceFile, program));
   }
 
-  public analyze(sourceFile: ts.SourceFile, program: ts.Program, VisitorClass: typeof SonarRuleVisitor): SonarIssue[] {
+  public applyWithSonar(sourceFile: ts.SourceFile, program: ts.Program): SonarIssue[] {
+    const VisitorClass = this.ruleVisitor();
     const visitor = new VisitorClass(this.getOptions().ruleName, program);
     visitor.visit(sourceFile);
     return visitor.getIssues();
-  }
-
-  public applyWithSonar(sourceFile: ts.SourceFile, program: ts.Program): SonarIssue[] {
-    return this.analyze(sourceFile, program, this.ruleVisitor());
   }
 
   abstract ruleVisitor(): typeof SonarRuleVisitor;
@@ -141,7 +138,7 @@ export class SonarIssue {
     return this;
   }
 
-  public addSecondary(secondaryLocation: IssueLocation): SonarIssue {
+  public addSecondaryLocation(secondaryLocation: IssueLocation): SonarIssue {
     this.secondaryLocations.push(secondaryLocation);
     return this;
   }
