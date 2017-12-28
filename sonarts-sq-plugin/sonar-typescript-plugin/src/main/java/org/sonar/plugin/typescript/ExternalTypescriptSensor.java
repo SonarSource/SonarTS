@@ -45,6 +45,8 @@ import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+import org.sonar.api.batch.sensor.symbol.NewSymbol;
+import org.sonar.api.batch.sensor.symbol.NewSymbolTable;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
@@ -124,6 +126,7 @@ public class ExternalTypescriptSensor implements Sensor {
         InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(response.filepath));
         if (inputFile != null) {
           saveHighlights(sensorContext, response.highlights, inputFile);
+          saveSymbols(sensorContext, response.symbols, inputFile);
           saveMetrics(sensorContext, response, inputFile);
           saveCpd(sensorContext, response.cpdTokens, inputFile);
           saveFailures(sensorContext, response.issues, typeScriptRules);
@@ -281,6 +284,17 @@ public class ExternalTypescriptSensor implements Sensor {
     highlighting.save();
   }
 
+  private static void saveSymbols(SensorContext sensorContext, Symbol[] symbols, InputFile inputFile) {
+    NewSymbolTable newSymbolTable = sensorContext.newSymbolTable().onFile(inputFile);
+    for (Symbol symbol : symbols) {
+      NewSymbol newSymbol = newSymbolTable.newSymbol(symbol.startLine, symbol.startCol, symbol.endLine, symbol.endCol);
+      for (SymbolReference reference : symbol.references) {
+        newSymbol.newReference(reference.startLine, reference.startCol, reference.endLine, reference.endCol);
+      }
+    }
+    newSymbolTable.save();
+  }
+
   @Nullable
   private static File getTypescriptLocation(File currentDirectory) {
     File nodeModules = getChildDirectoryByName(currentDirectory, "node_modules");
@@ -330,6 +344,7 @@ public class ExternalTypescriptSensor implements Sensor {
     Failure[] issues = {};
     Highlight[] highlights = {};
     CpdToken[] cpdTokens = {};
+    Symbol[] symbols = {};
     int[] ncloc = {};
     int[] commentLines = {};
     Integer[] nosonarLines = {};
@@ -355,6 +370,21 @@ public class ExternalTypescriptSensor implements Sensor {
     Integer endLine;
     Integer endCol;
     String image;
+  }
+
+  private static class Symbol {
+    Integer startLine;
+    Integer startCol;
+    Integer endLine;
+    Integer endCol;
+    SymbolReference[] references;
+  }
+
+  private static class SymbolReference {
+    Integer startLine;
+    Integer startCol;
+    Integer endLine;
+    Integer endCol;
   }
 
 }

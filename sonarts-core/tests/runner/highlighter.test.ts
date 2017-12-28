@@ -98,6 +98,6 @@ function token(
 }
 
 function actual(content: string): HighlightedToken[] {
-  const sourceFile = parseString(content);
+  const { sourceFile } = parseString(content);
   return getHighlighting(sourceFile).highlights;
 }

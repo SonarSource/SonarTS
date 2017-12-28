@@ -91,7 +91,7 @@ function runRuleOnFile(Rule: any, file: string, ruleArguments: any[]): LintError
     const result = parseFile(file);
     failures = rule.applyWithProgram(result.sourceFile, result.program);
   } else {
-    failures = rule.apply(parseString(source));
+    failures = rule.apply(parseString(source).sourceFile);
   }
 
   return mapToLintErrors(failures);

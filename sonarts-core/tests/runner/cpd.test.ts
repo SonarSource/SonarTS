@@ -122,6 +122,6 @@ function token(startLine: number, startCol: number, endLine: number, endCol: num
 }
 
 function actual(content: string): CpdToken[] {
-  const sourceFile = parseString(content);
+  const { sourceFile } = parseString(content);
   return getCpdTokens(sourceFile).cpdTokens;
 }
