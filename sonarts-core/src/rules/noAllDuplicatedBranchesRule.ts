@@ -21,9 +21,9 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { SonarRule, SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
-export class Rule extends SonarRule {
+export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-all-duplicated-branches",
     description: "All branches in a conditional structure should not have exactly the same implementation",
@@ -42,8 +42,8 @@ export class Rule extends SonarRule {
   public static MESSAGE = "Remove this conditional structure or edit its code blocks so that they're not all the same.";
   public static MESSAGE_CONDITIONAL_EXPRESSION = 'This conditional operation returns the same value whether the condition is "true" or "false".';
 
-  public ruleVisitor(): typeof SonarRuleVisitor {
-    return Visitor;
+  public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 

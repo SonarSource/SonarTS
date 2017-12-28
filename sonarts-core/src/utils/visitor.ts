@@ -23,6 +23,7 @@ import * as ts from "typescript";
 export class TreeVisitor {
   public visit(node: ts.Node) {
     this.visitNode(node);
+    return this;
   }
 
   protected visitAnyKeyword(node: ts.Node) {
