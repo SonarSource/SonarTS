@@ -96,7 +96,7 @@ class Visitor extends SonarRuleVisitor {
   public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
     const { body } = node;
     if (body && ts.isBlock(body) && Visitor.isBigEnough(body)) {
-      this.functionBlocks.push(body as ts.Block);
+      this.functionBlocks.push(body);
     }
 
     super.visitFunctionLikeDeclaration(node);

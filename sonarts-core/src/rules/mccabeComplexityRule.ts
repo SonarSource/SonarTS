@@ -60,12 +60,9 @@ class Visitor extends SonarRuleVisitor {
   }
 
   public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
-    const functionComplexity = getFunctionComplexityNodes(node as ts.FunctionLikeDeclaration).length;
+    const functionComplexity = getFunctionComplexityNodes(node).length;
     if (functionComplexity > this.threshold) {
-      this.addIssue(
-        functionLikeMainToken(node as ts.FunctionLikeDeclaration),
-        Rule.message(functionComplexity, this.threshold),
-      );
+      this.addIssue(functionLikeMainToken(node), Rule.message(functionComplexity, this.threshold));
     }
 
     super.visitFunctionLikeDeclaration(node);

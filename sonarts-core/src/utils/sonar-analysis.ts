@@ -116,7 +116,7 @@ export class SonarIssue extends tslint.RuleFailure {
       ruleName: this.getRuleName(),
       cost: this.cost,
       secondaryLocation: this.secondaryLocations,
-      ruleSeverity: "",
+      ruleSeverity: this.getRuleSeverity(),
     };
   }
 

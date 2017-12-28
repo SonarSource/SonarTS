@@ -43,8 +43,7 @@ class Visitor extends SonarRuleVisitor {
   private static readonly MESSAGE = "Remove these useless parentheses.";
 
   public visitParenthesizedExpression(node: ts.ParenthesizedExpression) {
-    const parenthesizedExpression = node as ts.ParenthesizedExpression;
-    if (is(parenthesizedExpression.expression, ts.SyntaxKind.ParenthesizedExpression)) {
+    if (is(node.expression, ts.SyntaxKind.ParenthesizedExpression)) {
       this.addIssue(node, Visitor.MESSAGE);
     }
 
