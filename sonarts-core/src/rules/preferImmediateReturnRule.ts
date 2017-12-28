@@ -56,11 +56,26 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   protected visitBlock(node: ts.Block) {
-    if (node.statements.length > 1) {
-      const last = node.statements[node.statements.length - 1];
+    this.processStatements(node.statements);
+    super.visitBlock(node);
+  }
+
+  protected visitCaseClause(node: ts.CaseClause) {
+    this.processStatements(node.statements);
+    super.visitCaseClause(node);
+  }
+
+  protected visitDefaultClause(node: ts.DefaultClause) {
+    this.processStatements(node.statements);
+    super.visitDefaultClause(node);
+  }
+
+  private processStatements(statements: ts.NodeArray<ts.Statement>) {
+    if (statements.length > 1) {
+      const last = statements[statements.length - 1];
       const returnedVariable = this.getOnlyReturnedVariable(last);
 
-      const lastButOne = node.statements[node.statements.length - 2];
+      const lastButOne = statements[statements.length - 2];
       const declaredVariable = this.getOnlyDeclaredVariable(lastButOne);
 
       if (returnedVariable && declaredVariable) {
@@ -76,7 +91,6 @@ class Walker extends tslint.ProgramAwareRuleWalker {
         }
       }
     }
-    super.visitBlock(node);
   }
 
   private getOnlyReturnedVariable(node: ts.Node) {

@@ -6,7 +6,7 @@ src/TypeScript/src/compiler/commandLineParser.ts: 684,684,684,684,684
 src/TypeScript/src/services/patternMatcher.ts: 742,742,742
 src/TypeScript/src/services/formatting/rulesMap.ts: 39,39,39
 src/TypeScript/src/services/codefixes/fixExtendsInterfaceBecomesImplements.ts: 35,35,35
-src/TypeScript/src/services/codefixes/helpers.ts: 19,19,19
+src/TypeScript/src/services/codefixes/helpers.ts: 19,78,19,78,19,78
 src/TypeScript/src/server/session.ts: 776,776
 src/TypeScript/src/server/client.ts: 597
 src/TypeScript/src/harness/unittests/tsserverProjectSystem.ts: 157,618
@@ -44,6 +44,7 @@ src/angular/packages/platform-webworker/test/web_workers/worker/renderer_v2_inte
 src/angular/tools/@angular/tsc-wrapped/test/bundler_spec.ts: 183
 src/ant-design/components/breadcrumb/Breadcrumb.tsx: 23
 src/console/src/utils/utils.ts: 146
+src/console/src/reducers/databrowser/data.ts: 105
 src/console/src/views/models/DatabrowserView/Cell/SelectNodesCell/Table/Table.tsx: 257
 src/console/src/views/PermissionsView/PermissionPopup/PermissionConditions.tsx: 286
 src/console/src/views/ProjectRootView/AddProjectPopup.tsx: 74
@@ -74,6 +75,7 @@ src/vscode/src/vs/base/browser/dom.ts: 653
 src/vscode/src/vs/base/common/diagnostics.ts: 48
 src/vscode/src/vs/base/node/mime.ts: 126
 src/vscode/src/vs/editor/common/modes/languageConfigurationRegistry.ts: 397,405
+src/vscode/src/vs/code/electron-main/menus.ts: 1008
 src/vscode/src/vs/editor/browser/view/viewLayer.ts: 147,196
 src/vscode/src/vs/editor/browser/controller/mouseTarget.ts: 424
 src/vscode/src/vs/editor/contrib/referenceSearch/browser/referencesModel.ts: 94

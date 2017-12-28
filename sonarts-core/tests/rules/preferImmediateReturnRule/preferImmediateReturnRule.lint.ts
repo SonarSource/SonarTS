@@ -161,4 +161,17 @@ function homonymous_is_used() {
   return bar;
 }
 
+function inside_switch(x: any) {
+  switch (x) {
+    case 1:
+      const y = 3;
+      //        ^ {{Immediately return this expression instead of assigning it to the temporary variable "y".}}
+      return y;
+    default:
+      const z = 2;
+      //        ^ {{Immediately return this expression instead of assigning it to the temporary variable "z".}}
+      return z;
+  }
+}
+
 export default 1;
