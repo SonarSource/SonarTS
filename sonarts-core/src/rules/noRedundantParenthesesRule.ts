@@ -42,13 +42,12 @@ export class Rule extends Lint.Rules.AbstractRule {
 class Visitor extends SonarRuleVisitor {
   private static readonly MESSAGE = "Remove these useless parentheses.";
 
-  visitNode(node: ts.Node): void {
-    if (is(node, ts.SyntaxKind.ParenthesizedExpression)) {
-      const parenthesizedExpression = node as ts.ParenthesizedExpression;
-      if (is(parenthesizedExpression.expression, ts.SyntaxKind.ParenthesizedExpression)) {
-        this.addIssue(node, Visitor.MESSAGE);
-      }
+  public visitParenthesizedExpression(node: ts.ParenthesizedExpression) {
+    const parenthesizedExpression = node as ts.ParenthesizedExpression;
+    if (is(parenthesizedExpression.expression, ts.SyntaxKind.ParenthesizedExpression)) {
+      this.addIssue(node, Visitor.MESSAGE);
     }
-    super.visitNode(node);
+
+    super.visitParenthesizedExpression(node);
   }
 }

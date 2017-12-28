@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable, UsageFlag } from "../symbols/table";
 import { SonarRuleMetaData } from "../sonarRule";
-import { FUNCTION_LIKE, descendants, ancestorsChain, isFunctionLikeDeclaration } from "../utils/navigation";
+import { FUNCTION_LIKE, descendants, ancestorsChain } from "../utils/navigation";
 import { LiveVariableAnalyzer, LVAReturn } from "../symbols/lva";
 import { ControlFlowGraph } from "../cfg/cfg";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
@@ -56,29 +56,43 @@ class Visitor extends TypedSonarRuleVisitor {
     this.lva = new LiveVariableAnalyzer(this.symbols);
   }
 
-  protected visitNode(node: ts.Node) {
-    if (isFunctionLikeDeclaration(node)) {
-      if (node.body) {
-        const lvaReturn = this.lva.analyzeFunction(node);
-        this.check(node.body, lvaReturn, ...node.parameters);
-      }
-    } else if (ts.isCatchClause(node)) {
-      if (node.variableDeclaration) {
-        const cfg = ControlFlowGraph.fromStatements(Array.from(node.block.statements));
-        if (cfg) {
-          const lvaReturn = this.lva.analyze(node.block, cfg);
-          this.check(node.block, lvaReturn, node.variableDeclaration);
-        }
-      }
-    } else if (ts.isForInStatement(node) || ts.isForOfStatement(node)) {
-      const cfg = ControlFlowGraph.fromStatements([node.statement]);
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    if (node.body) {
+      const lvaReturn = this.lva.analyzeFunction(node);
+      this.check(node.body, lvaReturn, ...node.parameters);
+    }
+
+    super.visitFunctionLikeDeclaration(node);
+  }
+
+  public visitCatchClause(node: ts.CatchClause) {
+    if (node.variableDeclaration) {
+      const cfg = ControlFlowGraph.fromStatements(Array.from(node.block.statements));
       if (cfg) {
-        const lvaReturn = this.lva.analyze(node, cfg);
-        this.check(node.statement, lvaReturn, node.initializer);
+        const lvaReturn = this.lva.analyze(node.block, cfg);
+        this.check(node.block, lvaReturn, node.variableDeclaration);
       }
     }
 
-    super.visitNode(node);
+    super.visitCatchClause(node);
+  }
+
+  public visitForInStatement(node: ts.ForInStatement) {
+    this.visitForInOfStatement(node);
+    super.visitForInStatement(node);
+  }
+
+  public visitForOfStatement(node: ts.ForOfStatement) {
+    this.visitForInOfStatement(node);
+    super.visitForOfStatement(node);
+  }
+
+  private visitForInOfStatement(node: ts.ForOfStatement | ts.ForInStatement) {
+    const cfg = ControlFlowGraph.fromStatements([node.statement]);
+    if (cfg) {
+      const lvaReturn = this.lva.analyze(node, cfg);
+      this.check(node.statement, lvaReturn, node.initializer);
+    }
   }
 
   private check(root: ts.Node, lvaReturn?: LVAReturn, ...nodesToCheck: ts.Node[]) {

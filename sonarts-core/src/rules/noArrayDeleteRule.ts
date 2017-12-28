@@ -45,16 +45,11 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Visitor extends TypedSonarRuleVisitor {
-  public visitNode(node: ts.Node) {
-    if (
-      ts.isDeleteExpression(node) &&
-      ts.isElementAccessExpression(node.expression) &&
-      this.isArray(node.expression.expression)
-    ) {
+  public visitDeleteExpression(node: ts.DeleteExpression) {
+    if (ts.isElementAccessExpression(node.expression) && this.isArray(node.expression.expression)) {
       this.raiseIssue(node);
     }
-
-    super.visitNode(node);
+    super.visitDeleteExpression(node);
   }
 
   private raiseIssue(node: ts.DeleteExpression) {

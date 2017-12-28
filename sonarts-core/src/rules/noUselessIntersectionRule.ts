@@ -51,21 +51,20 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Visitor extends TypedSonarRuleVisitor {
-  protected visitNode(node: ts.Node) {
-    if (ts.isIntersectionTypeNode(node)) {
-      const anyOrNever = node.types.find(typeNode => ["any", "never"].includes(typeNode.getText()));
-      if (anyOrNever) {
-        this.addIssue(node, Rule.formatAnyOrNeverMessage(anyOrNever.getText()));
-      } else {
-        node.types.forEach(typeNode => {
-          const type = this.program.getTypeChecker().getTypeFromTypeNode(typeNode);
-          if (isTypeWithoutMembers(type)) {
-            this.addIssue(typeNode, Rule.MESSAGE);
-          }
-        });
-      }
+  public visitIntersectionTypeNode(node: ts.IntersectionTypeNode) {
+    const anyOrNever = node.types.find(typeNode => ["any", "never"].includes(typeNode.getText()));
+    if (anyOrNever) {
+      this.addIssue(node, Rule.formatAnyOrNeverMessage(anyOrNever.getText()));
+    } else {
+      node.types.forEach(typeNode => {
+        const type = this.program.getTypeChecker().getTypeFromTypeNode(typeNode);
+        if (isTypeWithoutMembers(type)) {
+          this.addIssue(typeNode, Rule.MESSAGE);
+        }
+      });
     }
-    super.visitNode(node);
+
+    super.visitIntersectionTypeNode(node);
   }
 }
 

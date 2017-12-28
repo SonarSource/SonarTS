@@ -26,7 +26,7 @@ import { ProgramState, createInitialState } from "../se/programStates";
 import { isTruthy, Constraint, isFalsy } from "../se/constraints";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable, UsageFlag } from "../symbols/table";
-import { firstLocalAncestor, FUNCTION_LIKE, is } from "../utils/navigation";
+import { firstLocalAncestor, FUNCTION_LIKE } from "../utils/navigation";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -59,21 +59,19 @@ class Visitor extends TypedSonarRuleVisitor {
     super(options.ruleName, program);
   }
 
-  protected visitNode(node: ts.Node) {
-    if (is(node, ...FUNCTION_LIKE)) {
-      const functionLike = node as ts.FunctionLikeDeclaration;
-      const statements = this.getStatements(functionLike);
-      if (statements) {
-        const initialState = createInitialState(functionLike, this.program);
-        const shouldTrackSymbol = (symbol: ts.Symbol) =>
-          this.symbols
-            .allUsages(symbol)
-            .filter(usage => usage.is(UsageFlag.WRITE))
-            .every(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) === functionLike);
-        this.runForStatements(Array.from(statements), initialState, shouldTrackSymbol);
-      }
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    const statements = this.getStatements(node);
+    if (statements) {
+      const initialState = createInitialState(node, this.program);
+      const shouldTrackSymbol = (symbol: ts.Symbol) =>
+        this.symbols
+          .allUsages(symbol)
+          .filter(usage => usage.is(UsageFlag.WRITE))
+          .every(usage => firstLocalAncestor(usage.node, ...FUNCTION_LIKE) === node);
+      this.runForStatements(Array.from(statements), initialState, shouldTrackSymbol);
     }
-    super.visitNode(node);
+
+    super.visitFunctionLikeDeclaration(node);
   }
 
   private getStatements(functionLike: ts.FunctionLikeDeclaration) {

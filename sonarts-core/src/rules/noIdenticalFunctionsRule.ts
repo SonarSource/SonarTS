@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { is, FUNCTION_LIKE, lineAndCharacter, findChild } from "../utils/navigation";
+import { is, lineAndCharacter, findChild } from "../utils/navigation";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -93,15 +93,13 @@ export class Rule extends tslint.Rules.AbstractRule {
 class Visitor extends SonarRuleVisitor {
   public functionBlocks: ts.Block[] = [];
 
-  protected visitNode(node: ts.Node): void {
-    if (is(node, ...FUNCTION_LIKE)) {
-      const body = (node as ts.FunctionLikeDeclaration).body;
-      if (is(body, ts.SyntaxKind.Block) && Visitor.isBigEnough(body as ts.Block)) {
-        this.functionBlocks.push(body as ts.Block);
-      }
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    const { body } = node;
+    if (body && ts.isBlock(body) && Visitor.isBigEnough(body)) {
+      this.functionBlocks.push(body as ts.Block);
     }
 
-    super.visitNode(node);
+    super.visitFunctionLikeDeclaration(node);
   }
 
   private static isBigEnough(block: ts.Block) {

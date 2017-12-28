@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { is, FUNCTION_LIKE, functionLikeMainToken } from "../utils/navigation";
+import { functionLikeMainToken } from "../utils/navigation";
 import { getFunctionComplexityNodes } from "../utils/cyclomaticComplexity";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
@@ -59,17 +59,15 @@ class Visitor extends SonarRuleVisitor {
     super(options.ruleName);
   }
 
-  public visitNode(node: ts.Node) {
-    if (is(node, ...FUNCTION_LIKE)) {
-      const functionComplexity = getFunctionComplexityNodes(node as ts.FunctionLikeDeclaration).length;
-      if (functionComplexity > this.threshold) {
-        this.addIssue(
-          functionLikeMainToken(node as ts.FunctionLikeDeclaration),
-          Rule.message(functionComplexity, this.threshold),
-        );
-      }
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    const functionComplexity = getFunctionComplexityNodes(node as ts.FunctionLikeDeclaration).length;
+    if (functionComplexity > this.threshold) {
+      this.addIssue(
+        functionLikeMainToken(node as ts.FunctionLikeDeclaration),
+        Rule.message(functionComplexity, this.threshold),
+      );
     }
 
-    super.visitNode(node);
+    super.visitFunctionLikeDeclaration(node);
   }
 }

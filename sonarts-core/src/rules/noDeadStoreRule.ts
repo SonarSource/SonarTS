@@ -23,7 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { LiveVariableAnalyzer } from "../symbols/lva";
 import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
-import { descendants, floatToTopParenthesis, is, isFunctionLikeDeclaration } from "../utils/navigation";
+import { descendants, floatToTopParenthesis, is } from "../utils/navigation";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -53,24 +53,22 @@ class Visitor extends SonarRuleVisitor {
     super(options.ruleName);
   }
 
-  protected visitNode(node: ts.Node) {
-    if (isFunctionLikeDeclaration(node)) {
-      const lvaReturn = new LiveVariableAnalyzer(this.symbols).analyzeFunction(node);
-      if (lvaReturn) {
-        const { deadUsages } = lvaReturn;
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    const lvaReturn = new LiveVariableAnalyzer(this.symbols).analyzeFunction(node);
+    if (lvaReturn) {
+      const { deadUsages } = lvaReturn;
 
-        descendants(node)
-          .filter(ts.isIdentifier)
-          .forEach(identifier => {
-            const usage = this.symbols.getUsage(identifier);
-            if (usage && deadUsages.has(usage) && !this.isException(usage)) {
-              this.addIssue(identifier, `Remove this useless assignment to local variable "${identifier.text}".`);
-            }
-          });
-      }
+      descendants(node)
+        .filter(ts.isIdentifier)
+        .forEach(identifier => {
+          const usage = this.symbols.getUsage(identifier);
+          if (usage && deadUsages.has(usage) && !this.isException(usage)) {
+            this.addIssue(identifier, `Remove this useless assignment to local variable "${identifier.text}".`);
+          }
+        });
     }
 
-    super.visitNode(node);
+    super.visitFunctionLikeDeclaration(node);
   }
 
   private isException(usage: Usage) {

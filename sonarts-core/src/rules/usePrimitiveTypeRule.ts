@@ -46,7 +46,6 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Visitor extends SonarRuleVisitor {
   protected visitNode(node: ts.Node) {
-    // TODO create and use `visitTypeNode` in visitor
     if (ts.isTypeNode(node)) {
       const text = node.getText();
       if (this.isPrimitiveWrapper(text)) {
