@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -42,11 +43,11 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitIfStatement(node: ts.IfStatement) {
     // don't visit `else if` statements
     if (!node.parent || node.parent.kind !== ts.SyntaxKind.IfStatement) {
@@ -56,7 +57,7 @@ class Walker extends tslint.RuleWalker {
         if (this.hasRequiredSize(branches[i])) {
           for (let j = 0; j < i; j++) {
             if (areEquivalent(branches[i], branches[j])) {
-              this.addFailureAtNode(branches[i], Rule.formatMessage("branch", this.getLine(branches[j])));
+              this.addIssue(branches[i], Rule.formatMessage("branch", this.getLine(branches[j])));
               break;
             }
           }
@@ -81,7 +82,7 @@ class Walker extends tslint.RuleWalker {
           );
 
           if (areEquivalent(firstClauseWithoutBreak, secondClauseWithoutBreak)) {
-            this.addFailureAtNode(clauses[i], Rule.formatMessage("case", this.getLine(clauses[j])));
+            this.addIssue(clauses[i], Rule.formatMessage("case", this.getLine(clauses[j])));
             break;
           }
         }
@@ -119,11 +120,11 @@ class Walker extends tslint.RuleWalker {
   }
 
   private getLine(node: ts.Node): number {
-    return this.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line + 1;
+    return node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line + 1;
   }
 
   private getLastLine(node: ts.Node): number {
-    return this.getSourceFile().getLineAndCharacterOfPosition(node.getEnd()).line + 1;
+    return node.getSourceFile().getLineAndCharacterOfPosition(node.getEnd()).line + 1;
   }
 
   private takeWithoutBreak(nodes: ts.Node[]) {

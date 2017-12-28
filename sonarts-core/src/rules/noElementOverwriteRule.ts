@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { descendants, is, isAssignment } from "../utils/navigation";
 import { nodeToSonarLine } from "../runner/sonar-utils";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -37,11 +38,11 @@ export class Rule extends Lint.Rules.TypedRule {
   };
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): Lint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends Lint.ProgramAwareRuleWalker {
+class Visitor extends TypedSonarRuleVisitor {
   protected visitSourceFile(node: ts.SourceFile): void {
     this.checkStatements(node.statements);
     super.visitSourceFile(node);
@@ -68,7 +69,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
         }
         const sameKeyWriteUsage = usedKeys.get(keyWriteUsage.indexOrKey);
         if (sameKeyWriteUsage) {
-          this.addFailureAtNode(keyWriteUsage.node, this.message(keyWriteUsage.indexOrKey, sameKeyWriteUsage.node));
+          this.addIssue(keyWriteUsage.node, this.message(keyWriteUsage.indexOrKey, sameKeyWriteUsage.node));
         }
         usedKeys.set(keyWriteUsage.indexOrKey, keyWriteUsage);
         collection = keyWriteUsage.collectionSymbol;
@@ -93,7 +94,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
   private arrayKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
     if (isAssignment(node) && is(node.left, ts.SyntaxKind.ElementAccessExpression)) {
       const lhs = node.left as ts.ElementAccessExpression;
-      const array = this.getTypeChecker().getSymbolAtLocation(lhs.expression);
+      const array = this.program.getTypeChecker().getSymbolAtLocation(lhs.expression);
       if (!array || this.usedInRhs(node.right, array)) return;
       const index = this.extractIndex(lhs.argumentExpression);
       if (!index) return;
@@ -108,7 +109,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
   private usedInRhs(rhs: ts.Expression, symbol: ts.Symbol) {
     return descendants(rhs)
       .filter(child => child.kind === ts.SyntaxKind.Identifier)
-      .some(id => this.getTypeChecker().getSymbolAtLocation(id) === symbol);
+      .some(id => this.program.getTypeChecker().getSymbolAtLocation(id) === symbol);
   }
 
   private mapKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
@@ -124,9 +125,9 @@ class Walker extends Lint.ProgramAwareRuleWalker {
       const callExpression = node as ts.CallExpression;
       if (is(callExpression.expression, ts.SyntaxKind.PropertyAccessExpression)) {
         const propertyAccess = callExpression.expression as ts.PropertyAccessExpression;
-        const type = this.getTypeChecker().getTypeAtLocation(propertyAccess.expression);
+        const type = this.program.getTypeChecker().getTypeAtLocation(propertyAccess.expression);
         if (type.symbol && type.symbol.name === typeName && propertyAccess.name.text === method) {
-          const lhsSymbol = this.getTypeChecker().getSymbolAtLocation(propertyAccess.expression);
+          const lhsSymbol = this.program.getTypeChecker().getSymbolAtLocation(propertyAccess.expression);
           const key = this.extractIndex(callExpression.arguments[0]);
           if (!lhsSymbol || !key) return;
           return {
@@ -144,7 +145,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
       const lhs = node.left as ts.PropertyAccessExpression;
       // avoid deeply nested property access
       if (!is(lhs.expression, ts.SyntaxKind.Identifier)) return;
-      const objectSymbol = this.getTypeChecker().getSymbolAtLocation(lhs.expression);
+      const objectSymbol = this.program.getTypeChecker().getSymbolAtLocation(lhs.expression);
       if (!objectSymbol) return;
       if (this.usedInRhs(node.right, objectSymbol)) return;
       const property = lhs.name.text;
@@ -163,7 +164,7 @@ class Walker extends Lint.ProgramAwareRuleWalker {
       const literal = node as ts.LiteralLikeNode;
       return literal.text;
     }
-    const symbol = this.getTypeChecker().getSymbolAtLocation(node);
+    const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
     return symbol && symbol.name;
   }
 

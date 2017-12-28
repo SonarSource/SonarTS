@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { is, FUNCTION_LIKE, functionLikeMainToken } from "../utils/navigation";
 import { getFunctionComplexityNodes } from "../utils/cyclomaticComplexity";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -49,23 +50,20 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), this.threshold));
+    return new Visitor(this.getOptions(), this.threshold).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
-  threshold: number;
-
-  constructor(sourceFile: ts.SourceFile, options: tslint.IOptions, threshold: number) {
-    super(sourceFile, options);
-    this.threshold = threshold;
+class Visitor extends SonarRuleVisitor {
+  constructor(options: tslint.IOptions, private readonly threshold: number) {
+    super(options.ruleName);
   }
 
   public visitNode(node: ts.Node) {
     if (is(node, ...FUNCTION_LIKE)) {
       const functionComplexity = getFunctionComplexityNodes(node as ts.FunctionLikeDeclaration).length;
       if (functionComplexity > this.threshold) {
-        this.addFailureAtNode(
+        this.addIssue(
           functionLikeMainToken(node as ts.FunctionLikeDeclaration),
           Rule.message(functionComplexity, this.threshold),
         );

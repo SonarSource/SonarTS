@@ -27,6 +27,7 @@ import { isTruthy, Constraint, isFalsy } from "../se/constraints";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable, UsageFlag } from "../symbols/table";
 import { firstLocalAncestor, FUNCTION_LIKE, is } from "../utils/navigation";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -49,18 +50,13 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
+    return new Visitor(this.getOptions(), program, symbols).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
-  public constructor(
-    sourceFile: ts.SourceFile,
-    options: tslint.IOptions,
-    program: ts.Program,
-    private readonly symbols: SymbolTable,
-  ) {
-    super(sourceFile, options, program);
+class Visitor extends TypedSonarRuleVisitor {
+  public constructor(options: tslint.IOptions, program: ts.Program, private readonly symbols: SymbolTable) {
+    super(options.ruleName, program);
   }
 
   protected visitNode(node: ts.Node) {
@@ -68,7 +64,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       const functionLike = node as ts.FunctionLikeDeclaration;
       const statements = this.getStatements(functionLike);
       if (statements) {
-        const initialState = createInitialState(functionLike, this.getProgram());
+        const initialState = createInitialState(functionLike, this.program);
         const shouldTrackSymbol = (symbol: ts.Symbol) =>
           this.symbols
             .allUsages(symbol)
@@ -103,9 +99,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       if (result) {
         result.branchingProgramNodes.forEach((states, branchingProgramPoint) => {
           if (this.ifAllProgramStateConstraints(states, isTruthy)) {
-            this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("true"));
+            this.addIssue(branchingProgramPoint, Rule.getMessage("true"));
           } else if (this.ifAllProgramStateConstraints(states, isFalsy)) {
-            this.addFailureAtNode(branchingProgramPoint, Rule.getMessage("false"));
+            this.addIssue(branchingProgramPoint, Rule.getMessage("false"));
           }
         });
       }

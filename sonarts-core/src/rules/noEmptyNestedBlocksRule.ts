@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { getCommentsAfter, getCommentsBefore, is } from "../utils/navigation";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -39,11 +40,11 @@ export class Rule extends tslint.Rules.AbstractRule {
   public static MESSAGE = "Either remove or fill this block of code.";
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitBlock(node: ts.Block) {
     if (
       node.statements.length === 0 &&
@@ -52,7 +53,7 @@ class Walker extends tslint.RuleWalker {
       !this.isCatchClause(node.parent) &&
       !this.hasLeadingComment(node.parent)
     ) {
-      this.addFailureAtNode(node, Rule.MESSAGE);
+      this.addIssue(node, Rule.MESSAGE);
     }
 
     super.visitBlock(node);

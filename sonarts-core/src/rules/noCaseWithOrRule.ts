@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -36,17 +37,17 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitCaseClause(node: ts.CaseClause) {
     const chain = this.pickBarBarChain(node.expression);
     if (chain !== undefined) {
       // avoid double quotes around string literals
       const left = ts.isStringLiteral(chain.left) ? chain.left.getText() : `"${chain.left.getText()}"`;
-      this.addFailureAtNode(
+      this.addIssue(
         node.expression,
         `Explicitly specify ${chain.count} separate cases that fall through; ` +
           `currently this case clause only works for ${left}.`,

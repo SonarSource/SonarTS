@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -49,19 +50,19 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitIfStatement(node: ts.IfStatement) {
     const condition = node.expression;
     let statement = node.elseStatement;
     while (statement) {
       if (ts.isIfStatement(statement)) {
         if (areEquivalent(condition, statement.expression)) {
-          const { line } = this.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
-          this.addFailureAtNode(statement.expression, Rule.formatMessage("branch", line + 1));
+          const { line } = node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
+          this.addIssue(statement.expression, Rule.formatMessage("branch", line + 1));
         }
         statement = statement.elseStatement;
       } else {
@@ -78,8 +79,8 @@ class Walker extends tslint.RuleWalker {
     for (let i = 0; i < clauses.length; i++) {
       for (let j = i + 1; j < clauses.length; j++) {
         if (areEquivalent(clauses[i].expression, clauses[j].expression)) {
-          const { line } = this.getSourceFile().getLineAndCharacterOfPosition(clauses[i].expression.getStart());
-          this.addFailureAtNode(clauses[j].expression, Rule.formatMessage("case", line + 1));
+          const { line } = node.getSourceFile().getLineAndCharacterOfPosition(clauses[i].expression.getStart());
+          this.addIssue(clauses[j].expression, Rule.formatMessage("case", line + 1));
         }
       }
     }

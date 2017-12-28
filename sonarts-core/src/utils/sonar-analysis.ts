@@ -40,6 +40,12 @@ export class SonarRuleVisitor extends TreeVisitor {
     this.issues.push(issue);
     return issue;
   }
+
+  public addIssueAtLocation(primaryLocation: IssueLocation): SonarIssue {
+    const issue = new SonarIssue(primaryLocation, this.ruleName);
+    this.issues.push(issue);
+    return issue;
+  }
 }
 
 export class TypedSonarRuleVisitor extends SonarRuleVisitor {
@@ -48,15 +54,12 @@ export class TypedSonarRuleVisitor extends SonarRuleVisitor {
   }
 }
 export class IssueLocation {
-  private node: ts.Node;
-  private message?: string;
-
   public readonly startLine: number;
   public readonly startColumn: number;
   public readonly endLine: number;
   public readonly endColumn: number;
 
-  public constructor(node: ts.Node, message?: string, lastNode: ts.Node = node) {
+  public constructor(public readonly node: ts.Node, public message?: string, public readonly lastNode: ts.Node = node) {
     this.node = node;
     this.message = message;
 
@@ -67,14 +70,6 @@ export class IssueLocation {
     this.startColumn = startPosition.character;
     this.endLine = toSonarLine(endPosition.line);
     this.endColumn = endPosition.character;
-  }
-
-  public getMessage() {
-    return this.message;
-  }
-
-  public getNode() {
-    return this.node;
   }
 
   public toJson() {
@@ -94,10 +89,10 @@ export class SonarIssue extends tslint.RuleFailure {
 
   public constructor(primaryLocation: IssueLocation, ruleName: string) {
     super(
-      primaryLocation.getNode().getSourceFile(),
-      primaryLocation.getNode().getStart(),
-      primaryLocation.getNode().getEnd(),
-      primaryLocation.getMessage()!,
+      primaryLocation.node.getSourceFile(),
+      primaryLocation.node.getStart(),
+      primaryLocation.lastNode.getEnd(),
+      primaryLocation.message!,
       ruleName,
     );
 
@@ -106,18 +101,18 @@ export class SonarIssue extends tslint.RuleFailure {
 
   public toJson() {
     return {
-      failure: this.primaryLocation.getMessage()!,
+      failure: this.primaryLocation.message!,
       startPosition: {
         line: this.primaryLocation.startLine - 1,
         character: this.primaryLocation.startColumn,
-        position: this.primaryLocation.getNode().getStart(),
+        position: this.primaryLocation.node.getStart(),
       },
       endPosition: {
         line: this.primaryLocation.endLine - 1,
         character: this.primaryLocation.endColumn,
-        position: this.primaryLocation.getNode().getEnd(),
+        position: this.primaryLocation.lastNode.getEnd(),
       },
-      name: this.primaryLocation.getNode().getSourceFile().fileName,
+      name: this.primaryLocation.node.getSourceFile().fileName,
       ruleName: this.getRuleName(),
       cost: this.cost,
       secondaryLocation: this.secondaryLocations,

@@ -23,6 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { is } from "../utils/navigation";
 import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -44,14 +45,14 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program));
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Visitor extends TypedSonarRuleVisitor {
   public visitBinaryExpression(expression: ts.BinaryExpression) {
     if (this.isAssignment(expression) && !this.hasAccessors(expression.left) && this.isSelfAssignment(expression)) {
-      this.addFailureAtNode(expression, Rule.formatMessage());
+      this.addIssue(expression, Rule.formatMessage());
     }
 
     super.visitBinaryExpression(expression);
@@ -74,7 +75,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private hasAccessors(node: ts.Node) {
-    const symbol = this.getTypeChecker().getSymbolAtLocation(node);
+    const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
     const declarations = symbol && symbol.declarations;
     return (
       declarations &&
@@ -106,6 +107,9 @@ class Walker extends tslint.ProgramAwareRuleWalker {
   }
 
   private isArrayMutatingCall(expression: ts.PropertyAccessExpression): boolean {
-    return isArray(expression.expression, this.getTypeChecker()) && ARRAY_MUTATING_CALLS.includes(expression.name.text);
+    return (
+      isArray(expression.expression, this.program.getTypeChecker()) &&
+      ARRAY_MUTATING_CALLS.includes(expression.name.text)
+    );
   }
 }

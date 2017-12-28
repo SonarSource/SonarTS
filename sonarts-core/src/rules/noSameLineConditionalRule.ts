@@ -21,6 +21,7 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { lineAndCharacter } from "../utils/navigation";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends Lint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -34,11 +35,11 @@ export class Rule extends Lint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): Lint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends Lint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   private static readonly MESSAGE = 'Move this "if" to a new line or add the missing "else".';
 
   protected visitSourceFile(node: ts.SourceFile): void {
@@ -68,7 +69,7 @@ class Walker extends Lint.RuleWalker {
           const previousStatementLastLine = lineAndCharacter(previousStatement.getEnd(), statement.getSourceFile())
             .line;
           if (ifTokenLine === previousStatementLastLine) {
-            this.addFailureAtNode(statement.getFirstToken(), Walker.MESSAGE);
+            this.addIssue(statement.getFirstToken(), Visitor.MESSAGE);
           }
         }
       }

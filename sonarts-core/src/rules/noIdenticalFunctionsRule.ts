@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { is, FUNCTION_LIKE, lineAndCharacter, findChild } from "../utils/navigation";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -35,9 +36,9 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    const walker = new Walker(sourceFile, this.getOptions());
-    this.applyWithWalker(walker);
-    const functionBlocks = walker.functionBlocks;
+    const visitor = new Visitor(this.getOptions().ruleName);
+    visitor.visit(sourceFile);
+    const functionBlocks = visitor.functionBlocks;
 
     if (functionBlocks.length < 2) {
       return [];
@@ -50,7 +51,7 @@ export class Rule extends tslint.Rules.AbstractRule {
         const originalFunctionBlock = functionBlocks[j];
 
         if (areEquivalent(duplicatingFunctionBlock, originalFunctionBlock)) {
-          walker.addFailureAtNode(
+          visitor.addIssue(
             Rule.issueNode(duplicatingFunctionBlock.parent as ts.FunctionLikeDeclaration),
             Rule.message(originalFunctionBlock),
           );
@@ -59,7 +60,7 @@ export class Rule extends tslint.Rules.AbstractRule {
       }
     }
 
-    return walker.getFailures();
+    return visitor.getIssues();
   }
 
   private static message(functionBlock: ts.Block): string {
@@ -89,13 +90,13 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public functionBlocks: ts.Block[] = [];
 
   protected visitNode(node: ts.Node): void {
     if (is(node, ...FUNCTION_LIKE)) {
       const body = (node as ts.FunctionLikeDeclaration).body;
-      if (is(body, ts.SyntaxKind.Block) && Walker.isBigEnough(body as ts.Block)) {
+      if (is(body, ts.SyntaxKind.Block) && Visitor.isBigEnough(body as ts.Block)) {
         this.functionBlocks.push(body as ts.Block);
       }
     }

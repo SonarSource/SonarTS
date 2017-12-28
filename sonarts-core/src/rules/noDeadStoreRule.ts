@@ -24,6 +24,7 @@ import { SymbolTableBuilder } from "../symbols/builder";
 import { LiveVariableAnalyzer } from "../symbols/lva";
 import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
 import { descendants, floatToTopParenthesis, is, isFunctionLikeDeclaration } from "../utils/navigation";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -43,18 +44,13 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
+    return new Visitor(this.getOptions(), symbols).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
-  public constructor(
-    sourceFile: ts.SourceFile,
-    options: tslint.IOptions,
-    program: ts.Program,
-    private readonly symbols: SymbolTable,
-  ) {
-    super(sourceFile, options, program);
+class Visitor extends SonarRuleVisitor {
+  public constructor(options: tslint.IOptions, private readonly symbols: SymbolTable) {
+    super(options.ruleName);
   }
 
   protected visitNode(node: ts.Node) {
@@ -68,10 +64,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
           .forEach(identifier => {
             const usage = this.symbols.getUsage(identifier);
             if (usage && deadUsages.has(usage) && !this.isException(usage)) {
-              this.addFailureAtNode(
-                identifier,
-                `Remove this useless assignment to local variable "${identifier.text}".`,
-              );
+              this.addIssue(identifier, `Remove this useless assignment to local variable "${identifier.text}".`);
             }
           });
       }

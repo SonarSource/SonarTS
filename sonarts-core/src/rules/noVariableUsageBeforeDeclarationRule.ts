@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -45,26 +46,22 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return this.applyWithFunction(sourceFile, walk(program));
-  }
-}
-
-function walk(program: ts.Program) {
-  return (context: tslint.WalkContext<void>) => {
-    const declarations = collectDeclarations(context.sourceFile, program);
-    const usages = collectUsages(context.sourceFile, program);
+    const ruleVisitor = new SonarRuleVisitor(this.getOptions().ruleName);
+    const declarations = collectDeclarations(sourceFile, program);
+    const usages = collectUsages(sourceFile, program);
 
     usages.forEach((usage, symbol) => {
       const declaration = declarations.get(symbol);
       if (declaration) {
-        const usageLine = getLine(usage, context.sourceFile);
-        const declarationLine = getLine(declaration, context.sourceFile);
+        const usageLine = getLine(usage, sourceFile);
+        const declarationLine = getLine(declaration, sourceFile);
         if (usageLine < declarationLine) {
-          context.addFailureAtNode(usage, Rule.formatMessage(usage.text));
+          ruleVisitor.addIssue(usage, Rule.formatMessage(usage.text));
         }
       }
     });
-  };
+    return ruleVisitor.getIssues();
+  }
 }
 
 /*

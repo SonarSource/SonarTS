@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -34,11 +35,11 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   private static readonly MESSAGE_INC = "Remove this increment or correct the code not to waste it.";
   private static readonly MESSAGE_DEC = "Remove this decrement or correct the code not to waste it.";
 
@@ -51,9 +52,9 @@ class Walker extends tslint.RuleWalker {
         const postfixUnaryExpr = rightOperand as ts.PostfixUnaryExpression;
 
         if (areEquivalent(leftOperand, postfixUnaryExpr.operand)) {
-          this.addFailureAtNode(
+          this.addIssue(
             postfixUnaryExpr.getChildAt(1),
-            postfixUnaryExpr.operator === ts.SyntaxKind.PlusPlusToken ? Walker.MESSAGE_INC : Walker.MESSAGE_DEC,
+            postfixUnaryExpr.operator === ts.SyntaxKind.PlusPlusToken ? Visitor.MESSAGE_INC : Visitor.MESSAGE_DEC,
           );
         }
       }

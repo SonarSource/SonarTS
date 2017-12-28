@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable } from "../symbols/table";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -41,18 +42,13 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
+    return new Visitor(this.getOptions(), program, symbols).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
-  constructor(
-    sourceFile: ts.SourceFile,
-    options: tslint.IOptions,
-    program: ts.Program,
-    private readonly symbols: SymbolTable,
-  ) {
-    super(sourceFile, options, program);
+class Visitor extends TypedSonarRuleVisitor {
+  constructor(options: tslint.IOptions, program: ts.Program, private readonly symbols: SymbolTable) {
+    super(options.ruleName, program);
   }
 
   protected visitBlock(node: ts.Block) {
@@ -79,15 +75,15 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       const declaredVariable = this.getOnlyDeclaredVariable(lastButOne);
 
       if (returnedVariable && declaredVariable) {
-        const returnedSymbol = this.getTypeChecker().getSymbolAtLocation(returnedVariable);
-        const declaredSymbol = this.getTypeChecker().getSymbolAtLocation(declaredVariable.name);
+        const returnedSymbol = this.program.getTypeChecker().getSymbolAtLocation(returnedVariable);
+        const declaredSymbol = this.program.getTypeChecker().getSymbolAtLocation(declaredVariable.name);
 
         if (
           returnedSymbol &&
           returnedSymbol === declaredSymbol &&
           !this.symbols.allUsages(declaredSymbol).some(usage => usage.isUsedInside(declaredVariable.initializer))
         ) {
-          this.addFailureAtNode(declaredVariable.initializer, this.formatMessage(last, returnedVariable.text));
+          this.addIssue(declaredVariable.initializer, this.formatMessage(last, returnedVariable.text));
         }
       }
     }

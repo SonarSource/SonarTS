@@ -20,6 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SonarRuleVisitor, IssueLocation } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -37,11 +38,11 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   private static readonly COMPOUND_ASSIGNMENT_OPERATORS = new Map()
     .set(ts.SyntaxKind.PlusToken, "+=")
     .set(ts.SyntaxKind.MinusToken, "-=")
@@ -67,7 +68,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private isPresentInCompoundAssignments(operator: ts.Node): boolean {
-    return Walker.COMPOUND_ASSIGNMENT_OPERATORS.has(operator.kind);
+    return Visitor.COMPOUND_ASSIGNMENT_OPERATORS.has(operator.kind);
   }
 
   private areAdjacent(left: ts.Node, right: ts.Node): boolean {
@@ -75,14 +76,12 @@ class Walker extends tslint.RuleWalker {
   }
 
   private suggestOperator(unaryOperator: ts.Node): string {
-    return Walker.COMPOUND_ASSIGNMENT_OPERATORS.get(unaryOperator.kind);
+    return Visitor.COMPOUND_ASSIGNMENT_OPERATORS.get(unaryOperator.kind);
   }
 
   private addOperatorFailure(previousOperator: ts.Node, unaryOperator: ts.Node) {
-    this.addFailureAt(
-      previousOperator.getStart(),
-      previousOperator.getWidth() + unaryOperator.getWidth(),
-      Rule.formatMessage(this.suggestOperator(unaryOperator)),
+    this.addIssueAtLocation(
+      new IssueLocation(previousOperator, Rule.formatMessage(this.suggestOperator(unaryOperator)), unaryOperator),
     );
   }
 }

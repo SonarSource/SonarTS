@@ -25,6 +25,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { FUNCTION_LIKE, descendants, ancestorsChain, isFunctionLikeDeclaration } from "../utils/navigation";
 import { LiveVariableAnalyzer, LVAReturn } from "../symbols/lva";
 import { ControlFlowGraph } from "../cfg/cfg";
+import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -43,20 +44,15 @@ export class Rule extends tslint.Rules.TypedRule {
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions(), program, symbols));
+    return new Visitor(this.getOptions(), program, symbols).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.ProgramAwareRuleWalker {
+class Visitor extends TypedSonarRuleVisitor {
   private lva: LiveVariableAnalyzer;
 
-  constructor(
-    sourceFile: ts.SourceFile,
-    options: tslint.IOptions,
-    program: ts.Program,
-    private readonly symbols: SymbolTable,
-  ) {
-    super(sourceFile, options, program);
+  constructor(options: tslint.IOptions, program: ts.Program, private readonly symbols: SymbolTable) {
+    super(options.ruleName, program);
     this.lva = new LiveVariableAnalyzer(this.symbols);
   }
 
@@ -96,7 +92,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
       descendants(parameter)
         .filter(ts.isIdentifier)
         .forEach(identifier => {
-          const symbol = this.getTypeChecker().getSymbolAtLocation(identifier);
+          const symbol = this.program.getTypeChecker().getSymbolAtLocation(identifier);
           if (
             symbol &&
             !symbolsLiveAtStart.has(symbol) &&
@@ -104,7 +100,7 @@ class Walker extends tslint.ProgramAwareRuleWalker {
             this.onlyUsedLocallyToRoot(symbol, root) &&
             this.symbols.allUsages(symbol).length > 1
           ) {
-            this.addFailureAtNode(identifier, Rule.formatMessage(identifier));
+            this.addIssue(identifier, Rule.formatMessage(identifier));
           }
         });
     });

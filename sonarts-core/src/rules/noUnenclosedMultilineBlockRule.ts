@@ -17,10 +17,11 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { is } from "../utils/navigation";
+import { is, lineAndCharacter } from "../utils/navigation";
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -34,11 +35,11 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   protected visitBlock(node: ts.Block): void {
     this.visitStatements(Array.from(node.statements));
     super.visitBlock(node);
@@ -84,7 +85,7 @@ class Walker extends tslint.RuleWalker {
         return result;
       }, new Array<{ prev: ConditionOrLoop; next: ts.Statement }>())
       .map(pair => {
-        return new ChainedStatements(pair.prev, this.extractLastBody(pair.prev), pair.next, this);
+        return new ChainedStatements(pair.prev, this.extractLastBody(pair.prev), pair.next);
       });
   }
 
@@ -112,14 +113,15 @@ class Walker extends tslint.RuleWalker {
   }
 
   private countStatementsInTheSamePile(reference: ts.Statement, statements: ts.Statement[]): number {
-    let startOfPile = this.getLineAndCharacterOfPosition(reference.getStart());
+    const file = reference.getSourceFile();
+    let startOfPile = lineAndCharacter(reference.getStart(), file);
     let lastLineOfPile = startOfPile.line;
     for (const statement of statements) {
-      const currentLine = this.getLineAndCharacterOfPosition(statement.getEnd()).line;
-      const currentIndentation = this.getLineAndCharacterOfPosition(statement.getStart()).character;
+      const currentLine = lineAndCharacter(statement.getEnd(), file).line;
+      const currentIndentation = lineAndCharacter(statement.getStart(), file).character;
       if (currentLine > startOfPile.line) {
         if (currentIndentation === startOfPile.character) {
-          lastLineOfPile = this.getLineAndCharacterOfPosition(statement.getEnd()).line;
+          lastLineOfPile = lineAndCharacter(statement.getEnd(), file).line;
         } else {
           break;
         }
@@ -129,7 +131,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private raiseAdjacenceIssue(adjacentStatements: ChainedStatements) {
-    this.addFailureAtNode(
+    this.addIssue(
       adjacentStatements.next,
       `This statement will not be executed ${adjacentStatements.includedStatementQualifier()}; ` +
         `only the first statement will be. The rest will execute ${adjacentStatements.excludedStatementsQualifier()}.`,
@@ -137,7 +139,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private raiseBlockIssue(piledStatements: ChainedStatements, sizeOfPile: number) {
-    this.addFailureAtNode(
+    this.addIssue(
       piledStatements.next,
       `This line will not be executed ${piledStatements.includedStatementQualifier()}; ` +
         `only the first line of this ${sizeOfPile}-line block will be. The rest will execute ${piledStatements.excludedStatementsQualifier()}.`,
@@ -145,7 +147,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private raiseInlinedAndIndentedIssue(chainedStatements: ChainedStatements) {
-    this.addFailureAtNode(
+    this.addIssue(
       chainedStatements.next,
       `This line will not be executed ${chainedStatements.includedStatementQualifier()}; ` +
         `only the first statement will be. The rest will execute ${chainedStatements.excludedStatementsQualifier()}.`,
@@ -156,19 +158,15 @@ class Walker extends tslint.RuleWalker {
 class ChainedStatements {
   private readonly positions: Positions;
 
-  constructor(
-    readonly topStatement: ConditionOrLoop,
-    readonly prev: ts.Statement,
-    readonly next: ts.Statement,
-    walker: Walker,
-  ) {
+  constructor(readonly topStatement: ConditionOrLoop, readonly prev: ts.Statement, readonly next: ts.Statement) {
+    const file = topStatement.getSourceFile();
     this.positions = {
-      prevTopStart: walker.getLineAndCharacterOfPosition(this.topStatement.getStart()),
-      prevTopEnd: walker.getLineAndCharacterOfPosition(this.topStatement.getEnd()),
-      prevStart: walker.getLineAndCharacterOfPosition(this.prev.getStart()),
-      prevEnd: walker.getLineAndCharacterOfPosition(this.prev.getEnd()),
-      nextStart: walker.getLineAndCharacterOfPosition(this.next.getStart()),
-      nextEnd: walker.getLineAndCharacterOfPosition(this.next.getEnd()),
+      prevTopStart: lineAndCharacter(this.topStatement.getStart(), file),
+      prevTopEnd: lineAndCharacter(this.topStatement.getEnd(), file),
+      prevStart: lineAndCharacter(this.prev.getStart(), file),
+      prevEnd: lineAndCharacter(this.prev.getEnd(), file),
+      nextStart: lineAndCharacter(this.next.getStart(), file),
+      nextEnd: lineAndCharacter(this.next.getEnd(), file),
     };
   }
 

@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
 import * as nav from "../utils/navigation";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -35,11 +36,11 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitBreakStatement(node: ts.BreakOrContinueStatement): void {
     this.checkJump(node);
   }
@@ -75,7 +76,7 @@ class Walker extends tslint.RuleWalker {
   }
 
   private raiseIssue(keyword: ts.Node) {
-    this.addFailureAtNode(keyword, `Remove this "${keyword.getText()}" statement or make it conditional`);
+    this.addIssue(keyword, `Remove this "${keyword.getText()}" statement or make it conditional`);
   }
 
   private isConditional(node: ts.Node): boolean {

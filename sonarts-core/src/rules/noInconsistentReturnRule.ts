@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { CfgBlock, ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
 import { functionLikeMainToken } from "../utils/navigation";
+import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -35,11 +36,11 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
-    return this.applyWithWalker(new Walker(sourceFile, this.getOptions()));
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Walker extends tslint.RuleWalker {
+class Visitor extends SonarRuleVisitor {
   public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
     if (!func.body) return;
     this.checkFunctionLikeDeclaration(func, func.body, func.type);
@@ -75,10 +76,7 @@ class Walker extends tslint.RuleWalker {
       const hasExplicit = predecessors.find(this.lastElementIsExplicitReturn);
       const hasImplicit = predecessors.find(this.lastElementIsNotExplicitReturn);
       if (hasExplicit && hasImplicit) {
-        this.addFailureAtNode(
-          functionLikeMainToken(functionNode),
-          'Refactor this function to use "return" consistently',
-        );
+        this.addIssue(functionLikeMainToken(functionNode), 'Refactor this function to use "return" consistently');
       }
     }
   }
