@@ -108,12 +108,12 @@ export class SonarIssue extends tslint.RuleFailure {
     return {
       failure: this.primaryLocation.getMessage()!,
       startPosition: {
-        line: this.primaryLocation.startLine,
+        line: this.primaryLocation.startLine - 1,
         character: this.primaryLocation.startColumn,
         position: this.primaryLocation.getNode().getStart(),
       },
       endPosition: {
-        line: this.primaryLocation.endLine,
+        line: this.primaryLocation.endLine - 1,
         character: this.primaryLocation.endColumn,
         position: this.primaryLocation.getNode().getEnd(),
       },
