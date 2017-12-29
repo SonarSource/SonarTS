@@ -19,12 +19,12 @@
  */
 import * as ts from "typescript";
 import { TreeVisitor } from "../utils/visitor";
-import { is, drillDownThroughParenthesis } from "../utils/navigation";
+import { is, drillDownThroughParenthesis, findChild } from "../utils/navigation";
 
 export function getOverallCognitiveComplexity(node: ts.SourceFile): number {
   let complexityWalker = new ComplexityWalker();
   complexityWalker.visit(node);
-  let fileComplexity = complexityWalker.getComplexity();
+  let fileComplexity = complexityWalker.getComplexity().complexity;
 
   const functionCollector = new FunctionCollector();
   functionCollector.visit(node);
@@ -36,7 +36,7 @@ export function getOverallCognitiveComplexity(node: ts.SourceFile): number {
   return fileComplexity;
 }
 
-function getFunctionCognitiveComplexity(node: ts.FunctionLikeDeclaration): number {
+function getFunctionCognitiveComplexity(node: ts.FunctionLikeDeclaration) {
   let complexityWalker = new ComplexityWalker();
   complexityWalker.visit(node.body!);
   return complexityWalker.getComplexity();
@@ -52,7 +52,11 @@ const TARGETED_KINDS = [
 ];
 
 export class FunctionCollector extends TreeVisitor {
-  public functionComplexities: { functionNode: ts.FunctionLikeDeclaration; complexity: number }[] = [];
+  public functionComplexities: {
+    functionNode: ts.FunctionLikeDeclaration;
+    complexity: number;
+    nodes: ComplexityNode[];
+  }[] = [];
 
   public visitNode(node: ts.Node): void {
     if (is(node, ...TARGETED_KINDS)) {
@@ -60,20 +64,23 @@ export class FunctionCollector extends TreeVisitor {
       const body = functionNode.body as ts.Node;
       if (body) {
         const complexity = getFunctionCognitiveComplexity(node as ts.FunctionLikeDeclaration);
-        this.functionComplexities.push({ functionNode, complexity });
+        this.functionComplexities.push({ functionNode, ...complexity });
       }
     }
     super.visitNode(node);
   }
 }
 
+export type ComplexityNode = { node: ts.Node; complexity: number };
+
 class ComplexityWalker extends TreeVisitor {
   private complexity = 0;
+  private complexityNodes: ComplexityNode[] = [];
   private nesting = 0;
   private logicalOperationsToIgnore: ts.BinaryExpression[] = [];
 
-  public getComplexity(): number {
-    return this.complexity;
+  public getComplexity(): { complexity: number; nodes: ComplexityNode[] } {
+    return { complexity: this.complexity, nodes: this.complexityNodes };
   }
 
   public visitNode(node: ts.Node) {
@@ -83,10 +90,12 @@ class ComplexityWalker extends TreeVisitor {
   }
 
   public visitIfStatement(node: ts.IfStatement): void {
+    const ifToken = findChild(node, ts.SyntaxKind.IfKeyword);
+
     if (this.isElseIf(node)) {
-      this.addComplexityWithoutNesting();
+      this.addComplexityWithoutNesting(ifToken);
     } else {
-      this.addComplexityWithNesting();
+      this.addComplexityWithNesting(ifToken);
     }
 
     this.visit(node.expression);
@@ -96,7 +105,7 @@ class ComplexityWalker extends TreeVisitor {
       if (is(node.elseStatement, ts.SyntaxKind.IfStatement)) {
         this.visit(node.elseStatement);
       } else {
-        this.addComplexityWithoutNesting();
+        this.addComplexityWithoutNesting(findChild(node, ts.SyntaxKind.ElseKeyword));
         this.visitWithNesting(node.elseStatement);
       }
     }
@@ -110,7 +119,7 @@ class ComplexityWalker extends TreeVisitor {
   }
 
   public visitSwitchStatement(node: ts.SwitchStatement): void {
-    this.addComplexityWithNesting();
+    this.addComplexityWithNesting(findChild(node, ts.SyntaxKind.SwitchKeyword));
     this.visit(node.expression);
     this.visitWithNesting(node.caseBlock);
   }
@@ -125,51 +134,55 @@ class ComplexityWalker extends TreeVisitor {
 
   public visitContinueStatement(node: ts.ContinueStatement): void {
     if (node.label) {
-      this.addComplexityWithoutNesting();
+      this.addComplexityWithoutNesting(findChild(node, ts.SyntaxKind.ContinueKeyword));
     }
     super.visitContinueStatement(node);
   }
 
   public visitBreakStatement(node: ts.BreakStatement): void {
     if (node.label) {
-      this.addComplexityWithoutNesting();
+      this.addComplexityWithoutNesting(findChild(node, ts.SyntaxKind.BreakKeyword));
     }
     super.visitBreakStatement(node);
   }
 
   public visitCatchClause(node: ts.CatchClause): void {
-    this.addComplexityWithNesting();
+    this.addComplexityWithNesting(findChild(node, ts.SyntaxKind.CatchKeyword));
     this.visitWithNesting(node.block);
   }
 
   public visitForStatement(node: ts.ForStatement): void {
-    this.visitLoop(node.statement, node.initializer, node.condition, node.incrementor);
+    this.visitLoop(node.statement, ts.SyntaxKind.ForKeyword, node.initializer, node.condition, node.incrementor);
   }
 
   public visitForInStatement(node: ts.ForInStatement): void {
-    this.visitLoop(node.statement, node.initializer, node.expression);
+    this.visitLoop(node.statement, ts.SyntaxKind.ForKeyword, node.initializer, node.expression);
   }
 
   public visitForOfStatement(node: ts.ForOfStatement): void {
-    this.visitLoop(node.statement, node.initializer, node.expression);
+    this.visitLoop(node.statement, ts.SyntaxKind.ForKeyword, node.initializer, node.expression);
   }
 
   public visitDoStatement(node: ts.DoStatement): void {
-    this.visitLoop(node.statement, node.expression);
+    this.visitLoop(node.statement, ts.SyntaxKind.DoKeyword, node.expression);
   }
 
   public visitWhileStatement(node: ts.WhileStatement): void {
-    this.visitLoop(node.statement, node.expression);
+    this.visitLoop(node.statement, ts.SyntaxKind.WhileKeyword, node.expression);
   }
 
-  private visitLoop(nestedNode: ts.Node, ...notNestedExpressions: (ts.Node | undefined)[]) {
-    this.addComplexityWithNesting();
+  private visitLoop(
+    nestedNode: ts.Node,
+    complexityKeyword: ts.SyntaxKind,
+    ...notNestedExpressions: (ts.Node | undefined)[]
+  ) {
+    this.addComplexityWithNesting(findChild(nestedNode.parent!, complexityKeyword));
     this.walkNodes(notNestedExpressions);
     this.visitWithNesting(nestedNode);
   }
 
   public visitConditionalExpression(node: ts.ConditionalExpression): void {
-    this.addComplexityWithNesting();
+    this.addComplexityWithNesting(findChild(node, ts.SyntaxKind.QuestionToken));
     this.visit(node.condition);
     this.visitWithNesting(node.whenTrue);
     this.visitWithNesting(node.whenFalse);
@@ -180,14 +193,12 @@ class ComplexityWalker extends TreeVisitor {
       const flattenedLogicalExpressions = this.flattenLogicalExpression(node);
 
       let previous;
-      let flattenedComplexity = 0;
       for (const current of flattenedLogicalExpressions) {
         if (!previous || !is(previous.operatorToken, current.operatorToken.kind)) {
-          flattenedComplexity++;
+          this.addComplexityWithoutNesting(current.operatorToken);
         }
         previous = current;
       }
-      this.addComplexityWithNesting(flattenedComplexity);
     }
     super.visitBinaryExpression(node);
   }
@@ -238,12 +249,15 @@ class ComplexityWalker extends TreeVisitor {
     this.nesting--;
   }
 
-  private addComplexityWithoutNesting(): void {
+  private addComplexityWithoutNesting(node: ts.Node): void {
     this.complexity += 1;
+    this.complexityNodes.push({ node, complexity: 1 });
   }
 
-  private addComplexityWithNesting(value?: number): void {
+  private addComplexityWithNesting(node: ts.Node, value?: number): void {
     const addition = value ? value : 1;
-    this.complexity += this.nesting + addition;
+    const nodeComplexity = this.nesting + addition;
+    this.complexity += nodeComplexity;
+    this.complexityNodes.push({ node, complexity: nodeComplexity });
   }
 }

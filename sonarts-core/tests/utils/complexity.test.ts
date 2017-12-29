@@ -37,7 +37,7 @@ it("should count complexity not skipping functions", () => {
 it("should count cognitive complexity for file", () => {
   const { sourceFile } = parseString(
     `
-    let bar = function() { 1 && 2; } // +2 (incl. +1 from nesting)
+    let bar = function() { 1 && 2; } // +1
     1 && 2; // +1
     function foo() { 1 || 2; } // +1
     class {
@@ -48,5 +48,5 @@ it("should count cognitive complexity for file", () => {
     }
     `,
   );
-  expect(getOverallCognitiveComplexity(sourceFile)).toEqual(6);
+  expect(getOverallCognitiveComplexity(sourceFile)).toEqual(5);
 });
