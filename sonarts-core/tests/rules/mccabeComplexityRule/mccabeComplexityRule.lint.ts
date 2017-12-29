@@ -28,8 +28,10 @@ function nestingFunction() {
 
   function nestedFunction() { // +1
 //^^^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}}
+// [29:2-29:10] < {{+1}}
 
-    return 1 && 2; // +1
+    return 1 && 2; 
+//           ^^ < {{+1}}
   }
 }
 

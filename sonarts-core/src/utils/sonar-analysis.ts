@@ -129,4 +129,8 @@ export class SonarIssue extends tslint.RuleFailure {
     this.secondaryLocations.push(secondaryLocation);
     return this;
   }
+
+  public getSecondaryLocations() {
+    return this.secondaryLocations;
+  }
 }

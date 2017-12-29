@@ -1,6 +1,6 @@
 // NOK basic case
 
-function foo() {
+function foo() {  
   console.log("Hello");
   console.log("World");
   return 42;
@@ -8,6 +8,7 @@ function foo() {
 
   function bar() {
 //^^^^^^^^ {{Update this function so that its implementation is not identical to the one on line 3.}}
+//[3:0-7:1] < {{original implementation}}
   console.log("Hello");
   console.log("World");
 
@@ -38,7 +39,7 @@ class A {
   }
 
   constructor() {
-//^^^^^^^^^^^ {{Update this function so that its implementation is not identical to the one on line 34.}}
+//^^^^^^^^^^^ {{Update this function so that its implementation is not identical to the one on line 35.}}
     console.log("Hello");
     console.log("World");
     console.log("!");
@@ -76,7 +77,7 @@ function foo1() {
 }
 
   function bar1() {
-//^^^^^^^^ {{Update this function so that its implementation is not identical to the one on line 72.}}
+//^^^^^^^^ {{Update this function so that its implementation is not identical to the one on line 73.}}
   return [
     1,
   ];
