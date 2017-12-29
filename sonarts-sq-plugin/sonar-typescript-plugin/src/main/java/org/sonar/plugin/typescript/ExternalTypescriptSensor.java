@@ -50,7 +50,6 @@ import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.batch.sensor.symbol.NewSymbol;
 import org.sonar.api.batch.sensor.symbol.NewSymbolTable;
-import org.sonar.api.internal.apachecommons.lang.StringUtils;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
@@ -171,7 +170,7 @@ public class ExternalTypescriptSensor implements Sensor {
   private static @Nullable String getNodeVersion(String nodeExecutable) {
     try {
       Process process = Runtime.getRuntime().exec(nodeExecutable + " -v");
-      return StringUtils.stripEnd(IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8), "\n");
+      return IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8).trim();
     } catch (Exception e) {
       LOG.error("Failed to get Node.js version");
       return null;
