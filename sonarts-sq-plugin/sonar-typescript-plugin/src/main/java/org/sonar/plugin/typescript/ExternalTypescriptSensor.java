@@ -88,7 +88,7 @@ public class ExternalTypescriptSensor implements Sensor {
 
   @Override
   public void describe(SensorDescriptor sensorDescriptor) {
-    sensorDescriptor.onlyOnLanguage(TypeScriptLanguage.KEY).name("TypeScript Sensor").onlyOnFileType(InputFile.Type.MAIN);
+    sensorDescriptor.onlyOnLanguage(TypeScriptLanguage.KEY).name("SonarTS").onlyOnFileType(InputFile.Type.MAIN);
   }
 
   @Override
@@ -113,6 +113,12 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private void analyze(
     Iterable<InputFile> inputFiles, SensorContext sensorContext, TypeScriptRules typeScriptRules, ExecutableBundle executableBundle, @Nullable File localTypescript) {
+
+    if (!isCompatibleNodeVersion(executableBundle.getNodeExecutable())) {
+      LOG.error("No TypeScript files will be analyzed");
+      return;
+    }
+
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
     Map<String, List<InputFile>> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
@@ -123,30 +129,35 @@ public class ExternalTypescriptSensor implements Sensor {
       LOG.debug(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
 
       SonarTSRunnerCommand command = executableBundle.getSonarTsRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
-      if (checkNodeVersion(executableBundle.getNodeExecutable())) {
-        SonarTSRunnerResponse[] responses = executeExternalRunner(command, localTypescript);
 
-        for (SonarTSRunnerResponse response : responses) {
-          FileSystem fileSystem = sensorContext.fileSystem();
-          InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(response.filepath));
-          if (inputFile != null) {
-            saveHighlights(sensorContext, response.highlights, inputFile);
-            saveSymbols(sensorContext, response.symbols, inputFile);
-            saveMetrics(sensorContext, response, inputFile);
-            saveCpd(sensorContext, response.cpdTokens, inputFile);
-            saveFailures(sensorContext, response.issues, typeScriptRules);
-          } else {
-            LOG.error("Failed to find input file for path `" + response.filepath + "`");
-          }
+      SonarTSRunnerResponse[] responses = executeExternalRunner(command, localTypescript);
+
+      for (SonarTSRunnerResponse response : responses) {
+        FileSystem fileSystem = sensorContext.fileSystem();
+        InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(response.filepath));
+        if (inputFile != null) {
+          saveHighlights(sensorContext, response.highlights, inputFile);
+          saveSymbols(sensorContext, response.symbols, inputFile);
+          saveMetrics(sensorContext, response, inputFile);
+          saveCpd(sensorContext, response.cpdTokens, inputFile);
+          saveFailures(sensorContext, response.issues, typeScriptRules);
+        } else {
+          LOG.error("Failed to find input file for path `" + response.filepath + "`");
         }
       }
+
     }
   }
 
-  private static boolean checkNodeVersion(String nodeExecutable) {
+  private static boolean isCompatibleNodeVersion(String nodeExecutable) {
     LOG.debug("Checking node version");
-    String version = getNodeVersion(nodeExecutable);
-    if (version == null) {
+
+    String version;
+    try {
+      Process process = Runtime.getRuntime().exec(nodeExecutable + " -v");
+      version = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8).trim();
+    } catch (Exception e) {
+      LOG.error("Failed to get Node.js version");
       return false;
     }
 
@@ -159,22 +170,12 @@ public class ExternalTypescriptSensor implements Sensor {
         return false;
       }
     } else {
-      LOG.error(String.format("Failed to parse Node.js version, got %s", version));
+      LOG.error(String.format("Failed to parse Node.js version, got '%s'", version));
       return false;
     }
 
     LOG.debug(String.format("Using Node.js %s", version));
     return true;
-  }
-
-  private static @Nullable String getNodeVersion(String nodeExecutable) {
-    try {
-      Process process = Runtime.getRuntime().exec(nodeExecutable + " -v");
-      return IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8).trim();
-    } catch (Exception e) {
-      LOG.error("Failed to get Node.js version");
-      return null;
-    }
   }
 
   private static Iterable<InputFile> getInputFiles(SensorContext sensorContext) {

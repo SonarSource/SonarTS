@@ -103,7 +103,7 @@ public class ExternalTypescriptSensorTest {
     ExternalTypescriptSensor sensor = createSensor();
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     sensor.describe(sensorDescriptor);
-    assertThat(sensorDescriptor.name()).isEqualTo("TypeScript Sensor");
+    assertThat(sensorDescriptor.name()).isEqualTo("SonarTS");
     assertThat(sensorDescriptor.languages()).containsOnly("ts");
     assertThat(sensorDescriptor.type()).isEqualTo(Type.MAIN);
   }
@@ -223,7 +223,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_fail_with_old_node() throws Exception {
+  public void should_log_and_stop_with_old_node() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -235,6 +235,23 @@ public class ExternalTypescriptSensorTest {
     executeSensor(sensorContext, testBundle);
 
     assertThat(logTester.logs()).contains("Only Node.js v6 or later is supported, got v4.2.4");
+    assertThat(sensorContext.allIssues()).hasSize(0);
+  }
+
+  @Test
+  public void should_log_and_stop_with_invalid_node_version() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext);
+
+    TestBundleFactory testBundle = new TestBundleFactory()
+      .command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath())
+      .setCustomNodeExecutable(node + " " + resourceScript("/invalidNodeVersion.js"));
+
+    createTestInputFile(sensorContext);
+    executeSensor(sensorContext, testBundle);
+
+    assertThat(logTester.logs()).contains("Failed to parse Node.js version, got 'Invalid version'");
+    assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
   @Test
