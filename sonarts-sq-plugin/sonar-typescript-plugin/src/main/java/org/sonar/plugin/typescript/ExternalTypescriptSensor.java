@@ -168,7 +168,7 @@ public class ExternalTypescriptSensor implements Sensor {
     return true;
   }
 
-  private @Nullable String getNodeVersion(String nodeExecutable) {
+  private static @Nullable String getNodeVersion(String nodeExecutable) {
     try {
       Process process = Runtime.getRuntime().exec(nodeExecutable + " -v");
       return StringUtils.stripEnd(IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8), "\n");

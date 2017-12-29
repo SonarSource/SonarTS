@@ -102,7 +102,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    */
   @Override
   public String getNodeExecutable() {
-    return configuration.get(TypeScriptPlugin.NODE_EXECUTABLE).get();
+    return configuration.get(TypeScriptPlugin.NODE_EXECUTABLE).orElse(TypeScriptPlugin.NODE_EXECUTABLE_DEFAULT);
   }
 
   private File copyTo(File targetPath) throws IOException {
