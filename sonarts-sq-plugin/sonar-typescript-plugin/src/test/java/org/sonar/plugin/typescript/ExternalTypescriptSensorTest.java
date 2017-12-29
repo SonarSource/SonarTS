@@ -223,6 +223,21 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
+  public void should_fail_with_old_node() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext);
+
+    TestBundleFactory testBundle = new TestBundleFactory()
+      .command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath())
+      .setCustomNodeExecutable(node + " " + resourceScript("/oldNodeVersion.js"));
+
+    createTestInputFile(sensorContext);
+    executeSensor(sensorContext, testBundle);
+
+    assertThat(logTester.logs()).contains("Only Node.js v6 or later is supported, got v4.2.4");
+  }
+
+  @Test
   public void should_log_when_tsconfig_for_file_not_found() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     // "file.ts" is in resources directory, where there is no tsconfig.json
@@ -354,9 +369,15 @@ public class ExternalTypescriptSensorTest {
   private static class TestBundleFactory implements ExecutableBundleFactory {
 
     private String[] ruleCheckCommand;
+    private String customNodeExecutable = null;
 
     public TestBundleFactory command(String... ruleCheckCommmand) {
       this.ruleCheckCommand = ruleCheckCommmand;
+      return this;
+    }
+
+    public TestBundleFactory setCustomNodeExecutable(String nodeExecutable) {
+      customNodeExecutable = nodeExecutable;
       return this;
     }
 
@@ -370,6 +391,11 @@ public class ExternalTypescriptSensorTest {
       @Override
       public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
         return new SonarTSRunnerCommand(inputFiles, ruleCheckCommand);
+      }
+
+      @Override
+      public String getNodeExecutable() {
+        return customNodeExecutable != null ? customNodeExecutable : node;
       }
     }
   }
