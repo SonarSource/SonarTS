@@ -21,16 +21,9 @@ import { Rule } from "../../../src/rules/cognitiveComplexityRule";
 import runRule, { runRuleWithLintFile } from "../../runRule";
 
 it("raises errors with default parameter", () => {
-  const { actualErrors, expectedErrors } = runRule(Rule, __filename);
-  expect(actualErrors).toEqual(expectedErrors);
+  runRule(Rule, __filename);
 });
 
 it("raises errors when set to Zero", () => {
-  const { actualErrors, expectedErrors } = runRuleWithLintFile(
-    Rule,
-    "cognitiveComplexityRule",
-    "cognitiveComplexityRuleZero",
-    0,
-  );
-  expect(actualErrors).toEqual(expectedErrors);
+  runRuleWithLintFile(Rule, "cognitiveComplexityRule", "cognitiveComplexityRuleZero", 0);
 });

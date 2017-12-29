@@ -10,6 +10,7 @@ function with_nested_class() {
     public simple_complexity(condition: boolean): void {
       //   ^^^^^^^^^^^^^^^^^ {{Refactor this method to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
           if (condition) { }
+      //  ^^ < {{+1}}
     }
   }
 }
@@ -57,8 +58,11 @@ class MyTestClass {
   function else_nesting(condition: boolean) {
 //^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 4 to the 0 allowed.}}
   if (condition) {        // +1
+//^^ < {{+1}}   
   } else {                // +1 (nesting level +1)
+
     if (condition) {}     // +2
+  //^^ < {{+2 (incl. 1 for nesting)}}   
   }
 }
 
@@ -268,8 +272,8 @@ function nesting_class_no_complexity(condition: boolean) {  // Ok
 }
 
   function nested_function_expression_with_boolean() {
-//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 2 to the 0 allowed.}}
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 1 to the 0 allowed.}}
   let foo = function(a: boolean, b:boolean) {
-    return a && b; // +2 (incl. +1 from nesting)
+    return a && b; // +1
   };
 }

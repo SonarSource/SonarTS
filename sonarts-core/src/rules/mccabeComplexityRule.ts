@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { functionLikeMainToken } from "../utils/navigation";
 import { getFunctionComplexityNodes } from "../utils/cyclomaticComplexity";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor, IssueLocation } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -60,9 +60,11 @@ class Visitor extends SonarRuleVisitor {
   }
 
   public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
-    const functionComplexity = getFunctionComplexityNodes(node).length;
+    const complexityNodes = getFunctionComplexityNodes(node);
+    const functionComplexity = complexityNodes.length;
     if (functionComplexity > this.threshold) {
-      this.addIssue(functionLikeMainToken(node), Rule.message(functionComplexity, this.threshold));
+      const issue = this.addIssue(functionLikeMainToken(node), Rule.message(functionComplexity, this.threshold));
+      complexityNodes.forEach(node => issue.addSecondaryLocation(new IssueLocation(node, "+1")));
     }
 
     super.visitFunctionLikeDeclaration(node);

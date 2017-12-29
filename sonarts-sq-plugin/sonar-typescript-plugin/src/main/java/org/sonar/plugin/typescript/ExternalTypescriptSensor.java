@@ -129,7 +129,7 @@ public class ExternalTypescriptSensor implements Sensor {
           saveSymbols(sensorContext, response.symbols, inputFile);
           saveMetrics(sensorContext, response, inputFile);
           saveCpd(sensorContext, response.cpdTokens, inputFile);
-          saveFailures(sensorContext, response.issues, typeScriptRules);
+          saveIssues(sensorContext, response.issues, typeScriptRules);
         } else {
           LOG.error("Failed to find input file for path `" + response.filepath + "`");
         }
@@ -246,32 +246,53 @@ public class ExternalTypescriptSensor implements Sensor {
     sensorContext.<Integer>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();
   }
 
-  private void saveFailures(SensorContext sensorContext, Failure[] failures, TypeScriptRules typeScriptRules) {
+  private void saveIssues(SensorContext sensorContext, Issue[] issues, TypeScriptRules typeScriptRules) {
     FileSystem fs = sensorContext.fileSystem();
-    for (Failure failure : failures) {
-      InputFile inputFile = fs.inputFile(fs.predicates().hasAbsolutePath(failure.name));
+    for (Issue issue : issues) {
+      InputFile inputFile = fs.inputFile(fs.predicates().hasAbsolutePath(issue.name));
       if (inputFile != null) {
-        RuleKey ruleKey = typeScriptRules.ruleKeyFromTsLintKey(failure.ruleName);
-        NewIssue issue = sensorContext.newIssue().forRule(ruleKey);
-        NewIssueLocation location = issue.newLocation();
+        RuleKey ruleKey = typeScriptRules.ruleKeyFromTsLintKey(issue.ruleName);
+        NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
+        NewIssueLocation location = newIssue.newLocation();
         location.on(inputFile);
-        location.message(failure.failure);
+        location.message(issue.failure);
 
         // semicolon rule
         if (ruleKey.rule().equals("S1438")) {
-          location.at(inputFile.selectLine(failure.startPosition.line + 1));
+          location.at(inputFile.selectLine(issue.startPosition.line + 1));
 
         } else if (!TypeScriptRules.FILE_LEVEL_RULES.contains(ruleKey.rule())) {
           location.at(inputFile.newRange(
-            failure.startPosition.line + 1,
-            failure.startPosition.character,
-            failure.endPosition.line + 1,
-            failure.endPosition.character));
+            issue.startPosition.line + 1,
+            issue.startPosition.character,
+            issue.endPosition.line + 1,
+            issue.endPosition.character));
         }
 
-        issue.at(location);
-        issue.save();
+        newIssue.at(location);
+
+        // there is not secondaryLocations for issues coming from tslint rules
+        if (issue.secondaryLocations != null) {
+          for (SecondaryLocation secondaryLocation : issue.secondaryLocations) {
+            NewIssueLocation newSecondaryLocation = newIssue.newLocation().on(inputFile);
+            setSecondaryLocation(newSecondaryLocation, secondaryLocation, inputFile);
+            newIssue.addLocation(newSecondaryLocation);
+          }
+        }
+
+        newIssue.save();
       }
+    }
+  }
+
+  private static void setSecondaryLocation(NewIssueLocation newSecondaryLocation, SecondaryLocation secondaryLocation, InputFile inputFile) {
+    newSecondaryLocation.at(inputFile.newRange(
+      secondaryLocation.startLine + 1,
+      secondaryLocation.startCol,
+      secondaryLocation.endLine + 1,
+      secondaryLocation.endCol));
+    if (secondaryLocation.message != null) {
+      newSecondaryLocation.message(secondaryLocation.message);
     }
   }
 
@@ -325,23 +346,23 @@ public class ExternalTypescriptSensor implements Sensor {
     return null;
   }
 
-  private static class Failure {
-
+  private static class Issue {
     String failure;
     Position startPosition;
     Position endPosition;
     String name;
     String ruleName;
+    SecondaryLocation[] secondaryLocations;
   }
-  private static class Position {
 
+  private static class Position {
     Integer line;
     Integer character;
   }
-  private static class SonarTSRunnerResponse {
 
+  private static class SonarTSRunnerResponse {
     String filepath;
-    Failure[] issues = {};
+    Issue[] issues = {};
     Highlight[] highlights = {};
     CpdToken[] cpdTokens = {};
     Symbol[] symbols = {};
@@ -385,6 +406,14 @@ public class ExternalTypescriptSensor implements Sensor {
     Integer startCol;
     Integer endLine;
     Integer endCol;
+  }
+
+  private static class SecondaryLocation {
+    Integer startLine;
+    Integer startCol;
+    Integer endLine;
+    Integer endCol;
+    String message;
   }
 
 }

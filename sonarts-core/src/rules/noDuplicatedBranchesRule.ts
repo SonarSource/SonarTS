@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor, IssueLocation } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -57,7 +57,9 @@ class Visitor extends SonarRuleVisitor {
         if (this.hasRequiredSize(branches[i])) {
           for (let j = 0; j < i; j++) {
             if (areEquivalent(branches[i], branches[j])) {
-              this.addIssue(branches[i], Rule.formatMessage("branch", this.getLine(branches[j])));
+              this.addIssue(branches[i], Rule.formatMessage("branch", this.getLine(branches[j]))).addSecondaryLocation(
+                new IssueLocation(branches[j]),
+              );
               break;
             }
           }
@@ -82,7 +84,9 @@ class Visitor extends SonarRuleVisitor {
           );
 
           if (areEquivalent(firstClauseWithoutBreak, secondClauseWithoutBreak)) {
-            this.addIssue(clauses[i], Rule.formatMessage("case", this.getLine(clauses[j])));
+            this.addIssue(clauses[i], Rule.formatMessage("case", this.getLine(clauses[j]))).addSecondaryLocation(
+              new IssueLocation(clauses[j]),
+            );
             break;
           }
         }

@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor, IssueLocation } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -62,7 +62,9 @@ class Visitor extends SonarRuleVisitor {
       if (ts.isIfStatement(statement)) {
         if (areEquivalent(condition, statement.expression)) {
           const { line } = node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
-          this.addIssue(statement.expression, Rule.formatMessage("branch", line + 1));
+          this.addIssue(statement.expression, Rule.formatMessage("branch", line + 1)).addSecondaryLocation(
+            new IssueLocation(node.expression, "Original"),
+          );
         }
         statement = statement.elseStatement;
       } else {
@@ -80,7 +82,9 @@ class Visitor extends SonarRuleVisitor {
       for (let j = i + 1; j < clauses.length; j++) {
         if (areEquivalent(clauses[i].expression, clauses[j].expression)) {
           const { line } = node.getSourceFile().getLineAndCharacterOfPosition(clauses[i].expression.getStart());
-          this.addIssue(clauses[j].expression, Rule.formatMessage("case", line + 1));
+          this.addIssue(clauses[j].expression, Rule.formatMessage("case", line + 1)).addSecondaryLocation(
+            new IssueLocation(clauses[i].expression, "Original"),
+          );
         }
       }
     }

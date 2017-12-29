@@ -21,6 +21,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as tslint from "tslint";
 import { parseFile, parseString } from "../src/utils/parser";
+import { SonarIssue } from "../src/utils/sonar-analysis";
 
 const RULE_OPTIONS: tslint.IOptions = {
   disabledIntervals: [],
@@ -40,16 +41,17 @@ export interface LintError {
   message: string;
 }
 
-export interface RuleRunResult {
-  actualErrors: LintError[];
-  expectedErrors: LintError[];
+export interface SecondaryLocation {
+  startPos: PositionInFile;
+  endPos: PositionInFile;
+  message: string;
 }
 
 /**
  * Run rule againts a lint file
  * Use from the test: runRule(Rule, __filename) if lint file name matches the test file name
  */
-export default function runRule(Rule: any, testFileName: string, ...ruleArguments: any[]): RuleRunResult {
+export default function runRule(Rule: any, testFileName: string, ...ruleArguments: any[]) {
   const lintFileName = getLintFileName(testFileName);
   return checkRule(Rule, lintFileName, ruleArguments);
 }
@@ -63,24 +65,35 @@ export function runRuleWithLintFile(
   testDirectoryName: string,
   testFileName: string,
   ...ruleArguments: any[]
-): RuleRunResult {
+) {
   const lintFileName = getLintFileName(testFileName, testDirectoryName);
-  return checkRule(Rule, lintFileName, ruleArguments);
+  checkRule(Rule, lintFileName, ruleArguments);
 }
 
 function checkRule(Rule: any, lintFileName: string, ruleArguments: any[]) {
   const source = fs.readFileSync(lintFileName, "utf-8");
-  const actualErrors = runRuleOnFile(Rule, lintFileName, ruleArguments);
-  const expectedErrors = parseErrorsFromMarkup(source);
-  return { actualErrors: actualErrors.sort(byLine), expectedErrors: expectedErrors.sort(byLine) };
+  const { errors: actualErrors, secondaryLocations: actualSecondaryLocations } = runRuleOnFile(
+    Rule,
+    lintFileName,
+    ruleArguments,
+  );
+  const { errors: expectedErrors, secondaryLocations: expectedSecondaryLocations } = parseErrorsFromMarkup(source);
+
+  actualErrors.sort(byLine);
+  expectedErrors.sort(byLine);
+
+  expect(actualErrors).toEqual(expectedErrors);
+  expectedSecondaryLocations.forEach(expectedSecodaryLocation => {
+    expect(actualSecondaryLocations).toContainEqual(expectedSecodaryLocation);
+  });
 }
 
-function byLine(e1: LintError, e2: LintError) {
+function byLine(e1: LintError | SecondaryLocation, e2: LintError | SecondaryLocation) {
   return e1.startPos.line - e2.startPos.line;
 }
 
 // used for unit test
-function runRuleOnFile(Rule: any, file: string, ruleArguments: any[]): LintError[] {
+function runRuleOnFile(Rule: any, file: string, ruleArguments: any[]) {
   const rule = new Rule(RULE_OPTIONS);
   rule.ruleArguments = ruleArguments;
   const source = fs.readFileSync(file, "utf-8");
@@ -94,14 +107,15 @@ function runRuleOnFile(Rule: any, file: string, ruleArguments: any[]): LintError
     failures = rule.apply(parseString(source).sourceFile);
   }
 
-  return mapToLintErrors(failures);
+  return { errors: mapToLintErrors(failures), secondaryLocations: mapToSecondaryLocations(failures) };
 }
 
-function parseErrorsFromMarkup(source: string): LintError[] {
+function parseErrorsFromMarkup(source: string) {
   const errors: LintError[] = [];
+  const secondaryLocations: SecondaryLocation[] = [];
 
   source.split("\n").forEach((line, lineNum) => {
-    if (/\^.*{{/.test(line)) {
+    if (/\^\s*{{/.test(line)) {
       const startColumn = line.indexOf("^");
       const endColumn = line.lastIndexOf("^") + 1;
       const message = line.match(/\{\{(.+)\}\}/)[1];
@@ -116,7 +130,23 @@ function parseErrorsFromMarkup(source: string): LintError[] {
       });
     }
 
-    const multiLineMatch = line.match(/\[(\d+):(\d+)-(\d+):(\d+)\].*{{/);
+    if (/\^\s*[<>]\s*{{/.test(line)) {
+      const startColumn = line.indexOf("^");
+      const endColumn = line.lastIndexOf("^") + 1;
+      const messageMatch = line.match(/\{\{(.+)\}\}/);
+      const message = messageMatch ? messageMatch[1] : undefined;
+
+      // "- 1" because comment with error description is placed on the next line after error.
+      const errorLine = lineNumberedFromOne(lineNum - 1);
+
+      secondaryLocations.push({
+        endPos: { col: endColumn, line: errorLine },
+        message,
+        startPos: { col: startColumn, line: errorLine },
+      });
+    }
+
+    const multiLineMatch = line.match(/\[(\d+):(\d+)-(\d+):(\d+)\]\s*{{/);
     if (multiLineMatch) {
       const startLine = Number(multiLineMatch[1]);
       const startColumn = Number(multiLineMatch[2]);
@@ -130,9 +160,25 @@ function parseErrorsFromMarkup(source: string): LintError[] {
         startPos: { col: startColumn, line: startLine },
       });
     }
+
+    const multiLineSecondaryMatch = line.match(/\[(\d+):(\d+)-(\d+):(\d+)\]\s*[<>]\s*/);
+    if (multiLineSecondaryMatch) {
+      const startLine = Number(multiLineSecondaryMatch[1]);
+      const startColumn = Number(multiLineSecondaryMatch[2]);
+      const endLine = Number(multiLineSecondaryMatch[3]);
+      const endColumn = Number(multiLineSecondaryMatch[4]);
+      const messageMatch = line.match(/\{\{(.+)\}\}/);
+      const message = messageMatch ? messageMatch[1] : undefined;
+
+      secondaryLocations.push({
+        startPos: { col: startColumn, line: startLine },
+        endPos: { col: endColumn, line: endLine },
+        message,
+      });
+    }
   });
 
-  return errors;
+  return { errors, secondaryLocations };
 }
 
 function getLintFileName(testFileName: string, testDirectoryName?: string): string {
@@ -157,6 +203,26 @@ function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
       startPos: { col: startPosition.character, line: lineNumberedFromOne(startPosition.line) },
     };
   });
+}
+
+function mapToSecondaryLocations(failures: tslint.RuleFailure[]) {
+  const secondaryLocations: SecondaryLocation[] = [];
+  failures.forEach(failure => {
+    if (isSonarIssue(failure)) {
+      secondaryLocations.push(
+        ...failure.getSecondaryLocations().map(location => ({
+          startPos: { line: lineNumberedFromOne(location.startLine), col: location.startColumn },
+          endPos: { line: lineNumberedFromOne(location.endLine), col: location.endColumn },
+          message: location.message,
+        })),
+      );
+    }
+  });
+  return secondaryLocations;
+}
+
+function isSonarIssue(failure: tslint.RuleFailure): failure is SonarIssue {
+  return "secondaryLocations" in failure;
 }
 
 function lineNumberedFromOne(lineNumberedFromZero: number) {

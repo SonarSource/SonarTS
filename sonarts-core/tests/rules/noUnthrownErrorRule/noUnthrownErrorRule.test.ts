@@ -21,6 +21,5 @@ import { Rule } from "../../../src/rules/noUnthrownErrorRule";
 import runRule from "../../runRule";
 
 it("test", () => {
-  const result = runRule(Rule, __filename);
-  expect(result.actualErrors).toEqual(result.expectedErrors);
+  runRule(Rule, __filename);
 });

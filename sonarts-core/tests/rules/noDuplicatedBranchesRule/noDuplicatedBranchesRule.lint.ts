@@ -5,12 +5,12 @@ let a, b, first, second, third;
 /*
  * NOK IF
  */
-
 if (a) {
   first();
   second();
 } else {
-  // [12:7-16:1] {{This branch's code block is the same as the block for the branch on line 9.}}
+  // [11:7-16:1] {{This branch's code block is the same as the block for the branch on line 8.}}
+  // [8:7-11:1] <
   first();
   second();
 }
@@ -87,8 +87,8 @@ if (a) {
 /*
  * NOK SWITCH
  */
-
 switch (a) {
+  // [92:2-95:10] >
   case 1:
     first();
     second();

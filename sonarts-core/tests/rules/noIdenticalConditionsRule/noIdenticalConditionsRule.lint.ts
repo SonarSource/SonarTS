@@ -1,10 +1,10 @@
 
-
 let a, b;
 
 if (a) {
+//  ^ > {{Original}}
 } else if (a) {
-//         ^            {{This branch duplicates the one on line 5}}
+//         ^            {{This branch duplicates the one on line 4}}
 }
 
 if (b) {
@@ -36,6 +36,7 @@ switch (a) {
 
 switch (a) {
   case 1:
+//     ^ > {{Original}}  
   case 2:
   case 1:
 //     ^                {{This case duplicates the one on line 38}}  
