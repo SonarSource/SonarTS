@@ -275,20 +275,24 @@ public class ExternalTypescriptSensor implements Sensor {
         if (issue.secondaryLocations != null) {
           for (SecondaryLocation secondaryLocation : issue.secondaryLocations) {
             NewIssueLocation newSecondaryLocation = newIssue.newLocation().on(inputFile);
-            newSecondaryLocation.at(inputFile.newRange(
-              secondaryLocation.startLine + 1,
-              secondaryLocation.startCol,
-              secondaryLocation.endLine + 1,
-              secondaryLocation.endCol));
-            if (secondaryLocation.message != null) {
-              newSecondaryLocation.message(secondaryLocation.message);
-            }
+            setSecondaryLocation(newSecondaryLocation, secondaryLocation, inputFile);
             newIssue.addLocation(newSecondaryLocation);
           }
         }
 
         newIssue.save();
       }
+    }
+  }
+
+  private static void setSecondaryLocation(NewIssueLocation newSecondaryLocation, SecondaryLocation secondaryLocation, InputFile inputFile) {
+    newSecondaryLocation.at(inputFile.newRange(
+      secondaryLocation.startLine + 1,
+      secondaryLocation.startCol,
+      secondaryLocation.endLine + 1,
+      secondaryLocation.endCol));
+    if (secondaryLocation.message != null) {
+      newSecondaryLocation.message(secondaryLocation.message);
     }
   }
 
