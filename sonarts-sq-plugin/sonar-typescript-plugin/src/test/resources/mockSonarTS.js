@@ -11,7 +11,10 @@ var result = [
         startPosition: { line: 1, character: 5 },
         endPosition: { line: 1, character: 6 },
         name: testFile,
-        ruleName: "no-unconditional-jump"
+        ruleName: "no-unconditional-jump",
+        secondaryLocations: [
+          { startLine: 1, startCol: 1, endLine: 1, endCol: 2, message: 'secondary location message' }
+        ]
       }
     ],
 

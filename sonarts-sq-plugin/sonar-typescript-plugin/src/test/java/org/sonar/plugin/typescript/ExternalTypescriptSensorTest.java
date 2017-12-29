@@ -117,6 +117,7 @@ public class ExternalTypescriptSensorTest {
     executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
+    assertThat(sensorContext.allIssues().iterator().next().flows()).hasSize(1);
 
     assertThat(sensorContext.highlightingTypeAt(testInputFile.key(), 2, 3)).containsExactly(TypeOfText.KEYWORD);
 

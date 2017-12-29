@@ -20,7 +20,6 @@
 
 import * as ts from "typescript";
 import { lineAndCharacter } from "./navigation";
-import { toSonarLine } from "../runner/sonar-utils";
 import { TreeVisitor } from "./visitor";
 import * as tslint from "tslint";
 
@@ -66,18 +65,19 @@ export class IssueLocation {
     const startPosition = lineAndCharacter(node.getStart(), node.getSourceFile());
     const endPosition = lineAndCharacter(lastNode.getEnd(), node.getSourceFile());
 
-    this.startLine = toSonarLine(startPosition.line);
+    this.startLine = startPosition.line;
     this.startColumn = startPosition.character;
-    this.endLine = toSonarLine(endPosition.line);
+    this.endLine = endPosition.line;
     this.endColumn = endPosition.character;
   }
 
   public toJson() {
     return {
       startLine: this.startLine,
-      startColumn: this.startColumn,
+      startCol: this.startColumn,
       endLine: this.endLine,
-      endColumn: this.endColumn,
+      endCol: this.endColumn,
+      message: this.message,
     };
   }
 }
@@ -103,19 +103,19 @@ export class SonarIssue extends tslint.RuleFailure {
     return {
       failure: this.primaryLocation.message!,
       startPosition: {
-        line: this.primaryLocation.startLine - 1,
+        line: this.primaryLocation.startLine,
         character: this.primaryLocation.startColumn,
         position: this.primaryLocation.node.getStart(),
       },
       endPosition: {
-        line: this.primaryLocation.endLine - 1,
+        line: this.primaryLocation.endLine,
         character: this.primaryLocation.endColumn,
         position: this.primaryLocation.lastNode.getEnd(),
       },
       name: this.primaryLocation.node.getSourceFile().fileName,
       ruleName: this.getRuleName(),
       cost: this.cost,
-      secondaryLocation: this.secondaryLocations,
+      secondaryLocations: this.secondaryLocations.map(location => location.toJson()),
       ruleSeverity: this.getRuleSeverity(),
     };
   }

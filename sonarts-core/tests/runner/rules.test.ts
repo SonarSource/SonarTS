@@ -35,5 +35,5 @@ it("should run sonarts rules", () => {
     program.getSourceFile(sampleFile),
   );
   expect(issues.issues.length).toBe(2);
-  expect("secondaryLocation" in issues.issues[0]).toBeTruthy();
+  expect("secondaryLocations" in issues.issues[0]).toBeTruthy();
 });
