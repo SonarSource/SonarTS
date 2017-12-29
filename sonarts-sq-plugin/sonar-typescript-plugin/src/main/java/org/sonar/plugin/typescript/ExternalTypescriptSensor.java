@@ -143,7 +143,7 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private boolean checkNodeVersion(String nodeExecutable) {
+  private static boolean checkNodeVersion(String nodeExecutable) {
     LOG.debug("Checking node version");
     String version = getNodeVersion(nodeExecutable);
     if (version == null) {
