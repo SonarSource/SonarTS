@@ -134,7 +134,7 @@ function parseErrorsFromMarkup(source: string) {
       const startColumn = line.indexOf("^");
       const endColumn = line.lastIndexOf("^") + 1;
       const messageMatch = line.match(/\{\{(.+)\}\}/);
-      const message = messageMatch && messageMatch[1];
+      const message = messageMatch ? messageMatch[1] : undefined;
 
       // "- 1" because comment with error description is placed on the next line after error.
       const errorLine = lineNumberedFromOne(lineNum - 1);
@@ -168,7 +168,7 @@ function parseErrorsFromMarkup(source: string) {
       const endLine = Number(multiLineSecondaryMatch[3]);
       const endColumn = Number(multiLineSecondaryMatch[4]);
       const messageMatch = line.match(/\{\{(.+)\}\}/);
-      const message = messageMatch && messageMatch[1];
+      const message = messageMatch ? messageMatch[1] : undefined;
 
       secondaryLocations.push({
         startPos: { col: startColumn, line: startLine },
