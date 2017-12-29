@@ -157,7 +157,7 @@ public class ExternalTypescriptSensor implements Sensor {
       Process process = Runtime.getRuntime().exec(nodeExecutable + " -v");
       version = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8).trim();
     } catch (Exception e) {
-      LOG.error("Failed to get Node.js version");
+      LOG.error("Failed to get Node.js version", e);
       return false;
     }
 
