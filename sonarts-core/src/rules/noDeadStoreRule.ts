@@ -23,7 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { LiveVariableAnalyzer } from "../symbols/lva";
 import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
-import { descendants, floatToTopParenthesis, is } from "../utils/navigation";
+import { floatToTopParenthesis, is } from "../utils/navigation";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -58,14 +58,11 @@ class Visitor extends SonarRuleVisitor {
     if (lvaReturn) {
       const { deadUsages } = lvaReturn;
 
-      descendants(node)
-        .filter(ts.isIdentifier)
-        .forEach(identifier => {
-          const usage = this.symbols.getUsage(identifier);
-          if (usage && deadUsages.has(usage) && !this.isException(usage)) {
-            this.addIssue(identifier, `Remove this useless assignment to local variable "${identifier.text}".`);
-          }
-        });
+      deadUsages.forEach(deadUsage => {
+        if (!this.isException(deadUsage)) {
+          this.addIssue(deadUsage.node, `Remove this useless assignment to local variable "${deadUsage.symbol.name}".`);
+        }
+      });
     }
 
     super.visitFunctionLikeDeclaration(node);
