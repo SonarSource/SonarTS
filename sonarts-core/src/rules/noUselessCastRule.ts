@@ -71,7 +71,9 @@ class Visitor extends TypedSonarRuleVisitor {
     const { expression, type } = assertionExpression;
     const actualExpressionType = this.program.getTypeChecker().getTypeAtLocation(expression);
     const typeToCast = this.program.getTypeChecker().getTypeFromTypeNode(type);
-    if (actualExpressionType === typeToCast) {
+    const compatibleTypes = [actualExpressionType, ...getBaseTypes(actualExpressionType)];
+
+    if (compatibleTypes.includes(typeToCast)) {
       this.addIssue(assertionExpression, Rule.MESSAGE_CAST);
     }
   }
@@ -79,4 +81,15 @@ class Visitor extends TypedSonarRuleVisitor {
 
 function isUndefinedOrNull(type: ts.Type) {
   return !!(type.flags & ts.TypeFlags.Undefined) || !!(type.flags & ts.TypeFlags.Null);
+}
+
+function getBaseTypes(type: ts.Type): ts.Type[] {
+  const baseTypes = type.getBaseTypes();
+  if (baseTypes) {
+    const result: ts.Type[] = [...baseTypes];
+    baseTypes.forEach(baseType => result.push(...getBaseTypes(baseType)));
+    return result;
+  } else {
+    return [];
+  }
 }
