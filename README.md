@@ -120,7 +120,7 @@ npm install tslint-sonarts -g   # or install globally
 * Some of the rules in SonarTS require type information. So in order to provide as much value as possible run TSLint with **type-checker**, for example:
 
 ```
-tslint --type-check --project tsconfig.json -c tslint.json 'src/**/*.ts'
+tslint --project ./tsconfig.json 'src/**/*.{ts,tsx}'
 ```
 
 ## Use in SonarQube
