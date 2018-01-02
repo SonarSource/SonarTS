@@ -37,7 +37,7 @@ public class TypeScriptPlugin implements Plugin {
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
 
   public static final String NODE_EXECUTABLE = "sonar.typescript.node";
-  private static final String NODE_EXECUTABLE_DEFAULT = "node";
+  public static final String NODE_EXECUTABLE_DEFAULT = "node";
 
   public static final String TS_EXCLUSIONS_KEY = "sonar.typescript.exclusions";
   public static final String TS_EXCLUSIONS_DEFAULT_VALUE = "**/node_modules/**,**/bower_components/**";

@@ -95,7 +95,7 @@ public class LCOVCoverageSensor implements Sensor {
   public void describe(SensorDescriptor descriptor) {
     descriptor
       .onlyOnLanguage(TypeScriptLanguage.KEY)
-      .name("TypeScript LCOV Coverage Sensor")
+      .name("SonarTS Coverage")
       .onlyOnFileType(Type.MAIN);
   }
 }

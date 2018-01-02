@@ -103,7 +103,7 @@ public class ExternalTypescriptSensorTest {
     ExternalTypescriptSensor sensor = createSensor();
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     sensor.describe(sensorDescriptor);
-    assertThat(sensorDescriptor.name()).isEqualTo("TypeScript Sensor");
+    assertThat(sensorDescriptor.name()).isEqualTo("SonarTS");
     assertThat(sensorDescriptor.languages()).containsOnly("ts");
     assertThat(sensorDescriptor.type()).isEqualTo(Type.MAIN);
   }
@@ -221,6 +221,38 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
     executeSensor(sensorContext, testBundle);
+  }
+
+  @Test
+  public void should_log_and_stop_with_old_node() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext);
+
+    TestBundleFactory testBundle = new TestBundleFactory()
+      .command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath())
+      .setCustomNodeExecutable(node + " " + resourceScript("/oldNodeVersion.js"));
+
+    createTestInputFile(sensorContext);
+    executeSensor(sensorContext, testBundle);
+
+    assertThat(logTester.logs()).contains("Only Node.js v6 or later is supported, got v4.2.4");
+    assertThat(sensorContext.allIssues()).hasSize(0);
+  }
+
+  @Test
+  public void should_log_and_stop_with_invalid_node_version() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext);
+
+    TestBundleFactory testBundle = new TestBundleFactory()
+      .command(node, resourceScript("/mockSonarTS.js"), testInputFile.absolutePath())
+      .setCustomNodeExecutable(node + " " + resourceScript("/invalidNodeVersion.js"));
+
+    createTestInputFile(sensorContext);
+    executeSensor(sensorContext, testBundle);
+
+    assertThat(logTester.logs()).contains("Failed to parse Node.js version, got 'Invalid version'");
+    assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
   @Test
@@ -355,9 +387,15 @@ public class ExternalTypescriptSensorTest {
   private static class TestBundleFactory implements ExecutableBundleFactory {
 
     private String[] ruleCheckCommand;
+    private String customNodeExecutable = null;
 
     public TestBundleFactory command(String... ruleCheckCommmand) {
       this.ruleCheckCommand = ruleCheckCommmand;
+      return this;
+    }
+
+    public TestBundleFactory setCustomNodeExecutable(String nodeExecutable) {
+      customNodeExecutable = nodeExecutable;
       return this;
     }
 
@@ -371,6 +409,11 @@ public class ExternalTypescriptSensorTest {
       @Override
       public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
         return new SonarTSRunnerCommand(inputFiles, ruleCheckCommand);
+      }
+
+      @Override
+      public String getNodeExecutable() {
+        return customNodeExecutable != null ? customNodeExecutable : node;
       }
     }
   }
