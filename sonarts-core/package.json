@@ -13,7 +13,7 @@
     "postpack": "rm README.md",
     "build": "yarn install && yarn license-check && yarn check-format && yarn clear && yarn compile-sources && yarn type-check-tests",
     "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer && webpack",
-    "build-ci": "yarn build && yarn test --coverage",
+    "build-ci": "yarn build && yarn test --coverage --runInBand",
     "build-local": "yarn build && yarn test",
     "test": "jest --forceExit",
     "ruling": "ts-node tests/ruling/index.ts",
