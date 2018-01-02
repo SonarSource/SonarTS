@@ -26,9 +26,12 @@ export class SymbolTableBuilder extends TreeVisitor {
   private table = new SymbolTable();
 
   public static build(sourceFile: ts.SourceFile, program: ts.Program): SymbolTable {
-    const builder = new SymbolTableBuilder(program);
-    builder.visit(sourceFile);
-    return builder.table;
+    if (!(sourceFile as any).symbolTable) {
+      const builder = new SymbolTableBuilder(program);
+      builder.visit(sourceFile);
+      (sourceFile as any).symbolTable = builder.table;
+    }
+    return (sourceFile as any).symbolTable;
   }
 
   private constructor(private readonly program: ts.Program) {

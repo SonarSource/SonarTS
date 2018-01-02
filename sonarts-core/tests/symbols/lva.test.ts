@@ -27,7 +27,7 @@ import { FunctionLikeDeclaration } from "typescript";
 let symbols: SymbolTable;
 let sourceFile: ts.SourceFile;
 
-beforeEach(() => {
+beforeAll(() => {
   ({ symbols, sourceFile } = buildSymbolTable("sample_lva.lint.ts"));
 });
 
