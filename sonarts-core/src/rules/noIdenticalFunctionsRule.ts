@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { is, lineAndCharacter, findChild } from "../utils/navigation";
-import { SonarRuleVisitor, IssueLocation } from "../utils/sonar-analysis";
+import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -56,7 +56,7 @@ export class Rule extends tslint.Rules.AbstractRule {
               Rule.issueNode(duplicatingFunctionBlock.parent as ts.FunctionLikeDeclaration),
               Rule.message(originalFunctionBlock),
             )
-            .addSecondaryLocation(new IssueLocation(originalFunctionBlock.parent!, "original implementation"));
+            .addSecondaryLocation(getIssueLocationAtNode(originalFunctionBlock.parent!, "original implementation"));
           break;
         }
       }

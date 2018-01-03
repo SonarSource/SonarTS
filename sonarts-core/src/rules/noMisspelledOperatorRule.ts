@@ -81,7 +81,12 @@ class Visitor extends SonarRuleVisitor {
 
   private addOperatorFailure(previousOperator: ts.Node, unaryOperator: ts.Node) {
     this.addIssueAtLocation(
-      new IssueLocation(previousOperator, Rule.formatMessage(this.suggestOperator(unaryOperator)), unaryOperator),
+      new IssueLocation(
+        previousOperator.getStart(),
+        unaryOperator.getEnd(),
+        previousOperator.getSourceFile(),
+        Rule.formatMessage(this.suggestOperator(unaryOperator)),
+      ),
     );
   }
 }
