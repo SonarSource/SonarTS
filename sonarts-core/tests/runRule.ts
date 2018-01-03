@@ -200,7 +200,7 @@ function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
   return failures.map(failure => {
     const startPosition = failure.getStartPosition().getLineAndCharacter();
     const endPosition = failure.getEndPosition().getLineAndCharacter();
-    let cost = isSonarIssue(failure) ? failure.getCost() : undefined;
+    const cost = isSonarIssue(failure) ? failure.getCost() : undefined;
     return {
       endPos: { col: endPosition.character, line: lineNumberedFromOne(endPosition.line) },
       message: failure.getFailure(),
