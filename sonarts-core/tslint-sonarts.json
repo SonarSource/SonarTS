@@ -9,6 +9,7 @@
     "no-case-with-or": true,
     "no-collection-size-mischeck": true,
     "no-dead-store": true,
+    "no-double-rest-parameters": true,
     "no-duplicated-branches": true,
     "no-element-overwrite": true,
     "no-empty-destructuring": true,

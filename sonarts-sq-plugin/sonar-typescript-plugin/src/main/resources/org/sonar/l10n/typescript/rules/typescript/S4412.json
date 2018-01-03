@@ -1,0 +1,15 @@
+{
+  "title": "Rest parameters should not be passed as rest arguments",
+  "type": "BUG",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "1min"
+  },
+  "tags": [
+    
+  ],
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-4412",
+  "sqKey": "S4412"
+}

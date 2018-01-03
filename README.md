@@ -24,6 +24,7 @@ How does it work?
 * Logical OR should not be used in switch cases ([`no-case-with-or`])
 * Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
+* Rest parameters should not be passed as rest arguments ([`no-double-rest-parameters`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
 * Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
@@ -63,6 +64,7 @@ How does it work?
 [`no-case-with-or`]: ./sonarts-core/docs/rules/no-case-with-or.md
 [`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
 [`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md
+[`no-double-rest-parameters`]: ./sonarts-core/docs/rules/no-double-rest-parameters.md
 [`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
 [`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
 [`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md

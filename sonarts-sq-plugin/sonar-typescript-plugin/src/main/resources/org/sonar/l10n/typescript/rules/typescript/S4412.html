@@ -1,0 +1,27 @@
+<p>When rest parameter is passed as rest argument to another function call without using spread, this rest parameter will be wrapped in one more
+array, which is probably is not what intended.</p>
+<h2>Noncompliant Code Example</h2>
+<pre>
+collect(new Book(), new Book());
+
+function collect(...books: Book[]) {
+  buy(books);   // Noncompliant
+}
+
+function buy(...things: any[]) {
+  console.log(things); // outputs "[ [ Book {}, Book {} ] ]"
+}
+</pre>
+<h2>Compliant Solution</h2>
+<pre>
+collect(new Book(), new Book());
+
+function collect(...books: Book[]) {
+  buy(...books);
+}
+
+function buy(...things: any[]) {
+  console.log(things); // outputs "[ Book {}, Book {} ]"
+}
+</pre>
+
