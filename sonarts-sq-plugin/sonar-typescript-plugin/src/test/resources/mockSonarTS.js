@@ -14,7 +14,8 @@ var result = [
         ruleName: "no-unconditional-jump",
         secondaryLocations: [
           { startLine: 1, startCol: 1, endLine: 1, endCol: 2, message: 'secondary location message' }
-        ]
+        ],
+        cost: 42
       }
     ],
 

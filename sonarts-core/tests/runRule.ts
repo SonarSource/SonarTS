@@ -39,6 +39,7 @@ export interface LintError {
   startPos: PositionInFile;
   endPos: PositionInFile;
   message: string;
+  cost?: number;
 }
 
 export interface SecondaryLocation {
@@ -119,13 +120,15 @@ function parseErrorsFromMarkup(source: string) {
       const startColumn = line.indexOf("^");
       const endColumn = line.lastIndexOf("^") + 1;
       const message = line.match(/\{\{(.+)\}\}/)[1];
-
+      const costMatch = line.match(/\[\[(\d+)\]\]/);
+      const cost = costMatch ? +costMatch[1] : undefined;
       // "- 1" because comment with error description is placed on the next line after error.
       const errorLine = lineNumberedFromOne(lineNum - 1);
 
       errors.push({
         endPos: { col: endColumn, line: errorLine },
         message,
+        cost,
         startPos: { col: startColumn, line: errorLine },
       });
     }
@@ -197,9 +200,14 @@ function mapToLintErrors(failures: tslint.RuleFailure[]): LintError[] {
   return failures.map(failure => {
     const startPosition = failure.getStartPosition().getLineAndCharacter();
     const endPosition = failure.getEndPosition().getLineAndCharacter();
+    let cost: number;
+    if (isSonarIssue(failure)) {
+      cost = failure.getCost();
+    }
     return {
       endPos: { col: endPosition.character, line: lineNumberedFromOne(endPosition.line) },
       message: failure.getFailure(),
+      cost,
       startPos: { col: startPosition.character, line: lineNumberedFromOne(startPosition.line) },
     };
   });

@@ -292,38 +292,46 @@ public class ExternalTypescriptSensor implements Sensor {
     for (Issue issue : issues) {
       InputFile inputFile = fs.inputFile(fs.predicates().hasAbsolutePath(issue.name));
       if (inputFile != null) {
-        RuleKey ruleKey = typeScriptRules.ruleKeyFromTsLintKey(issue.ruleName);
-        NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
-        NewIssueLocation location = newIssue.newLocation();
-        location.on(inputFile);
-        location.message(issue.failure);
-
-        // semicolon rule
-        if (ruleKey.rule().equals("S1438")) {
-          location.at(inputFile.selectLine(issue.startPosition.line + 1));
-
-        } else if (!TypeScriptRules.FILE_LEVEL_RULES.contains(ruleKey.rule())) {
-          location.at(inputFile.newRange(
-            issue.startPosition.line + 1,
-            issue.startPosition.character,
-            issue.endPosition.line + 1,
-            issue.endPosition.character));
-        }
-
-        newIssue.at(location);
-
-        // there is not secondaryLocations for issues coming from tslint rules
-        if (issue.secondaryLocations != null) {
-          for (SecondaryLocation secondaryLocation : issue.secondaryLocations) {
-            NewIssueLocation newSecondaryLocation = newIssue.newLocation().on(inputFile);
-            setSecondaryLocation(newSecondaryLocation, secondaryLocation, inputFile);
-            newIssue.addLocation(newSecondaryLocation);
-          }
-        }
-
-        newIssue.save();
+        saveIssue(sensorContext, typeScriptRules, issue, inputFile);
       }
     }
+  }
+
+  private void saveIssue(SensorContext sensorContext, TypeScriptRules typeScriptRules, Issue issue, InputFile inputFile) {
+    RuleKey ruleKey = typeScriptRules.ruleKeyFromTsLintKey(issue.ruleName);
+    NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
+    NewIssueLocation location = newIssue.newLocation();
+    location.on(inputFile);
+    location.message(issue.failure);
+
+    // semicolon rule
+    if (ruleKey.rule().equals("S1438")) {
+      location.at(inputFile.selectLine(issue.startPosition.line + 1));
+
+    } else if (!TypeScriptRules.FILE_LEVEL_RULES.contains(ruleKey.rule())) {
+      location.at(inputFile.newRange(
+        issue.startPosition.line + 1,
+        issue.startPosition.character,
+        issue.endPosition.line + 1,
+        issue.endPosition.character));
+    }
+
+    newIssue.at(location);
+
+    // there is not secondaryLocations for issues coming from tslint rules
+    if (issue.secondaryLocations != null) {
+      for (SecondaryLocation secondaryLocation : issue.secondaryLocations) {
+        NewIssueLocation newSecondaryLocation = newIssue.newLocation().on(inputFile);
+        setSecondaryLocation(newSecondaryLocation, secondaryLocation, inputFile);
+        newIssue.addLocation(newSecondaryLocation);
+      }
+    }
+
+    if (issue.cost != null) {
+      newIssue.gap((double)issue.cost);
+    }
+
+    newIssue.save();
   }
 
   private static void setSecondaryLocation(NewIssueLocation newSecondaryLocation, SecondaryLocation secondaryLocation, InputFile inputFile) {
@@ -394,6 +402,7 @@ public class ExternalTypescriptSensor implements Sensor {
     String name;
     String ruleName;
     SecondaryLocation[] secondaryLocations;
+    Integer cost;
   }
 
   private static class Position {
