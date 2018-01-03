@@ -20,7 +20,7 @@
     "format": "prettier --write \"{src,tests}/**/!(*.lint).ts\"",
     "check-format": "prettier --list-different \"{src,tests}/**/!(*.lint).ts\"",
     "compile-sources": "tsc -p .",
-    "type-check-tests": "tsc -p tests --noEmit"
+    "type-check-tests": "tsc -p tests --noEmit",
     "new-rule": "node lib/tools/new-rule.js"
   },
   "repository": {

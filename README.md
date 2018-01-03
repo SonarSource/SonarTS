@@ -93,6 +93,7 @@ How does it work?
 [`prefer-immediate-return`]: ./sonarts-core/docs/rules/prefer-immediate-return.md
 [`use-primitive-type`]: ./sonarts-core/docs/rules/use-primitive-type.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
+
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
 ## Prerequisites

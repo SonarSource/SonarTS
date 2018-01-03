@@ -30,7 +30,7 @@ export class Rule extends tslint.Rules.TypedRule {
         options: null,
         rspecKey: "___RSPEC_KEY___",
         type: "functionality",
-        typescriptOnly: ___IS_TYPESCRIPT_ONLY___,
+        typescriptOnly: false,
     };
 
     public static MESSAGE = 'TODO: add messge';

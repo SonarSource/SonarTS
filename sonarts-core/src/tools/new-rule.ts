@@ -3,14 +3,13 @@ import * as fs from "fs";
 const rootFolder = `${__dirname}/../../..`;
 const rspecRuleFolder = `${rootFolder}/sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/typescript`;
 
-if (process.argv.length != 5) {
+if (process.argv.length != 4) {
     showHelp();
     throw new Error("invalid number of arguments");
 }
 
 let rspecId = process.argv[2];
 const ruleClassName = process.argv[3];
-let isTypescriptOnly: boolean = process.argv[4] == "true";
 
 verifyClassName(ruleClassName);
 verifyRspecId(rspecId);
@@ -25,7 +24,7 @@ updateSonarTsJson(rootFolder, ruleNameDash);
 //- Create file for rule implementation in src/rules. File name should start with lower case and have suffix Rule
 //- Create test folder in test/rules with the name of the rule file
 //- In this folder create files <rule file name>.test.ts and <rule file name>.lint.ts
-createFiles(rootFolder, ruleClassName, ruleNameDash, ruleTitle, rspecKey, isTypescriptOnly);
+createFiles(rootFolder, ruleClassName, ruleNameDash, ruleTitle, rspecKey);
 
 //- In folder docs/rules create rule documentation file <rule key>.md
 const ruleDescription: string = getDescription(rspecRuleFolder, rspecId);
@@ -39,13 +38,13 @@ function showHelp() {
     console.log(
 `
 Before using the script, first run the rule API from SonarTS folder. For example:
-    "java -jar /tools/rule-api-1.17.0.1017.jar generate -language ts -rule S4043 -preserve-filenames -no-language-in-filenames
+    "java -jar /tools/rule-api-1.17.0.1017.jar generate -language ts -rule S4142 -preserve-filenames -no-language-in-filenames
 
 Usage:
-    RSPEC-KEY className isTypescriptOnly
+    RSPEC-KEY className
 
 Example:
-    S4043 myFirstAwesomeRule true
+    S4142 myFirstAwesomeRule
 `);
 }
 
@@ -72,7 +71,6 @@ function createFiles(
   ruleNameDash: string,
   ruleTitle: string,
   rspecKey: string,
-  isTypescriptOnly: boolean,
 ) {
   const templatesFolder = `${rootFolder}/sonarts-core/resources/new-rule-templates`;
 
@@ -81,7 +79,6 @@ function createFiles(
   ruleMetadata["___RULE_CLASS_NAME___"] = ruleClassName;
   ruleMetadata["___RULE_TITLE___"] = ruleTitle;
   ruleMetadata["___RSPEC_KEY___"] = rspecKey;
-  ruleMetadata["___IS_TYPESCRIPT_ONLY___"] = isTypescriptOnly;
 
   copyWithReplace(
     `${templatesFolder}/rule.template_ts`,
@@ -212,6 +209,12 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
   }
 
   if (resultsBlock1.length !== resultsBlock2.length) {
+    console.log("resultsBlock1");
+    console.log(resultsBlock1);
+
+    console.log("resultsBlock2");
+    console.log(resultsBlock2);
+    
     throw new Error("could not parse README.md!");
   }
 
