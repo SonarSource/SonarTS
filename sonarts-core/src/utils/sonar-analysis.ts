@@ -133,4 +133,8 @@ export class SonarIssue extends tslint.RuleFailure {
   public getSecondaryLocations() {
     return this.secondaryLocations;
   }
+
+  public getCost() {
+    return this.cost;
+  }
 }

@@ -1,6 +1,6 @@
 
   function complexFunction() { // +1
-//^^^^^^^^ {{The Cyclomatic Complexity of this function is 12 which is greater than 1 authorized.}}
+//^^^^^^^^ {{The Cyclomatic Complexity of this function is 12 which is greater than 1 authorized.}} [[cost:11]]
 
     if (42) {}; // +1
     while (42) {}; // +1
@@ -27,7 +27,7 @@
 function nestingFunction() {
 
   function nestedFunction() { // +1
-//^^^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}}
+//^^^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}} [[cost:1]]
 // [29:2-29:10] < {{+1}}
 
     return 1 && 2; 
@@ -37,28 +37,28 @@ function nestingFunction() {
 
 class A {
   method() {
-//^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}}
+//^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}} [[cost:1]]
 
     return 1 && 2; 
   }
 
   set setter() {
-//    ^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}}
+//    ^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}} [[cost:1]]
 
     1 && 2; 
   }
 
   constructor() {
-//^^^^^^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}}
+//^^^^^^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}} [[cost:1]]
     1 && 2;
   }
 }
 
 let arrowFunction = a => 1 && 2;
-//                    ^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}}
+//                    ^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}} [[cost:1]]
 
 let funcExpr = function() {
-//             ^^^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}}
+//             ^^^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}} [[cost:1]]
 
   1 && 2;
 }

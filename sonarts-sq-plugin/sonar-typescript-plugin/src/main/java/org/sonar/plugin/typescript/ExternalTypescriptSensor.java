@@ -247,7 +247,7 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private void saveCpd(SensorContext sensorContext, CpdToken[] cpdTokens, InputFile file) {
+  private static void saveCpd(SensorContext sensorContext, CpdToken[] cpdTokens, InputFile file) {
     NewCpdTokens newCpdTokens = sensorContext.newCpdTokens().onFile(file);
     for (CpdToken cpdToken : cpdTokens) {
       newCpdTokens.addToken(cpdToken.startLine, cpdToken.startCol, cpdToken.endLine, cpdToken.endCol, cpdToken.image);
@@ -287,43 +287,51 @@ public class ExternalTypescriptSensor implements Sensor {
     sensorContext.<Integer>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();
   }
 
-  private void saveIssues(SensorContext sensorContext, Issue[] issues, TypeScriptRules typeScriptRules) {
+  private static void saveIssues(SensorContext sensorContext, Issue[] issues, TypeScriptRules typeScriptRules) {
     FileSystem fs = sensorContext.fileSystem();
     for (Issue issue : issues) {
       InputFile inputFile = fs.inputFile(fs.predicates().hasAbsolutePath(issue.name));
       if (inputFile != null) {
-        RuleKey ruleKey = typeScriptRules.ruleKeyFromTsLintKey(issue.ruleName);
-        NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
-        NewIssueLocation location = newIssue.newLocation();
-        location.on(inputFile);
-        location.message(issue.failure);
-
-        // semicolon rule
-        if (ruleKey.rule().equals("S1438")) {
-          location.at(inputFile.selectLine(issue.startPosition.line + 1));
-
-        } else if (!TypeScriptRules.FILE_LEVEL_RULES.contains(ruleKey.rule())) {
-          location.at(inputFile.newRange(
-            issue.startPosition.line + 1,
-            issue.startPosition.character,
-            issue.endPosition.line + 1,
-            issue.endPosition.character));
-        }
-
-        newIssue.at(location);
-
-        // there is not secondaryLocations for issues coming from tslint rules
-        if (issue.secondaryLocations != null) {
-          for (SecondaryLocation secondaryLocation : issue.secondaryLocations) {
-            NewIssueLocation newSecondaryLocation = newIssue.newLocation().on(inputFile);
-            setSecondaryLocation(newSecondaryLocation, secondaryLocation, inputFile);
-            newIssue.addLocation(newSecondaryLocation);
-          }
-        }
-
-        newIssue.save();
+        saveIssue(sensorContext, typeScriptRules, issue, inputFile);
       }
     }
+  }
+
+  private static void saveIssue(SensorContext sensorContext, TypeScriptRules typeScriptRules, Issue issue, InputFile inputFile) {
+    RuleKey ruleKey = typeScriptRules.ruleKeyFromTsLintKey(issue.ruleName);
+    NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
+    NewIssueLocation location = newIssue.newLocation();
+    location.on(inputFile);
+    location.message(issue.failure);
+
+    // semicolon rule
+    if (ruleKey.rule().equals("S1438")) {
+      location.at(inputFile.selectLine(issue.startPosition.line + 1));
+
+    } else if (!TypeScriptRules.FILE_LEVEL_RULES.contains(ruleKey.rule())) {
+      location.at(inputFile.newRange(
+        issue.startPosition.line + 1,
+        issue.startPosition.character,
+        issue.endPosition.line + 1,
+        issue.endPosition.character));
+    }
+
+    newIssue.at(location);
+
+    // there is not secondaryLocations for issues coming from tslint rules
+    if (issue.secondaryLocations != null) {
+      for (SecondaryLocation secondaryLocation : issue.secondaryLocations) {
+        NewIssueLocation newSecondaryLocation = newIssue.newLocation().on(inputFile);
+        setSecondaryLocation(newSecondaryLocation, secondaryLocation, inputFile);
+        newIssue.addLocation(newSecondaryLocation);
+      }
+    }
+
+    if (issue.cost != null) {
+      newIssue.gap(issue.cost);
+    }
+
+    newIssue.save();
   }
 
   private static void setSecondaryLocation(NewIssueLocation newSecondaryLocation, SecondaryLocation secondaryLocation, InputFile inputFile) {
@@ -337,7 +345,7 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private void saveHighlights(SensorContext sensorContext, Highlight[] highlights, InputFile inputFile) {
+  private static void saveHighlights(SensorContext sensorContext, Highlight[] highlights, InputFile inputFile) {
     NewHighlighting highlighting = sensorContext.newHighlighting().onFile(inputFile);
     for (Highlight highlight : highlights) {
       highlighting.highlight(highlight.startLine, highlight.startCol, highlight.endLine, highlight.endCol,
@@ -394,6 +402,7 @@ public class ExternalTypescriptSensor implements Sensor {
     String name;
     String ruleName;
     SecondaryLocation[] secondaryLocations;
+    Double cost;
   }
 
   private static class Position {

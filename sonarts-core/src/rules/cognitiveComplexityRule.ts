@@ -58,6 +58,7 @@ export class Rule extends tslint.Rules.AbstractRule {
           functionLikeMainToken(functionComplexity.functionNode),
           getMessage(functionComplexity.functionNode, functionComplexity.complexity, this.threshold),
         );
+        issue.setCost(functionComplexity.complexity - this.threshold);
         functionComplexity.nodes.forEach(complexityNode =>
           issue.addSecondaryLocation(
             new IssueLocation(complexityNode.node, secondaryMessage(complexityNode.complexity)),

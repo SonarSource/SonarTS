@@ -64,6 +64,7 @@ class Visitor extends SonarRuleVisitor {
     const functionComplexity = complexityNodes.length;
     if (functionComplexity > this.threshold) {
       const issue = this.addIssue(functionLikeMainToken(node), Rule.message(functionComplexity, this.threshold));
+      issue.setCost(functionComplexity - this.threshold);
       complexityNodes.forEach(node => issue.addSecondaryLocation(new IssueLocation(node, "+1")));
     }
 
