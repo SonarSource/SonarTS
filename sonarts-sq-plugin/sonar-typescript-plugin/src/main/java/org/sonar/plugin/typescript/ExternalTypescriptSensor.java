@@ -247,7 +247,7 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private void saveCpd(SensorContext sensorContext, CpdToken[] cpdTokens, InputFile file) {
+  private static void saveCpd(SensorContext sensorContext, CpdToken[] cpdTokens, InputFile file) {
     NewCpdTokens newCpdTokens = sensorContext.newCpdTokens().onFile(file);
     for (CpdToken cpdToken : cpdTokens) {
       newCpdTokens.addToken(cpdToken.startLine, cpdToken.startCol, cpdToken.endLine, cpdToken.endCol, cpdToken.image);
@@ -287,7 +287,7 @@ public class ExternalTypescriptSensor implements Sensor {
     sensorContext.<Integer>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();
   }
 
-  private void saveIssues(SensorContext sensorContext, Issue[] issues, TypeScriptRules typeScriptRules) {
+  private static void saveIssues(SensorContext sensorContext, Issue[] issues, TypeScriptRules typeScriptRules) {
     FileSystem fs = sensorContext.fileSystem();
     for (Issue issue : issues) {
       InputFile inputFile = fs.inputFile(fs.predicates().hasAbsolutePath(issue.name));
@@ -297,7 +297,7 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private void saveIssue(SensorContext sensorContext, TypeScriptRules typeScriptRules, Issue issue, InputFile inputFile) {
+  private static void saveIssue(SensorContext sensorContext, TypeScriptRules typeScriptRules, Issue issue, InputFile inputFile) {
     RuleKey ruleKey = typeScriptRules.ruleKeyFromTsLintKey(issue.ruleName);
     NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
     NewIssueLocation location = newIssue.newLocation();
@@ -328,7 +328,7 @@ public class ExternalTypescriptSensor implements Sensor {
     }
 
     if (issue.cost != null) {
-      newIssue.gap((double)issue.cost);
+      newIssue.gap(issue.cost);
     }
 
     newIssue.save();
@@ -345,7 +345,7 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private void saveHighlights(SensorContext sensorContext, Highlight[] highlights, InputFile inputFile) {
+  private static void saveHighlights(SensorContext sensorContext, Highlight[] highlights, InputFile inputFile) {
     NewHighlighting highlighting = sensorContext.newHighlighting().onFile(inputFile);
     for (Highlight highlight : highlights) {
       highlighting.highlight(highlight.startLine, highlight.startCol, highlight.endLine, highlight.endCol,
@@ -402,7 +402,7 @@ public class ExternalTypescriptSensor implements Sensor {
     String name;
     String ruleName;
     SecondaryLocation[] secondaryLocations;
-    Integer cost;
+    Double cost;
   }
 
   private static class Position {

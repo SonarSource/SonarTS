@@ -7,7 +7,7 @@ function is_ok(condition: boolean) {
 }
 
   function too_complex(condition: boolean) {
-//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 20 to the 15 allowed.}} [[5]]
+//^^^^^^^^ {{Refactor this function to reduce its Cognitive Complexity from 20 to the 15 allowed.}} [[cost:5]]
   if (condition) {  }
   if (condition) {  }
   if (condition) {  }
