@@ -18,9 +18,17 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { collectLeftHandIdentifiers, is, isAssignment } from "../utils/navigation";
+import { collectLeftHandIdentifiers, is } from "../utils/navigation";
 import { SymbolTable, UsageFlag } from "./table";
 import { TreeVisitor } from "../utils/visitor";
+import {
+  isIdentifier,
+  isArrayBindingPattern,
+  isObjectBindingPattern,
+  isBindingElement,
+  isParenthesizedExpression,
+  isAssignment,
+} from "../utils/nodes";
 
 export class SymbolTableBuilder extends TreeVisitor {
   private table = new SymbolTable();
@@ -130,7 +138,7 @@ export class SymbolTableBuilder extends TreeVisitor {
     node: ts.VariableDeclaration | ts.ParameterDeclaration | ts.PropertyDeclaration | ts.BindingElement,
   ) {
     const declarationName = node.name;
-    if (ts.isIdentifier(declarationName)) {
+    if (isIdentifier(declarationName)) {
       let usageFlags = UsageFlag.DECLARATION;
       if (
         node.initializer ||
@@ -140,9 +148,9 @@ export class SymbolTableBuilder extends TreeVisitor {
         usageFlags += UsageFlag.WRITE;
       }
       this.registerUsageIfMissing(declarationName, usageFlags);
-    } else if (ts.isArrayBindingPattern(declarationName) || ts.isObjectBindingPattern(declarationName)) {
+    } else if (isArrayBindingPattern(declarationName) || isObjectBindingPattern(declarationName)) {
       Array.from(declarationName.elements).forEach(element => {
-        if (ts.isBindingElement(element)) {
+        if (isBindingElement(element)) {
           this.addVariable(element);
         }
       });
@@ -150,7 +158,7 @@ export class SymbolTableBuilder extends TreeVisitor {
   }
 
   private registerUsageIfMissing(node: ts.Expression, flags: UsageFlag): void {
-    if (ts.isParenthesizedExpression(node)) {
+    if (isParenthesizedExpression(node)) {
       this.registerUsageIfMissing(node.expression, flags);
     } else {
       let symbol = this.program.getTypeChecker().getSymbolAtLocation(node);

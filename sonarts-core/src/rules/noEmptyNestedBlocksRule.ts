@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { getCommentsAfter, getCommentsBefore, is } from "../utils/navigation";
+import { isCatchClause } from "../utils/nodes";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -76,7 +77,7 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private isCatchClause(node?: ts.Node) {
-    return node != null && ts.isCatchClause(node);
+    return node != null && isCatchClause(node);
   }
 
   private hasComments(node: ts.Block): boolean {

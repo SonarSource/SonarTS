@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { isTypeNode, isIdentifier } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -46,7 +47,7 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Visitor extends SonarRuleVisitor {
   protected visitNode(node: ts.Node) {
-    if (ts.isTypeNode(node)) {
+    if (isTypeNode(node)) {
       const text = node.getText();
       if (this.isPrimitiveWrapper(text)) {
         this.addIssue(node, `Replace this '${text}' wrapper object with primitive type '${text.toLowerCase()}'.`);
@@ -56,7 +57,7 @@ class Visitor extends SonarRuleVisitor {
   }
 
   protected visitNewExpression(node: ts.NewExpression) {
-    if (ts.isIdentifier(node.expression) && this.isPrimitiveWrapper(node.expression.text)) {
+    if (isIdentifier(node.expression) && this.isPrimitiveWrapper(node.expression.text)) {
       this.addIssue(node, `Remove this use of '${node.expression.text}' constructor.`);
     }
     super.visitNewExpression(node);

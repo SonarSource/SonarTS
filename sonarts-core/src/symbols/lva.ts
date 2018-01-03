@@ -19,15 +19,9 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import {
-  collectLeftHandIdentifiers,
-  firstLocalAncestor,
-  FUNCTION_LIKE,
-  is,
-  isAssignment,
-  firstAncestor,
-} from "../utils/navigation";
+import { collectLeftHandIdentifiers, firstLocalAncestor, FUNCTION_LIKE, is, firstAncestor } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
+import { isBlock, isAssignment } from "../utils/nodes";
 
 export class LiveVariableAnalyzer {
   private blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
@@ -39,7 +33,7 @@ export class LiveVariableAnalyzer {
   constructor(private readonly symbols: SymbolTable) {}
 
   public analyzeFunction(root: ts.FunctionLikeDeclaration): LVAReturn | undefined {
-    if (root.body && ts.isBlock(root.body)) {
+    if (root.body && isBlock(root.body)) {
       const cfg = ControlFlowGraph.fromStatements(Array.from(root.body.statements));
       return cfg && this.analyze(root, cfg);
     }

@@ -20,9 +20,10 @@
 import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { descendants, is, isAssignment } from "../utils/navigation";
+import { descendants, is } from "../utils/navigation";
 import { nodeToSonarLine } from "../runner/sonar-utils";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isAssignment } from "../utils/nodes";
 
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {

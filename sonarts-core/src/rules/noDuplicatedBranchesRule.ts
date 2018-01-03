@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonar-analysis";
+import { isIfStatement, isBlock } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -111,7 +112,7 @@ class Visitor extends SonarRuleVisitor {
     let statement = node.elseStatement;
 
     while (statement) {
-      if (ts.isIfStatement(statement)) {
+      if (isIfStatement(statement)) {
         branches.push(statement.thenStatement);
         statement = statement.elseStatement;
       } else {
@@ -138,6 +139,6 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private expandSingleBlockStatement(nodes: ts.Node[]) {
-    return nodes.length === 1 && ts.isBlock(nodes[0]) ? Array.from((nodes[0] as ts.Block).statements) : nodes;
+    return nodes.length === 1 && isBlock(nodes[0]) ? Array.from((nodes[0] as ts.Block).statements) : nodes;
   }
 }

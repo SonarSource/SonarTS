@@ -26,7 +26,8 @@ import {
 } from "./symbolicValues";
 import { ProgramState } from "./programStates";
 import { SymbolTable } from "../symbols/table";
-import { collectLeftHandIdentifiers, isAssignmentKind } from "../utils/navigation";
+import { collectLeftHandIdentifiers } from "../utils/navigation";
+import * as nodes from "../utils/nodes";
 
 export function applyExecutors(
   programPoint: ts.Node,
@@ -38,39 +39,39 @@ export function applyExecutors(
 
   // TODO is there a better way to handle this?
   // special case: `let x;`
-  if (parent && ts.isVariableDeclaration(parent) && parent.name === programPoint) {
+  if (parent && nodes.isVariableDeclaration(parent) && parent.name === programPoint) {
     return variableDeclaration(parent);
   }
 
-  if (ts.isNumericLiteral(programPoint)) {
+  if (nodes.isNumericLiteral(programPoint)) {
     return numeralLiteral(programPoint);
   }
 
-  if (ts.isIdentifier(programPoint)) {
+  if (nodes.isIdentifier(programPoint)) {
     return identifier(programPoint);
   }
 
-  if (ts.isBinaryExpression(programPoint)) {
+  if (nodes.isBinaryExpression(programPoint)) {
     return binaryExpression(programPoint);
   }
 
-  if (ts.isVariableDeclaration(programPoint)) {
+  if (nodes.isVariableDeclaration(programPoint)) {
     return variableDeclaration(programPoint);
   }
 
-  if (ts.isCallExpression(programPoint)) {
+  if (nodes.isCallExpression(programPoint)) {
     return callExpression(programPoint);
   }
 
-  if (ts.isObjectLiteralExpression(programPoint)) {
+  if (nodes.isObjectLiteralExpression(programPoint)) {
     return objectLiteralExpression();
   }
 
-  if (ts.isPropertyAccessExpression(programPoint)) {
+  if (nodes.isPropertyAccessExpression(programPoint)) {
     return propertyAccessExpression();
   }
 
-  if (ts.isPostfixUnaryExpression(programPoint)) {
+  if (nodes.isPostfixUnaryExpression(programPoint)) {
     return postfixUnaryExpression(programPoint);
   }
 
@@ -87,7 +88,7 @@ export function applyExecutors(
   }
 
   function binaryExpression(expression: ts.BinaryExpression) {
-    if (isAssignmentKind(expression.operatorToken.kind)) {
+    if (nodes.isAssignmentKind(expression.operatorToken.kind)) {
       return collectLeftHandIdentifiers(expression.left).identifiers.reduce((state, identifier) => {
         if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
           let [value, nextState] = state.popSV();
@@ -111,7 +112,7 @@ export function applyExecutors(
   }
 
   function variableDeclaration(declaration: ts.VariableDeclaration) {
-    if (ts.isIdentifier(declaration.name)) {
+    if (nodes.isIdentifier(declaration.name)) {
       let [value, nextState] = state.popSV();
       const variable = symbolAt(declaration.name);
       if (!variable || !shouldTrackSymbol(variable)) {
@@ -146,7 +147,7 @@ export function applyExecutors(
     let nextState = state;
     const operand = unary.operand;
     const sv = simpleSymbolicValue();
-    if (ts.isIdentifier(operand)) {
+    if (nodes.isIdentifier(operand)) {
       const symbol = symbolAt(operand);
       if (symbol) {
         nextState = nextState.setSV(symbol, sv);

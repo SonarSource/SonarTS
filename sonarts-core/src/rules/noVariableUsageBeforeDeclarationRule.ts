@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { isVariableDeclarationList, isIdentifier } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -77,7 +78,7 @@ function collectDeclarations(sourceFile: ts.SourceFile, program: ts.Program): Ma
       return;
     }
 
-    if (ts.isVariableDeclarationList(node) && isVar(node)) {
+    if (isVariableDeclarationList(node) && isVar(node)) {
       node.declarations.forEach(process);
     }
 
@@ -107,7 +108,7 @@ function collectUsages(sourceFile: ts.SourceFile, program: ts.Program): Map<ts.S
       return;
     }
 
-    if (ts.isIdentifier(node)) {
+    if (isIdentifier(node)) {
       process(node);
     }
 

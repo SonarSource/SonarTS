@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isElementAccessExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -46,7 +47,7 @@ export class Rule extends tslint.Rules.TypedRule {
 
 class Visitor extends TypedSonarRuleVisitor {
   public visitDeleteExpression(node: ts.DeleteExpression) {
-    if (ts.isElementAccessExpression(node.expression) && this.isArray(node.expression.expression)) {
+    if (isElementAccessExpression(node.expression) && this.isArray(node.expression.expression)) {
       this.raiseIssue(node);
     }
     super.visitDeleteExpression(node);

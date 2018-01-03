@@ -23,6 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { firstLocalAncestor } from "../utils/navigation";
 import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isPropertyAccessExpression, isIdentifier, isBinaryExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -57,10 +58,7 @@ class Visitor extends TypedSonarRuleVisitor {
     // * callee is a property access expression
     // * left part of callee is array
     // * the property is mutating, e.g."reverse" or "sort": `foo.reverse()`
-    if (
-      ts.isPropertyAccessExpression(callExpression.expression) &&
-      this.isArrayMutatingCall(callExpression.expression)
-    ) {
+    if (isPropertyAccessExpression(callExpression.expression) && this.isArrayMutatingCall(callExpression.expression)) {
       // store `foo` from `foo.reverse()`, `foo.sort()`, or `foo.bar` from `foo.bar.reverse()`, etc
       const mutatedArray = callExpression.expression.expression;
 
@@ -98,7 +96,7 @@ class Visitor extends TypedSonarRuleVisitor {
 
   private isIdentifierOrPropertyAccessExpression(node: ts.Node): boolean {
     // exclude class getters from consideration
-    return ts.isIdentifier(node) || (ts.isPropertyAccessExpression(node) && !this.isGetAccessor(node));
+    return isIdentifier(node) || (isPropertyAccessExpression(node) && !this.isGetAccessor(node));
   }
 
   private isForbiddenOperation(node: ts.Node): boolean {
@@ -114,11 +112,11 @@ class Visitor extends TypedSonarRuleVisitor {
     return (
       // check assignment
       node !== undefined &&
-      ts.isBinaryExpression(node) &&
+      isBinaryExpression(node) &&
       node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
       // check that identifiers on both sides are the same
-      ts.isIdentifier(node.left) &&
-      ts.isIdentifier(reversedArray) &&
+      isIdentifier(node.left) &&
+      isIdentifier(reversedArray) &&
       node.left.text === reversedArray.text
     );
   }

@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { isStringLiteral, isBinaryExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -46,7 +47,7 @@ class Visitor extends SonarRuleVisitor {
     const chain = this.pickBarBarChain(node.expression);
     if (chain !== undefined) {
       // avoid double quotes around string literals
-      const left = ts.isStringLiteral(chain.left) ? chain.left.getText() : `"${chain.left.getText()}"`;
+      const left = isStringLiteral(chain.left) ? chain.left.getText() : `"${chain.left.getText()}"`;
       this.addIssue(
         node.expression,
         `Explicitly specify ${chain.count} separate cases that fall through; ` +
@@ -60,7 +61,7 @@ class Visitor extends SonarRuleVisitor {
   private pickBarBarChain(expression: ts.Expression) {
     let current = expression;
     let count = 0;
-    while (ts.isBinaryExpression(current) && current.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
+    while (isBinaryExpression(current) && current.operatorToken.kind === ts.SyntaxKind.BarBarToken) {
       count++;
       current = current.left;
     }

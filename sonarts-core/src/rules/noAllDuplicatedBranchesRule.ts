@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { isIfStatement } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -87,7 +88,7 @@ class Visitor extends SonarRuleVisitor {
     let statement = node.elseStatement;
 
     while (statement) {
-      if (ts.isIfStatement(statement)) {
+      if (isIfStatement(statement)) {
         branches.push(statement.thenStatement);
         statement = statement.elseStatement;
       } else {

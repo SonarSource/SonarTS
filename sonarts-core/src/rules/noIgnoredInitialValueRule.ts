@@ -26,6 +26,7 @@ import { FUNCTION_LIKE, descendants, ancestorsChain } from "../utils/navigation"
 import { LiveVariableAnalyzer, LVAReturn } from "../symbols/lva";
 import { ControlFlowGraph } from "../cfg/cfg";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isIdentifier } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -104,7 +105,7 @@ class Visitor extends TypedSonarRuleVisitor {
 
     nodesToCheck.forEach(parameter => {
       descendants(parameter)
-        .filter(ts.isIdentifier)
+        .filter(isIdentifier)
         .forEach(identifier => {
           const symbol = this.program.getTypeChecker().getSymbolAtLocation(identifier);
           if (

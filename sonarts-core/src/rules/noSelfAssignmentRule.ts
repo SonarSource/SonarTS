@@ -24,6 +24,7 @@ import areEquivalent from "../utils/areEquivalent";
 import { is } from "../utils/navigation";
 import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isCallExpression, isPropertyAccessExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -98,8 +99,8 @@ class Visitor extends TypedSonarRuleVisitor {
   private isArrayReverseAssignment(left: ts.Expression, right: ts.Expression): boolean {
     // in case of `a = a.reverse()`, left is `a` and right is `a.reverse()`
     return (
-      ts.isCallExpression(right) &&
-      ts.isPropertyAccessExpression(right.expression) &&
+      isCallExpression(right) &&
+      isPropertyAccessExpression(right.expression) &&
       this.isIdentifier(right.expression.expression) &&
       this.isArrayMutatingCall(right.expression) &&
       areEquivalent(right.expression.expression, left)

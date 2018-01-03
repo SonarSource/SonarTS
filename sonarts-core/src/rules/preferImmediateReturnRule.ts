@@ -23,6 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable } from "../symbols/table";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isReturnStatement, isThrowStatement, isIdentifier, isVariableStatement } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -90,17 +91,15 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   private getOnlyReturnedVariable(node: ts.Node) {
-    return (ts.isReturnStatement(node) || ts.isThrowStatement(node)) &&
-      node.expression &&
-      ts.isIdentifier(node.expression)
+    return (isReturnStatement(node) || isThrowStatement(node)) && node.expression && isIdentifier(node.expression)
       ? node.expression
       : undefined;
   }
 
   private getOnlyDeclaredVariable(node: ts.Node) {
-    if (ts.isVariableStatement(node) && node.declarationList.declarations.length === 1) {
+    if (isVariableStatement(node) && node.declarationList.declarations.length === 1) {
       const { name, initializer } = node.declarationList.declarations[0];
-      if (ts.isIdentifier(name) && initializer) {
+      if (isIdentifier(name) && initializer) {
         return { name, initializer };
       }
     }
@@ -108,7 +107,7 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   private formatMessage(node: ts.Node, variable: string) {
-    const action = ts.isReturnStatement(node) ? "return" : "throw";
+    const action = isReturnStatement(node) ? "return" : "throw";
     return `Immediately ${action} this expression instead of assigning it to the temporary variable "${variable}".`;
   }
 }

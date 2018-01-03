@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor, IssueLocation } from "../utils/sonar-analysis";
 import { toTokens, lineAndCharacter, getText, is, getCommentsBefore, getCommentsAfter } from "../utils/navigation";
+import * as nodes from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -156,11 +157,11 @@ class Visitor extends SonarRuleVisitor {
 
   private isExclusion({ statements }: ts.SourceFile) {
     return (
-      statements.every(node => ts.isExpressionStatement(node) && ts.isIdentifier(node.expression)) ||
+      statements.every(node => nodes.isExpressionStatement(node) && nodes.isIdentifier(node.expression)) ||
       (statements.length === 1 &&
-        (ts.isLabeledStatement(statements[0]) ||
-          ts.isBreakStatement(statements[0]) ||
-          ts.isContinueStatement(statements[0]) ||
+        (nodes.isLabeledStatement(statements[0]) ||
+          nodes.isBreakStatement(statements[0]) ||
+          nodes.isContinueStatement(statements[0]) ||
           this.isExpressionExclusion(statements[0]) ||
           this.isReturnThrowExclusion(statements[0])))
     );
@@ -169,21 +170,21 @@ class Visitor extends SonarRuleVisitor {
   /** Excludes `foo`, `foo, bar`, `"foo"`, `42` and `+42` expressions */
   private isExpressionExclusion(node: ts.Node) {
     return (
-      ts.isExpressionStatement(node) &&
+      nodes.isExpressionStatement(node) &&
       (!node.getText().endsWith(";") ||
-        (ts.isBinaryExpression(node.expression) && is(node.expression.operatorToken, ts.SyntaxKind.CommaToken)) ||
-        ts.isIdentifier(node.expression) ||
-        ts.isStringLiteral(node.expression) ||
-        ts.isNumericLiteral(node.expression) ||
-        ts.isPrefixUnaryExpression(node.expression))
+        (nodes.isBinaryExpression(node.expression) && is(node.expression.operatorToken, ts.SyntaxKind.CommaToken)) ||
+        nodes.isIdentifier(node.expression) ||
+        nodes.isStringLiteral(node.expression) ||
+        nodes.isNumericLiteral(node.expression) ||
+        nodes.isPrefixUnaryExpression(node.expression))
     );
   }
 
   /** Excludes `return`, `return foo`, `throw` and `throw foo` statements */
   private isReturnThrowExclusion(node: ts.Node) {
     return (
-      (ts.isReturnStatement(node) || ts.isThrowStatement(node)) &&
-      (!!node.expression && ts.isIdentifier(node.expression))
+      (nodes.isReturnStatement(node) || nodes.isThrowStatement(node)) &&
+      (!!node.expression && nodes.isIdentifier(node.expression))
     );
   }
 

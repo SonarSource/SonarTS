@@ -23,6 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { is, lineAndCharacter, findChild } from "../utils/navigation";
 import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonar-analysis";
+import { isBlock } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -97,7 +98,7 @@ class Visitor extends SonarRuleVisitor {
 
   public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
     const { body } = node;
-    if (body && ts.isBlock(body) && Visitor.isBigEnough(body)) {
+    if (body && isBlock(body) && Visitor.isBigEnough(body)) {
       this.functionBlocks.push(body);
     }
 

@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { isNullType, isUndefinedType, isVoidType } from "../utils/navigation";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isInterfaceDeclaration } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -82,7 +83,7 @@ function isStandaloneInterface({ declarations }: ts.Symbol) {
   return (
     !declarations ||
     declarations.every(declaration => {
-      return ts.isInterfaceDeclaration(declaration) && (declaration.heritageClauses || []).length === 0;
+      return isInterfaceDeclaration(declaration) && (declaration.heritageClauses || []).length === 0;
     })
   );
 }

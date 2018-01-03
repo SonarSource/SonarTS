@@ -26,6 +26,7 @@ import { build } from "../src/cfg/builder";
 import { Constraint } from "../src/se/constraints";
 import { SymbolTableBuilder } from "../src/symbols/builder";
 import { parseString } from "../src/utils/parser";
+import { isIdentifier, isCallExpression } from "../src/utils/nodes";
 
 export function inspectStack(source: string) {
   const { result } = executeFromSource(source);
@@ -41,7 +42,7 @@ export function inspectStack(source: string) {
 export function inspectConstraints(source: string): Constraint[] | undefined {
   const { result, program } = executeFromSource(source);
   const { programPoint, programStates } = findInspectCall(result);
-  const identifiers = programPoint.arguments.filter(ts.isIdentifier);
+  const identifiers = programPoint.arguments.filter(isIdentifier);
   const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
   const constraints = programStates.map(programState => {
     const value = programState.sv(symbols[0]);
@@ -70,7 +71,7 @@ export function executeOneFunction(source: string): { result: ExecutionResult; p
 
 export function inspectSVFromResult(result: ExecutionResult, program: ts.Program) {
   const { programPoint, programStates } = findInspectCall(result);
-  const identifiers = programPoint.arguments.filter(ts.isIdentifier);
+  const identifiers = programPoint.arguments.filter(isIdentifier);
   const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
   const sv: { [name: string]: SymbolicValue[] } = {};
   for (const symbol of symbols) {
@@ -95,8 +96,8 @@ function executeFromSource(source: string) {
 function findInspectCall(result: ExecutionResult) {
   for (const [programPoint, programStates] of result.programNodes.entries()) {
     if (
-      ts.isCallExpression(programPoint) &&
-      ts.isIdentifier(programPoint.expression) &&
+      isCallExpression(programPoint) &&
+      isIdentifier(programPoint.expression) &&
       programPoint.expression.text === "_inspect"
     ) {
       return { programPoint, programStates };
