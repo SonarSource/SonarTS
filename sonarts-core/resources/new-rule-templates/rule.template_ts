@@ -23,24 +23,22 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
-    public static metadata: SonarRuleMetaData = {
-        ruleName: "___RULE_NAME_DASH___",
-        description: "___RULE_TITLE___",
-        rationale: tslint.Utils.dedent``,
-        optionsDescription: "",
-        options: null,
-        rspecKey: "___RSPEC_KEY___",
-        type: "functionality",
-        typescriptOnly: false,
-    };
+  public static metadata: SonarRuleMetaData = {
+    ruleName: "___RULE_NAME_DASH___",
+    description: "___RULE_TITLE___",
+    rationale: tslint.Utils.dedent``,
+    optionsDescription: "",
+    options: null,
+    rspecKey: "___RSPEC_KEY___",
+    type: "functionality",
+    typescriptOnly: false,
+  };
 
-    public static MESSAGE = 'TODO: add message';
+  public static MESSAGE = "TODO: add message";
 
-    public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-        return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
-    }
+  public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
+    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
+  }
 }
 
-class Visitor extends TypedSonarRuleVisitor {
-
-}
+class Visitor extends TypedSonarRuleVisitor {}
