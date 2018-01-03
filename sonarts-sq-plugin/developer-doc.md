@@ -1,5 +1,14 @@
 # Developer Guidelines
 
+## Adding a rule to sonarts-core
+* Follow instructions [here](../CONTRIBUTING.md) or run `new-rule` tool
+```
+# from project root
+java -jar <location of rule-api jar> generate -rule S1234 -no-language-in-filenames
+cd sonarts-core
+yarn new-rule S1234 noSomethingSomewhereRule 
+```
+ 
 ## Adding a rule to the SonarQube Plugin
 
 * Create a class in `sonar-typescript-plugin/src/main/java/...../rules` with the same name as the tslint rule-key, but camelized. For instance : `no-empty-block` becomes `NoEmptyBlock.java`

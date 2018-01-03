@@ -46,10 +46,10 @@ How does it work?
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
+* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Types without members, 'any' and 'never' should not be used in type intersections ([`no-useless-intersection`])
-* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Local variables should not be declared and then immediately returned or thrown ([`prefer-immediate-return`]) ([`requires type-check`])
 * Wrapper objects should not be used for primitive types ([`use-primitive-type`]) ([`requires type-check`])
@@ -85,14 +85,15 @@ How does it work?
 [`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
 [`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md
+[`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-useless-cast`]: ./sonarts-core/docs/rules/no-useless-cast.md
 [`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
 [`no-useless-intersection`]: ./sonarts-core/docs/rules/no-useless-intersection.md
-[`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
 [`prefer-immediate-return`]: ./sonarts-core/docs/rules/prefer-immediate-return.md
 [`use-primitive-type`]: ./sonarts-core/docs/rules/use-primitive-type.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
+
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
 ## Prerequisites
