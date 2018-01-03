@@ -4,7 +4,7 @@ import * as stringify from "json-stable-stringify";
 const rootFolder = `${__dirname}/../../..`;
 const rspecRuleFolder = `${rootFolder}/sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/typescript`;
 
-if (process.argv.length != 4) {
+if (process.argv.length !== 4) {
   showHelp();
   throw new Error("invalid number of arguments");
 }
@@ -28,7 +28,7 @@ updateSonarTsJson(rootFolder, ruleNameDash);
 createFiles(rootFolder, ruleClassName, ruleNameDash, ruleTitle, rspecKey);
 
 //- In folder docs/rules create rule documentation file <rule key>.md
-const ruleDescription: string = `# ${ruleNameDash}\n\n${getDescription(rspecRuleFolder, rspecId)}`;
+const ruleDescription = `# ${ruleNameDash}\n\n${getDescription(rspecRuleFolder, rspecId)}`;
 fs.writeFileSync(`${rootFolder}/sonarts-core/docs/rules/${ruleNameDash}.md`, ruleDescription);
 
 //- In README.md add reference to the documentation file.
@@ -167,12 +167,10 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
 
   let state = 0;
 
-  for (var i = 0; i < lines.length; i++) {
-    let line = lines[i];
-
+  for (const line of lines) {
     switch (state) {
       case 0:
-        if (line.trim() == "## Rules") {
+        if (line.trim() === "## Rules") {
           state = 1;
         }
         result.push(line);
@@ -190,7 +188,7 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
         break;
 
       case 3:
-        if (line.length == 0) {
+        if (line.length === 0) {
           state++;
         } else {
           resultsBlock1.push(line);
@@ -198,7 +196,7 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
         break;
 
       case 4:
-        if (line.length == 0) {
+        if (line.length === 0) {
           state++;
         } else {
           resultsBlock2.push(line);
@@ -220,7 +218,7 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
     throw new Error("could not parse README.md!");
   }
 
-  var dict2: any = {};
+  let dict2: any = {};
   for (let i = 0; i < resultsBlock1.length; i++) {
     dict2[resultsBlock2[i]] = resultsBlock1[i];
   }
@@ -228,24 +226,24 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
   let keys = Object.keys(dict2).sort();
   let values = new Array();
 
-  for (let i = 0; i < keys.length; i++) {
-    values.push(dict2[keys[i]]);
+  for (const key of keys) {
+    values.push(dict2[key]);
   }
 
-  for (let i = 0; i < values.length; i++) {
-    result.push(values[i]);
-  }
-
-  result.push("");
-
-  for (let i = 0; i < keys.length; i++) {
-    result.push(keys[i]);
+  for (const value of values) {
+    result.push(value);
   }
 
   result.push("");
 
-  for (let i = 0; i < resultsBlock3.length; i++) {
-    result.push(resultsBlock3[i]);
+  for (const key of keys) {
+    result.push(key);
+  }
+
+  result.push("");
+
+  for (const element of resultsBlock3) {
+    result.push(element);
   }
 
   let res = result.join("\n");
