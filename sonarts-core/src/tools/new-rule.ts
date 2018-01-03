@@ -1,11 +1,12 @@
 import * as fs from "fs";
+import * as stringify from "json-stable-stringify";
 
 const rootFolder = `${__dirname}/../../..`;
 const rspecRuleFolder = `${rootFolder}/sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/typescript`;
 
 if (process.argv.length != 4) {
-    showHelp();
-    throw new Error("invalid number of arguments");
+  showHelp();
+  throw new Error("invalid number of arguments");
 }
 
 let rspecId = process.argv[2];
@@ -27,16 +28,15 @@ updateSonarTsJson(rootFolder, ruleNameDash);
 createFiles(rootFolder, ruleClassName, ruleNameDash, ruleTitle, rspecKey);
 
 //- In folder docs/rules create rule documentation file <rule key>.md
-const ruleDescription: string = getDescription(rspecRuleFolder, rspecId);
+const ruleDescription: string = `# ${ruleNameDash}\n\n${getDescription(rspecRuleFolder, rspecId)}`;
 fs.writeFileSync(`${rootFolder}/sonarts-core/docs/rules/${ruleNameDash}.md`, ruleDescription);
 
 //- In README.md add reference to the documentation file.
 updateReadme(rootFolder, ruleTitle, ruleNameDash);
 
-
 function showHelp() {
-    console.log(
-`
+  console.log(
+    `
 Before using the script, first run the rule API from SonarTS folder. For example:
     "java -jar /tools/rule-api-1.17.0.1017.jar generate -language ts -rule S4142 -preserve-filenames -no-language-in-filenames
 
@@ -45,7 +45,8 @@ Usage:
 
 Example:
     S4142 myFirstAwesomeRule
-`);
+`,
+  );
 }
 
 function escapeRegExp(str: string) {
@@ -83,14 +84,12 @@ function createFiles(
   copyWithReplace(
     `${templatesFolder}/rule.template_ts`,
     `${rootFolder}/sonarts-core/src/rules/${ruleClassName}.ts`,
-      ruleMetadata,
+    ruleMetadata,
   );
 
   const testPath = `${rootFolder}/sonarts-core/tests/rules/${ruleClassName}`;
 
   fs.mkdirSync(testPath);
-
-  copyWithReplace(`${templatesFolder}/testCase.template_ts`, `${testPath}/${ruleClassName}.lint.ts`, ruleMetadata);
 
   copyWithReplace(`${templatesFolder}/unitTest.template_ts`, `${testPath}/${ruleClassName}.test.ts`, ruleMetadata);
 }
@@ -98,7 +97,10 @@ function createFiles(
 function updateSonarTsJson(rootFolder: string, ruleNameDash: string) {
   let sonarTsJson = JSON.parse(fs.readFileSync(`${rootFolder}/sonarts-core/tslint-sonarts.json`).toString());
   sonarTsJson.rules[ruleNameDash] = true;
-  fs.writeFileSync(`${rootFolder}/sonarts-core/tslint-sonarts.json`, JSON.stringify(sonarTsJson, null, 2));
+  fs.writeFileSync(
+    `${rootFolder}/sonarts-core/tslint-sonarts.json`,
+    stringify(sonarTsJson, { cmp: (a, b) => (a.key < b.key ? -1 : 1), space: 2 }) + "\n",
+  );
 }
 
 function getRuleTitleAndRspecKey(rspecRuleFolder: string, rspecId: string) {
@@ -214,7 +216,7 @@ function updateReadme(rootFolder: string, ruleTitle: string, ruleNameDash: strin
 
     console.log("resultsBlock2");
     console.log(resultsBlock2);
-    
+
     throw new Error("could not parse README.md!");
   }
 

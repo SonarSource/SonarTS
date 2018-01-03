@@ -21,7 +21,7 @@
     "check-format": "prettier --list-different \"{src,tests}/**/!(*.lint).ts\"",
     "compile-sources": "tsc -p .",
     "type-check-tests": "tsc -p tests --noEmit",
-    "new-rule": "node lib/tools/new-rule.js"
+    "new-rule": "ts-node src/tools/new-rule.ts"
   },
   "repository": {
     "type": "git",
@@ -51,6 +51,7 @@
   "devDependencies": {
     "@types/glob": "5.0.33",
     "@types/jest": "21.1.6",
+    "@types/json-stable-stringify": "1.0.32",
     "@types/lodash": "4.14.85",
     "@types/minimist": "1.2.0",
     "@types/node": "8.0.53",
@@ -58,6 +59,7 @@
     "awesome-typescript-loader": "3.3.0",
     "glob": "7.1.2",
     "jest": "21.2.1",
+    "json-stable-stringify": "1.0.1",
     "license-check": "1.1.5",
     "lodash": "4.17.4",
     "minimist": "1.2.0",

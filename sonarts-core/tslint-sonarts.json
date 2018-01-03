@@ -1,8 +1,7 @@
 {
-  "rulesDirectory": "./lib/rules",
   "rules": {
-    "mccabe-complexity": false,
     "cognitive-complexity": true,
+    "mccabe-complexity": false,
     "no-accessor-field-mismatch": true,
     "no-all-duplicated-branches": true,
     "no-array-delete": true,
@@ -39,5 +38,6 @@
     "prefer-immediate-return": true,
     "use-primitive-type": true,
     "use-type-alias": true
-  }
+  },
+  "rulesDirectory": "./lib/rules"
 }
