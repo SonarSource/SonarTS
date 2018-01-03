@@ -96,7 +96,13 @@ export class SonarIssue extends tslint.RuleFailure {
   private secondaryLocations: IssueLocation[] = [];
 
   public constructor(primaryLocation: IssueLocation, ruleName: string) {
-    super(primaryLocation.sourceFile, primaryLocation.start, primaryLocation.end, primaryLocation.message!, ruleName);
+    super(
+      primaryLocation.sourceFile,
+      primaryLocation.start,
+      primaryLocation.end,
+      primaryLocation.message || "",
+      ruleName,
+    );
     this.primaryLocation = primaryLocation;
   }
 

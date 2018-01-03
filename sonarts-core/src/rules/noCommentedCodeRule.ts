@@ -53,13 +53,12 @@ class Visitor extends SonarRuleVisitor {
     this.sourceFile = sourceFile;
     const tokens = toTokens(sourceFile);
     tokens.forEach(token => {
-      this.processComments(getCommentsBefore(token), sourceFile);
-      this.processComments(getCommentsAfter(token), sourceFile);
+      this.processComments(getCommentsBefore(token));
+      this.processComments(getCommentsAfter(token));
     });
-    super.visitSourceFile(sourceFile);
   }
 
-  private processComments(comments: ts.CommentRange[], sourceFile: ts.SourceFile) {
+  private processComments(comments: ts.CommentRange[]) {
     const groupedComments = this.groupComments(comments);
 
     groupedComments.forEach(group => {
@@ -69,7 +68,12 @@ class Visitor extends SonarRuleVisitor {
         const parsed = this.tryToParse(text);
         if (parsed.parseDiagnostics.length === 0 && parsed.statements.length > 0 && !this.isExclusion(parsed)) {
           this.addIssueAtLocation(
-            new IssueLocation(group[0].pos, group[group.length - 1].end, sourceFile, `Remove this commented out code.`),
+            new IssueLocation(
+              group[0].pos,
+              group[group.length - 1].end,
+              this.sourceFile,
+              `Remove this commented out code.`,
+            ),
           );
         }
       }
@@ -94,7 +98,7 @@ class Visitor extends SonarRuleVisitor {
       }
     }
 
-    if (currentGroup != null) {
+    if (currentGroup) {
       groups.push(currentGroup);
     }
 
@@ -127,12 +131,9 @@ class Visitor extends SonarRuleVisitor {
     } else if (comment.startsWith("/*")) {
       return comment.substring(2, comment.length - 2);
     } else if (comment.startsWith("<!--")) {
-      if (comment.endsWith("-->")) {
-        return comment.substring(4, comment.length - 3);
-      }
-      return comment.substring(4);
+      return comment.endsWith("-->") ? comment.substring(4, comment.length - 3) : comment.substring(4);
     } else {
-      throw new Error();
+      return comment;
     }
   }
 
