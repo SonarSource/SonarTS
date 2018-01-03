@@ -23,6 +23,7 @@ How does it work?
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
 * Logical OR should not be used in switch cases ([`no-case-with-or`])
 * Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
+* Sections of code should not be "commented out" ([`no-commented-code`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
 * Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
@@ -62,6 +63,7 @@ How does it work?
 [`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
 [`no-case-with-or`]: ./sonarts-core/docs/rules/no-case-with-or.md
 [`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
+[`no-commented-code`]: ./sonarts-core/docs/rules/no-commented-code.md
 [`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md
 [`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
 [`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
