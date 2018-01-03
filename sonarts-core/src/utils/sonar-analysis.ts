@@ -35,7 +35,7 @@ export class SonarRuleVisitor extends TreeVisitor {
   }
 
   public addIssue(node: ts.Node, message: string): SonarIssue {
-    const issue = new SonarIssue(new IssueLocation(node, message), this.ruleName);
+    const issue = new SonarIssue(getIssueLocationAtNode(node, message), this.ruleName);
     this.issues.push(issue);
     return issue;
   }
@@ -58,12 +58,16 @@ export class IssueLocation {
   public readonly endLine: number;
   public readonly endColumn: number;
 
-  public constructor(public readonly node: ts.Node, public message?: string, public readonly lastNode: ts.Node = node) {
-    this.node = node;
+  public constructor(
+    public readonly start: number,
+    public readonly end: number,
+    public readonly sourceFile: ts.SourceFile,
+    public message?: string,
+  ) {
     this.message = message;
 
-    const startPosition = lineAndCharacter(node.getStart(), node.getSourceFile());
-    const endPosition = lineAndCharacter(lastNode.getEnd(), node.getSourceFile());
+    const startPosition = lineAndCharacter(start, sourceFile);
+    const endPosition = lineAndCharacter(end, sourceFile);
 
     this.startLine = startPosition.line;
     this.startColumn = startPosition.character;
@@ -82,6 +86,10 @@ export class IssueLocation {
   }
 }
 
+export function getIssueLocationAtNode(node: ts.Node, message?: string) {
+  return new IssueLocation(node.getStart(), node.getEnd(), node.getSourceFile(), message);
+}
+
 export class SonarIssue extends tslint.RuleFailure {
   private cost?: number;
   public readonly primaryLocation: IssueLocation;
@@ -89,13 +97,12 @@ export class SonarIssue extends tslint.RuleFailure {
 
   public constructor(primaryLocation: IssueLocation, ruleName: string) {
     super(
-      primaryLocation.node.getSourceFile(),
-      primaryLocation.node.getStart(),
-      primaryLocation.lastNode.getEnd(),
-      primaryLocation.message!,
+      primaryLocation.sourceFile,
+      primaryLocation.start,
+      primaryLocation.end,
+      primaryLocation.message || "",
       ruleName,
     );
-
     this.primaryLocation = primaryLocation;
   }
 
@@ -105,14 +112,14 @@ export class SonarIssue extends tslint.RuleFailure {
       startPosition: {
         line: this.primaryLocation.startLine,
         character: this.primaryLocation.startColumn,
-        position: this.primaryLocation.node.getStart(),
+        position: this.primaryLocation.start,
       },
       endPosition: {
         line: this.primaryLocation.endLine,
         character: this.primaryLocation.endColumn,
-        position: this.primaryLocation.lastNode.getEnd(),
+        position: this.primaryLocation.end,
       },
-      name: this.primaryLocation.node.getSourceFile().fileName,
+      name: this.primaryLocation.sourceFile.fileName,
       ruleName: this.getRuleName(),
       cost: this.cost,
       secondaryLocations: this.secondaryLocations.map(location => location.toJson()),
