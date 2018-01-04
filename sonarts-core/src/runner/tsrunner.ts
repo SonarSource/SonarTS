@@ -33,5 +33,35 @@ process.stdin.on("end", () => {
   const results = processRequest(inputString);
 
   process.stdout.setEncoding("utf8");
-  process.stdout.write(JSON.stringify(results, null, " "));
+
+  write("[");
+
+  results.forEach((result, index) => {
+    write("{");
+
+    write(`"filepath": "${result.filepath}",`);
+
+    write(`"issues": ${JSON.stringify(result.issues)},`);
+    write(`"highlights": ${JSON.stringify(result.highlights)},`);
+    write(`"cpdTokens": ${JSON.stringify(result.cpdTokens)},`);
+    write(`"symbols": ${JSON.stringify(result.symbols)},`);
+
+    write(`"statements": ${result.statements},`);
+    write(`"functions": ${result.functions},`);
+    write(`"classes": ${result.classes},`);
+    write(`"complexity": ${result.complexity},`);
+    write(`"cognitiveComplexity": ${result.cognitiveComplexity}`);
+
+    write("}");
+
+    if (index < results.length - 1) {
+      write(",");
+    }
+  });
+
+  write("]");
 });
+
+function write(str: string) {
+  process.stdout.write(str);
+}
