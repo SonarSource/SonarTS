@@ -13,19 +13,34 @@ SQ_VERSION:
   - LTS
 
 exclude:
-# exclude CI on linux, because it was already done on travis
-  - TEST: ci
-    SLAVE: linux
-# limit Windows CI and plugin tests only to LATEST_RELEASE
+
+  - SLAVE: linux
+    TEST: ruling
+
+  - SLAVE: linux
+    TEST: ci
+
+
+  
+  - SLAVE: windows
+    TEST: ruling
+
   - SLAVE: windows
     SQ_VERSION: DEV
+
   - SLAVE: windows
     SQ_VERSION: LTS
 
-# limit Ruling test to Linux/LATEST_RELEASE only    
-  - TEST: ruling
-    SLAVE: windows
-  - TEST: ruling
+
+    
+  - SLAVE: multicpu
     SQ_VERSION: DEV
-  - TEST: ruling
+    
+  - SLAVE: multicpu
     SQ_VERSION: LTS
+
+  - SLAVE: multicpu
+    TEST: ci
+
+  - SLAVE: multicpu
+    TEST: plugin
