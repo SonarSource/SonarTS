@@ -19,12 +19,18 @@
  */
 import * as fs from "fs";
 import * as glob from "glob";
-import * as lodash from "lodash";
 import * as path from "path";
-import { executeRule } from "../../src/runner/rules";
+import { exec } from "child_process";
+import { cpus } from "os";
+import { promisify } from "util";
+import * as lodash from "lodash";
 import * as tslint from "tslint";
-import * as ts from "typescript";
-import { createProgram } from "../../src/utils/parser";
+
+const execPromise = promisify(exec);
+const cpuCount = cpus().length;
+
+const tsNode = path.join(__dirname, "../../node_modules/.bin/ts-node");
+const worker = path.join(__dirname, "worker.ts");
 
 export interface Results {
   [rule: string]: {
@@ -43,29 +49,61 @@ export function getRules(rule?: string): tslint.Rules.AbstractRule[] {
 
 export function getTSConfigFiles(): string[] {
   const tsconfigPaths = path.join(__dirname, "../../typescript-test-sources/src") + "/**/tsconfig.json";
-  return lodash.sortBy(glob.sync(tsconfigPaths));
+  // vscode and TypeScript are the biggest projects, start their analysis first to decrease overall duration
+  return lodash.sortBy(
+    glob.sync(tsconfigPaths),
+    path => (path.includes("vscode/src/tsconfig.json") ? 0 : 1),
+    path => (path.includes("TypeScript/src") ? 0 : 1),
+    path => path,
+  );
 }
 
-export function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFiles: string[]): Results {
+export async function runRules(tsConfigFiles: string[], rule?: string) {
   let results = {};
+  let next = 0; // index of the next tsconfig
+  const initial = []; // initially started processes (not all!)
+
+  console.log(`Running on ${cpuCount} CPUs...`);
+  console.log("");
+
   console.log("Analyzing:");
-  tsConfigFiles.forEach(tsConfigFile => {
-    console.log("  *", getFileNameForSnapshot(tsConfigFile));
-    const program = createProgram(tsConfigFile);
-    const files = lodash.sortBy(getProgramFiles(program));
-    files.forEach(file => {
-      rules.forEach(Rule => {
-        const rule = initRule(Rule);
-        const errorLines = executeRule(rule, file, program).map(
-          failure => failure.getStartPosition().getLineAndCharacter().line + 1,
-        );
-        const ruleName = (Rule as any).metadata.ruleName;
-        results = addErrorsToResults(results, ruleName, getFileNameForSnapshot(file.fileName), errorLines);
-      });
-    });
-  });
+
+  // start initial processes, their number is equal to the number of CPUs
+  for (let index = 0; index < cpuCount; index++) {
+    initial.push(runNext());
+  }
+
+  // wait until all processes finish
+  await Promise.all(initial);
+
   console.log("");
   return results;
+
+  // runs process for the given `tsConfigFile`
+  // after the process finishes, the function chains the promise with the next tsconfig
+  function runCommand(tsConfigFile: string): Promise<void> {
+    console.log("  *", getFileNameForSnapshot(tsConfigFile));
+    let command = `node ${tsNode} ${worker} ${tsConfigFile}`;
+    if (rule) {
+      command += ` ${rule}`;
+    }
+    return execPromise(command)
+      .then(
+        ({ stdout }) => {
+          const response = JSON.parse(stdout);
+          results = addToResults(results, response);
+        },
+        ({ stderr }) => {
+          console.error(stderr);
+          process.exit(1);
+        },
+      )
+      .then(runNext);
+  }
+
+  function runNext(): Promise<void> {
+    return next < tsConfigFiles.length ? runCommand(tsConfigFiles[next++]) : Promise.resolve();
+  }
 }
 
 export function writeResults(results: Results) {
@@ -120,33 +158,11 @@ export function checkResults(actual: Results) {
   return passed;
 }
 
-function initRule(Rule: any): tslint.IRule {
-  const RULE_OPTIONS: tslint.IOptions = {
-    disabledIntervals: [],
-    ruleArguments: [],
-    ruleName: "",
-    ruleSeverity: "error",
-  };
-  return new Rule(RULE_OPTIONS);
-}
-
-function getProgramFiles(program: ts.Program): ts.SourceFile[] {
-  return program.getSourceFiles().filter(file => !file.isDeclarationFile);
-}
-
-function addErrorsToResults(results: Results, ruleName: string, fileName: string, errorLines: number[]): Results {
+function addToResults(results: Results, newResults: Results) {
   const nextResults = { ...results };
-  if (!(ruleName in nextResults)) {
-    nextResults[ruleName] = {};
-  }
-
-  if (errorLines.length > 0) {
-    if (!(fileName in nextResults[ruleName])) {
-      nextResults[ruleName][fileName] = [];
-    }
-
-    nextResults[ruleName][fileName] = [...nextResults[ruleName][fileName], ...errorLines];
-  }
+  Object.keys(newResults).forEach(rule => {
+    nextResults[rule] = { ...nextResults[rule], ...newResults[rule] };
+  });
   return nextResults;
 }
 

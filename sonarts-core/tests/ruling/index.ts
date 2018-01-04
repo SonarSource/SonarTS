@@ -33,13 +33,13 @@ console.log("");
 
 const tsConfigFiles = utils.getTSConfigFiles();
 
-const results = utils.runRules(rules, tsConfigFiles);
-
-if (argv.update) {
-  utils.writeResults(results);
-} else {
-  const passed = utils.checkResults(results);
-  if (!passed) {
-    process.exitCode = 1;
+utils.runRules(tsConfigFiles, argv.rule).then(results => {
+  if (argv.update) {
+    utils.writeResults(results);
+  } else {
+    const passed = utils.checkResults(results);
+    if (!passed) {
+      process.exitCode = 1;
+    }
   }
-}
+});
