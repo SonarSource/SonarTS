@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { SonarRuleVisitor, IssueLocation } from "../utils/sonar-analysis";
+import { SonarRuleVisitor, IssueLocation } from "../utils/sonarAnalysis";
 import { toTokens, lineAndCharacter, getText, getCommentsBefore, getCommentsAfter } from "../utils/navigation";
 import * as nodes from "../utils/nodes";
 

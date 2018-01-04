@@ -18,9 +18,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { UsageFlag } from "../../src/symbols/table";
-import { buildSymbolTable, getNode } from "./test_utils";
+import { buildSymbolTable, getNode } from "./testUtils";
 
-const { symbols, sourceFile } = buildSymbolTable("sample_symbols.lint.ts");
+const { symbols, sourceFile } = buildSymbolTable("sampleSymbols.lint.ts");
 
 it("variable declarations", () => {
   expect(symbols.getUsage(getNode(sourceFile, "local")).flags).toBe(UsageFlag.DECLARATION);

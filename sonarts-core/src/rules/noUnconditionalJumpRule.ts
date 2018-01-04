@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
 import { SonarRuleMetaData } from "../sonarRule";
 import * as nav from "../utils/navigation";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {

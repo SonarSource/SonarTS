@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { toSonarLine } from "./sonar-utils";
+import { toSonarLine } from "./sonarUtils";
 import { getComments, getText, lineAndCharacter, toTokens } from "../utils/navigation";
 import { is } from "../utils/nodes";
 

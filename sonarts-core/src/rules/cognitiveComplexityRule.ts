@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { functionLikeMainToken } from "../utils/navigation";
 import { FunctionCollector } from "../utils/cognitiveComplexity";
-import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonar-analysis";
+import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {

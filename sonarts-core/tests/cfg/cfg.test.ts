@@ -19,7 +19,7 @@
  */
 import * as ts from "typescript";
 import { ControlFlowGraph } from "../../src/cfg/cfg";
-import toVis, { VisData } from "../../src/tools/cfg_viewer/transformer";
+import toVis, { VisData } from "../../src/tools/cfgViewer/transformer";
 import { parseString } from "../../src/utils/parser";
 
 it("empty file", () => {

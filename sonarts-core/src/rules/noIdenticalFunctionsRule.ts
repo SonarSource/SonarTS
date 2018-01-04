@@ -23,7 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { lineAndCharacter, findChild } from "../utils/navigation";
 import { is, isBlock, isArrowFunction } from "../utils/nodes";
-import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonar-analysis";
+import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {

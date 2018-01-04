@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable } from "../symbols/table";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isReturnStatement, isThrowStatement, isIdentifier, isVariableStatement } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {

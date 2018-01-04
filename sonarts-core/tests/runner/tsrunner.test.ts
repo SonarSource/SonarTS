@@ -21,8 +21,8 @@ import * as path from "path";
 import { processRequest } from "../../src/runner/processRequest";
 
 it("should process full input", () => {
-  const filepath = path.join(__dirname, "./fixtures/runner_project/sample.lint.ts");
-  const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
+  const filepath = path.join(__dirname, "./fixtures/runnerProject/sample.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/runnerProject/tsconfig.json");
   const result = processRequest(inputForRequest(filepath, tsconfig));
   result.forEach((r: any) => r.issues.forEach((i: any) => (i.name = path.normalize(i.name))));
 
@@ -64,8 +64,8 @@ it("should process full input", () => {
 });
 
 it("should process files with BOM correctly", () => {
-  const filepath = path.join(__dirname, "./fixtures/runner_project/withBOM.lint.ts");
-  const tsconfig = path.join(__dirname, "./fixtures/runner_project/tsconfig.json");
+  const filepath = path.join(__dirname, "./fixtures/runnerProject/withBOM.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/runnerProject/tsconfig.json");
   const result = processRequest(inputForRequest(filepath, tsconfig));
 
   const firstCpdToken = result[0].cpdTokens[0];

@@ -20,7 +20,7 @@
 import * as ts from "typescript";
 import { DataSet } from "vis";
 import * as cfg from "../../../src/cfg/cfg";
-import toVis from "../../../src/tools/cfg_viewer/transformer";
+import toVis from "../../../src/tools/cfgViewer/transformer";
 
 const START = "START\n";
 

@@ -25,7 +25,7 @@ import { LiveVariableAnalyzer } from "../symbols/lva";
 import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
 import { floatToTopParenthesis } from "../utils/navigation";
 import * as nodes from "../utils/nodes";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {

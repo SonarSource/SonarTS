@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { getCommentsAfter, getCommentsBefore } from "../utils/navigation";
 import { isCatchClause, isFunctionLikeDeclaration } from "../utils/nodes";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {

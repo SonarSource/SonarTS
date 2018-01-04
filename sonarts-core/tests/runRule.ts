@@ -21,7 +21,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as tslint from "tslint";
 import { parseFile, parseString } from "../src/utils/parser";
-import { SonarIssue } from "../src/utils/sonar-analysis";
+import { SonarIssue } from "../src/utils/sonarAnalysis";
 
 const RULE_OPTIONS: tslint.IOptions = {
   disabledIntervals: [],

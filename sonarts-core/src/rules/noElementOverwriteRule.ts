@@ -21,8 +21,8 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { descendants } from "../utils/navigation";
-import { nodeToSonarLine } from "../runner/sonar-utils";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { nodeToSonarLine } from "../runner/sonarUtils";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import {
   isAssignment,
   isExpressionStatement,

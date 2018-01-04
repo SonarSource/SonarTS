@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { buildSymbolTable, getNode } from "./test_utils";
+import { buildSymbolTable, getNode } from "./testUtils";
 import { LiveVariableAnalyzer, LVAReturn } from "../../src/symbols/lva";
 import { SymbolTable } from "../../src/symbols/table";
 import { descendants } from "../../src/utils/navigation";
@@ -28,7 +28,7 @@ let symbols: SymbolTable;
 let sourceFile: ts.SourceFile;
 
 beforeAll(() => {
-  ({ symbols, sourceFile } = buildSymbolTable("sample_lva.lint.ts"));
+  ({ symbols, sourceFile } = buildSymbolTable("sampleLVA.lint.ts"));
 });
 
 function isDead(varName: string, func: ts.FunctionLikeDeclaration, lvaReturn: LVAReturn, line?: number) {

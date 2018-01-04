@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import {
   is,
   isCallExpression,

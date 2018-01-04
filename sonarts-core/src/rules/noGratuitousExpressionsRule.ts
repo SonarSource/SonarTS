@@ -27,7 +27,7 @@ import { isTruthy, Constraint, isFalsy } from "../se/constraints";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable, UsageFlag } from "../symbols/table";
 import { firstLocalAncestor, FUNCTION_LIKE } from "../utils/navigation";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isArrowFunction, isBlock } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
