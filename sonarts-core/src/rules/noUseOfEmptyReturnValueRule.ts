@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isBinaryExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -68,7 +69,7 @@ class Visitor extends TypedSonarRuleVisitor {
       return false;
     }
 
-    if (ts.isBinaryExpression(parent)) {
+    if (isBinaryExpression(parent)) {
       if (
         parent.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken ||
         parent.operatorToken.kind === ts.SyntaxKind.BarBarToken

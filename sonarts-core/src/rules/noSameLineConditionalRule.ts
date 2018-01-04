@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { lineAndCharacter } from "../utils/navigation";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { isIfStatement } from "../utils/nodes";
 
 export class Rule extends Lint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -61,10 +62,10 @@ class Visitor extends SonarRuleVisitor {
 
   private checkStatements(statements: ts.Statement[]): void {
     statements.forEach((statement, index) => {
-      if (ts.isIfStatement(statement) && index > 0) {
+      if (isIfStatement(statement) && index > 0) {
         const previousStatement = statements[index - 1];
 
-        if (ts.isIfStatement(previousStatement)) {
+        if (isIfStatement(previousStatement)) {
           const ifTokenLine = lineAndCharacter(statement.getStart(), statement.getSourceFile()).line;
           const previousStatementLastLine = lineAndCharacter(previousStatement.getEnd(), statement.getSourceFile())
             .line;

@@ -18,11 +18,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
+import { buildSymbolTable, getNode } from "./test_utils";
 import { LiveVariableAnalyzer, LVAReturn } from "../../src/symbols/lva";
 import { SymbolTable } from "../../src/symbols/table";
-import { descendants, FUNCTION_LIKE, is } from "../../src/utils/navigation";
-import { buildSymbolTable, getNode } from "./test_utils";
-import { FunctionLikeDeclaration } from "typescript";
+import { descendants } from "../../src/utils/navigation";
+import { isFunctionLikeDeclaration } from "../../src/utils/nodes";
 
 let symbols: SymbolTable;
 let sourceFile: ts.SourceFile;
@@ -31,7 +31,7 @@ beforeAll(() => {
   ({ symbols, sourceFile } = buildSymbolTable("sample_lva.lint.ts"));
 });
 
-function isDead(varName: string, func: FunctionLikeDeclaration, lvaReturn: LVAReturn, line?: number) {
+function isDead(varName: string, func: ts.FunctionLikeDeclaration, lvaReturn: LVAReturn, line?: number) {
   return lvaReturn.deadUsages.has(symbols.getUsage(getNode(func, varName, line)));
 }
 
@@ -89,7 +89,7 @@ it("destructuring", () => {
   expect(isDead("d", func, lvaReturn, 82)).toBe(true);
 });
 
-function liveVariableAnalysis(functionName: string): { func: FunctionLikeDeclaration; lvaReturn: LVAReturn } {
+function liveVariableAnalysis(functionName: string): { func: ts.FunctionLikeDeclaration; lvaReturn: LVAReturn } {
   const func = findFunction(functionName);
   const lvaReturn = new LiveVariableAnalyzer(symbols).analyzeFunction(func);
   return { func, lvaReturn };
@@ -97,7 +97,6 @@ function liveVariableAnalysis(functionName: string): { func: FunctionLikeDeclara
 
 function findFunction(functionName: string): ts.FunctionLikeDeclaration {
   return descendants(sourceFile)
-    .filter(node => is(node, ...FUNCTION_LIKE))
-    .map(node => node as ts.FunctionLikeDeclaration)
+    .filter(isFunctionLikeDeclaration)
     .find(func => func.name.getText() === functionName);
 }

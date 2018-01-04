@@ -20,7 +20,8 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { getCommentsAfter, getCommentsBefore, is } from "../utils/navigation";
+import { getCommentsAfter, getCommentsBefore } from "../utils/navigation";
+import { isCatchClause, isFunctionLikeDeclaration } from "../utils/nodes";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -59,24 +60,12 @@ class Visitor extends SonarRuleVisitor {
     super.visitBlock(node);
   }
 
-  private isLikeFunction(node?: ts.Node): boolean {
-    return (
-      node != null &&
-      is(
-        node,
-        ts.SyntaxKind.FunctionDeclaration,
-        ts.SyntaxKind.FunctionExpression,
-        ts.SyntaxKind.Constructor,
-        ts.SyntaxKind.MethodDeclaration,
-        ts.SyntaxKind.GetAccessor,
-        ts.SyntaxKind.SetAccessor,
-        ts.SyntaxKind.ArrowFunction,
-      )
-    );
+  private isLikeFunction(node?: ts.Node) {
+    return !!node && isFunctionLikeDeclaration(node);
   }
 
   private isCatchClause(node?: ts.Node) {
-    return node != null && ts.isCatchClause(node);
+    return node != null && isCatchClause(node);
   }
 
   private hasComments(node: ts.Block): boolean {

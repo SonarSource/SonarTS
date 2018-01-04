@@ -21,9 +21,16 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { is } from "../utils/navigation";
 import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import {
+  is,
+  isCallExpression,
+  isPropertyAccessExpression,
+  isIdentifier,
+  isArrayLiteralExpression,
+  isSpreadElement,
+} from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -70,10 +77,6 @@ class Visitor extends TypedSonarRuleVisitor {
     return is(expression.operatorToken, ts.SyntaxKind.EqualsToken);
   }
 
-  private isIdentifier(expression: ts.Expression) {
-    return is(expression, ts.SyntaxKind.Identifier);
-  }
-
   private hasAccessors(node: ts.Node) {
     const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
     const declarations = symbol && symbol.declarations;
@@ -84,10 +87,9 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   private isArrayWithSpreadExpressionOnly(expression: ts.Expression, variable: ts.Node): boolean {
-    if (is(expression, ts.SyntaxKind.ArrayLiteralExpression)) {
-      const elements = (expression as ts.ArrayLiteralExpression).elements;
-
-      if (elements.length === 1 && is(elements[0], ts.SyntaxKind.SpreadElement)) {
+    if (isArrayLiteralExpression(expression)) {
+      const { elements } = expression;
+      if (elements.length === 1 && isSpreadElement(elements[0])) {
         return areEquivalent((elements[0] as ts.SpreadElement).expression, variable);
       }
     }
@@ -98,9 +100,9 @@ class Visitor extends TypedSonarRuleVisitor {
   private isArrayReverseAssignment(left: ts.Expression, right: ts.Expression): boolean {
     // in case of `a = a.reverse()`, left is `a` and right is `a.reverse()`
     return (
-      ts.isCallExpression(right) &&
-      ts.isPropertyAccessExpression(right.expression) &&
-      this.isIdentifier(right.expression.expression) &&
+      isCallExpression(right) &&
+      isPropertyAccessExpression(right.expression) &&
+      isIdentifier(right.expression.expression) &&
       this.isArrayMutatingCall(right.expression) &&
       areEquivalent(right.expression.expression, left)
     );

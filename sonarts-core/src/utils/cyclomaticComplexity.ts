@@ -19,7 +19,8 @@
  */
 
 import * as ts from "typescript";
-import { is, FUNCTION_LIKE, functionLikeMainToken } from "../utils/navigation";
+import { functionLikeMainToken } from "./navigation";
+import { is, isFunctionLikeDeclaration } from "./nodes";
 
 export function getFunctionComplexityNodes(functionNode: ts.FunctionLikeDeclaration): ts.Node[] {
   return getComplexityNodes(functionNode, true);
@@ -33,11 +34,11 @@ function getComplexityNodes(rootNode: ts.Node, skipFunctions: boolean): ts.Node[
   const complexityNodes: ts.Node[] = [];
 
   const visitNode = (node: ts.Node) => {
-    if (is(node, ...FUNCTION_LIKE)) {
+    if (isFunctionLikeDeclaration(node)) {
       if (skipFunctions && node !== rootNode) {
         return;
       } else {
-        complexityNodes.push(functionLikeMainToken(node as ts.FunctionLikeDeclaration));
+        complexityNodes.push(functionLikeMainToken(node));
       }
     }
 

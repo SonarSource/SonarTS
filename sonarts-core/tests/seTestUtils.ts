@@ -18,7 +18,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { is, descendants } from "../src/utils/navigation";
+import { descendants } from "../src/utils/navigation";
+import { isIdentifier, isCallExpression, isFunctionDeclaration } from "../src/utils/nodes";
 import { execute, ExecutionResult } from "../src/se/SymbolicExecution";
 import { ProgramState, createInitialState } from "../src/se/programStates";
 import { SymbolicValue } from "../src/se/symbolicValues";
@@ -41,7 +42,7 @@ export function inspectStack(source: string) {
 export function inspectConstraints(source: string): Constraint[] | undefined {
   const { result, program } = executeFromSource(source);
   const { programPoint, programStates } = findInspectCall(result);
-  const identifiers = programPoint.arguments.filter(ts.isIdentifier);
+  const identifiers = programPoint.arguments.filter(isIdentifier);
   const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
   const constraints = programStates.map(programState => {
     const value = programState.sv(symbols[0]);
@@ -57,9 +58,7 @@ export function inspectSV(source: string) {
 
 export function executeOneFunction(source: string): { result: ExecutionResult; program: ts.Program } {
   const { sourceFile, program } = parseString(source);
-  const node = descendants(sourceFile).find(node =>
-    is(node, ts.SyntaxKind.FunctionDeclaration),
-  ) as ts.FunctionDeclaration;
+  const node = descendants(sourceFile).find(node => isFunctionDeclaration(node)) as ts.FunctionDeclaration;
   const result = execute(
     build(Array.from(node.body.statements)),
     SymbolTableBuilder.build(sourceFile, program),
@@ -70,7 +69,7 @@ export function executeOneFunction(source: string): { result: ExecutionResult; p
 
 export function inspectSVFromResult(result: ExecutionResult, program: ts.Program) {
   const { programPoint, programStates } = findInspectCall(result);
-  const identifiers = programPoint.arguments.filter(ts.isIdentifier);
+  const identifiers = programPoint.arguments.filter(isIdentifier);
   const symbols = identifiers.map(identifier => program.getTypeChecker().getSymbolAtLocation(identifier));
   const sv: { [name: string]: SymbolicValue[] } = {};
   for (const symbol of symbols) {
@@ -95,8 +94,8 @@ function executeFromSource(source: string) {
 function findInspectCall(result: ExecutionResult) {
   for (const [programPoint, programStates] of result.programNodes.entries()) {
     if (
-      ts.isCallExpression(programPoint) &&
-      ts.isIdentifier(programPoint.expression) &&
+      isCallExpression(programPoint) &&
+      isIdentifier(programPoint.expression) &&
       programPoint.expression.text === "_inspect"
     ) {
       return { programPoint, programStates };

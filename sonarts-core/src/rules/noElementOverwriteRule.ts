@@ -20,9 +20,19 @@
 import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { descendants, is, isAssignment } from "../utils/navigation";
+import { descendants } from "../utils/navigation";
 import { nodeToSonarLine } from "../runner/sonar-utils";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import {
+  isAssignment,
+  isExpressionStatement,
+  isElementAccessExpression,
+  isCallExpression,
+  isPropertyAccessExpression,
+  isIdentifier,
+  isNumericLiteral,
+  isStringLiteral,
+} from "../utils/nodes";
 
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -80,20 +90,19 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   private keyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
-    if (is(node, ts.SyntaxKind.ExpressionStatement)) {
-      const expression = (node as ts.ExpressionStatement).expression;
+    if (isExpressionStatement(node)) {
       return (
-        this.arrayKeyWriteUsage(expression) ||
-        this.mapKeyWriteUsage(expression) ||
-        this.setKeyWriteUsage(expression) ||
-        this.objectKeyWriteUsage(expression)
+        this.arrayKeyWriteUsage(node.expression) ||
+        this.mapKeyWriteUsage(node.expression) ||
+        this.setKeyWriteUsage(node.expression) ||
+        this.objectKeyWriteUsage(node.expression)
       );
     }
   }
 
   private arrayKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
-    if (isAssignment(node) && is(node.left, ts.SyntaxKind.ElementAccessExpression)) {
-      const lhs = node.left as ts.ElementAccessExpression;
+    if (isAssignment(node) && isElementAccessExpression(node.left)) {
+      const lhs = node.left;
       const array = this.program.getTypeChecker().getSymbolAtLocation(lhs.expression);
       if (!array || this.usedInRhs(node.right, array)) return;
       const index = this.extractIndex(lhs.argumentExpression);
@@ -121,30 +130,27 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   private callExpression(node: ts.Node, typeName: string, method: string): KeyWriteCollectionUsage | undefined {
-    if (is(node, ts.SyntaxKind.CallExpression)) {
-      const callExpression = node as ts.CallExpression;
-      if (is(callExpression.expression, ts.SyntaxKind.PropertyAccessExpression)) {
-        const propertyAccess = callExpression.expression as ts.PropertyAccessExpression;
-        const type = this.program.getTypeChecker().getTypeAtLocation(propertyAccess.expression);
-        if (type.symbol && type.symbol.name === typeName && propertyAccess.name.text === method) {
-          const lhsSymbol = this.program.getTypeChecker().getSymbolAtLocation(propertyAccess.expression);
-          const key = this.extractIndex(callExpression.arguments[0]);
-          if (!lhsSymbol || !key) return;
-          return {
-            collectionSymbol: lhsSymbol,
-            indexOrKey: key,
-            node: propertyAccess.expression,
-          };
-        }
+    if (isCallExpression(node) && isPropertyAccessExpression(node.expression)) {
+      const propertyAccess = node.expression;
+      const type = this.program.getTypeChecker().getTypeAtLocation(propertyAccess.expression);
+      if (type.symbol && type.symbol.name === typeName && propertyAccess.name.text === method) {
+        const lhsSymbol = this.program.getTypeChecker().getSymbolAtLocation(propertyAccess.expression);
+        const key = this.extractIndex(node.arguments[0]);
+        if (!lhsSymbol || !key) return;
+        return {
+          collectionSymbol: lhsSymbol,
+          indexOrKey: key,
+          node: propertyAccess.expression,
+        };
       }
     }
   }
 
   private objectKeyWriteUsage(node: ts.Node): KeyWriteCollectionUsage | undefined {
-    if (isAssignment(node) && is(node.left, ts.SyntaxKind.PropertyAccessExpression)) {
-      const lhs = node.left as ts.PropertyAccessExpression;
+    if (isAssignment(node) && isPropertyAccessExpression(node.left)) {
+      const lhs = node.left;
       // avoid deeply nested property access
-      if (!is(lhs.expression, ts.SyntaxKind.Identifier)) return;
+      if (!isIdentifier(lhs.expression)) return;
       const objectSymbol = this.program.getTypeChecker().getSymbolAtLocation(lhs.expression);
       if (!objectSymbol) return;
       if (this.usedInRhs(node.right, objectSymbol)) return;
@@ -160,9 +166,8 @@ class Visitor extends TypedSonarRuleVisitor {
 
   private extractIndex(node?: ts.Node): string | undefined {
     if (!node) return;
-    if (is(node, ts.SyntaxKind.NumericLiteral, ts.SyntaxKind.StringLiteral)) {
-      const literal = node as ts.LiteralLikeNode;
-      return literal.text;
+    if (isNumericLiteral(node) || isStringLiteral(node)) {
+      return node.text;
     }
     const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
     return symbol && symbol.name;

@@ -23,7 +23,8 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { LiveVariableAnalyzer } from "../symbols/lva";
 import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
-import { floatToTopParenthesis, is } from "../utils/navigation";
+import { floatToTopParenthesis } from "../utils/navigation";
+import * as nodes from "../utils/nodes";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -76,7 +77,7 @@ class Visitor extends SonarRuleVisitor {
     if (parent && this.isPartOfDestructiringWithRest(parent)) {
       return true;
     }
-    if (parent && (ts.isBindingElement(parent) || ts.isVariableDeclaration(parent))) {
+    if (parent && (nodes.isBindingElement(parent) || nodes.isVariableDeclaration(parent))) {
       return parent.initializer !== undefined && this.isBasicValue(parent.initializer);
     }
     return false;
@@ -84,28 +85,28 @@ class Visitor extends SonarRuleVisitor {
 
   private isPartOfDestructiringWithRest(node: ts.Node) {
     return (
-      ts.isBindingElement(node) &&
+      nodes.isBindingElement(node) &&
       node.dotDotDotToken === undefined &&
       node.parent !== undefined &&
-      ts.isObjectBindingPattern(node.parent) &&
+      nodes.isObjectBindingPattern(node.parent) &&
       node.parent.elements[node.parent.elements.length - 1].dotDotDotToken !== undefined
     );
   }
 
   private isBasicValue(expression: ts.Expression): boolean {
-    if (is(expression, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.NullKeyword)) {
+    if (nodes.is(expression, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.NullKeyword)) {
       return true;
     }
-    if (ts.isLiteralExpression(expression)) {
+    if (nodes.isLiteralExpression(expression)) {
       return ["0", "1", '""', "''"].includes(expression.getText());
     }
-    if (ts.isPrefixUnaryExpression(expression)) {
+    if (nodes.isPrefixUnaryExpression(expression)) {
       return expression.operator === ts.SyntaxKind.MinusToken && this.isBasicValue(expression.operand);
     }
-    if (ts.isArrayLiteralExpression(expression)) {
+    if (nodes.isArrayLiteralExpression(expression)) {
       return expression.elements.length === 0;
     }
-    if (ts.isObjectLiteralExpression(expression)) {
+    if (nodes.isObjectLiteralExpression(expression)) {
       return expression.properties.length === 0;
     }
     return false;

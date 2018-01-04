@@ -28,6 +28,7 @@ import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable, UsageFlag } from "../symbols/table";
 import { firstLocalAncestor, FUNCTION_LIKE } from "../utils/navigation";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { isArrowFunction, isBlock } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -75,9 +76,9 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   private getStatements(functionLike: ts.FunctionLikeDeclaration) {
-    if (ts.isArrowFunction(functionLike)) {
+    if (isArrowFunction(functionLike)) {
       // `body` can be a block or an expression
-      if (ts.isBlock(functionLike.body)) {
+      if (isBlock(functionLike.body)) {
         return functionLike.body.statements;
       }
     } else {

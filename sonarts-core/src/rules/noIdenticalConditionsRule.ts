@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonar-analysis";
+import { isIfStatement, isCaseClause } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -59,7 +60,7 @@ class Visitor extends SonarRuleVisitor {
     const condition = node.expression;
     let statement = node.elseStatement;
     while (statement) {
-      if (ts.isIfStatement(statement)) {
+      if (isIfStatement(statement)) {
         if (areEquivalent(condition, statement.expression)) {
           const { line } = node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
           this.addIssue(statement.expression, Rule.formatMessage("branch", line + 1)).addSecondaryLocation(
@@ -76,7 +77,7 @@ class Visitor extends SonarRuleVisitor {
   }
 
   public visitSwitchStatement(node: ts.SwitchStatement) {
-    const clauses = node.caseBlock.clauses.filter(ts.isCaseClause) as ts.CaseClause[];
+    const clauses = node.caseBlock.clauses.filter(isCaseClause);
 
     for (let i = 0; i < clauses.length; i++) {
       for (let j = i + 1; j < clauses.length; j++) {

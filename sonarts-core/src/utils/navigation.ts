@@ -18,19 +18,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
+import * as nodes from "./nodes";
 
 const Kind = ts.SyntaxKind;
 
 export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | ts.ReturnStatement): ts.Node {
   return node.getFirstToken();
-}
-
-export function isAssignmentKind(kind: ts.SyntaxKind) {
-  return kind >= ts.SyntaxKind.FirstAssignment && kind <= ts.SyntaxKind.LastAssignment;
-}
-
-export function isAssignment(node: ts.Node | undefined): node is ts.BinaryExpression {
-  return !!node && ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.EqualsToken;
 }
 
 export function collectLeftHandIdentifiers(
@@ -45,15 +38,15 @@ export function collectLeftHandIdentifiers(
 
   function collectFromExpression(node: ts.Expression) {
     node = drillDownThroughParenthesis(node);
-    if (ts.isIdentifier(node)) {
+    if (nodes.isIdentifier(node)) {
       identifiers.push(node);
-    } else if (ts.isObjectLiteralExpression(node)) {
+    } else if (nodes.isObjectLiteralExpression(node)) {
       collectFromObjectLiteralExpression(node);
-    } else if (ts.isArrayLiteralExpression(node)) {
+    } else if (nodes.isArrayLiteralExpression(node)) {
       node.elements.forEach(element => collectFromExpression(element));
-    } else if (ts.isSpreadElement(node)) {
+    } else if (nodes.isSpreadElement(node)) {
       collectFromExpression(node.expression);
-    } else if (ts.isBinaryExpression(node)) {
+    } else if (nodes.isBinaryExpression(node)) {
       collectFromExpression(node.left);
       nonIdentifiers.push(node.right);
     } else {
@@ -63,14 +56,14 @@ export function collectLeftHandIdentifiers(
 
   function collectFromObjectLiteralExpression(node: ts.ObjectLiteralExpression) {
     node.properties.forEach(property => {
-      if (ts.isPropertyAssignment(property)) {
+      if (nodes.isPropertyAssignment(property)) {
         collectFromExpression(property.initializer);
-      } else if (ts.isShorthandPropertyAssignment(property)) {
+      } else if (nodes.isShorthandPropertyAssignment(property)) {
         collectFromExpression(property.name);
         if (property.objectAssignmentInitializer) {
           nonIdentifiers.push(property.objectAssignmentInitializer);
         }
-      } else if (ts.isSpreadAssignment(property)) {
+      } else if (nodes.isSpreadAssignment(property)) {
         collectFromExpression(property.expression);
       }
     });
@@ -99,7 +92,7 @@ export function toTokens(node: ts.Node): ts.Node[] {
 
   while (stack.length) {
     const currentNode = stack.pop() as ts.Node;
-    if (isToken(currentNode)) {
+    if (nodes.isToken(currentNode)) {
       result.push(currentNode);
       continue;
     }
@@ -117,18 +110,6 @@ export function toTokens(node: ts.Node): ts.Node[] {
 
 export function lineAndCharacter(pos: number, file: ts.SourceFile): ts.LineAndCharacter {
   return file.getLineAndCharacterOfPosition(pos);
-}
-
-export function is(node: ts.Node | undefined, ...kinds: ts.SyntaxKind[]): boolean {
-  return node !== undefined && kinds.includes(node.kind);
-}
-
-export function isFunctionLikeDeclaration(node: ts.Node): node is ts.FunctionLikeDeclaration {
-  return is(node, ...FUNCTION_LIKE);
-}
-
-function isToken(node: ts.Node): boolean {
-  return node.kind <= ts.SyntaxKind.OfKeyword;
 }
 
 export function localAncestorsChain(node: ts.Node): ts.Node[] {
@@ -157,11 +138,11 @@ export function firstAncestor(
 }
 
 export function floatToTopParenthesis(node: ts.Node): ts.Node {
-  return ts.isParenthesizedExpression(node) && node.parent ? floatToTopParenthesis(node.parent) : node;
+  return nodes.isParenthesizedExpression(node) && node.parent ? floatToTopParenthesis(node.parent) : node;
 }
 
 export function drillDownThroughParenthesis(node: ts.Expression): ts.Expression {
-  return ts.isParenthesizedExpression(node) ? drillDownThroughParenthesis(node.expression) : node;
+  return nodes.isParenthesizedExpression(node) ? drillDownThroughParenthesis(node.expression) : node;
 }
 
 /** Returns all descendants of the `node`, including tokens */
@@ -173,7 +154,7 @@ export function descendants(node: ts.Node): ts.Node[] {
 }
 
 export function findChild(node: ts.Node, kind: ts.SyntaxKind): ts.Node {
-  const child = node.getChildren().find(child => is(child, kind));
+  const child = node.getChildren().find(child => nodes.is(child, kind));
   if (child) {
     return child;
   } else {
@@ -185,7 +166,7 @@ export function accessModifier(
   declaration: ts.MethodDeclaration | ts.ParameterDeclaration | ts.AccessorDeclaration,
 ): ts.Modifier | undefined {
   if (declaration.modifiers) {
-    return declaration.modifiers.find(modifier => is(modifier, ...ACCESS_MODIFIERS));
+    return declaration.modifiers.find(modifier => nodes.is(modifier, ...ACCESS_MODIFIERS));
   } else {
     return;
   }
@@ -193,7 +174,7 @@ export function accessModifier(
 
 export function isReadonly(declaration: ts.MethodDeclaration | ts.ParameterDeclaration): ts.Modifier | undefined {
   if (declaration.modifiers) {
-    return declaration.modifiers.find(modifier => is(modifier, ts.SyntaxKind.ReadonlyKeyword));
+    return declaration.modifiers.find(modifier => nodes.is(modifier, ts.SyntaxKind.ReadonlyKeyword));
   } else {
     return;
   }

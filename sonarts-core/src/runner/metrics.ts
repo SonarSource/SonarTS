@@ -18,10 +18,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { getComments, getCommentsAfter, getText, is, lineAndCharacter } from "../utils/navigation";
 import { toSonarLine } from "./sonar-utils";
 import { getOverallComplexity } from "../utils/cyclomaticComplexity";
 import { getOverallCognitiveComplexity } from "../utils/cognitiveComplexity";
+import { getComments, getCommentsAfter, getText, lineAndCharacter } from "../utils/navigation";
+import { is } from "../utils/nodes";
 
 export default function getMetrics(sourceFile: ts.SourceFile): Metrics {
   return {

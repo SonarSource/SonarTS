@@ -21,7 +21,8 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { is, lineAndCharacter, findChild } from "../utils/navigation";
+import { lineAndCharacter, findChild } from "../utils/navigation";
+import { is, isBlock, isArrowFunction } from "../utils/nodes";
 import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonar-analysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -84,8 +85,8 @@ export class Rule extends tslint.Rules.AbstractRule {
       return findChild(functionNode, ts.SyntaxKind.ConstructorKeyword);
     }
 
-    if (is(functionNode, ts.SyntaxKind.ArrowFunction)) {
-      return (functionNode as ts.ArrowFunction).equalsGreaterThanToken;
+    if (isArrowFunction(functionNode)) {
+      return functionNode.equalsGreaterThanToken;
     }
 
     throw new Error("Unknow function kind " + ts.SyntaxKind[functionNode.kind]);
@@ -97,7 +98,7 @@ class Visitor extends SonarRuleVisitor {
 
   public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
     const { body } = node;
-    if (body && ts.isBlock(body) && Visitor.isBigEnough(body)) {
+    if (body && isBlock(body) && Visitor.isBigEnough(body)) {
       this.functionBlocks.push(body);
     }
 
