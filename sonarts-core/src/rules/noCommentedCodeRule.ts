@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor, IssueLocation } from "../utils/sonar-analysis";
-import { toTokens, lineAndCharacter, getText, is, getCommentsBefore, getCommentsAfter } from "../utils/navigation";
+import { toTokens, lineAndCharacter, getText, getCommentsBefore, getCommentsAfter } from "../utils/navigation";
 import * as nodes from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -172,7 +172,8 @@ class Visitor extends SonarRuleVisitor {
     return (
       nodes.isExpressionStatement(node) &&
       (!node.getText().endsWith(";") ||
-        (nodes.isBinaryExpression(node.expression) && is(node.expression.operatorToken, ts.SyntaxKind.CommaToken)) ||
+        (nodes.isBinaryExpression(node.expression) &&
+          nodes.is(node.expression.operatorToken, ts.SyntaxKind.CommaToken)) ||
         nodes.isIdentifier(node.expression) ||
         nodes.isStringLiteral(node.expression) ||
         nodes.isNumericLiteral(node.expression) ||

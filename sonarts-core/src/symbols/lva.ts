@@ -19,9 +19,9 @@
  */
 import * as ts from "typescript";
 import { CfgBlock, CfgBlockWithPredecessors, ControlFlowGraph } from "../cfg/cfg";
-import { collectLeftHandIdentifiers, firstLocalAncestor, FUNCTION_LIKE, is, firstAncestor } from "../utils/navigation";
+import { collectLeftHandIdentifiers, firstLocalAncestor, FUNCTION_LIKE, firstAncestor } from "../utils/navigation";
 import { SymbolTable, Usage, UsageFlag } from "./table";
-import { isBlock, isAssignment } from "../utils/nodes";
+import { is, isBlock, isAssignment } from "../utils/nodes";
 
 export class LiveVariableAnalyzer {
   private blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;

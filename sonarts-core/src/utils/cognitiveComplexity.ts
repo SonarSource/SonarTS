@@ -19,7 +19,8 @@
  */
 import * as ts from "typescript";
 import { TreeVisitor } from "../utils/visitor";
-import { is, drillDownThroughParenthesis, findChild } from "../utils/navigation";
+import { drillDownThroughParenthesis, findChild } from "../utils/navigation";
+import { is } from "../utils/nodes";
 
 export function getOverallCognitiveComplexity(node: ts.SourceFile): number {
   let complexityWalker = new ComplexityWalker();

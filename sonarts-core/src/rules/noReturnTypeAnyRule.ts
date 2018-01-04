@@ -20,9 +20,8 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { FUNCTION_LIKE, is } from "../utils/navigation";
+import { isReturnStatement, isFunctionLikeDeclaration } from "../utils/nodes";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
-import { isReturnStatement } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -63,7 +62,7 @@ class Visitor extends TypedSonarRuleVisitor {
     const visitNode = (node: ts.Node) => {
       if (isReturnStatement(node)) {
         returns.push(node);
-      } else if (!is(node, ...FUNCTION_LIKE)) {
+      } else if (!isFunctionLikeDeclaration(node)) {
         node.forEachChild(visitNode);
       }
     };

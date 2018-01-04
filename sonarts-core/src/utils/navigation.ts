@@ -92,7 +92,7 @@ export function toTokens(node: ts.Node): ts.Node[] {
 
   while (stack.length) {
     const currentNode = stack.pop() as ts.Node;
-    if (isToken(currentNode)) {
+    if (nodes.isToken(currentNode)) {
       result.push(currentNode);
       continue;
     }
@@ -110,14 +110,6 @@ export function toTokens(node: ts.Node): ts.Node[] {
 
 export function lineAndCharacter(pos: number, file: ts.SourceFile): ts.LineAndCharacter {
   return file.getLineAndCharacterOfPosition(pos);
-}
-
-export function is(node: ts.Node | undefined, ...kinds: ts.SyntaxKind[]): boolean {
-  return node !== undefined && kinds.includes(node.kind);
-}
-
-function isToken(node: ts.Node): boolean {
-  return node.kind <= ts.SyntaxKind.OfKeyword;
 }
 
 export function localAncestorsChain(node: ts.Node): ts.Node[] {
@@ -162,7 +154,7 @@ export function descendants(node: ts.Node): ts.Node[] {
 }
 
 export function findChild(node: ts.Node, kind: ts.SyntaxKind): ts.Node {
-  const child = node.getChildren().find(child => is(child, kind));
+  const child = node.getChildren().find(child => nodes.is(child, kind));
   if (child) {
     return child;
   } else {
@@ -174,7 +166,7 @@ export function accessModifier(
   declaration: ts.MethodDeclaration | ts.ParameterDeclaration | ts.AccessorDeclaration,
 ): ts.Modifier | undefined {
   if (declaration.modifiers) {
-    return declaration.modifiers.find(modifier => is(modifier, ...ACCESS_MODIFIERS));
+    return declaration.modifiers.find(modifier => nodes.is(modifier, ...ACCESS_MODIFIERS));
   } else {
     return;
   }
@@ -182,7 +174,7 @@ export function accessModifier(
 
 export function isReadonly(declaration: ts.MethodDeclaration | ts.ParameterDeclaration): ts.Modifier | undefined {
   if (declaration.modifiers) {
-    return declaration.modifiers.find(modifier => is(modifier, ts.SyntaxKind.ReadonlyKeyword));
+    return declaration.modifiers.find(modifier => nodes.is(modifier, ts.SyntaxKind.ReadonlyKeyword));
   } else {
     return;
   }

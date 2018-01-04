@@ -20,7 +20,7 @@
 import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { is } from "../utils/navigation";
+import { isParenthesizedExpression } from "../utils/nodes";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
 export class Rule extends Lint.Rules.AbstractRule {
@@ -43,7 +43,7 @@ class Visitor extends SonarRuleVisitor {
   private static readonly MESSAGE = "Remove these useless parentheses.";
 
   public visitParenthesizedExpression(node: ts.ParenthesizedExpression) {
-    if (is(node.expression, ts.SyntaxKind.ParenthesizedExpression)) {
+    if (isParenthesizedExpression(node.expression)) {
       this.addIssue(node, Visitor.MESSAGE);
     }
 

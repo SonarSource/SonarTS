@@ -18,9 +18,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { is } from "./navigation";
+import { FUNCTION_LIKE } from "./navigation";
 
 // Note: keep all type guards ordered aphabetically
+
+export function is(node: ts.Node | undefined, ...kinds: ts.SyntaxKind[]) {
+  return node !== undefined && kinds.includes(node.kind);
+}
 
 export function isArrayBindingPattern(node: ts.Node): node is ts.ArrayBindingPattern {
   return is(node, ts.SyntaxKind.ArrayBindingPattern);
@@ -82,6 +86,14 @@ export function isExpressionStatement(node: ts.Node): node is ts.ExpressionState
   return is(node, ts.SyntaxKind.ExpressionStatement);
 }
 
+export function isFunctionDeclaration(node: ts.Node): node is ts.FunctionDeclaration {
+  return is(node, ts.SyntaxKind.FunctionDeclaration);
+}
+
+export function isFunctionLikeDeclaration(node: ts.Node): node is ts.FunctionLikeDeclaration {
+  return is(node, ...FUNCTION_LIKE);
+}
+
 export function isIdentifier(node: ts.Node): node is ts.Identifier {
   return is(node, ts.SyntaxKind.Identifier);
 }
@@ -100,6 +112,10 @@ export function isLabeledStatement(node: ts.Node): node is ts.LabeledStatement {
 
 export function isLiteralExpression(node: ts.Node): node is ts.LiteralExpression {
   return ts.SyntaxKind.FirstLiteralToken <= node.kind && node.kind <= ts.SyntaxKind.LastLiteralToken;
+}
+
+export function isNewExpression(node: ts.Node): node is ts.NewExpression {
+  return is(node, ts.SyntaxKind.NewExpression);
 }
 
 export function isNumericLiteral(node: ts.Node): node is ts.NumericLiteral {
@@ -154,6 +170,10 @@ export function isStringLiteral(node: ts.Node): node is ts.StringLiteral {
   return is(node, ts.SyntaxKind.StringLiteral);
 }
 
+export function isToken(node: ts.Node) {
+  return node.kind <= ts.SyntaxKind.OfKeyword;
+}
+
 export function isThrowStatement(node: ts.Node): node is ts.ThrowStatement {
   return is(node, ts.SyntaxKind.ThrowStatement);
 }
@@ -193,4 +213,8 @@ export function isVariableDeclarationList(node: ts.Node): node is ts.VariableDec
 
 export function isVariableStatement(node: ts.Node): node is ts.VariableStatement {
   return is(node, ts.SyntaxKind.VariableStatement);
+}
+
+export function isUnionOrIntersectionTypeNode(node: ts.Node): node is ts.UnionOrIntersectionTypeNode {
+  return is(node, ts.SyntaxKind.UnionType, ts.SyntaxKind.IntersectionType);
 }

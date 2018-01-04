@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { RuleFailure } from "tslint";
 import { SonarRuleMetaData } from "../sonarRule";
-import { is } from "../utils/navigation";
+import { isUnionOrIntersectionTypeNode } from "../utils/nodes";
 import { nodeToSonarLine } from "../runner/sonar-utils";
 import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
 
@@ -51,18 +51,17 @@ class Visitor extends TypedSonarRuleVisitor {
   private unionOrIntersectionTypeUsage: Map<ts.Type, ts.TypeNode[]> = new Map();
 
   protected visitNode(node: ts.Node): void {
-    if (is(node, ts.SyntaxKind.UnionType, ts.SyntaxKind.IntersectionType)) {
-      const typeNode = node as ts.UnionOrIntersectionTypeNode;
-      const type = this.program.getTypeChecker().getTypeFromTypeNode(typeNode);
+    if (isUnionOrIntersectionTypeNode(node)) {
+      const type = this.program.getTypeChecker().getTypeFromTypeNode(node);
 
       // number of types is determined from AST node, because real type will resolve type aliases
-      if (isUnionOrIntersectionType(type) && typeNode.types.length >= Rule.NUMBER_OF_TYPES_THRESHOLD) {
+      if (isUnionOrIntersectionType(type) && node.types.length >= Rule.NUMBER_OF_TYPES_THRESHOLD) {
         let typeUsages = this.unionOrIntersectionTypeUsage.get(type);
         if (!typeUsages) {
-          typeUsages = [typeNode];
+          typeUsages = [node];
           this.unionOrIntersectionTypeUsage.set(type, typeUsages);
         } else {
-          typeUsages.push(typeNode);
+          typeUsages.push(node);
         }
         if (typeUsages.length === Rule.REPEATED_USAGE_THRESHOLD) {
           const lines = typeUsages.map(u => nodeToSonarLine(u));

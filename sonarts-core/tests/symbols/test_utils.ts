@@ -21,7 +21,8 @@ import * as path from "path";
 import * as ts from "typescript";
 import { SymbolTableBuilder } from "../../src/symbols/builder";
 import { SymbolTable } from "../../src/symbols/table";
-import { descendants, is } from "../../src/utils/navigation";
+import { descendants } from "../../src/utils/navigation";
+import { is } from "../../src/utils/nodes";
 import { parseFile } from "../../src/utils/parser";
 
 export function getNode(root: ts.Node, identifierText: string, line?: number): ts.Node | undefined {

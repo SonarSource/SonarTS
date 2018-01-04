@@ -18,8 +18,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { getComments, getText, is, lineAndCharacter, toTokens } from "../utils/navigation";
 import { toSonarLine } from "./sonar-utils";
+import { getComments, getText, lineAndCharacter, toTokens } from "../utils/navigation";
+import { is } from "../utils/nodes";
 
 export default function getHighlighting(sourceFile: ts.SourceFile): { highlights: HighlightedToken[] } {
   const highlights: HighlightedToken[] = [];

@@ -20,7 +20,16 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { firstAncestor, is, COMPOUND_ASSIGNMENTS } from "../utils/navigation";
+import { firstAncestor, COMPOUND_ASSIGNMENTS } from "../utils/navigation";
+import {
+  is,
+  isBinaryExpression,
+  isElementAccessExpression,
+  isCallExpression,
+  isPropertyAccessExpression,
+  isArrayLiteralExpression,
+  isNewExpression,
+} from "../utils/nodes";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { Usage, SymbolTable, UsageFlag } from "../symbols/table";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
@@ -116,33 +125,24 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   // myArray = [1, 2];
-  private static isVariableWrite(statement: ts.ExpressionStatement, usage: Usage): boolean {
-    if (is(statement.expression, ts.SyntaxKind.BinaryExpression)) {
-      const binaryExpression = statement.expression as ts.BinaryExpression;
-      return (
-        is(binaryExpression.operatorToken, ts.SyntaxKind.EqualsToken) &&
-        binaryExpression.left === usage.node &&
-        Rule.isNewCollectionCreation(binaryExpression.right)
-      );
-    }
-
-    return false;
+  private static isVariableWrite({ expression }: ts.ExpressionStatement, usage: Usage) {
+    return (
+      isBinaryExpression(expression) &&
+      is(expression.operatorToken, ts.SyntaxKind.EqualsToken) &&
+      expression.left === usage.node &&
+      Rule.isNewCollectionCreation(expression.right)
+    );
   }
 
   // myArray[1] = 42;
   // myArray[1] += 42;
-  private static isElementWrite(statement: ts.ExpressionStatement, usage: Usage): boolean {
-    if (is(statement.expression, ts.SyntaxKind.BinaryExpression)) {
-      const binaryExpression = statement.expression as ts.BinaryExpression;
-      if (
-        is(binaryExpression.operatorToken, ts.SyntaxKind.EqualsToken, ...COMPOUND_ASSIGNMENTS) &&
-        is(binaryExpression.left, ts.SyntaxKind.ElementAccessExpression)
-      ) {
-        return (binaryExpression.left as ts.ElementAccessExpression).expression === usage.node;
-      }
-    }
-
-    return false;
+  private static isElementWrite({ expression }: ts.ExpressionStatement, usage: Usage) {
+    return (
+      isBinaryExpression(expression) &&
+      is(expression.operatorToken, ts.SyntaxKind.EqualsToken, ...COMPOUND_ASSIGNMENTS) &&
+      isElementAccessExpression(expression.left) &&
+      expression.left.expression === usage.node
+    );
   }
 
   // myArray.push(1);
@@ -163,10 +163,10 @@ export class Rule extends tslint.Rules.TypedRule {
       "add",
     ]);
 
-    if (is(statement.expression, ts.SyntaxKind.CallExpression)) {
-      const callExpression = statement.expression as ts.CallExpression;
-      if (is(callExpression.expression, ts.SyntaxKind.PropertyAccessExpression)) {
-        const propertyAccess = callExpression.expression as ts.PropertyAccessExpression;
+    if (isCallExpression(statement.expression)) {
+      const callExpression = statement.expression;
+      if (isPropertyAccessExpression(callExpression.expression)) {
+        const propertyAccess = callExpression.expression;
         return propertyAccess.expression === usage.node && writingMethods.has(propertyAccess.name.text);
       }
     }
@@ -194,16 +194,16 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   private static isNewCollectionCreation(node: ts.Node): boolean {
-    if (is(node, ts.SyntaxKind.ArrayLiteralExpression)) {
+    if (isArrayLiteralExpression(node)) {
       return true;
     }
 
-    if (is(node, ts.SyntaxKind.CallExpression)) {
-      return (node as ts.CallExpression).expression.getText() === "Array";
+    if (isCallExpression(node)) {
+      return node.expression.getText() === "Array";
     }
 
-    if (is(node, ts.SyntaxKind.NewExpression)) {
-      const constructorName = (node as ts.NewExpression).expression.getText();
+    if (isNewExpression(node)) {
+      const constructorName = node.expression.getText();
       return Rule.isCollectionName(constructorName);
     }
 

@@ -22,7 +22,8 @@ import { ControlFlowGraph, CfgBlock, CfgBranchingBlock } from "../cfg/cfg";
 import { applyExecutors } from "./stateTransitions";
 import { ProgramState } from "./programStates";
 import { SymbolTable } from "../symbols/table";
-import { is, CONDITIONAL_STATEMENTS, LOOP_STATEMENTS } from "../utils/navigation";
+import { CONDITIONAL_STATEMENTS, LOOP_STATEMENTS } from "../utils/navigation";
+import { is } from "../utils/nodes";
 
 const BLOCK_VISITS_LIMIT = 1000;
 

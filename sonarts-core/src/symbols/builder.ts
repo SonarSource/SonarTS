@@ -18,10 +18,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { collectLeftHandIdentifiers, is } from "../utils/navigation";
+import { collectLeftHandIdentifiers } from "../utils/navigation";
 import { SymbolTable, UsageFlag } from "./table";
 import { TreeVisitor } from "../utils/visitor";
 import {
+  is,
   isIdentifier,
   isArrayBindingPattern,
   isObjectBindingPattern,

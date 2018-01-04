@@ -18,7 +18,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { is, descendants } from "../src/utils/navigation";
+import { descendants } from "../src/utils/navigation";
+import { isIdentifier, isCallExpression, isFunctionDeclaration } from "../src/utils/nodes";
 import { execute, ExecutionResult } from "../src/se/SymbolicExecution";
 import { ProgramState, createInitialState } from "../src/se/programStates";
 import { SymbolicValue } from "../src/se/symbolicValues";
@@ -26,7 +27,6 @@ import { build } from "../src/cfg/builder";
 import { Constraint } from "../src/se/constraints";
 import { SymbolTableBuilder } from "../src/symbols/builder";
 import { parseString } from "../src/utils/parser";
-import { isIdentifier, isCallExpression } from "../src/utils/nodes";
 
 export function inspectStack(source: string) {
   const { result } = executeFromSource(source);
@@ -58,9 +58,7 @@ export function inspectSV(source: string) {
 
 export function executeOneFunction(source: string): { result: ExecutionResult; program: ts.Program } {
   const { sourceFile, program } = parseString(source);
-  const node = descendants(sourceFile).find(node =>
-    is(node, ts.SyntaxKind.FunctionDeclaration),
-  ) as ts.FunctionDeclaration;
+  const node = descendants(sourceFile).find(node => isFunctionDeclaration(node)) as ts.FunctionDeclaration;
   const result = execute(
     build(Array.from(node.body.statements)),
     SymbolTableBuilder.build(sourceFile, program),

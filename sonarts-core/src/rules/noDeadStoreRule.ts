@@ -23,7 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { LiveVariableAnalyzer } from "../symbols/lva";
 import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
-import { floatToTopParenthesis, is } from "../utils/navigation";
+import { floatToTopParenthesis } from "../utils/navigation";
 import * as nodes from "../utils/nodes";
 import { SonarRuleVisitor } from "../utils/sonar-analysis";
 
@@ -94,7 +94,7 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private isBasicValue(expression: ts.Expression): boolean {
-    if (is(expression, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.NullKeyword)) {
+    if (nodes.is(expression, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.NullKeyword)) {
       return true;
     }
     if (nodes.isLiteralExpression(expression)) {
