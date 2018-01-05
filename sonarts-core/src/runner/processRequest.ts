@@ -32,7 +32,7 @@ interface Sensor {
 
 const sensors: Sensor[] = [getHighlighting, getMetrics, getCpdTokens, getSymbolHighlighting];
 
-export function processRequest(inputString: string) {
+export function processRequest(inputString: string): any[] {
   const input = JSON.parse(inputString);
   let program = createProgram(input.tsconfig);
 
