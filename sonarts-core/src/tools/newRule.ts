@@ -178,7 +178,7 @@ function run() {
 
     const lines = readme.split("\n");
 
-    const head = [];
+    const head: string[] = [];
     const ruleTitles: string[] = [];
     const ruleLinks: string[] = [];
     const tail: string[] = [];
@@ -197,38 +197,18 @@ function run() {
     for (const line of lines) {
       switch (state) {
         case 0:
-          if (line.trim() === "## Rules") {
-            state = 1;
-          }
-          head.push(line);
+          processHead(line);
           break;
-
         case 1:
         case 2:
-          if (line.length > 0) {
-            state++;
-            ruleTitles.push(line);
-          } else {
-            head.push(line);
-          }
+          processAfterHead(line);
           break;
-
         case 3:
-          if (line.length === 0) {
-            state++;
-          } else {
-            ruleTitles.push(line);
-          }
+          processRuleTitles(line);
           break;
-
         case 4:
-          if (line.length === 0) {
-            state++;
-          } else {
-            ruleLinks.push(line);
-          }
+          processRuleLinks(line);
           break;
-
         case 5:
           tail.push(line);
           break;
@@ -236,6 +216,38 @@ function run() {
     }
 
     return { head, ruleTitles, ruleLinks, tail };
+
+    function processHead(line: string) {
+      if (line.trim() === "## Rules") {
+        state = 1;
+      }
+      head.push(line);
+    }
+
+    function processAfterHead(line: string) {
+      if (line.length > 0) {
+        state++;
+        ruleTitles.push(line);
+      } else {
+        head.push(line);
+      }
+    }
+
+    function processRuleTitles(line: string) {
+      if (line.length === 0) {
+        state++;
+      } else {
+        ruleTitles.push(line);
+      }
+    }
+
+    function processRuleLinks(line: string) {
+      if (line.length === 0) {
+        state++;
+      } else {
+        ruleLinks.push(line);
+      }
+    }
   }
 
   function verifyClassName() {
