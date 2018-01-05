@@ -27,3 +27,30 @@ export function toSonarLine(line: number) {
 export function nodeToSonarLine(node: ts.Node) {
   return toSonarLine(node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line);
 }
+
+export function stringifyToStream(stream: NodeJS.WritableStream, data: any[]) {
+  stream.write("[");
+
+  data.forEach((element, index) => {
+    stream.write("{");
+
+    let firstProp = true;
+    Object.entries(element).forEach(([key, value]) => {
+      if (value !== undefined) {
+        if (!firstProp) {
+          stream.write(",");
+        }
+        stream.write(`"${key}":${JSON.stringify(value)}`);
+        firstProp = false;
+      }
+    });
+
+    stream.write("}");
+
+    if (index + 1 !== data.length) {
+      stream.write(",");
+    }
+  });
+
+  stream.write("]");
+}

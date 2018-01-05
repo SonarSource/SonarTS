@@ -40,6 +40,7 @@ import org.sonar.plugin.typescript.TypeScriptRules;
 public class SonarTSCoreBundle implements ExecutableBundle {
 
   private static final Logger LOG = Loggers.get(SonarTSCoreBundle.class);
+  private static final int NODE_PROCESS_MEMORY = 2048;
 
   // relative location inside sonarts-core bundle
   private static final String SONAR_LOCATION = "node_modules/tslint-sonarts/bin/tsrunner";
@@ -87,7 +88,8 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    */
   @Override
   public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
-    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, getNodeExecutable(), this.tsMetricsExecutable.getAbsolutePath());
+    String increaseMemory = "--max-old-space-size=" + NODE_PROCESS_MEMORY;
+    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, getNodeExecutable(), increaseMemory, this.tsMetricsExecutable.getAbsolutePath());
     runnerCommand.setTsConfigPath(tsconfigPath);
     typeScriptRules.forEach(rule -> {
       if(rule.isEnabled()) {

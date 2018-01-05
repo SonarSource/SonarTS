@@ -18,6 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { processRequest } from "./processRequest";
+import { stringifyToStream } from "./sonarUtils";
 
 const chunks: string[] = [];
 
@@ -32,6 +33,5 @@ process.stdin.on("end", () => {
   const inputString = chunks.join("");
   const results = processRequest(inputString);
 
-  process.stdout.setEncoding("utf8");
-  process.stdout.write(JSON.stringify(results, null, " "));
+  stringifyToStream(process.stdout, results);
 });
