@@ -150,7 +150,7 @@ function equality() {
   let x = foo();
   const y = x;
   if (x === y) return 1;
-  //  ^^^^^^^ FN: This condition always evaluates to "true".
+  //  ^^^^^^^ {{This condition always evaluates to "true".}}
 }
 
 function possiblyUndefinedParameter(parameter: any) {
@@ -244,5 +244,44 @@ function destructuring() {
   ({ x } = foo());
   if (x) {
     //OK assigned to unknown
+  }
+}
+
+function foo2(x: boolean, y: boolean) {
+  x = y
+  if (x === y){
+  //  ^^^^^^^ {{This condition always evaluates to "true".}}
+  }
+
+  if (x == y){
+  //  ^^^^^^ {{This condition always evaluates to "true".}}
+  }
+
+  if (x !== y){
+  //  ^^^^^^^ {{This condition always evaluates to "false".}}
+  }
+
+  if (x != y){
+  //  ^^^^^^ {{This condition always evaluates to "false".}}
+  }
+}
+
+function foo3(x: boolean, y: boolean) {
+  x = true
+  y = true
+  if (x === y){
+  //  ^^^^^^^ FN: This condition always evaluates to "true".
+  }
+
+  if (x == y){
+  //  ^^^^^^ FN: This condition always evaluates to "true".
+  }
+
+  if (x !== y){
+  //  ^^^^^^^ FN: This condition always evaluates to "false".
+  }
+
+  if (x != y){
+  //  ^^^^^^ FN: This condition always evaluates to "false".
   }
 }
