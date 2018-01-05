@@ -345,8 +345,7 @@ class CfgBuilder {
       whenFalse,
       ifStatement,
     );
-    const expression = this.buildExpression(ifRoot, ifStatement.expression);
-    return expression;
+    return this.buildExpression(ifRoot, ifStatement.expression);
   }
 
   private buildSwitchStatement(current: CfgBlock, switchStatement: ts.SwitchStatement): CfgBlock {
@@ -457,8 +456,7 @@ class CfgBuilder {
         const whenFalse = this.buildExpression(this.createBlockPredecessorOf(current), conditionalExpression.whenFalse);
         const whenTrue = this.buildExpression(this.createBlockPredecessorOf(current), conditionalExpression.whenTrue);
         const endOfConditional = this.createBranchingBlock(expression.getText(), whenTrue, whenFalse, expression);
-        const startOfConditional = this.buildExpression(endOfConditional, conditionalExpression.condition);
-        return startOfConditional;
+        return this.buildExpression(endOfConditional, conditionalExpression.condition); // startOfConditional
 
       case SyntaxKind.BinaryExpression:
         return this.buildBinaryExpression(current, expression as ts.BinaryExpression);

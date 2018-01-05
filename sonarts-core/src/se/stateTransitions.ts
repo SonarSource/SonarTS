@@ -88,27 +88,38 @@ export function applyExecutors(
   }
 
   function binaryExpression(expression: ts.BinaryExpression) {
-    if (nodes.isAssignmentKind(expression.operatorToken.kind)) {
-      return collectLeftHandIdentifiers(expression.left).identifiers.reduce((state, identifier) => {
-        if (expression.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
-          let [value, nextState] = state.popSV();
-          const variable = symbolAt(identifier);
-          if (!variable) {
-            return nextState;
-          }
+    return nodes.isAssignmentKind(expression.operatorToken.kind)
+      ? assignmentLike(expression)
+      : state.pushSV(simpleSymbolicValue());
+  }
 
-          if (!value) {
-            throw new Error("Assignment without value");
-          }
-          return nextState.pushSV(value).setSV(variable, value);
-        } else {
-          const variable = symbolAt(identifier);
-          const value = simpleSymbolicValue();
-          return variable ? state.pushSV(value).setSV(variable, value) : state;
-        }
-      }, state);
-    }
-    return state.pushSV(simpleSymbolicValue());
+  function assignmentLike(expression: ts.BinaryExpression) {
+    return expression.operatorToken.kind === ts.SyntaxKind.EqualsToken
+      ? assignment(expression)
+      : compoundAssignment(expression);
+  }
+
+  function assignment(expression: ts.BinaryExpression) {
+    return collectLeftHandIdentifiers(expression.left).identifiers.reduce((state, identifier) => {
+      let [value, nextState] = state.popSV();
+      const variable = symbolAt(identifier);
+      if (!variable) {
+        return nextState;
+      }
+
+      if (!value) {
+        throw new Error("Assignment without value");
+      }
+      return nextState.pushSV(value).setSV(variable, value);
+    }, state);
+  }
+
+  function compoundAssignment(expression: ts.BinaryExpression) {
+    return collectLeftHandIdentifiers(expression.left).identifiers.reduce((state, identifier) => {
+      const variable = symbolAt(identifier);
+      const value = simpleSymbolicValue();
+      return variable ? state.pushSV(value).setSV(variable, value) : state;
+    }, state);
   }
 
   function variableDeclaration(declaration: ts.VariableDeclaration) {
