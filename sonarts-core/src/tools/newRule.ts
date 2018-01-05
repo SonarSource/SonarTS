@@ -105,6 +105,8 @@ function run() {
     }
 
     copyWithReplace(unitTestTemplatePath, path.join(testPath, `${ruleClassName}.test.ts`), ruleMetadata);
+
+    fs.writeFileSync(path.join(testPath, `${ruleClassName}.lint.ts`), "\n");
   }
 
   /** Creates the `*.md` documentation file, tries to convert rule description from html to markdown */
