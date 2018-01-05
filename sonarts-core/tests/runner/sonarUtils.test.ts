@@ -22,7 +22,7 @@ import { Writable } from "stream";
 
 it("should stringify to stream", async () => {
   const filepath = "filepath";
-  const data: PerFileResult[] = [
+  const data: any = [
     {
       filepath,
       issues: [
@@ -72,20 +72,3 @@ it("should stringify to stream", async () => {
 
   expect(result).toEqual(JSON.stringify(data));
 });
-
-export interface PerFileResult {
-  filepath: string;
-  issues: any[];
-  highlights: any[];
-  cpdTokens: any[];
-  symbols: any[];
-  ncloc: number[];
-  commentLines: number[];
-  nosonarLines: number[];
-  executableLines: number[];
-  statements: number;
-  functions: number;
-  classes: number;
-  complexity: number;
-  cognitiveComplexity: number;
-}
