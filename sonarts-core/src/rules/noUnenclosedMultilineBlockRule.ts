@@ -22,7 +22,7 @@ import * as tslint from "tslint";
 import { SonarRuleMetaData } from "../sonarRule";
 import { lineAndCharacter } from "../utils/navigation";
 import { is } from "../utils/nodes";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {

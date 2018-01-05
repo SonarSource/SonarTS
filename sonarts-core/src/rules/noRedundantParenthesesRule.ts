@@ -21,7 +21,7 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { isParenthesizedExpression } from "../utils/nodes";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends Lint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {

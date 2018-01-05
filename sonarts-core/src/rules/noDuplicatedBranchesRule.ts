@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonar-analysis";
+import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonarAnalysis";
 import { isIfStatement, isBlock } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {

@@ -22,8 +22,8 @@ import * as ts from "typescript";
 import { RuleFailure } from "tslint";
 import { SonarRuleMetaData } from "../sonarRule";
 import { isUnionOrIntersectionTypeNode } from "../utils/nodes";
-import { nodeToSonarLine } from "../runner/sonar-utils";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { nodeToSonarLine } from "../runner/sonarUtils";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {

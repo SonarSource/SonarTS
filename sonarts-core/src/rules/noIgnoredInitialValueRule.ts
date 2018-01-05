@@ -25,7 +25,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { FUNCTION_LIKE, descendants, ancestorsChain } from "../utils/navigation";
 import { LiveVariableAnalyzer, LVAReturn } from "../symbols/lva";
 import { ControlFlowGraph } from "../cfg/cfg";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isIdentifier } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {

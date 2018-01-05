@@ -21,7 +21,7 @@ import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { lineAndCharacter } from "../utils/navigation";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isIfStatement } from "../utils/nodes";
 
 export class Rule extends Lint.Rules.AbstractRule {

@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isBinaryExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {

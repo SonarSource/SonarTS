@@ -23,7 +23,7 @@ import * as ts from "typescript";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SymbolTable } from "../symbols/table";
 import { SonarRuleMetaData } from "../sonarRule";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {

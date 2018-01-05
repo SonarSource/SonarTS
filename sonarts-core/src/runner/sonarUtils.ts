@@ -17,7 +17,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 import * as ts from "typescript";
 
 // SonarQube's line indexing starts from 1, while TypeScript is 0 based.

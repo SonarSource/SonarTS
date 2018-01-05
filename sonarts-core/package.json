@@ -12,7 +12,7 @@
     "prepack": "yarn build && cp ../README.md .",
     "postpack": "rm README.md",
     "build": "yarn install && yarn license-check && yarn check-format && yarn clear && yarn compile-sources && yarn type-check-tests",
-    "build-cfg": "cp src/tools/cfg_viewer/index.html lib/tools/cfg_viewer && webpack",
+    "build-cfg": "cp src/tools/cfgViewer/index.html lib/tools/cfgViewer && webpack",
     "build-ci": "yarn build && yarn test --coverage --runInBand",
     "build-local": "yarn build && yarn test",
     "test": "jest --forceExit",
@@ -21,7 +21,7 @@
     "check-format": "prettier --list-different \"{src,tests}/**/!(*.lint).ts\"",
     "compile-sources": "tsc -p .",
     "type-check-tests": "tsc -p tests --noEmit",
-    "new-rule": "ts-node src/tools/new-rule.ts"
+    "new-rule": "ts-node src/tools/newRule.ts"
   },
   "repository": {
     "type": "git",

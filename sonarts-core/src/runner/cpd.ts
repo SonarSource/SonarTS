@@ -19,7 +19,7 @@
  */
 import * as ts from "typescript";
 import { lineAndCharacter, toTokens } from "../utils/navigation";
-import { toSonarLine } from "./sonar-utils";
+import { toSonarLine } from "./sonarUtils";
 
 export default function getCpdTokens(sourceFile: ts.SourceFile): { cpdTokens: CpdToken[] } {
   const cpdTokens: CpdToken[] = [];

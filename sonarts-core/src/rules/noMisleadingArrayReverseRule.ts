@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { firstLocalAncestor } from "../utils/navigation";
 import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isPropertyAccessExpression, isIdentifier, isBinaryExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {

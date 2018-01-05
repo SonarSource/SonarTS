@@ -32,7 +32,7 @@ import {
 } from "../utils/nodes";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { Usage, SymbolTable, UsageFlag } from "../symbols/table";
-import { SonarRuleVisitor } from "../utils/sonar-analysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {

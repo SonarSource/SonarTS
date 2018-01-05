@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { isNullType, isUndefinedType, isVoidType } from "../utils/navigation";
-import { TypedSonarRuleVisitor } from "../utils/sonar-analysis";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isInterfaceDeclaration } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
