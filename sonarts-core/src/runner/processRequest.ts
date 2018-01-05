@@ -32,7 +32,7 @@ interface Sensor {
 
 const sensors: Sensor[] = [getHighlighting, getMetrics, getCpdTokens, getSymbolHighlighting];
 
-export function processRequest(inputString: string) {
+export function processRequest(inputString: string): PerFileResult[] {
   const input = JSON.parse(inputString);
   let program = createProgram(input.tsconfig);
 
@@ -48,4 +48,21 @@ export function processRequest(inputString: string) {
     return output;
   });
   return output;
+}
+
+export interface PerFileResult {
+  filepath: string;
+  issues: any[];
+  highlights: any[];
+  cpdTokens: any[];
+  symbols: any[];
+  ncloc: number[];
+  commentLines: number[];
+  nosonarLines: number[];
+  executableLines: number[];
+  statements: number;
+  functions: number;
+  classes: number;
+  complexity: number;
+  cognitiveComplexity: number;
 }
