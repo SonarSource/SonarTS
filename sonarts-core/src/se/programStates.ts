@@ -130,8 +130,7 @@ export class ProgramState {
     if (this.symbolicValues.size !== another.symbolicValues.size) {
       return false;
     }
-    const res = this.symbolicValues.keySeq().equals(another.symbolicValues.keySeq());
-    return res;
+    return this.symbolicValues.keySeq().equals(another.symbolicValues.keySeq());
   }
 
   private areSymbolicValuesEqual(another: ProgramState) {
@@ -172,8 +171,7 @@ export class ProgramState {
     }
     const constraints = this.getConstraints(top);
     const anotherConstraints = another.getConstraints(anotherTop);
-    const res = areArraysEqual(constraints, anotherConstraints, isEqualConstraints);
-    return res;
+    return areArraysEqual(constraints, anotherConstraints, isEqualConstraints);
   }
 }
 

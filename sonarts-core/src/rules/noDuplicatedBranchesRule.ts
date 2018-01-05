@@ -57,10 +57,7 @@ class Visitor extends SonarRuleVisitor {
       for (let i = 1; i < branches.length; i++) {
         if (this.hasRequiredSize(branches[i])) {
           for (let j = 0; j < i; j++) {
-            if (areEquivalent(branches[i], branches[j])) {
-              this.addIssue(branches[i], Rule.formatMessage("branch", this.getLine(branches[j]))).addSecondaryLocation(
-                getIssueLocationAtNode(branches[j]),
-              );
+            if (this.compareIfBranches(branches[i], branches[j])) {
               break;
             }
           }
@@ -95,6 +92,14 @@ class Visitor extends SonarRuleVisitor {
     }
 
     super.visitSwitchStatement(node);
+  }
+
+  private compareIfBranches(a: ts.Statement, b: ts.Statement) {
+    const equivalent = areEquivalent(a, b);
+    if (equivalent) {
+      this.addIssue(a, Rule.formatMessage("branch", this.getLine(b))).addSecondaryLocation(getIssueLocationAtNode(b));
+    }
+    return equivalent;
   }
 
   private hasRequiredSize(node: ts.Node | ts.Node[]) {
