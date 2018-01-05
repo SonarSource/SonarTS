@@ -87,7 +87,8 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    */
   @Override
   public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
-    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, getNodeExecutable(), this.tsMetricsExecutable.getAbsolutePath());
+    String increaseMemory = "--max-old-space-size=2048";
+    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, getNodeExecutable(), increaseMemory, this.tsMetricsExecutable.getAbsolutePath());
     runnerCommand.setTsConfigPath(tsconfigPath);
     typeScriptRules.forEach(rule -> {
       if(rule.isEnabled()) {
