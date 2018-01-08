@@ -16,7 +16,7 @@ How does it work?
 
 ## Rules
 
-### :bug: Bug Detection
+### Bug Detection :bug:
 
 Rules in this category aim to find places in code which has a high chance to be bugs, i.e. don't work as indented. 
 Most of the time this is a result of bad copy-paste ([`no-identical-conditions`]) or improvident API usage ([`no-misleading-array-reverse`]).
@@ -39,7 +39,7 @@ Some rules are raising issues on unused values ([`no-useless-increment`]), which
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Types without members, 'any' and 'never' should not be used in type intersections ([`no-useless-intersection`])
 
-### :pig: Code Smell Detection
+### Code Smell Detection :pig:
 
 Code Smells issues, or Maintainability issues, are raised for places of code which might be costly to change in the future ([`cognitive-complexity`]).
 These rules also help to keep the high code quality and readability ([`no-commented-code`], [`no-identical-functions`], [`use-primitive-type`]).
