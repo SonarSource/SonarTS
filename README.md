@@ -16,41 +16,54 @@ How does it work?
 
 ## Rules
 
+### :bug: Bug Detection
+
+Rules in this category aim to find places in code which has a high chance to be bugs, i.e. don't work as indented. 
+Most of the time this is a result of bad copy-paste ([`no-identical-conditions`]) or improvident API usage ([`no-misleading-array-reverse`]).
+Some rules are raising issues on unused values ([`no-useless-increment`]), which is at best wasted code and at worst a bug.
+
+* All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
+* Logical OR should not be used in switch cases ([`no-case-with-or`])
+* Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
+* Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
+* Destructuring patterns should not be empty ([`no-empty-destructuring`])
+* Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
+* Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
+* Function parameters, caught exceptions and foreach variables' initial values should not be ignored ([`no-ignored-initial-value`]) ([`requires type-check`])
+* Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
+* `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
+* Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
+* Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
+* Errors should not be created without being thrown ([`no-unthrown-error`])
+* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
+* Values should not be uselessly incremented ([`no-useless-increment`])
+* Types without members, 'any' and 'never' should not be used in type intersections ([`no-useless-intersection`])
+
+### :pig: Code Smell Detection
+
+Code Smells issues, or Maintainability issues, are raised for places of code which might be costly to change in the future ([`cognitive-complexity`]).
+These rules also help to keep the high code quality and readability ([`no-commented-code`], [`no-identical-functions`], [`use-primitive-type`]).
+And finally some rules report issues on different suspicious code patters ([`no-dead-store`], [`no-gratuitous-expressions`]).
+
 * Cognitive Complexity of functions should not be too high ([`cognitive-complexity`])
 * Functions should not be too complex ([`mccabe-complexity`])
 * Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
-* All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
-* Logical OR should not be used in switch cases ([`no-case-with-or`])
-* Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
 * Sections of code should not be "commented out" ([`no-commented-code`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
-* Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
-* Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Conditions should not always evaluate to "true" or to "false" ([`no-gratuitous-expressions`])
-* Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
-* Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Functions should not have identical implementations ([`no-identical-functions`])
-* Function parameters, caught exceptions and foreach variables' initial values should not be ignored ([`no-ignored-initial-value`]) ([`requires type-check`])
-* Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
-* `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
-* Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
 * Redundant pairs of parentheses should be removed ([`no-redundant-parentheses`])
 * Primitive return types should be used ([`no-return-type-any`]) ([`requires type-check`])
 * Conditionals should start on new lines ([`no-same-line-conditional`])
-* Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
-* Errors should not be created without being thrown ([`no-unthrown-error`])
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
-* The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
-* Values should not be uselessly incremented ([`no-useless-increment`])
-* Types without members, 'any' and 'never' should not be used in type intersections ([`no-useless-intersection`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Local variables should not be declared and then immediately returned or thrown ([`prefer-immediate-return`]) ([`requires type-check`])
 * Wrapper objects should not be used for primitive types ([`use-primitive-type`]) ([`requires type-check`])
