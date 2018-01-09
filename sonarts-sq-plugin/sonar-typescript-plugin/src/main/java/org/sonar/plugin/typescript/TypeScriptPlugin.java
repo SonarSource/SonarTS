@@ -54,7 +54,8 @@ public class TypeScriptPlugin implements Plugin {
       TypeScriptRulesDefinition.class,
       LCOVCoverageSensor.class,
       TypeScriptExclusionsFileFilter.class,
-      SonarTSServer.class,
+      ContextualSensor.class,
+      ContextualSensor.class,
       PropertyDefinition.builder(FILE_SUFFIXES_KEY)
         .defaultValue(FILE_SUFFIXES_DEFVALUE)
         .name("File Suffixes")

@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.apache.commons.io.IOUtils;
-import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -46,8 +45,6 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.cpd.NewCpdTokens;
 import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
-import org.sonar.api.batch.sensor.issue.NewIssue;
-import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.batch.sensor.symbol.NewSymbol;
 import org.sonar.api.batch.sensor.symbol.NewSymbolTable;
 import org.sonar.api.issue.NoSonarFilter;
@@ -55,7 +52,6 @@ import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.measures.Metric;
-import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
@@ -105,7 +101,7 @@ public class ExternalTypescriptSensor implements Sensor {
 
     ExecutableBundle executableBundle = executableBundleFactory.createAndDeploy(deployDestination, sensorContext.config());
 
-    Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
+    Iterable<InputFile> inputFiles = SensorContextUtils.getInputFiles(sensorContext);
 
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     analyze(inputFiles, sensorContext, typeScriptRules, executableBundle, typescriptLocation);
@@ -129,10 +125,9 @@ public class ExternalTypescriptSensor implements Sensor {
       LOG.debug(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
 
       SonarTSRunnerCommand command = executableBundle.getSonarTsRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
+      SensorContextUtils.AnalysisResponse[] responses = executeExternalRunner(command, localTypescript);
 
-      SonarTSRunnerResponse[] responses = executeExternalRunner(command, localTypescript);
-
-      for (SonarTSRunnerResponse response : responses) {
+      for (SensorContextUtils.AnalysisResponse response : responses) {
         FileSystem fileSystem = sensorContext.fileSystem();
         InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(response.filepath));
         if (inputFile != null) {
@@ -140,7 +135,7 @@ public class ExternalTypescriptSensor implements Sensor {
           saveSymbols(sensorContext, response.symbols, inputFile);
           saveMetrics(sensorContext, response, inputFile);
           saveCpd(sensorContext, response.cpdTokens, inputFile);
-          saveIssues(sensorContext, response.issues, typeScriptRules);
+          SensorContextUtils.saveIssues(sensorContext, response.issues, typeScriptRules);
         } else {
           LOG.error("Failed to find input file for path `" + response.filepath + "`");
         }
@@ -178,14 +173,6 @@ public class ExternalTypescriptSensor implements Sensor {
     return true;
   }
 
-  private static Iterable<InputFile> getInputFiles(SensorContext sensorContext) {
-    FileSystem fileSystem = sensorContext.fileSystem();
-    FilePredicate mainFilePredicate = sensorContext.fileSystem().predicates().and(
-      fileSystem.predicates().hasType(InputFile.Type.MAIN),
-      fileSystem.predicates().hasLanguage(TypeScriptLanguage.KEY));
-    return fileSystem.inputFiles(mainFilePredicate);
-  }
-
   private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
     Map<String, List<InputFile>> inputFileByTsconfig = new HashMap<>();
 
@@ -213,7 +200,7 @@ public class ExternalTypescriptSensor implements Sensor {
     return null;
   }
 
-  private SonarTSRunnerResponse[] executeExternalRunner(SonarTSRunnerCommand command, @Nullable File localTypescript) {
+  private SensorContextUtils.AnalysisResponse[] executeExternalRunner(SonarTSRunnerCommand command, @Nullable File localTypescript) {
     String commandLine = command.commandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens());
     setNodePath(localTypescript, processBuilder);
@@ -225,10 +212,10 @@ public class ExternalTypescriptSensor implements Sensor {
       writerToSonar.write(command.toJsonRequest());
       writerToSonar.close();
       try (InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)) {
-        SonarTSRunnerResponse[] responses = new Gson().fromJson(inputStreamReader, SonarTSRunnerResponse[].class);
+        SensorContextUtils.AnalysisResponse[] responses = new Gson().fromJson(inputStreamReader, SensorContextUtils.AnalysisResponse[].class);
         if (responses == null) {
           LOG.error(String.format("External process `%s` returned an empty output. Run with -X for more information", commandLine));
-          return new SonarTSRunnerResponse[0];
+          return new SensorContextUtils.AnalysisResponse[0];
         }
         return responses;
       }
@@ -247,36 +234,36 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private static void saveCpd(SensorContext sensorContext, CpdToken[] cpdTokens, InputFile file) {
+  private static void saveCpd(SensorContext sensorContext, SensorContextUtils.CpdToken[] cpdTokens, InputFile file) {
     NewCpdTokens newCpdTokens = sensorContext.newCpdTokens().onFile(file);
-    for (CpdToken cpdToken : cpdTokens) {
+    for (SensorContextUtils.CpdToken cpdToken : cpdTokens) {
       newCpdTokens.addToken(cpdToken.startLine, cpdToken.startCol, cpdToken.endLine, cpdToken.endCol, cpdToken.image);
     }
 
     newCpdTokens.save();
   }
 
-  private void saveMetrics(SensorContext sensorContext, SonarTSRunnerResponse sonarTSRunnerResponse, InputFile inputFile) {
-    saveMetric(sensorContext, inputFile, CoreMetrics.FUNCTIONS, sonarTSRunnerResponse.functions);
-    saveMetric(sensorContext, inputFile, CoreMetrics.CLASSES, sonarTSRunnerResponse.classes);
-    saveMetric(sensorContext, inputFile, CoreMetrics.STATEMENTS, sonarTSRunnerResponse.statements);
-    saveMetric(sensorContext, inputFile, CoreMetrics.NCLOC, sonarTSRunnerResponse.ncloc.length);
-    saveMetric(sensorContext, inputFile, CoreMetrics.COMMENT_LINES, sonarTSRunnerResponse.commentLines.length);
-    saveMetric(sensorContext, inputFile, CoreMetrics.COMPLEXITY, sonarTSRunnerResponse.complexity);
-    saveMetric(sensorContext, inputFile, CoreMetrics.COGNITIVE_COMPLEXITY, sonarTSRunnerResponse.cognitiveComplexity);
+  private void saveMetrics(SensorContext sensorContext, SensorContextUtils.AnalysisResponse analysisResponse, InputFile inputFile) {
+    saveMetric(sensorContext, inputFile, CoreMetrics.FUNCTIONS, analysisResponse.functions);
+    saveMetric(sensorContext, inputFile, CoreMetrics.CLASSES, analysisResponse.classes);
+    saveMetric(sensorContext, inputFile, CoreMetrics.STATEMENTS, analysisResponse.statements);
+    saveMetric(sensorContext, inputFile, CoreMetrics.NCLOC, analysisResponse.ncloc.length);
+    saveMetric(sensorContext, inputFile, CoreMetrics.COMMENT_LINES, analysisResponse.commentLines.length);
+    saveMetric(sensorContext, inputFile, CoreMetrics.COMPLEXITY, analysisResponse.complexity);
+    saveMetric(sensorContext, inputFile, CoreMetrics.COGNITIVE_COMPLEXITY, analysisResponse.cognitiveComplexity);
 
-    noSonarFilter.noSonarInFile(inputFile, Arrays.stream(sonarTSRunnerResponse.nosonarLines).collect(Collectors.toSet()));
+    noSonarFilter.noSonarInFile(inputFile, Arrays.stream(analysisResponse.nosonarLines).collect(Collectors.toSet()));
 
     FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(inputFile);
-    for (int line : sonarTSRunnerResponse.ncloc) {
+    for (int line : analysisResponse.ncloc) {
       fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1);
     }
 
-    for (int line : sonarTSRunnerResponse.commentLines) {
+    for (int line : analysisResponse.commentLines) {
       fileLinesContext.setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, line, 1);
     }
 
-    for (int line : sonarTSRunnerResponse.executableLines) {
+    for (int line : analysisResponse.executableLines) {
       fileLinesContext.setIntValue(CoreMetrics.EXECUTABLE_LINES_DATA_KEY, line, 1);
     }
 
@@ -287,78 +274,20 @@ public class ExternalTypescriptSensor implements Sensor {
     sensorContext.<Integer>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();
   }
 
-  private static void saveIssues(SensorContext sensorContext, Issue[] issues, TypeScriptRules typeScriptRules) {
-    FileSystem fs = sensorContext.fileSystem();
-    for (Issue issue : issues) {
-      InputFile inputFile = fs.inputFile(fs.predicates().hasAbsolutePath(issue.name));
-      if (inputFile != null) {
-        saveIssue(sensorContext, typeScriptRules, issue, inputFile);
-      }
-    }
-  }
-
-  private static void saveIssue(SensorContext sensorContext, TypeScriptRules typeScriptRules, Issue issue, InputFile inputFile) {
-    RuleKey ruleKey = typeScriptRules.ruleKeyFromTsLintKey(issue.ruleName);
-    NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
-    NewIssueLocation location = newIssue.newLocation();
-    location.on(inputFile);
-    location.message(issue.failure);
-
-    // semicolon rule
-    if (ruleKey.rule().equals("S1438")) {
-      location.at(inputFile.selectLine(issue.startPosition.line + 1));
-
-    } else if (!TypeScriptRules.FILE_LEVEL_RULES.contains(ruleKey.rule())) {
-      location.at(inputFile.newRange(
-        issue.startPosition.line + 1,
-        issue.startPosition.character,
-        issue.endPosition.line + 1,
-        issue.endPosition.character));
-    }
-
-    newIssue.at(location);
-
-    // there is not secondaryLocations for issues coming from tslint rules
-    if (issue.secondaryLocations != null) {
-      for (SecondaryLocation secondaryLocation : issue.secondaryLocations) {
-        NewIssueLocation newSecondaryLocation = newIssue.newLocation().on(inputFile);
-        setSecondaryLocation(newSecondaryLocation, secondaryLocation, inputFile);
-        newIssue.addLocation(newSecondaryLocation);
-      }
-    }
-
-    if (issue.cost != null) {
-      newIssue.gap(issue.cost);
-    }
-
-    newIssue.save();
-  }
-
-  private static void setSecondaryLocation(NewIssueLocation newSecondaryLocation, SecondaryLocation secondaryLocation, InputFile inputFile) {
-    newSecondaryLocation.at(inputFile.newRange(
-      secondaryLocation.startLine + 1,
-      secondaryLocation.startCol,
-      secondaryLocation.endLine + 1,
-      secondaryLocation.endCol));
-    if (secondaryLocation.message != null) {
-      newSecondaryLocation.message(secondaryLocation.message);
-    }
-  }
-
-  private static void saveHighlights(SensorContext sensorContext, Highlight[] highlights, InputFile inputFile) {
+  private static void saveHighlights(SensorContext sensorContext, SensorContextUtils.Highlight[] highlights, InputFile inputFile) {
     NewHighlighting highlighting = sensorContext.newHighlighting().onFile(inputFile);
-    for (Highlight highlight : highlights) {
+    for (SensorContextUtils.Highlight highlight : highlights) {
       highlighting.highlight(highlight.startLine, highlight.startCol, highlight.endLine, highlight.endCol,
         TypeOfText.valueOf(highlight.textType.toUpperCase(Locale.ENGLISH)));
     }
     highlighting.save();
   }
 
-  private static void saveSymbols(SensorContext sensorContext, Symbol[] symbols, InputFile inputFile) {
+  private static void saveSymbols(SensorContext sensorContext, SensorContextUtils.Symbol[] symbols, InputFile inputFile) {
     NewSymbolTable newSymbolTable = sensorContext.newSymbolTable().onFile(inputFile);
-    for (Symbol symbol : symbols) {
+    for (SensorContextUtils.Symbol symbol : symbols) {
       NewSymbol newSymbol = newSymbolTable.newSymbol(symbol.startLine, symbol.startCol, symbol.endLine, symbol.endCol);
-      for (SymbolReference reference : symbol.references) {
+      for (SensorContextUtils.SymbolReference reference : symbol.references) {
         newSymbol.newReference(reference.startLine, reference.startCol, reference.endLine, reference.endCol);
       }
     }
@@ -393,77 +322,6 @@ public class ExternalTypescriptSensor implements Sensor {
     }
 
     return null;
-  }
-
-  private static class Issue {
-    String failure;
-    Position startPosition;
-    Position endPosition;
-    String name;
-    String ruleName;
-    SecondaryLocation[] secondaryLocations;
-    Double cost;
-  }
-
-  private static class Position {
-    Integer line;
-    Integer character;
-  }
-
-  private static class SonarTSRunnerResponse {
-    String filepath;
-    Issue[] issues = {};
-    Highlight[] highlights = {};
-    CpdToken[] cpdTokens = {};
-    Symbol[] symbols = {};
-    int[] ncloc = {};
-    int[] commentLines = {};
-    Integer[] nosonarLines = {};
-    int[] executableLines = {};
-    int functions = 0;
-    int statements = 0;
-    int classes = 0;
-    int complexity = 0;
-    int cognitiveComplexity = 0;
-  }
-
-  private static class Highlight {
-    Integer startLine;
-    Integer startCol;
-    Integer endLine;
-    Integer endCol;
-    String textType;
-  }
-
-  private static class CpdToken {
-    Integer startLine;
-    Integer startCol;
-    Integer endLine;
-    Integer endCol;
-    String image;
-  }
-
-  private static class Symbol {
-    Integer startLine;
-    Integer startCol;
-    Integer endLine;
-    Integer endCol;
-    SymbolReference[] references;
-  }
-
-  private static class SymbolReference {
-    Integer startLine;
-    Integer startCol;
-    Integer endLine;
-    Integer endCol;
-  }
-
-  private static class SecondaryLocation {
-    Integer startLine;
-    Integer startCol;
-    Integer endLine;
-    Integer endCol;
-    String message;
   }
 
 }

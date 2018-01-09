@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import org.sonar.api.Startable;
 import org.sonar.api.batch.InstantiationStrategy;
-import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
@@ -33,21 +32,16 @@ import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 import org.sonarsource.api.sonarlint.SonarLintSide;
 
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
-@ScannerSide
 @SonarLintSide
-public class SonarTSServer implements Startable {
+public class ContextualServer implements Startable {
 
-  private static final Logger LOG = Loggers.get(ExternalTypescriptSensor.class);
+  private static final Logger LOG = Loggers.get(ContextualServer.class);
 
   private Configuration configuration;
   private ExecutableBundleFactory bundleFactory;
   private static AtomicReference<Process> serverProcess = new AtomicReference<>();
 
-  public SonarTSServer(ExecutableBundleFactory bundleFactory) {
-    this(null, bundleFactory);
-  }
-
-  public SonarTSServer(Configuration configuration, ExecutableBundleFactory bundleFactory) {
+  public ContextualServer(Configuration configuration, ExecutableBundleFactory bundleFactory) {
     this.configuration = configuration;
     this.bundleFactory = bundleFactory;
   }
@@ -83,5 +77,4 @@ public class SonarTSServer implements Startable {
   public void stop() {
     // TODO actually stop the server once this object will get instantiated by a long-lived container
   }
-
 }
