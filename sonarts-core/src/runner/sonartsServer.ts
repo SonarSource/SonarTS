@@ -18,8 +18,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as net from "net";
-import { createService, FileCache } from "./language-service";
 import * as rules from "./rules";
+import { FileCache, createService } from "./languageService";
 
 export function start(): number {
   const server = net.createServer(socket => {

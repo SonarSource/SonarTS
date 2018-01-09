@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require("../lib/runner/sonarts-server").start();
+require("../lib/runner/sonartsServer").start();

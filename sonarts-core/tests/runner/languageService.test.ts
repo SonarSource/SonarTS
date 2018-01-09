@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { createService, FileCache } from "../../src/runner/language-service";
+import { createService, FileCache } from "../../src/runner/languageService";
 import * as nav from "../../src/utils/navigation";
 import * as ts from "typescript";
 import { Identifier, LanguageService } from "typescript";
