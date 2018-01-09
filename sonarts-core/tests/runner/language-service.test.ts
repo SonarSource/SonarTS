@@ -22,6 +22,7 @@ import * as nav from "../../src/utils/navigation";
 import * as ts from "typescript";
 import { Identifier, LanguageService } from "typescript";
 import * as path from "path";
+import { is } from "../../src/utils/nodes";
 
 it("should return type information", () => {
   const file1 = path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts");
@@ -50,7 +51,7 @@ function getType(service: LanguageService, file: string, identifierName: string)
   const sourceFile = program.getSourceFile(file);
   const xNode = nav
     .descendants(sourceFile)
-    .filter(descendant => nav.is(descendant, ts.SyntaxKind.Identifier))
+    .filter(descendant => is(descendant, ts.SyntaxKind.Identifier))
     .map(descendant => descendant as Identifier)
     .find(identifier => identifier.getText() == identifierName);
 
