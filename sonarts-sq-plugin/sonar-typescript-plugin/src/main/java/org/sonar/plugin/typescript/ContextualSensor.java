@@ -45,7 +45,7 @@ public class ContextualSensor implements Sensor {
   private static final Logger LOG = Loggers.get(ContextualSensor.class);
 
   private CheckFactory checkFactory;
-  private static AtomicReference<Socket> socket = new AtomicReference<>();
+  private static AtomicReference<Socket> socketReference = new AtomicReference<>();
 
   public ContextualSensor(CheckFactory checkFactory) {
     this.checkFactory = checkFactory;
@@ -53,38 +53,36 @@ public class ContextualSensor implements Sensor {
 
   @Override
   public void describe(SensorDescriptor sensorDescriptor) {
-    sensorDescriptor.onlyOnLanguage(TypeScriptLanguage.KEY).name("SonarTS").onlyOnFileType(InputFile.Type.MAIN);
+    sensorDescriptor.onlyOnLanguage(TypeScriptLanguage.KEY).name("Contextual SonarTS").onlyOnFileType(InputFile.Type.MAIN);
   }
 
   @Override
   public void execute(SensorContext sensorContext) {
     Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
-    inputFiles.forEach(inputFile -> {
+    inputFiles.forEach(inputFile ->
       connect().ifPresent(socket -> {
         try {
           final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
           writer.append(new Gson().toJson(new SensorContextUtils.AnalysisRequest(inputFile.uri().toString(), inputFile.contents())));
           writer.flush();
-          SensorContextUtils.AnalysisResponse response = new Gson().fromJson(new JsonReader(new InputStreamReader(socket.getInputStream())),
-            SensorContextUtils.AnalysisResponse.class);
+          JsonReader jsonReader = new JsonReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+          SensorContextUtils.AnalysisResponse response = new Gson().fromJson(jsonReader, SensorContextUtils.AnalysisResponse.class);
           TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
           SensorContextUtils.saveIssues(sensorContext, response.issues, typeScriptRules);
         } catch (IOException e) {
-          LOG.error("Failed writing to server " + socket.getLocalAddress(), e);
+          LOG.error("Failed writing to SonarTS Server " + socket.getLocalAddress(), e);
         }
-      });
-    });
-
+      }));
   }
 
-  private Optional<Socket> connect() {
-    return Optional.ofNullable(this.socket.updateAndGet(socket -> {
+  private static Optional<Socket> connect() {
+    return Optional.ofNullable(socketReference.updateAndGet(socket -> {
       if (socket == null) {
         try {
           return new Socket("localhost", 55555);
         } catch (IOException e) {
-          LOG.error("Failed to connect to sonarts server", e);
-          return socket;
+          LOG.error("Failed to connect to SonarTS Server", e);
+          return null;
         }
       }
       return socket;

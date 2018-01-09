@@ -28,6 +28,10 @@ import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 
 public class SensorContextUtils {
+
+  private SensorContextUtils() {
+  }
+
   static void saveIssues(SensorContext sensorContext, Issue[] issues, TypeScriptRules typeScriptRules) {
     FileSystem fs = sensorContext.fileSystem();
     for (Issue issue : issues) {
