@@ -29,7 +29,17 @@ it("run analysis on provided content", done => {
       JSON.stringify({
         operation: "analyze",
         file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
-        content: `if(x && x) console.log("identical expressions");`,
+        content: `if(x && x) console.log("identical expressions"); if (x == null) {} else if (x == 2) {}`,
+        rules: [
+          {
+            ruleName: "no-identical-expressions",
+            ruleArguments: [],
+          },
+          {
+            ruleName: "triple-equals",
+            ruleArguments: ["allow-null-check"],
+          },
+        ],
       }),
     );
   });
@@ -37,7 +47,7 @@ it("run analysis on provided content", done => {
   client.on("data", function(data) {
     const response = JSON.parse(data.toString());
     client.destroy();
-    expect(response.issues.length).toBe(1);
+    expect(response.issues.map((issue: any) => issue.ruleName)).toEqual(["no-identical-expressions", "triple-equals"]);
     done();
   });
 });

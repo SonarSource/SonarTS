@@ -30,18 +30,7 @@ export function start(): number {
         fileCache.newContent(request);
         const service = createService([request.file], {}, fileCache);
         const program = service.getProgram();
-        const issues = rules.getIssues(
-          [
-            {
-              ruleName: "no-identical-expressions",
-              ruleArguments: [],
-              ruleSeverity: "error",
-              disabledIntervals: [],
-            },
-          ],
-          program,
-          program.getSourceFile(request.file),
-        );
+        const issues = rules.getIssues(request.rules, program, program.getSourceFile(request.file));
         socket.write(JSON.stringify(issues));
       }
     });
