@@ -66,7 +66,7 @@ public class ContextualServer implements Startable {
       return;
     }
     final ExecutableBundle bundle = bundleFactory.createAndDeploy(serverFolder, configuration);
-    ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand());
+    ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand().commandLineTokens());
     // TODO consider adding NODE_PATH
     LOG.info("SonarTS Server started");
     try {

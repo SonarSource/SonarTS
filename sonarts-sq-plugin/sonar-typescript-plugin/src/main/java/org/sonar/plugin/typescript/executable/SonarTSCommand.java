@@ -19,17 +19,26 @@
  */
 package org.sonar.plugin.typescript.executable;
 
-import org.sonar.api.batch.fs.InputFile;
-import org.sonar.plugin.typescript.TypeScriptRules;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public interface ExecutableBundle {
+public class SonarTSCommand {
 
-  SonarTSCommand getSonarTsRunnerCommand();
+  private final List<String> commandLineTokens;
 
-  SonarTSCommand getSonarTSServerCommand();
+  public SonarTSCommand(String... commandLineTokens) {
+    this.commandLineTokens = Arrays.asList(commandLineTokens);
+  }
 
-  String buildRequest(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules);
+  public String commandLine() {
+    return String.join(" ", commandLineTokens);
+  }
 
-  String getNodeExecutable();
+  public List<String> commandLineTokens() {
+    List<String> list = new ArrayList<>();
+    list.addAll(commandLineTokens);
+    return list;
+  }
 
 }

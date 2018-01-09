@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -55,7 +54,7 @@ import org.sonar.api.utils.log.Loggers;
 import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
-import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
+import org.sonar.plugin.typescript.executable.SonarTSCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -408,20 +407,24 @@ public class ExternalTypescriptSensorTest {
     }
 
     private class TestBundle implements ExecutableBundle {
-
-      @Override
-      public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
-        return new SonarTSRunnerCommand(inputFiles, ruleCheckCommand);
-      }
-
       @Override
       public String getNodeExecutable() {
         return customNodeExecutable != null ? customNodeExecutable : node;
       }
 
       @Override
-      public List<String> getSonarTSServerCommand() {
-        return Collections.emptyList();
+      public SonarTSCommand getSonarTsRunnerCommand() {
+        return new SonarTSCommand(ruleCheckCommand);
+      }
+
+      @Override
+      public SonarTSCommand getSonarTSServerCommand() {
+        return new SonarTSCommand(ruleCheckCommand);
+      }
+
+      @Override
+      public String buildRequest(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
+        return "";
       }
     }
   }

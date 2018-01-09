@@ -19,15 +19,18 @@
  */
 package org.sonar.plugin.typescript.executable;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
@@ -51,8 +54,8 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   private File deployDestination;
 
   private String bundleLocation;
-  private File sonartsExecutable;
-  private File sonartsServer;
+  private File sonartsRunnerExecutable;
+  private File sonartsServerExecutable;
 
   private SonarTSCoreBundle(String bundleLocation, File deployDestination, Configuration configuration) {
     this.bundleLocation = bundleLocation;
@@ -61,8 +64,8 @@ public class SonarTSCoreBundle implements ExecutableBundle {
 
     File sonartsCoreDir = new File(deployDestination, "sonarts-bundle");
 
-    this.sonartsExecutable = new File(sonartsCoreDir, BIN + "tsrunner");
-    this.sonartsServer = new File(sonartsCoreDir, BIN + "sonarts-server");
+    this.sonartsRunnerExecutable = new File(sonartsCoreDir, BIN + "tsrunner");
+    this.sonartsServerExecutable = new File(sonartsCoreDir, BIN + "sonarts-server");
   }
 
   static SonarTSCoreBundle createAndDeploy(String bundleLocation, File deployDestination, Configuration configuration) {
@@ -92,16 +95,28 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    * Builds command to run rules and calculate metrics with tsrunner
    */
   @Override
-  public SonarTSRunnerCommand getSonarTsRunnerCommand(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
-    String increaseMemory = "--max-old-space-size=" + NODE_PROCESS_MEMORY;
-    SonarTSRunnerCommand runnerCommand = new SonarTSRunnerCommand(inputFiles, getNodeExecutable(), increaseMemory, this.sonartsExecutable.getAbsolutePath());
-    runnerCommand.setTsConfigPath(tsconfigPath);
+  public SonarTSCommand getSonarTsRunnerCommand() {
+    return getCommand(sonartsRunnerExecutable);
+  }
+
+  @Override
+  public String buildRequest(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
+    SonarTSRequest request = new SonarTSRequest();
+    request.filepaths = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::absolutePath).toArray(String[]::new);
+    request.tsconfig = tsconfigPath;
+
     typeScriptRules.forEach(rule -> {
       if(rule.isEnabled()) {
-        runnerCommand.addRule(rule.tsLintKey(), rule.configuration());
+        request.rules.add(new RuleToExecute(rule.tsLintKey(), rule.configuration()));
       }
     });
-    return runnerCommand;
+
+    return new Gson().toJson(request);
+  }
+
+  private SonarTSCommand getCommand(File executable) {
+    String increaseMemory = "--max-old-space-size=" + NODE_PROCESS_MEMORY;
+    return new SonarTSCommand(getNodeExecutable(), increaseMemory, executable.getAbsolutePath());
   }
 
   /**
@@ -113,8 +128,8 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   }
 
   @Override
-  public List<String> getSonarTSServerCommand() {
-    return Arrays.asList(configuration.get(TypeScriptPlugin.NODE_EXECUTABLE).get(), this.sonartsServer.getAbsolutePath());
+  public SonarTSCommand getSonarTSServerCommand() {
+    return getCommand(sonartsServerExecutable);
   }
 
   private File copyTo(File targetPath) throws IOException {
@@ -143,6 +158,22 @@ public class SonarTSCoreBundle implements ExecutableBundle {
           out.close();
         }
       }
+    }
+  }
+
+  private static class SonarTSRequest {
+    String[] filepaths;
+    String tsconfig;
+    List<RuleToExecute> rules = new ArrayList<>();
+  }
+
+  private static class RuleToExecute {
+    final String ruleName;
+    final JsonElement ruleArguments;
+
+    RuleToExecute(String ruleName, JsonElement ruleArguments) {
+      this.ruleName = ruleName;
+      this.ruleArguments = ruleArguments;
     }
   }
 

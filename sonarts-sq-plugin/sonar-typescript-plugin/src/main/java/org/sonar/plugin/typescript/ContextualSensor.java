@@ -66,9 +66,9 @@ public class ContextualSensor implements Sensor {
           writer.append(new Gson().toJson(new SensorContextUtils.AnalysisRequest(inputFile.uri().toString(), inputFile.contents())));
           writer.flush();
           JsonReader jsonReader = new JsonReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-          SensorContextUtils.AnalysisResponse response = new Gson().fromJson(jsonReader, SensorContextUtils.AnalysisResponse.class);
+          SensorContextUtils.Issue[] issues = new Gson().fromJson(jsonReader, SensorContextUtils.Issue[].class);
           TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
-          SensorContextUtils.saveIssues(sensorContext, response.issues, typeScriptRules);
+          SensorContextUtils.saveIssues(sensorContext, issues, typeScriptRules);
         } catch (IOException e) {
           LOG.error("Failed writing to SonarTS Server " + socket.getLocalAddress(), e);
         }

@@ -56,7 +56,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
-import org.sonar.plugin.typescript.executable.SonarTSRunnerCommand;
+import org.sonar.plugin.typescript.executable.SonarTSCommand;
 
 public class ExternalTypescriptSensor implements Sensor {
 
@@ -124,8 +124,9 @@ public class ExternalTypescriptSensor implements Sensor {
       Collection<InputFile> inputFilesForThisConfig = e.getValue();
       LOG.debug(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
 
-      SonarTSRunnerCommand command = executableBundle.getSonarTsRunnerCommand(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
-      SensorContextUtils.AnalysisResponse[] responses = executeExternalRunner(command, localTypescript);
+      SonarTSCommand command = executableBundle.getSonarTsRunnerCommand();
+      String request = executableBundle.buildRequest(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
+      SensorContextUtils.AnalysisResponse[] responses = executeExternalRunner(command, localTypescript, request);
 
       for (SensorContextUtils.AnalysisResponse response : responses) {
         FileSystem fileSystem = sensorContext.fileSystem();
@@ -200,7 +201,7 @@ public class ExternalTypescriptSensor implements Sensor {
     return null;
   }
 
-  private SensorContextUtils.AnalysisResponse[] executeExternalRunner(SonarTSRunnerCommand command, @Nullable File localTypescript) {
+  private SensorContextUtils.AnalysisResponse[] executeExternalRunner(SonarTSCommand command, @Nullable File localTypescript, String request) {
     String commandLine = command.commandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens());
     setNodePath(localTypescript, processBuilder);
@@ -209,7 +210,7 @@ public class ExternalTypescriptSensor implements Sensor {
       Process process = processBuilder.start();
       errorConsumer.consumeStdError(process);
       OutputStreamWriter writerToSonar = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
-      writerToSonar.write(command.toJsonRequest());
+      writerToSonar.write(request);
       writerToSonar.close();
       try (InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)) {
         SensorContextUtils.AnalysisResponse[] responses = new Gson().fromJson(inputStreamReader, SensorContextUtils.AnalysisResponse[].class);
