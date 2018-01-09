@@ -41,6 +41,10 @@ public class ContextualServer implements Startable {
   private ExecutableBundleFactory bundleFactory;
   private static AtomicReference<Process> serverProcess = new AtomicReference<>();
 
+  public ContextualServer(ExecutableBundleFactory bundleFactory) {
+    this(null, bundleFactory);
+  }
+
   public ContextualServer(Configuration configuration, ExecutableBundleFactory bundleFactory) {
     this.configuration = configuration;
     this.bundleFactory = bundleFactory;
