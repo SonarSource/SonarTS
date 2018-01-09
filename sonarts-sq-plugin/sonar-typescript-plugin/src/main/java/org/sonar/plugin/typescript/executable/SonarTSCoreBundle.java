@@ -74,7 +74,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   }
 
   /**
-   * Extracting "sonarts-core.zip" (containing typescript, tslint and tslint-sonarts)
+   * Extracting "sonarts-core.zip" (containing tslint and tslint-sonarts)
    * to deployDestination (".sonar" directory of the analyzed project).
    */
   private void deploy() {

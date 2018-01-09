@@ -19,12 +19,13 @@
  */
 package org.sonar.plugin.typescript;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 import org.sonar.api.Startable;
 import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Configuration;
-import org.sonar.api.utils.TempFolder;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
@@ -39,33 +40,40 @@ public class SonarTSServer implements Startable {
   private static final Logger LOG = Loggers.get(ExternalTypescriptSensor.class);
 
   private Configuration configuration;
-  private TempFolder tempFolder;
   private ExecutableBundleFactory bundleFactory;
+  private static AtomicReference<Process> serverProcess = new AtomicReference<>();
 
-  public SonarTSServer(TempFolder tempFolder, ExecutableBundleFactory bundleFactory) {
-    this(null, tempFolder, bundleFactory);
+  public SonarTSServer(ExecutableBundleFactory bundleFactory) {
+    this(null, bundleFactory);
   }
 
-  public SonarTSServer(Configuration configuration, TempFolder tempFolder, ExecutableBundleFactory bundleFactory) {
+  public SonarTSServer(Configuration configuration, ExecutableBundleFactory bundleFactory) {
     this.configuration = configuration;
-    this.tempFolder = tempFolder;
     this.bundleFactory = bundleFactory;
   }
 
   @Override
   public void start() {
-    LOG.warn("Attempting SonarTS Server Start");
-    if (configuration == null) {
-      LOG.warn("Skipping server start due to null configuration");
+    File serverFolder = new File(System.getProperty("java.io.tmpdir"), "sonarts");
+    if (!serverFolder.exists()) {
+      serverFolder.mkdir();
+    }
+    if (serverProcess.get() != null && serverProcess.get().isAlive()) {
+      LOG.debug("Skipping SonarTS Server start, already running");
       return;
     }
-    final ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir("sonarts"), configuration);
+    LOG.warn("Attempting SonarTS Server start");
+    if (configuration == null) {
+      LOG.warn("Skipping SonarTS Server start due to null configuration");
+      return;
+    }
+    final ExecutableBundle bundle = bundleFactory.createAndDeploy(serverFolder, configuration);
     ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand());
     // TODO consider adding NODE_PATH
-    LOG.error("SonarTS Server Started!!");
+    LOG.info("SonarTS Server started");
     try {
       processBuilder.inheritIO();
-      processBuilder.start();
+      serverProcess.set(processBuilder.start());
     } catch (IOException e) {
       LOG.error("Failed to start SonarTS Server", e);
     }
@@ -73,6 +81,7 @@ public class SonarTSServer implements Startable {
 
   @Override
   public void stop() {
-
+    // TODO actually stop the server once this object will get instantiated by a long-lived container
   }
+
 }
