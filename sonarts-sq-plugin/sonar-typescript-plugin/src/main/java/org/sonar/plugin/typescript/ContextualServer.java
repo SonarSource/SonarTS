@@ -21,6 +21,7 @@ package org.sonar.plugin.typescript;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import org.sonar.api.Startable;
 import org.sonar.api.batch.InstantiationStrategy;
@@ -34,6 +35,9 @@ import org.sonarsource.api.sonarlint.SonarLintSide;
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 @SonarLintSide
 public class ContextualServer implements Startable {
+
+  // SonarLint should pass in this property an absolute path to the directory containing TypeScript dependency
+  private static final String TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY = "sonar.typescript.internal.typescriptLocation";
 
   private static final Logger LOG = Loggers.get(ContextualServer.class);
 
@@ -52,29 +56,45 @@ public class ContextualServer implements Startable {
 
   @Override
   public void start() {
-    File serverFolder = new File(System.getProperty("java.io.tmpdir"), "sonarts");
-    if (!serverFolder.exists()) {
-      serverFolder.mkdir();
-    }
     if (serverProcess.get() != null && serverProcess.get().isAlive()) {
       LOG.debug("Skipping SonarTS Server start, already running");
       return;
     }
+
     LOG.warn("Attempting SonarTS Server start");
+
     if (configuration == null) {
       LOG.warn("Skipping SonarTS Server start due to null configuration");
       return;
     }
-    final ExecutableBundle bundle = bundleFactory.createAndDeploy(serverFolder, configuration);
+
+    final ExecutableBundle bundle = bundleFactory.createAndDeploy(getServerDir(), configuration);
     ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand().commandLineTokens());
-    // TODO consider adding NODE_PATH
-    LOG.info("SonarTS Server started");
+
+    Optional<String> typescriptLocation = configuration.get(TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
+    if (typescriptLocation.isPresent()) {
+      SensorContextUtils.setNodePath(new File(typescriptLocation.get()), processBuilder);
+
+    } else {
+      LOG.error("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
+    }
+
     try {
       processBuilder.inheritIO();
       serverProcess.set(processBuilder.start());
+      LOG.info("SonarTS Server started");
+
     } catch (IOException e) {
       LOG.error("Failed to start SonarTS Server", e);
     }
+  }
+
+  private static File getServerDir() {
+    File serverFolder = new File(System.getProperty("java.io.tmpdir"), "sonarts");
+    if (!serverFolder.exists()) {
+      serverFolder.mkdir();
+    }
+    return serverFolder;
   }
 
   @Override

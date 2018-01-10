@@ -20,9 +20,11 @@
 package org.sonar.plugin.typescript;
 
 import com.google.gson.JsonElement;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -56,6 +58,11 @@ public class SensorContextUtils {
     });
 
     return rulesToExecute;
+  }
+
+  public static void setNodePath(File typescriptLocation, ProcessBuilder processBuilder) {
+    Map<String, String> environment = processBuilder.environment();
+    environment.put("NODE_PATH", typescriptLocation.getAbsolutePath() + File.pathSeparator + environment.getOrDefault("NODE_PATH", ""));
   }
 
   private static void saveIssue(SensorContext sensorContext, TypeScriptRules typeScriptRules, Issue issue, InputFile inputFile) {

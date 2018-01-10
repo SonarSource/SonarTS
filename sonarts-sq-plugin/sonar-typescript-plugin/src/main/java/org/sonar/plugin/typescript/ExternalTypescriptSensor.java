@@ -58,6 +58,8 @@ import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 import org.sonar.plugin.typescript.executable.SonarTSCommand;
 
+import static org.sonar.plugin.typescript.SensorContextUtils.setNodePath;
+
 public class ExternalTypescriptSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(ExternalTypescriptSensor.class);
@@ -204,7 +206,12 @@ public class ExternalTypescriptSensor implements Sensor {
   private SensorContextUtils.AnalysisResponse[] executeExternalRunner(SonarTSCommand command, @Nullable File localTypescript, String request) {
     String commandLine = command.commandLine();
     ProcessBuilder processBuilder = new ProcessBuilder(command.commandLineTokens());
-    setNodePath(localTypescript, processBuilder);
+
+    if (localTypescript != null) {
+      LOG.debug("Setting 'NODE_PATH' to " + localTypescript);
+      setNodePath(localTypescript, processBuilder);
+    }
+
     LOG.debug(String.format("Starting external process `%s`", commandLine));
     try {
       Process process = processBuilder.start();
@@ -225,14 +232,6 @@ public class ExternalTypescriptSensor implements Sensor {
       throw new IllegalStateException(String.format("Failed to run external process `%s`. Run with -X for more information", commandLine), e);
     }
 
-  }
-
-  private static void setNodePath(@Nullable File localTypescript, ProcessBuilder processBuilder) {
-    if (localTypescript != null) {
-      Map<String, String> environment = processBuilder.environment();
-      LOG.debug("Setting 'NODE_PATH' to " + localTypescript);
-      environment.put("NODE_PATH", localTypescript.getAbsolutePath() + File.pathSeparator + environment.getOrDefault("NODE_PATH", ""));
-    }
   }
 
   private static void saveCpd(SensorContext sensorContext, SensorContextUtils.CpdToken[] cpdTokens, InputFile file) {
