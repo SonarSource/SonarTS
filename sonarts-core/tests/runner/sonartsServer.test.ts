@@ -24,7 +24,7 @@ import * as path from "path";
 it("run analysis on provided content", done => {
   const port = start();
   var client = new net.Socket();
-  client.connect(port, "localhost", function() {
+  client.connect(port, "localhost", () => {
     client.write(
       JSON.stringify({
         operation: "analyze",

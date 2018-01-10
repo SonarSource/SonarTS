@@ -29,7 +29,7 @@ export function createService(
     getScriptFileNames: () => rootFileNames,
     getScriptVersion: fileName => cache.version(fileName),
     getScriptSnapshot: fileName => {
-      const cached = cache.retrieve(fileName);
+      const cached = cache.retrieveContent(fileName);
       if (cached) {
         return ts.ScriptSnapshot.fromString(cached);
       }
@@ -53,23 +53,23 @@ export function createService(
 }
 
 export class FileCache {
-  private files: ts.MapLike<VersionedContent> = {};
+  private files: Map<String, VersionedContent> = new Map();
 
   newContent(update: { file: string; content: string }): void {
-    const previous = this.files[update.file];
+    const previous = this.files.get(update.file);
     let version = 0;
     if (previous) {
       version = previous.version + 1;
     }
-    this.files[update.file] = { content: update.content, version };
+    this.files.set(update.file, { content: update.content, version });
   }
 
   version(file: string) {
-    return this.files[file] && this.files[file].version.toString();
+    return this.files.has(file) ? this.files.get(file)!.version.toString() : "n/a";
   }
 
-  retrieve(file: string): string | undefined {
-    return this.files[file] && this.files[file].content;
+  retrieveContent(file: string): string | undefined {
+    return this.files.has(file) ? this.files.get(file)!.content : undefined;
   }
 }
 
