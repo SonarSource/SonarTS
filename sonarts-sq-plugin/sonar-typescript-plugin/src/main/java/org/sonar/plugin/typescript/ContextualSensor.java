@@ -28,7 +28,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import org.sonar.api.batch.ScannerSide;
+import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.sensor.Sensor;
@@ -37,10 +37,12 @@ import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.SensorContextUtils.ContextualAnalysisRequest;
+import org.sonarsource.api.sonarlint.SonarLintSide;
 
 import static org.sonar.plugin.typescript.SensorContextUtils.getInputFiles;
 
-@ScannerSide
+@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
+@SonarLintSide
 public class ContextualSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(ContextualSensor.class);
@@ -64,12 +66,16 @@ public class ContextualSensor implements Sensor {
       connect().ifPresent(socket -> {
         try {
           final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
+          LOG.error("ANALYZING " + inputFile.contents()); // TODO remove this
           TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
+          writer.append(getContextualRequest(inputFile, typeScriptRules));
           writer.append(getContextualRequest(inputFile, typeScriptRules));
           writer.flush();
           JsonReader jsonReader = new JsonReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
           SensorContextUtils.Issue[] issues = new Gson().fromJson(jsonReader, SensorContextUtils.Issue[].class);
-          SensorContextUtils.saveIssues(sensorContext, issues, typeScriptRules);
+          for (SensorContextUtils.Issue issue : issues) {
+            SensorContextUtils.saveIssuePocToRemove(sensorContext, typeScriptRules, issue, inputFile);
+          }
         } catch (IOException e) {
           LOG.error("Failed writing to SonarTS Server " + socket.getLocalAddress(), e);
         }

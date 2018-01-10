@@ -32,8 +32,12 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class SensorContextUtils {
+
+  private static final Logger LOG = Loggers.get(ContextualSensor.class);
 
   private SensorContextUtils() {
   }
@@ -58,6 +62,43 @@ public class SensorContextUtils {
     });
 
     return rulesToExecute;
+  }
+
+  static void saveIssuePocToRemove(SensorContext sensorContext, TypeScriptRules typeScriptRules, Issue issue, InputFile inputFile) {
+    RuleKey ruleKey = RuleKey.of("typescript", "S1764");
+    NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
+    NewIssueLocation location = newIssue.newLocation();
+    location.on(inputFile);
+    location.message(issue.failure);
+
+    // semicolon rule
+    if (ruleKey.rule().equals("S1438")) {
+      location.at(inputFile.selectLine(issue.startPosition.line + 1));
+
+    } else if (!TypeScriptRules.FILE_LEVEL_RULES.contains(ruleKey.rule())) {
+      location.at(inputFile.newRange(
+        issue.startPosition.line + 1,
+        issue.startPosition.character,
+        issue.endPosition.line + 1,
+        issue.endPosition.character));
+    }
+
+    newIssue.at(location);
+
+    // there is not secondaryLocations for issues coming from tslint rules
+    if (issue.secondaryLocations != null) {
+      for (SecondaryLocation secondaryLocation : issue.secondaryLocations) {
+        NewIssueLocation newSecondaryLocation = newIssue.newLocation().on(inputFile);
+        setSecondaryLocation(newSecondaryLocation, secondaryLocation, inputFile);
+        newIssue.addLocation(newSecondaryLocation);
+      }
+    }
+
+    if (issue.cost != null) {
+      newIssue.gap(issue.cost);
+    }
+    LOG.info("Saving issue " + issue + "\n  as >>>> " + newIssue); // TODO Remove this
+    newIssue.save();
   }
 
   public static void setNodePath(File typescriptLocation, ProcessBuilder processBuilder) {
@@ -98,7 +139,7 @@ public class SensorContextUtils {
     if (issue.cost != null) {
       newIssue.gap(issue.cost);
     }
-
+    LOG.info("Saving issue " + issue + "\n  as >>>> " + newIssue); // TODO Remove this
     newIssue.save();
   }
 
@@ -129,11 +170,21 @@ public class SensorContextUtils {
     String ruleName;
     SecondaryLocation[] secondaryLocations;
     Double cost;
+
+    @Override
+    public String toString() {
+      return failure + "\n start " + startPosition + "\n end " + endPosition + "\n name " + name + "\n ruleName " + ruleName + "\n cost " + cost;
+    }
   }
 
   private static class Position {
     Integer line;
     Integer character;
+
+    @Override
+    public String toString() {
+      return "[" + line + "," + character + "]";
+    }
   }
 
   private static class SecondaryLocation {
