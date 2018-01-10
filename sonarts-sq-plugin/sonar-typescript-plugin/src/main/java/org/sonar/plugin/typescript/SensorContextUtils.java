@@ -19,6 +19,10 @@
  */
 package org.sonar.plugin.typescript;
 
+import com.google.gson.JsonElement;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -40,6 +44,18 @@ public class SensorContextUtils {
         saveIssue(sensorContext, typeScriptRules, issue, inputFile);
       }
     }
+  }
+
+  public static List<RuleToExecute> convertToRulesToExecute(TypeScriptRules typeScriptRules) {
+    List<RuleToExecute> rulesToExecute = new ArrayList<>();
+
+    typeScriptRules.forEach(rule -> {
+      if(rule.isEnabled()) {
+        rulesToExecute.add(new RuleToExecute(rule.tsLintKey(), rule.configuration()));
+      }
+    });
+
+    return rulesToExecute;
   }
 
   private static void saveIssue(SensorContext sensorContext, TypeScriptRules typeScriptRules, Issue issue, InputFile inputFile) {
@@ -169,15 +185,26 @@ public class SensorContextUtils {
     Integer endCol;
   }
 
-  static class AnalysisRequest {
+  static class ContextualAnalysisRequest {
     public String operation = "analyze";
     public String file;
     public String content;
+    public List<RuleToExecute> rules;
 
+    ContextualAnalysisRequest(InputFile inputFile, TypeScriptRules typeScriptRules) throws IOException {
+      this.file = inputFile.uri().toString();
+      this.content = inputFile.contents();
+      this.rules = SensorContextUtils.convertToRulesToExecute(typeScriptRules);
+    }
+  }
 
-    public AnalysisRequest(String file, String content) {
-      this.file = file;
-      this.content = content;
+  public static class RuleToExecute {
+    final String ruleName;
+    final JsonElement ruleArguments;
+
+    public RuleToExecute(String ruleName, JsonElement ruleArguments) {
+      this.ruleName = ruleName;
+      this.ruleArguments = ruleArguments;
     }
   }
 

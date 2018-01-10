@@ -125,7 +125,7 @@ public class ExternalTypescriptSensor implements Sensor {
       LOG.debug(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
 
       SonarTSCommand command = executableBundle.getSonarTsRunnerCommand();
-      String request = executableBundle.buildRequest(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
+      String request = executableBundle.getRequestForRunner(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
       SensorContextUtils.AnalysisResponse[] responses = executeExternalRunner(command, localTypescript, request);
 
       for (SensorContextUtils.AnalysisResponse response : responses) {

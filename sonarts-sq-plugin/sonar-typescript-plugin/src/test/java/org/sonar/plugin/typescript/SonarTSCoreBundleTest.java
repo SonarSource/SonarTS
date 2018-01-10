@@ -64,7 +64,7 @@ public class SonarTSCoreBundleTest {
     DefaultInputFile file2 = new TestInputFileBuilder("moduleKey", "file2.ts").build();
 
     SonarTSCommand ruleCommand = bundle.getSonarTsRunnerCommand();
-    String ruleCommandContent = bundle.buildRequest(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), getTypeScriptRules());
+    String ruleCommandContent = bundle.getRequestForRunner(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), getTypeScriptRules());
     assertThat(ruleCommand.commandLine()).isEqualTo("node --max-old-space-size=2048 " + new File(DEPLOY_DESTINATION, "sonarts-bundle/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
     assertThat(ruleCommandContent).contains("file1.ts");
     assertThat(ruleCommandContent).contains("file2.ts");

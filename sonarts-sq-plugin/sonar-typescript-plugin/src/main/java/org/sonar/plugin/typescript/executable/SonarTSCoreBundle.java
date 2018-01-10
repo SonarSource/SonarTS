@@ -20,14 +20,12 @@
 package org.sonar.plugin.typescript.executable;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -39,6 +37,8 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.sonar.plugin.typescript.SensorContextUtils;
+import org.sonar.plugin.typescript.SensorContextUtils.RuleToExecute;
 import org.sonar.plugin.typescript.TypeScriptPlugin;
 import org.sonar.plugin.typescript.TypeScriptRules;
 
@@ -100,16 +100,11 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   }
 
   @Override
-  public String buildRequest(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
+  public String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
     SonarTSRequest request = new SonarTSRequest();
     request.filepaths = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::absolutePath).toArray(String[]::new);
     request.tsconfig = tsconfigPath;
-
-    typeScriptRules.forEach(rule -> {
-      if(rule.isEnabled()) {
-        request.rules.add(new RuleToExecute(rule.tsLintKey(), rule.configuration()));
-      }
-    });
+    request.rules = SensorContextUtils.convertToRulesToExecute(typeScriptRules);
 
     return new Gson().toJson(request);
   }
@@ -164,17 +159,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   private static class SonarTSRequest {
     String[] filepaths;
     String tsconfig;
-    List<RuleToExecute> rules = new ArrayList<>();
-  }
-
-  private static class RuleToExecute {
-    final String ruleName;
-    final JsonElement ruleArguments;
-
-    RuleToExecute(String ruleName, JsonElement ruleArguments) {
-      this.ruleName = ruleName;
-      this.ruleArguments = ruleArguments;
-    }
+    List<RuleToExecute> rules;
   }
 
 }

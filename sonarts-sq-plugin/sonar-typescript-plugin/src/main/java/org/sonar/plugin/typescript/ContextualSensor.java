@@ -36,6 +36,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.sonar.plugin.typescript.SensorContextUtils.ContextualAnalysisRequest;
 
 import static org.sonar.plugin.typescript.SensorContextUtils.getInputFiles;
 
@@ -63,11 +64,11 @@ public class ContextualSensor implements Sensor {
       connect().ifPresent(socket -> {
         try {
           final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-          writer.append(new Gson().toJson(new SensorContextUtils.AnalysisRequest(inputFile.uri().toString(), inputFile.contents())));
+          TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
+          writer.append(getContextualRequest(inputFile, typeScriptRules));
           writer.flush();
           JsonReader jsonReader = new JsonReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
           SensorContextUtils.Issue[] issues = new Gson().fromJson(jsonReader, SensorContextUtils.Issue[].class);
-          TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
           SensorContextUtils.saveIssues(sensorContext, issues, typeScriptRules);
         } catch (IOException e) {
           LOG.error("Failed writing to SonarTS Server " + socket.getLocalAddress(), e);
@@ -87,6 +88,10 @@ public class ContextualSensor implements Sensor {
       }
       return socket;
     }));
+  }
+
+  private static String getContextualRequest(InputFile inputFile, TypeScriptRules typeScriptRules) throws IOException {
+    return new Gson().toJson(new ContextualAnalysisRequest(inputFile, typeScriptRules));
   }
 
 }
