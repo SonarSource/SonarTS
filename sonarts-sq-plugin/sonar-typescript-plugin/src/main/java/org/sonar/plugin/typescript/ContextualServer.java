@@ -32,7 +32,7 @@ import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 import org.sonarsource.api.sonarlint.SonarLintSide;
 
-@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
+@InstantiationStrategy("PRE_PROCESS")
 @SonarLintSide
 public class ContextualServer implements Startable {
 
