@@ -62,20 +62,20 @@ public class ContextualSensor implements Sensor {
   @Override
   public void execute(SensorContext sensorContext) {
     Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
+    LOG.info("Starting SonarTS Analysis");
     inputFiles.forEach(inputFile ->
       connect().ifPresent(socket -> {
+        LOG.info("Analysing " + inputFile.uri().toString());
         try {
           final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-          LOG.error("ANALYZING " + inputFile.contents()); // TODO remove this
           TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
           String request = getContextualRequest(inputFile, typeScriptRules);
-          LOG.info("REQUEST " + request); // TODO remove this
           writer.append(request);
           writer.flush();
           JsonReader jsonReader = new JsonReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
           SensorContextUtils.AnalysisResponse response = new Gson().fromJson(jsonReader, SensorContextUtils.AnalysisResponse.class);
           for (SensorContextUtils.Issue issue : response.issues) {
-            SensorContextUtils.saveIssuePocToRemove(sensorContext, typeScriptRules, issue, inputFile);
+            SensorContextUtils.saveIssue(sensorContext, typeScriptRules, issue, inputFile);
           }
         } catch (IOException e) {
           LOG.error("Failed writing to SonarTS Server " + socket.getLocalAddress(), e);

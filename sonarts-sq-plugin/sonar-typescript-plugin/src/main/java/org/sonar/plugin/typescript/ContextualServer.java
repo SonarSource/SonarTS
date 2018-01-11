@@ -82,7 +82,7 @@ public class ContextualServer implements Startable {
     try {
       processBuilder.inheritIO();
       serverProcess.set(processBuilder.start());
-      synchronized (this) { //TODO remove this and find
+      synchronized (this) { //TODO remove this and find a better way to avoid calling the server before it's up
         wait(1000);
       }
       LOG.info("SonarTS Server started");
