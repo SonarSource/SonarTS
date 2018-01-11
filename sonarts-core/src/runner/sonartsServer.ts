@@ -22,11 +22,11 @@ import * as path from "path";
 import * as os from "os";
 import * as fs from "fs";
 import * as ts from "typescript";
-import { getIssues } from "./rules"
+import { getIssues } from "./rules";
 import { FileCache, createService } from "./languageService";
 import { parseTsConfig } from "../utils/parser";
 
-export function start(): number {
+export function start() {
   const fileCache = new FileCache();
   // key is ts file path, value is corresponding tsconfig path
   const tsConfigCach: Map<string, string> = new Map();
@@ -80,7 +80,7 @@ export function start(): number {
   const port = 55555;
   server.listen(port, "localhost");
   console.log("SonarTS Server started on port " + port + " from folder " + __dirname);
-  return port;
+  return { server, port };
 }
 
 function getTsConfig(filePath: string): string | undefined {

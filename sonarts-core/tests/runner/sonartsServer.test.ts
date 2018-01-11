@@ -21,33 +21,79 @@ import { start } from "../../src/runner/sonartsServer";
 import * as net from "net";
 import * as path from "path";
 
-it("run analysis on provided content", done => {
-  const port = start();
-  var client = new net.Socket();
-  client.connect(port, "localhost", () => {
-    client.write(
-      JSON.stringify({
-        operation: "analyze",
-        file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
-        content: `if(x && x) console.log("identical expressions"); if (x == null) {} else if (x == 2) {}`,
-        rules: [
-          {
-            ruleName: "no-identical-expressions",
-            ruleArguments: [],
-          },
-          {
-            ruleName: "triple-equals",
-            ruleArguments: ["allow-null-check"],
-          },
-        ],
-      }),
-    );
-  });
+let server: net.Server, port: number;
 
-  client.on("data", function(data) {
-    const response = JSON.parse(data.toString());
-    client.destroy();
-    expect(response.issues.map((issue: any) => issue.ruleName)).toEqual(["no-identical-expressions", "triple-equals"]);
-    done();
-  });
+beforeEach(() => {
+  ({ server, port } = start());
 });
+
+afterEach(() => {
+  server.close();
+});
+
+it("run analysis on provided content", async () => {
+  const client = await getClient();
+
+  let response = await sendRequest(
+    client,
+    `if(x && x) console.log("identical expressions"); if (x == null) {} else if (x == 2) {}`,
+  );
+  expect(getRules(response.issues)).toEqual(["no-identical-expressions", "triple-equals"]);
+
+  response = await sendRequest(client, `if(x && x) console.log("identical expressions");`);
+  expect(getRules(response.issues)).toEqual(["no-identical-expressions"]);
+
+  server.close();
+});
+
+function getRules(issues: any[]) {
+  return issues.map(issue => issue.ruleName);
+}
+
+function getClient(): Promise<net.Socket> {
+  return new Promise(resolve => {
+    const client = net.connect(port, "localhost", () => resolve(client));
+  });
+}
+
+function sendRequest(client: net.Socket, content: string): Promise<any> {
+  return new Promise(resolve => {
+    write(client, content);
+    let dataAggregated = "";
+
+    const listener = (data: any) => {
+      dataAggregated += data;
+      try {
+        const response = JSON.parse(dataAggregated);
+        client.removeListener("data", listener);
+        resolve(response);
+      } finally {
+      }
+    };
+    client.on("data", listener);
+  });
+}
+
+function write(client: net.Socket, content: string) {
+  client.write(
+    JSON.stringify({
+      operation: "analyze",
+      file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
+      content,
+      rules: [
+        {
+          ruleName: "no-identical-expressions",
+          ruleArguments: [],
+        },
+        {
+          ruleName: "triple-equals",
+          ruleArguments: ["allow-null-check"],
+        },
+        {
+          ruleName: "no-useless-cast",
+          ruleArguments: [],
+        },
+      ],
+    }),
+  );
+}
