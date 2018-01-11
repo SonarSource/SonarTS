@@ -26,11 +26,11 @@ import { getIssues } from "./rules";
 import { FileCache, createService } from "./languageService";
 import { parseTsConfig } from "../utils/parser";
 
-export function start() {
+export function start(port: number) {
   const fileCache = new FileCache();
   // key is ts file path, value is corresponding tsconfig path
-  const tsConfigCach: Map<string, string> = new Map();
-  const servicesPerTsconfig: Map<String, ts.LanguageService> = new Map();
+  const tsConfigCache: Map<string, string> = new Map();
+  const servicesPerTsconfig: Map<string, ts.LanguageService> = new Map();
 
   const server = net.createServer(socket => {
     socket.on("data", data => {
@@ -42,12 +42,12 @@ export function start() {
         fileCache.newContent({ file, content });
 
         let tsConfig;
-        if (tsConfigCach.has(file)) {
-          tsConfig = tsConfigCach.get(file)!;
+        if (tsConfigCache.has(file)) {
+          tsConfig = tsConfigCache.get(file)!;
         } else {
           tsConfig = getTsConfig(file);
           if (tsConfig) {
-            tsConfigCach.set(file, tsConfig);
+            tsConfigCache.set(file, tsConfig);
           } else {
             console.error("No tsconfig.json file found for " + file);
             socket.write("[]");
@@ -77,7 +77,6 @@ export function start() {
       }
     });
   });
-  const port = 55555;
   server.listen(port, "localhost");
   console.log("SonarTS Server started on port " + port + " from folder " + __dirname);
   return { server, port };

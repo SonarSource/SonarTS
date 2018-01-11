@@ -68,7 +68,7 @@ export function createProgram(configFile: string): ts.Program {
   return program;
 }
 
-export function parseTsConfig(tsConfig: string): { options: ts.CompilerOptions, files: string[] } {
+export function parseTsConfig(tsConfig: string): { options: ts.CompilerOptions; files: string[] } {
   const projectDirectory = path.dirname(tsConfig);
   const config = ts.readConfigFile(tsConfig, ts.sys.readFile);
   if (config.error !== undefined) {
@@ -103,5 +103,5 @@ export function parseTsConfig(tsConfig: string): { options: ts.CompilerOptions, 
     }
   }
 
-  return { options : parsed.options, files: parsed.fileNames };
+  return { options: parsed.options, files: parsed.fileNames };
 }

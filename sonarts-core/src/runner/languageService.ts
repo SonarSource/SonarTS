@@ -37,7 +37,7 @@ export function createService(
       if (!fs.existsSync(fileName)) {
         return undefined;
       }
-
+      
       return ts.ScriptSnapshot.fromString(fs.readFileSync(fileName).toString());
     },
     getCurrentDirectory: () => process.cwd(),
@@ -48,12 +48,11 @@ export function createService(
     readDirectory: ts.sys.readDirectory,
   };
 
-  // Create the language service files
-  return ts.createLanguageService(servicesHost, ts.createDocumentRegistry());
+  return ts.createLanguageService(servicesHost);
 }
 
 export class FileCache {
-  private files: Map<String, VersionedContent> = new Map();
+  private files: Map<string, VersionedContent> = new Map();
 
   newContent(update: { file: string; content: string }): void {
     const previous = this.files.get(update.file);

@@ -1,4 +1,9 @@
-import { foo } from "./file2";
+import { bar } from "./file2";
 
-const x = foo();
-x as number;
+function foo() {
+  const x = bar();
+
+  if (x && x) {
+    
+  }
+}
