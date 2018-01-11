@@ -208,7 +208,7 @@ public class SensorContextUtils {
     public List<RuleToExecute> rules;
 
     ContextualAnalysisRequest(InputFile inputFile, TypeScriptRules typeScriptRules) throws IOException {
-      this.file = inputFile.uri().toString();
+      this.file = inputFile.absolutePath();
       this.content = inputFile.contents();
       this.rules = SensorContextUtils.convertToRulesToExecute(typeScriptRules);
     }

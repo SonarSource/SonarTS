@@ -27,6 +27,7 @@ import { FileCache, createService } from "./languageService";
 import { parseTsConfig } from "../utils/parser";
 
 export function start(port: number) {
+  const EMPTY_ANSWER = '{"issues":[]}';
   const fileCache = new FileCache();
   // key is ts file path, value is corresponding tsconfig path
   const tsConfigCache: Map<string, string> = new Map();
@@ -50,7 +51,7 @@ export function start(port: number) {
             tsConfigCache.set(file, tsConfig);
           } else {
             console.error("No tsconfig.json file found for " + file);
-            socket.write("[]");
+            socket.write(EMPTY_ANSWER);
             return;
           }
         }
@@ -66,14 +67,14 @@ export function start(port: number) {
         const sourceFile = program.getSourceFile(file);
         if (!sourceFile) {
           console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
-          socket.write("[]");
+          socket.write(EMPTY_ANSWER);
           return;
         }
         const issues = getIssues(rules, program, sourceFile);
         socket.write(JSON.stringify(issues));
       } else {
         console.error("Unknown operation for SonarTS Server: " + request.operation);
-        socket.write("[]");
+        socket.write(EMPTY_ANSWER);
       }
     });
   });
