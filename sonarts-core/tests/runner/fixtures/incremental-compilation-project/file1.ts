@@ -1,3 +1,3 @@
-import { foo } from "./file2";
+import { zoo } from "./file2";
 
-const x = foo();
+const x = zoo();

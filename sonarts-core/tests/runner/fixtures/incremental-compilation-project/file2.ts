@@ -1,6 +1,5 @@
-export function foo() {
-  const x = boo();
+export function bar() {}
+
+export function zoo(): number {
   return 3;
 }
-
-function boo() {}
