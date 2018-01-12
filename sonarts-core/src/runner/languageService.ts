@@ -37,7 +37,7 @@ export function createService(
       if (!fs.existsSync(fileName)) {
         return undefined;
       }
-      
+
       return ts.ScriptSnapshot.fromString(fs.readFileSync(fileName).toString());
     },
     getCurrentDirectory: () => process.cwd(),
