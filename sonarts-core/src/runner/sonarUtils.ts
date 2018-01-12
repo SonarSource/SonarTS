@@ -35,7 +35,9 @@ export function stringifyToStream(stream: NodeJS.WritableStream, data: any[]) {
     stream.write("{");
 
     let firstProp = true;
-    Object.entries(element).forEach(([key, value]) => {
+
+    Object.keys(element).forEach(key => {
+      const value = element[key];
       if (value !== undefined) {
         if (!firstProp) {
           stream.write(",");
