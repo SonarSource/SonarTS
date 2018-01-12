@@ -32,7 +32,7 @@ public class TypeScriptPlugin implements Plugin {
   private static final String GENERAL_SUBCATEGORY = "General";
 
   static final String FILE_SUFFIXES_KEY = "sonar.typescript.file.suffixes";
-  private static final String FILE_SUFFIXES_DEFVALUE = ".ts,.tsx";
+  public static final String FILE_SUFFIXES_DEFVALUE = ".ts,.tsx";
 
   public static final String LCOV_REPORT_PATHS = "sonar.typescript.lcov.reportPaths";
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";

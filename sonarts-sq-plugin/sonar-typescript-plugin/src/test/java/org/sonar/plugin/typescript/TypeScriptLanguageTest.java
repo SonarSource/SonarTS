@@ -19,23 +19,18 @@
  */
 package org.sonar.plugin.typescript;
 
-import org.sonar.api.config.Configuration;
-import org.sonar.api.resources.AbstractLanguage;
+import org.junit.Test;
+import org.sonar.api.config.internal.MapSettings;
 
-public class TypeScriptLanguage extends AbstractLanguage {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  public static final String KEY = "ts";
+public class TypeScriptLanguageTest {
 
-  private Configuration configuration;
-
-  public TypeScriptLanguage(Configuration configuration) {
-    super(KEY, "TypeScript");
-    this.configuration = configuration;
+  @Test
+  public void should_have_correct_file_extensions() throws Exception {
+    MapSettings settings = new MapSettings();
+    settings.setProperty(TypeScriptPlugin.FILE_SUFFIXES_KEY, TypeScriptPlugin.FILE_SUFFIXES_DEFVALUE);
+    TypeScriptLanguage typeScriptLanguage = new TypeScriptLanguage(settings.asConfig());
+    assertThat(typeScriptLanguage.getFileSuffixes()).containsExactly(".ts", ".tsx");
   }
-
-  @Override
-  public String[] getFileSuffixes() {
-    return configuration.getStringArray(TypeScriptPlugin.FILE_SUFFIXES_KEY);
-  }
-
 }

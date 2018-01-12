@@ -32,7 +32,7 @@ import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 import org.sonarsource.api.sonarlint.SonarLintSide;
 
-@InstantiationStrategy("PRE_PROCESS")
+@InstantiationStrategy("PER_PROCESS")
 @SonarLintSide
 public class ContextualServer implements Startable {
 
@@ -56,41 +56,54 @@ public class ContextualServer implements Startable {
 
   @Override
   public void start() {
+    LOG.info("Starting SonarTS Server");
+
     if (serverProcess.get() != null && serverProcess.get().isAlive()) {
-      LOG.debug("Skipping SonarTS Server start, already running");
+      LOG.warn("Skipping SonarTS Server start, already running");
       return;
     }
-
-    LOG.warn("Attempting SonarTS Server start");
 
     if (configuration == null) {
-      LOG.warn("Skipping SonarTS Server start due to null configuration");
+      LOG.warn("Skipping SonarTS Server start due to missing configuration");
       return;
     }
+    
+    startSonarTSServer();
+  }
 
-    final ExecutableBundle bundle = bundleFactory.createAndDeploy(getServerDir(), configuration);
+  private void startSonarTSServer() {
+    ExecutableBundle bundle = bundleFactory.createAndDeploy(getServerDir(), configuration);
+
     ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand().commandLineTokens());
-
-    Optional<String> typescriptLocation = configuration.get(TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
-    if (typescriptLocation.isPresent()) {
-      SensorContextUtils.setNodePath(new File(typescriptLocation.get()), processBuilder);
-
-    } else {
-      LOG.error("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
-    }
+    setNodePath(processBuilder);
 
     try {
       processBuilder.inheritIO();
       serverProcess.set(processBuilder.start());
-      synchronized (this) { //TODO remove this and find a better way to avoid calling the server before it's up
+      //TODO find a better way to wait until the server is up
+      // e.g. loop with accessing the port
+      synchronized (this) {
         wait(1000);
       }
-      LOG.info("SonarTS Server started");
+      LOG.info("SonarTS Server is started");
 
     } catch (IOException e) {
       LOG.error("Failed to start SonarTS Server", e);
+
     } catch (InterruptedException e) {
-      LOG.error("Error due to wait", e);
+      LOG.error("Failed to wait until the SonarTS Server is up", e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void setNodePath(ProcessBuilder processBuilder) {
+    Optional<String> typescriptLocation = configuration.get(TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
+
+    if (typescriptLocation.isPresent()) {
+      SensorContextUtils.setNodePath(new File(typescriptLocation.get()), processBuilder);
+
+    } else {
+      LOG.error("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY + " is missing");
     }
   }
 
@@ -104,6 +117,27 @@ public class ContextualServer implements Startable {
 
   @Override
   public void stop() {
-    // TODO actually stop the server once this object will get instantiated by a long-lived container
+    Process process = serverProcess.get();
+    if (process != null && process.isAlive()) {
+
+      process.destroy();
+      synchronized (this) {
+        try {
+          wait(200);
+        } catch (InterruptedException e) {
+          LOG.error("Failed to wait until the SonarTS Server is stopped", e);
+          throw new RuntimeException(e);
+        }
+      }
+
+      if (process.isAlive()) {
+        process.destroyForcibly();
+      }
+
+      LOG.info("SonarTS Server is stopped");
+
+    } else {
+      LOG.warn("Failed to stop SonarTS Server");
+    }
   }
 }

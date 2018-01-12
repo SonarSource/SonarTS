@@ -19,23 +19,13 @@
  */
 package org.sonar.plugin.typescript;
 
-import org.sonar.api.config.Configuration;
-import org.sonar.api.resources.AbstractLanguage;
+import org.junit.Test;
 
-public class TypeScriptLanguage extends AbstractLanguage {
+public class ContextualServerTest {
 
-  public static final String KEY = "ts";
+  @Test
+  public void test() throws Exception {
 
-  private Configuration configuration;
-
-  public TypeScriptLanguage(Configuration configuration) {
-    super(KEY, "TypeScript");
-    this.configuration = configuration;
   }
-
-  @Override
-  public String[] getFileSuffixes() {
-    return configuration.getStringArray(TypeScriptPlugin.FILE_SUFFIXES_KEY);
-  }
-
+  
 }
