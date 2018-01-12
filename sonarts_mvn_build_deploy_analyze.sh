@@ -9,6 +9,11 @@
 # - ARTIFACTORY_DEPLOY_USERNAME: login to deploy to $ARTIFACTORY_DEPLOY_REPO
 # - ARTIFACTORY_DEPLOY_PASSWORD: password to deploy to $ARTIFACTORY_DEPLOY_REPO
 
+# deploy and analyze only on one axes of node versions
+if [ "${TRAVIS_NODE_VERSION}" != "8" ]; then
+  exit 0
+fi
+
 set -euo pipefail
 
 #install maven
