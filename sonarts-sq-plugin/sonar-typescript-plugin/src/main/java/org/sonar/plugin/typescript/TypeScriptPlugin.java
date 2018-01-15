@@ -20,6 +20,7 @@
 package org.sonar.plugin.typescript;
 
 import org.sonar.api.Plugin;
+import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
@@ -31,7 +32,7 @@ public class TypeScriptPlugin implements Plugin {
   private static final String GENERAL_SUBCATEGORY = "General";
 
   static final String FILE_SUFFIXES_KEY = "sonar.typescript.file.suffixes";
-  private static final String FILE_SUFFIXES_DEFVALUE = ".ts,.tsx";
+  public static final String FILE_SUFFIXES_DEFVALUE = ".ts,.tsx";
 
   public static final String LCOV_REPORT_PATHS = "sonar.typescript.lcov.reportPaths";
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
@@ -48,11 +49,9 @@ public class TypeScriptPlugin implements Plugin {
       new SonarTSCoreBundleFactory(/* absolute location inside jar */ "/sonarts-bundle.zip"),
       ExternalProcessErrorConsumer.class,
       TypeScriptLanguage.class,
-      ExternalTypescriptSensor.class,
       SonarWayProfile.class,
       SonarWayRecommendedProfile.class,
       TypeScriptRulesDefinition.class,
-      LCOVCoverageSensor.class,
       TypeScriptExclusionsFileFilter.class,
       PropertyDefinition.builder(FILE_SUFFIXES_KEY)
         .defaultValue(FILE_SUFFIXES_DEFVALUE)
@@ -90,5 +89,14 @@ public class TypeScriptPlugin implements Plugin {
         .category(TYPESCRIPT_CATEGORY)
         .build()
     );
+
+    if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
+      context.addExtension(ContextualSensor.class);
+      context.addExtension(ContextualServer.class);
+
+    } else {
+      context.addExtension(ExternalTypescriptSensor.class);
+      context.addExtension(LCOVCoverageSensor.class);
+    }
   }
 }

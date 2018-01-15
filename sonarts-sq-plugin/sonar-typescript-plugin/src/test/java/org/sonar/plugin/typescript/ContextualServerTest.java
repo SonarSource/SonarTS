@@ -17,19 +17,15 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugin.typescript.executable;
+package org.sonar.plugin.typescript;
 
-import org.sonar.api.batch.fs.InputFile;
-import org.sonar.plugin.typescript.TypeScriptRules;
+import org.junit.Test;
 
-public interface ExecutableBundle {
+public class ContextualServerTest {
 
-  SonarTSCommand getSonarTsRunnerCommand();
+  @Test
+  public void test() throws Exception {
 
-  SonarTSCommand getSonarTSServerCommand();
-
-  String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules);
-
-  String getNodeExecutable();
-
+  }
+  
 }
