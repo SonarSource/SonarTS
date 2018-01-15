@@ -19,6 +19,7 @@
  */
 package org.sonar.plugin.typescript;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -139,12 +140,13 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
   public static final Set<String> FILE_LEVEL_RULES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("S113", "S104", "S1451")));
 
   private static final String RESOURCE_FOLDER = "org/sonar/l10n/typescript/rules/typescript";
+  private static final String DEFAULT_PROFILE_PATH = RESOURCE_FOLDER + File.separator + "Sonar_way_profile.json";
 
   private final List<TypeScriptRule> allRules;
   private final Map<String, RuleKey> tsLintKeyToRuleKey;
 
   public static void addToRepository(NewRepository repository) {
-    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER);
+    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, DEFAULT_PROFILE_PATH);
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, new ArrayList<>(getRuleClasses()));
   }
 
