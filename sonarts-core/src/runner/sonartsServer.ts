@@ -19,7 +19,6 @@
  */
 import * as net from "net";
 import * as path from "path";
-import * as os from "os";
 import * as fs from "fs";
 import * as ts from "typescript";
 import { getIssues } from "./rules";
@@ -85,7 +84,6 @@ export function start(port: number) {
 
 function getTsConfig(filePath: string): string | undefined {
   let currentDirectory = filePath;
-  const fsRoot = getSystemRoot();
   do {
     currentDirectory = path.dirname(currentDirectory);
     const possibleTsConfig = path.join(currentDirectory, "tsconfig.json");
@@ -93,11 +91,7 @@ function getTsConfig(filePath: string): string | undefined {
     if (fs.existsSync(possibleTsConfig)) {
       return possibleTsConfig;
     }
-  } while (currentDirectory !== fsRoot);
+  } while (currentDirectory !== path.dirname(currentDirectory));
 
   return undefined;
-}
-
-function getSystemRoot(): string {
-  return os.platform() === "win32" ? process.cwd().split(path.sep)[0] : "/";
 }
