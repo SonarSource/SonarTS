@@ -22,8 +22,10 @@ package org.sonar.plugin.typescript.executable;
 import java.io.File;
 import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.config.Configuration;
+import org.sonarsource.api.sonarlint.SonarLintSide;
 
-@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
+@InstantiationStrategy("PER_PROCESS")
+@SonarLintSide
 public interface ExecutableBundleFactory {
   ExecutableBundle createAndDeploy(File deployDestination, Configuration configuration);
 }

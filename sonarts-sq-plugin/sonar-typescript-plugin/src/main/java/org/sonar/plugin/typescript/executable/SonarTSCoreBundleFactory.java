@@ -21,14 +21,16 @@ package org.sonar.plugin.typescript.executable;
 
 import java.io.File;
 import org.sonar.api.batch.BatchSide;
+import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Configuration;
 import org.sonarsource.api.sonarlint.SonarLintSide;
 
 @BatchSide
 @ScannerSide
+@InstantiationStrategy("PER_PROCESS")
 @SonarLintSide
-public class SonarTSCoreBundleFactory implements ExecutableBundleFactory{
+public class SonarTSCoreBundleFactory implements ExecutableBundleFactory {
 
   private String bundleLocation;
 
