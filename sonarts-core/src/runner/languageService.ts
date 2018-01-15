@@ -19,6 +19,7 @@
  */
 import * as fs from "fs";
 import * as ts from "typescript";
+import * as path from "path";
 
 export function createService(
   rootFileNames: string[],
@@ -55,20 +56,23 @@ export class FileCache {
   private files: Map<string, VersionedContent> = new Map();
 
   newContent(update: { file: string; content: string }): void {
-    const previous = this.files.get(update.file);
+    const normalizedPath = path.normalize(update.file);
+    const previous = this.files.get(normalizedPath);
     let version = 0;
     if (previous) {
       version = previous.version + 1;
     }
-    this.files.set(update.file, { content: update.content, version });
+    this.files.set(normalizedPath, { content: update.content, version });
   }
 
   version(file: string) {
-    return this.files.has(file) ? this.files.get(file)!.version.toString() : "n/a";
+    const normalizedPath = path.normalize(file);
+    return this.files.has(normalizedPath) ? this.files.get(normalizedPath)!.version.toString() : "n/a";
   }
 
   retrieveContent(file: string): string | undefined {
-    return this.files.has(file) ? this.files.get(file)!.content : undefined;
+    const normalizedPath = path.normalize(file);
+    return this.files.has(normalizedPath) ? this.files.get(normalizedPath)!.content : undefined;
   }
 }
 
