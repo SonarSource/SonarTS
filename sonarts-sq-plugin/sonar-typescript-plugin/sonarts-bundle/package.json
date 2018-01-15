@@ -5,6 +5,7 @@
   "license": "LGPL-3.0",
   "devDependencies": {
     "tslint": "5.8.0",
-    "tslint-sonarts": "file:../../../sonarts-core/tslint-sonarts-1.4.0.tgz"
+    "tslint-sonarts": "file:../../../sonarts-core/tslint-sonarts-1.4.0.tgz",
+    "typescript": "2.6.1"
   }
 }

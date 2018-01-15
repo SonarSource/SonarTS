@@ -4,5 +4,5 @@
     "strictNullChecks": false
   },
   "include": ["**/*.ts"],
-  "exclude": ["**/*.lint.ts"]
+  "exclude": ["**/*.lint.ts", "runner/fixtures/**/*"]
 }

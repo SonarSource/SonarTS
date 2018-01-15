@@ -31,8 +31,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TypeScriptPluginTest {
 
   @Test
-  public void count_extensions() {
+  public void count_extensions_not_sonarlint() {
     SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SCANNER);
+    Plugin.Context context = new Plugin.Context(runtime);
+    Plugin underTest = new TypeScriptPlugin();
+    underTest.define(context);
+    assertThat(context.getExtensions()).hasSize(13);
+  }
+
+  @Test
+  public void count_extensions_sonarlint() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(6, 7));
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);

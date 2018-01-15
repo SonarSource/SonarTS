@@ -17,19 +17,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugin.typescript.executable;
+package org.sonar.plugin.typescript;
 
-import org.sonar.api.batch.fs.InputFile;
-import org.sonar.plugin.typescript.TypeScriptRules;
+import org.junit.Test;
+import org.sonar.api.config.internal.MapSettings;
 
-public interface ExecutableBundle {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  SonarTSCommand getSonarTsRunnerCommand();
+public class TypeScriptLanguageTest {
 
-  SonarTSCommand getSonarTSServerCommand();
-
-  String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules);
-
-  String getNodeExecutable();
-
+  @Test
+  public void should_have_correct_file_extensions() throws Exception {
+    MapSettings settings = new MapSettings();
+    settings.setProperty(TypeScriptPlugin.FILE_SUFFIXES_KEY, TypeScriptPlugin.FILE_SUFFIXES_DEFVALUE);
+    TypeScriptLanguage typeScriptLanguage = new TypeScriptLanguage(settings.asConfig());
+    assertThat(typeScriptLanguage.getFileSuffixes()).containsExactly(".ts", ".tsx");
+  }
 }
