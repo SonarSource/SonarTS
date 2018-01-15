@@ -60,8 +60,15 @@ export function parseFile(filename: string): { sourceFile: ts.SourceFile; progra
 }
 
 export function createProgram(configFile: string): ts.Program {
-  const projectDirectory = path.dirname(configFile);
-  const config = ts.readConfigFile(configFile, ts.sys.readFile);
+  const { options, files } = parseTsConfig(configFile);
+
+  const host = ts.createCompilerHost(options, true);
+  return ts.createProgram(files, options, host);
+}
+
+export function parseTsConfig(tsConfig: string): { options: ts.CompilerOptions; files: string[] } {
+  const projectDirectory = path.dirname(tsConfig);
+  const config = ts.readConfigFile(tsConfig, ts.sys.readFile);
   if (config.error !== undefined) {
     throw new Error(
       ts.formatDiagnostics([config.error], {
@@ -93,8 +100,6 @@ export function createProgram(configFile: string): ts.Program {
       );
     }
   }
-  const host = ts.createCompilerHost(parsed.options, true);
-  const program = ts.createProgram(parsed.fileNames, parsed.options, host);
 
-  return program;
+  return { options: parsed.options, files: parsed.fileNames };
 }
