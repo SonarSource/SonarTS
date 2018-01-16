@@ -90,7 +90,10 @@ public class Tests {
 
     try {
       CommandExecutor commandExecutor = CommandExecutor.create();
-      commandExecutor.execute(command, 600_000);
+      int result = commandExecutor.execute(command, 600_000);
+      if (result != 0) {
+        throw new IllegalStateException("Unable to run npm install");
+      }
     } catch (Exception e) {
       throw new IllegalStateException(command.toCommandLine(), e);
     }

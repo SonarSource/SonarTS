@@ -23,10 +23,13 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
-import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarLintTSCoreBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarScannerTSCoreBundleFactory;
 import org.sonar.plugin.typescript.lcov.LCOVCoverageSensor;
 
 public class TypeScriptPlugin implements Plugin {
+  /* absolute location inside jar */
+  private static final String SONARTS_BUNDLE_ZIP = "/sonarts-bundle.zip";
   private static final String TESTS_AND_COVERAGE_SUBCATEGORY = "Tests and Coverage";
   private static final String TYPESCRIPT_CATEGORY = "TypeScript";
   private static final String GENERAL_SUBCATEGORY = "General";
@@ -46,7 +49,6 @@ public class TypeScriptPlugin implements Plugin {
   @Override
   public void define(Context context) {
     context.addExtensions(
-      new SonarTSCoreBundleFactory(/* absolute location inside jar */ "/sonarts-bundle.zip"),
       ExternalProcessErrorConsumer.class,
       TypeScriptLanguage.class,
       SonarWayProfile.class,
@@ -87,14 +89,15 @@ public class TypeScriptPlugin implements Plugin {
         .subCategory(GENERAL_SUBCATEGORY)
         .multiValues(true)
         .category(TYPESCRIPT_CATEGORY)
-        .build()
-    );
+        .build());
 
     if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
+      context.addExtension(new SonarLintTSCoreBundleFactory(SONARTS_BUNDLE_ZIP));
       context.addExtension(ContextualSensor.class);
       context.addExtension(ContextualServer.class);
 
     } else {
+      context.addExtension(new SonarScannerTSCoreBundleFactory(SONARTS_BUNDLE_ZIP));
       context.addExtension(ExternalTypescriptSensor.class);
       context.addExtension(LCOVCoverageSensor.class);
     }

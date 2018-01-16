@@ -20,8 +20,22 @@
 package org.sonar.plugin.typescript.executable;
 
 import java.io.File;
+import org.sonar.api.batch.BatchSide;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Configuration;
 
-public interface ExecutableBundleFactory {
-  ExecutableBundle createAndDeploy(File deployDestination, Configuration configuration);
+@BatchSide
+@ScannerSide
+public class SonarScannerTSCoreBundleFactory implements ExecutableBundleFactory {
+
+  private String bundleLocation;
+
+  public SonarScannerTSCoreBundleFactory(String bundleLocation) {
+    this.bundleLocation = bundleLocation;
+  }
+
+  @Override
+  public SonarTSCoreBundle createAndDeploy(File deployDestination, Configuration configuration) {
+    return SonarTSCoreBundle.createAndDeploy(bundleLocation, deployDestination, configuration);
+  }
 }
