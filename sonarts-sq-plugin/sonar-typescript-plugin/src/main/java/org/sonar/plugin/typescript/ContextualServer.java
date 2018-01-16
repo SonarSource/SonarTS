@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.sonar.api.Startable;
 import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.config.Configuration;
+import org.sonar.api.utils.TempFolder;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
@@ -41,17 +42,16 @@ public class ContextualServer implements Startable {
 
   private static final Logger LOG = Loggers.get(ContextualServer.class);
 
-  private Configuration configuration;
-  private ExecutableBundleFactory bundleFactory;
+  private final Configuration configuration;
+  private final ExecutableBundleFactory bundleFactory;
+  private final TempFolder tempFolder;
+
   private static AtomicReference<Process> serverProcess = new AtomicReference<>();
 
-  public ContextualServer(ExecutableBundleFactory bundleFactory) {
-    this(null, bundleFactory);
-  }
-
-  public ContextualServer(Configuration configuration, ExecutableBundleFactory bundleFactory) {
+  public ContextualServer(Configuration configuration, ExecutableBundleFactory bundleFactory, TempFolder tempFolder) {
     this.configuration = configuration;
     this.bundleFactory = bundleFactory;
+    this.tempFolder = tempFolder;
   }
 
   @Override
@@ -67,12 +67,12 @@ public class ContextualServer implements Startable {
       LOG.warn("Skipping SonarTS Server start due to missing configuration");
       return;
     }
-    
+
     startSonarTSServer();
   }
 
   private void startSonarTSServer() {
-    ExecutableBundle bundle = bundleFactory.createAndDeploy(getServerDir(), configuration);
+    ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir(), configuration);
 
     ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand().commandLineTokens());
     setNodePath(processBuilder);
@@ -80,7 +80,7 @@ public class ContextualServer implements Startable {
     try {
       processBuilder.inheritIO();
       serverProcess.set(processBuilder.start());
-      //TODO find a better way to wait until the server is up
+      // TODO find a better way to wait until the server is up
       // e.g. loop with accessing the port
       synchronized (this) {
         wait(1000);
@@ -105,14 +105,6 @@ public class ContextualServer implements Startable {
     } else {
       LOG.error("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY + " is missing");
     }
-  }
-
-  private static File getServerDir() {
-    File serverFolder = new File(System.getProperty("java.io.tmpdir"), "sonarts");
-    if (!serverFolder.exists()) {
-      serverFolder.mkdir();
-    }
-    return serverFolder;
   }
 
   @Override
