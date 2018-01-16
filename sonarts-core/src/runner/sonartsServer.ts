@@ -34,51 +34,44 @@ export function start(port: number) {
 
   const server = net.createServer(socket => {
     socket.on("data", data => {
-      const request = JSON.parse(data.toString());
+      const { file, rules, content } = JSON.parse(data.toString());
 
-      if (request.operation === "analyze") {
-        const { file, rules, content } = request;
+      fileCache.newContent({ file, content });
 
-        fileCache.newContent({ file, content });
-
-        let tsConfig;
-        if (tsConfigCache.has(file)) {
-          tsConfig = tsConfigCache.get(file)!;
+      let tsConfig;
+      if (tsConfigCache.has(file)) {
+        tsConfig = tsConfigCache.get(file)!;
+      } else {
+        tsConfig = getTsConfig(file);
+        if (tsConfig) {
+          tsConfigCache.set(file, tsConfig);
         } else {
-          tsConfig = getTsConfig(file);
-          if (tsConfig) {
-            tsConfigCache.set(file, tsConfig);
-          } else {
-            console.error("No tsconfig.json file found for " + file);
-            socket.write(EMPTY_ANSWER);
-            return;
-          }
-        }
-
-        let service = servicesPerTsconfig.get(tsConfig);
-        if (!service) {
-          const { files, options } = parseTsConfig(tsConfig);
-          service = createService(files, options, fileCache);
-          servicesPerTsconfig.set(tsConfig, service);
-        }
-
-        const program = service.getProgram();
-        const sourceFile = program.getSourceFile(file);
-        if (!sourceFile) {
-          console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
+          console.error("No tsconfig.json file found for " + file);
           socket.write(EMPTY_ANSWER);
           return;
         }
-        const issues = getIssues(rules, program, sourceFile);
-        socket.write(JSON.stringify(issues));
-      } else {
-        console.error("Unknown operation for SonarTS Server: " + request.operation);
-        socket.write(EMPTY_ANSWER);
       }
+
+      let service = servicesPerTsconfig.get(tsConfig);
+      if (!service) {
+        const { files, options } = parseTsConfig(tsConfig);
+        service = createService(files, options, fileCache);
+        servicesPerTsconfig.set(tsConfig, service);
+      }
+
+      const program = service.getProgram();
+      const sourceFile = program.getSourceFile(file);
+      if (!sourceFile) {
+        console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
+        socket.write(EMPTY_ANSWER);
+        return;
+      }
+      const issues = getIssues(rules, program, sourceFile);
+      socket.write(JSON.stringify(issues));
     });
   });
   server.listen(port, "localhost");
-  console.log("SonarTS Server started on port " + port + " from folder " + __dirname);
+  console.log(`SonarTS Server started on port ${port} from folder ${__dirname}`);
   return { server, port };
 }
 

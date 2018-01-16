@@ -89,7 +89,6 @@ function sendRequest(client: net.Socket, content: string): Promise<any> {
 function write(client: net.Socket, content: string) {
   client.write(
     JSON.stringify({
-      operation: "analyze",
       file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
       content,
       rules: [

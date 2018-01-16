@@ -202,10 +202,9 @@ public class SensorContextUtils {
   }
 
   static class ContextualAnalysisRequest {
-    public String operation = "analyze";
-    public String file;
-    public String content;
-    public List<RuleToExecute> rules;
+    String file;
+    String content;
+    List<RuleToExecute> rules;
 
     ContextualAnalysisRequest(InputFile inputFile, TypeScriptRules typeScriptRules) throws IOException {
       this.file = inputFile.absolutePath();
