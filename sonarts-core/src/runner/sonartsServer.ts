@@ -25,7 +25,7 @@ import { getIssues } from "./rules";
 import { FileCache, createService } from "./languageService";
 import { parseTsConfig } from "../utils/parser";
 
-export function start(port: number) {
+export function start(port: number): Promise<{ server: net.Server; port: number }> {
   const EMPTY_ANSWER = '{"issues":[]}';
   const fileCache = new FileCache();
   // key is ts file path, value is corresponding tsconfig path
@@ -70,9 +70,12 @@ export function start(port: number) {
       socket.write(JSON.stringify(issues));
     });
   });
-  server.listen(port, "localhost");
-  console.log(`SonarTS Server started on port ${port} from folder ${__dirname}`);
-  return { server, port };
+  return new Promise(resolve => {
+    server.listen(port, "localhost", () => {
+      console.log(`SonarTS Server started on port ${port} from folder ${__dirname}`);
+      resolve({ server, port });
+    });
+  });
 }
 
 function getTsConfig(filePath: string): string | undefined {
