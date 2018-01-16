@@ -19,23 +19,23 @@
  */
 package org.sonar.plugin.typescript;
 
-import org.sonar.api.config.Settings;
+import org.sonar.api.config.Configuration;
 import org.sonar.api.resources.AbstractLanguage;
 
 public class TypeScriptLanguage extends AbstractLanguage {
 
   public static final String KEY = "ts";
 
-  private Settings settings;
+  private Configuration configuration;
 
-  public TypeScriptLanguage(Settings configuration) {
+  public TypeScriptLanguage(Configuration configuration) {
     super(KEY, "TypeScript");
-    this.settings = configuration;
+    this.configuration = configuration;
   }
 
   @Override
   public String[] getFileSuffixes() {
-    return settings.getStringArray(TypeScriptPlugin.FILE_SUFFIXES_KEY);
+    return configuration.getStringArray(TypeScriptPlugin.FILE_SUFFIXES_KEY);
   }
 
 }

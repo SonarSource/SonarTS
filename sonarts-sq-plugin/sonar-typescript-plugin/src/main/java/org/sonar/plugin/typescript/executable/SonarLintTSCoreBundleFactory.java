@@ -19,17 +19,24 @@
  */
 package org.sonar.plugin.typescript.executable;
 
-import org.sonar.api.batch.fs.InputFile;
-import org.sonar.plugin.typescript.TypeScriptRules;
+import java.io.File;
+import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.config.Configuration;
+import org.sonarsource.api.sonarlint.SonarLintSide;
 
-public interface ExecutableBundle {
+// FIXME Once there is a proper way not using @InstantiationStrategy we can revert to a single extension
+@InstantiationStrategy("PER_PROCESS")
+@SonarLintSide
+public class SonarLintTSCoreBundleFactory implements ExecutableBundleFactory {
 
-  SonarTSCommand getSonarTsRunnerCommand();
+  private String bundleLocation;
 
-  SonarTSCommand getSonarTSServerCommand();
+  public SonarLintTSCoreBundleFactory(String bundleLocation) {
+    this.bundleLocation = bundleLocation;
+  }
 
-  String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules);
-
-  String getNodeExecutable();
-
+  @Override
+  public SonarTSCoreBundle createAndDeploy(File deployDestination, Configuration configuration) {
+    return SonarTSCoreBundle.createAndDeploy(bundleLocation, deployDestination, configuration);
+  }
 }

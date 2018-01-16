@@ -19,25 +19,26 @@
  */
 package org.sonar.plugin.typescript.executable;
 
-import java.io.File;
-import org.sonar.api.batch.BatchSide;
-import org.sonar.api.batch.ScannerSide;
-import org.sonar.api.config.Configuration;
-import org.sonarsource.api.sonarlint.SonarLintSide;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-@BatchSide
-@ScannerSide
-@SonarLintSide
-public class SonarTSCoreBundleFactory implements ExecutableBundleFactory{
+public class SonarTSCommand {
 
-  private String bundleLocation;
+  private final List<String> commandLineTokens;
 
-  public SonarTSCoreBundleFactory(String bundleLocation) {
-    this.bundleLocation = bundleLocation;
+  public SonarTSCommand(String... commandLineTokens) {
+    this.commandLineTokens = Arrays.asList(commandLineTokens);
   }
 
-  @Override
-  public SonarTSCoreBundle createAndDeploy(File deployDestination, Configuration configuration) {
-    return SonarTSCoreBundle.createAndDeploy(bundleLocation, deployDestination, configuration);
+  public String commandLine() {
+    return String.join(" ", commandLineTokens);
   }
+
+  public List<String> commandLineTokens() {
+    List<String> list = new ArrayList<>();
+    list.addAll(commandLineTokens);
+    return list;
+  }
+
 }

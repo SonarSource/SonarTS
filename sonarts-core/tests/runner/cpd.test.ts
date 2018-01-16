@@ -35,7 +35,7 @@ it("should not skip any token", () => {
   expect(result.length).toBe(30);
 });
 
-it.skip("should skip comments", () => {
+it("should skip comments", () => {
   const result = actual(
     `a // comment1
   /*comment2*/

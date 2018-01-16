@@ -19,17 +19,23 @@
  */
 package org.sonar.plugin.typescript.executable;
 
-import org.sonar.api.batch.fs.InputFile;
-import org.sonar.plugin.typescript.TypeScriptRules;
+import java.io.File;
+import org.sonar.api.batch.BatchSide;
+import org.sonar.api.batch.ScannerSide;
+import org.sonar.api.config.Configuration;
 
-public interface ExecutableBundle {
+@BatchSide
+@ScannerSide
+public class SonarScannerTSCoreBundleFactory implements ExecutableBundleFactory {
 
-  SonarTSCommand getSonarTsRunnerCommand();
+  private String bundleLocation;
 
-  SonarTSCommand getSonarTSServerCommand();
+  public SonarScannerTSCoreBundleFactory(String bundleLocation) {
+    this.bundleLocation = bundleLocation;
+  }
 
-  String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules);
-
-  String getNodeExecutable();
-
+  @Override
+  public SonarTSCoreBundle createAndDeploy(File deployDestination, Configuration configuration) {
+    return SonarTSCoreBundle.createAndDeploy(bundleLocation, deployDestination, configuration);
+  }
 }
