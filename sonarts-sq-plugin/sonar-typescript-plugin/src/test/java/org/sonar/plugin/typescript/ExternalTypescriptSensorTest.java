@@ -63,6 +63,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.sonar.plugin.typescript.TestUtils.resourceScript;
 
 public class ExternalTypescriptSensorTest {
 
@@ -207,10 +208,6 @@ public class ExternalTypescriptSensorTest {
     executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
-  }
-
-  private String resourceScript(String script) throws URISyntaxException {
-    return new File(getClass().getResource(script).toURI()).getAbsolutePath();
   }
 
   @Test
