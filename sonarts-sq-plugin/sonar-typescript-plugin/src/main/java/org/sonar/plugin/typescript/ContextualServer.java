@@ -75,7 +75,6 @@ public class ContextualServer implements Startable {
     setNodePath(processBuilder);
 
     try {
-      processBuilder.inheritIO();
       serverProcess = processBuilder.start();
       tryToConnect();
       LOG.info("SonarTS Server is started");
