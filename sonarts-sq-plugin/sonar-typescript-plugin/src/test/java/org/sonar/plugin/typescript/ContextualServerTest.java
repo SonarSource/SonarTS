@@ -98,22 +98,22 @@ public class ContextualServerTest {
 
   @Test
   public void should_fail_when_not_started() {
-    ContextualServer contextualServer = new ContextualServer(new MapSettings().asConfig(), new TestBundleFactory().command(node, "--version"), temp);
+    ContextualServer contextualServer = new ContextualServer(new MapSettings().asConfig(), new TestBundleFactory().command("--version"), temp);
     contextualServer.start();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsOnlyOnce("Failed to start SonarTS Server");
     assertThat(contextualServer.isAlive()).isFalse();
   }
 
   private TestBundleFactory mockTSServer() {
-    return new TestBundleFactory().command(node, resourceScript("/mockSonarTSServer.js"));
+    return new TestBundleFactory().command(resourceScript("/mockSonarTSServer.js"));
   }
 
   private static class TestBundleFactory implements ExecutableBundleFactory {
 
-    private String[] ruleCheckCommand;
+    private String ruleCheckCommand;
     private String customNodeExecutable = null;
 
-    public TestBundleFactory command(String... ruleCheckCommmand) {
+    public TestBundleFactory command(String ruleCheckCommmand) {
       this.ruleCheckCommand = ruleCheckCommmand;
       return this;
     }
@@ -140,8 +140,8 @@ public class ContextualServerTest {
       }
 
       @Override
-      public SonarTSCommand getSonarTSServerCommand() {
-        return new SonarTSCommand(ruleCheckCommand);
+      public SonarTSCommand getSonarTSServerCommand(int port) {
+        return new SonarTSCommand(node, ruleCheckCommand, String.valueOf(port));
       }
 
       @Override

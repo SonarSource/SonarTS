@@ -36,9 +36,7 @@ public class SonarTSCommand {
   }
 
   public List<String> commandLineTokens() {
-    List<String> list = new ArrayList<>();
-    list.addAll(commandLineTokens);
-    return list;
+    return new ArrayList<>(commandLineTokens);
   }
 
 }

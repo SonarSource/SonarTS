@@ -26,8 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -109,9 +111,10 @@ public class SonarTSCoreBundle implements ExecutableBundle {
     return new Gson().toJson(request);
   }
 
-  private SonarTSCommand getCommand(File executable) {
+  private SonarTSCommand getCommand(File executable, String... additionalArgs) {
     String increaseMemory = "--max-old-space-size=" + NODE_PROCESS_MEMORY;
-    return new SonarTSCommand(getNodeExecutable(), increaseMemory, executable.getAbsolutePath());
+    Stream<String> args = Stream.of(getNodeExecutable(), increaseMemory, executable.getAbsolutePath());
+    return new SonarTSCommand(Stream.concat(args, Arrays.stream(additionalArgs)).toArray(String[]::new));
   }
 
   /**
@@ -123,8 +126,8 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   }
 
   @Override
-  public SonarTSCommand getSonarTSServerCommand() {
-    return getCommand(sonartsServerExecutable);
+  public SonarTSCommand getSonarTSServerCommand(int port) {
+    return getCommand(sonartsServerExecutable, String.valueOf(port));
   }
 
   private File copyTo(File targetPath) throws IOException {

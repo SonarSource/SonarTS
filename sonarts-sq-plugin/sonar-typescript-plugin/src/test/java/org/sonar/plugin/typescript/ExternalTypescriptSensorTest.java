@@ -23,7 +23,6 @@ import com.google.common.collect.Sets;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
@@ -415,7 +414,7 @@ public class ExternalTypescriptSensorTest {
       }
 
       @Override
-      public SonarTSCommand getSonarTSServerCommand() {
+      public SonarTSCommand getSonarTSServerCommand(int port) {
         return new SonarTSCommand(ruleCheckCommand);
       }
 
