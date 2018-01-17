@@ -88,7 +88,7 @@ public class ContextualServer implements Startable {
   }
 
   private static void tryToConnect() throws IOException {
-    InetSocketAddress address = new InetSocketAddress("localhost", 55555);
+    InetSocketAddress address = new InetSocketAddress("127.0.0.1", 55555);
     try (Socket socket = new Socket()) {
       socket.connect(address, 1_000);
     }
