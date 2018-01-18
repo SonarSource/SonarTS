@@ -57,7 +57,7 @@ public class ContextualServer implements Startable {
 
   private Process serverProcess;
   private ServerSocket serverSocket;
-  private static Socket socket;
+  private Socket socket;
 
   public ContextualServer(Configuration configuration, ExecutableBundleFactory bundleFactory, TempFolder tempFolder) {
     this.configuration = configuration;
@@ -77,7 +77,7 @@ public class ContextualServer implements Startable {
     startSonarTSServer();
   }
 
-  static synchronized SensorContextUtils.AnalysisResponse call(SensorContextUtils.ContextualAnalysisRequest request) throws IOException {
+  synchronized SensorContextUtils.AnalysisResponse analyze(SensorContextUtils.ContextualAnalysisRequest request) throws IOException {
     final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
     String requestJson = GSON.toJson(request);
     writer.append(requestJson);

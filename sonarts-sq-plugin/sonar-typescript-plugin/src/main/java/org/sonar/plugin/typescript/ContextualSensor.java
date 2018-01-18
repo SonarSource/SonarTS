@@ -39,10 +39,12 @@ public class ContextualSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(ContextualSensor.class);
 
-  private CheckFactory checkFactory;
+  private final ContextualServer contextualServer;
+  private final CheckFactory checkFactory;
 
-  public ContextualSensor(CheckFactory checkFactory) {
+  public ContextualSensor(CheckFactory checkFactory, ContextualServer contextualServer) {
     this.checkFactory = checkFactory;
+    this.contextualServer = contextualServer;
   }
 
   @Override
@@ -58,7 +60,7 @@ public class ContextualSensor implements Sensor {
       try {
         TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
         ContextualAnalysisRequest request = new ContextualAnalysisRequest(inputFile, typeScriptRules);
-        SensorContextUtils.AnalysisResponse response = ContextualServer.call(request);
+        SensorContextUtils.AnalysisResponse response = contextualServer.analyze(request);
         for (SensorContextUtils.Issue issue : response.issues) {
           SensorContextUtils.saveIssue(sensorContext, typeScriptRules, issue, inputFile);
         }
