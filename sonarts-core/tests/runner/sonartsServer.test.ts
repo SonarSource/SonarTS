@@ -21,8 +21,17 @@ import { start } from "../../src/runner/sonartsServer";
 import * as net from "net";
 import * as path from "path";
 
+let client: net.Socket;
+
+beforeEach(async () => {
+  client = await getClient();
+});
+
+afterEach(() => {
+  client.end();
+});
+
 it("run analysis on provided content", async () => {
-  const client = await getClient();
   let response = await sendRequest(
     client,
     `if(x && x) console.log("identical expressions"); if (x == null) {} else if (x == 2) {}`,
@@ -31,21 +40,16 @@ it("run analysis on provided content", async () => {
 
   response = await sendRequest(client, `if(x && x) console.log("identical expressions");`);
   expect(getRules(response.issues)).toEqual(["no-identical-expressions"]);
-  client.end();
 });
 
 it("creates type-checker-based issue", async () => {
-  const client = await getClient();
   let response = await sendRequest(client, `function foo(x: number) { x as number; }`);
   expect(getRules(response.issues)).toEqual(["no-useless-cast"]);
-  client.end();
 });
 
 it("creates cross-file type-checker-based issue", async () => {
-  const client = await getClient();
   let response = await sendRequest(client, `import { bar } from "./file2"; function foo() { const x = bar();}`);
   expect(getRules(response.issues)).toEqual(["no-use-of-empty-return-value"]);
-  client.end();
 });
 
 function getRules(issues: any[]) {
