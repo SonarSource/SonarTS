@@ -19,27 +19,17 @@
  */
 package org.sonar.plugin.typescript;
 
-import java.io.File;
-import java.io.IOException;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.utils.internal.JUnitTempFolder;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.plugin.typescript.executable.ExecutableBundle;
-import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
-import org.sonar.plugin.typescript.executable.SonarTSCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.sonar.plugin.typescript.TestUtils.resourceScript;
 
 public class ContextualServerTest {
-
-  private static String node;
 
   @org.junit.Rule
   public JUnitTempFolder temp = new JUnitTempFolder();
@@ -47,26 +37,9 @@ public class ContextualServerTest {
   @Rule
   public final LogTester logTester = new LogTester();
 
-  /**
-   * First try 'node' from frontend-maven-plugin, fallback to 'node' from the path
-   */
-  @BeforeClass
-  public static void setUp() {
-    try {
-      String nodeFromMavenPlugin = "target/node/node";
-      Runtime.getRuntime().exec(nodeFromMavenPlugin);
-      node = nodeFromMavenPlugin;
-
-    } catch (IOException e) {
-      node = "node";
-    }
-  }
-
   @Test
   public void should_start_and_stop() {
-    MapSettings mapSettings = new MapSettings();
-    mapSettings.setProperty("sonar.typescript.internal.typescriptLocation", "not used in tests");
-    ContextualServer contextualServer = new ContextualServer(mapSettings.asConfig(), mockTSServer(), temp);
+    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), mockTSServer(), temp);
     contextualServer.start();
     assertThat(contextualServer.isAlive()).isTrue();
     assertThat(logTester.logs()).contains("SonarTS Server is started");
@@ -86,7 +59,7 @@ public class ContextualServerTest {
 
   @Test
   public void should_not_start_or_stop_twice() {
-    ContextualServer contextualServer = new ContextualServer(new MapSettings().asConfig(), mockTSServer(), temp);
+    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), mockTSServer(), temp);
     contextualServer.start();
     contextualServer.start();
 
@@ -98,58 +71,20 @@ public class ContextualServerTest {
 
   @Test
   public void should_fail_when_not_started() {
-    ContextualServer contextualServer = new ContextualServer(new MapSettings().asConfig(), new TestBundleFactory().command("--version"), temp);
+    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), new TestBundleFactory().command("--version"), temp);
     contextualServer.start();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsOnlyOnce("Failed to start SonarTS Server");
     assertThat(contextualServer.isAlive()).isFalse();
   }
 
   private TestBundleFactory mockTSServer() {
-    return new TestBundleFactory().command(resourceScript("/mockSonarTSServer.js"));
+    return TestBundleFactory.nodeScript("/mockSonarTSServer.js");
   }
 
-  private static class TestBundleFactory implements ExecutableBundleFactory {
-
-    private String ruleCheckCommand;
-    private String customNodeExecutable = null;
-
-    public TestBundleFactory command(String ruleCheckCommmand) {
-      this.ruleCheckCommand = ruleCheckCommmand;
-      return this;
-    }
-
-    public TestBundleFactory setCustomNodeExecutable(String nodeExecutable) {
-      customNodeExecutable = nodeExecutable;
-      return this;
-    }
-
-    @Override
-    public ExecutableBundle createAndDeploy(File deployDestination, Configuration configuration) {
-      return new TestBundleFactory.TestBundle();
-    }
-
-    private class TestBundle implements ExecutableBundle {
-      @Override
-      public String getNodeExecutable() {
-        return customNodeExecutable != null ? customNodeExecutable : node;
-      }
-
-      @Override
-      public SonarTSCommand getSonarTsRunnerCommand() {
-        return new SonarTSCommand(ruleCheckCommand);
-      }
-
-      @Override
-      public SonarTSCommand getSonarTSServerCommand(int port) {
-        return new SonarTSCommand(node, ruleCheckCommand, String.valueOf(port));
-      }
-
-      @Override
-      public String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
-        return "";
-      }
-    }
+  private Configuration defaultConfiguration() {
+    MapSettings mapSettings = new MapSettings();
+    mapSettings.setProperty("sonar.typescript.internal.typescriptLocation", "not used in tests");
+    return mapSettings.asConfig();
   }
-
 }
 
