@@ -57,6 +57,11 @@ public class ContextualSensor implements Sensor {
     Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
     LOG.info("Starting SonarTS Analysis");
     inputFiles.forEach(inputFile -> {
+      if (!inputFile.uri().getScheme().equals("file")) {
+        LOG.error("File with uri [" + inputFile.uri() + "] can not be analyzed as it's not file scheme.");
+        return;
+      }
+
       try {
         TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
         ContextualAnalysisRequest request = new ContextualAnalysisRequest(inputFile, typeScriptRules);

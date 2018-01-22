@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
@@ -104,7 +105,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
   @Override
   public String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
     SonarTSRequest request = new SonarTSRequest();
-    request.filepaths = StreamSupport.stream(inputFiles.spliterator(), false).map(InputFile::absolutePath).toArray(String[]::new);
+    request.filepaths = StreamSupport.stream(inputFiles.spliterator(), false).map(inputFile -> Paths.get(inputFile.uri()).toString()).toArray(String[]::new);
     request.tsconfig = tsconfigPath;
     request.rules = SensorContextUtils.convertToRulesToExecute(typeScriptRules);
 
