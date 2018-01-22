@@ -52,6 +52,11 @@ it("creates cross-file type-checker-based issue", async () => {
   expect(getRules(response.issues)).toEqual(["no-use-of-empty-return-value"]);
 });
 
+it("is able to process partial request", async () => {
+  const response = await sendRequest(client, "console.log('hello')".repeat(10000));
+  expect(getRules(response.issues)).toEqual([]);
+});
+
 function getRules(issues: any[]) {
   return issues.map(issue => issue.ruleName);
 }
@@ -73,45 +78,43 @@ function getClient(): Promise<net.Socket> {
 
 function sendRequest(client: net.Socket, content: string): Promise<any> {
   return new Promise(resolve => {
-    write(client, content);
     let dataAggregated = "";
-
     const listener = (data: any) => {
-      dataAggregated += data;
       try {
+        dataAggregated += data;
         const response = JSON.parse(dataAggregated);
         client.removeListener("data", listener);
         resolve(response);
-      } finally {
+      } catch (e) {
+        // ignore
       }
     };
     client.on("data", listener);
+    client.write(requestBuilder(content));
   });
 }
 
-function write(client: net.Socket, content: string) {
-  client.write(
-    JSON.stringify({
-      file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
-      content,
-      rules: [
-        {
-          ruleName: "no-identical-expressions",
-          ruleArguments: [],
-        },
-        {
-          ruleName: "triple-equals",
-          ruleArguments: ["allow-null-check"],
-        },
-        {
-          ruleName: "no-useless-cast",
-          ruleArguments: [],
-        },
-        {
-          ruleName: "no-use-of-empty-return-value",
-          ruleArguments: [],
-        },
-      ],
-    }),
-  );
+function requestBuilder(content: string): string {
+  return JSON.stringify({
+    file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
+    content,
+    rules: [
+      {
+        ruleName: "no-identical-expressions",
+        ruleArguments: [],
+      },
+      {
+        ruleName: "triple-equals",
+        ruleArguments: ["allow-null-check"],
+      },
+      {
+        ruleName: "no-useless-cast",
+        ruleArguments: [],
+      },
+      {
+        ruleName: "no-use-of-empty-return-value",
+        ruleArguments: [],
+      },
+    ],
+  });
 }

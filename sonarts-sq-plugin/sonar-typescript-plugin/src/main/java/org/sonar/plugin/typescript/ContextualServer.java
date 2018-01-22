@@ -125,8 +125,8 @@ public class ContextualServer implements Startable {
 
   private void terminate() {
     try {
-      IOUtils.closeQuietly(serverSocket);
       IOUtils.closeQuietly(socket);
+      IOUtils.closeQuietly(serverSocket);
       serverProcess.destroy();
       boolean terminated = serverProcess.waitFor(200, TimeUnit.MILLISECONDS);
       if (!terminated) {
