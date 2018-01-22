@@ -21,16 +21,14 @@ import { start } from "../../src/runner/sonartsServer";
 import * as net from "net";
 import * as path from "path";
 
-let server: net.Server, port: number, client: net.Socket;
+let client: net.Socket;
 
 beforeEach(async () => {
-  ({ server, port } = await start(55556));
   client = await getClient();
 });
 
-afterEach(done => {
+afterEach(() => {
   client.end();
-  server.close(done);
 });
 
 it("run analysis on provided content", async () => {
@@ -54,57 +52,69 @@ it("creates cross-file type-checker-based issue", async () => {
   expect(getRules(response.issues)).toEqual(["no-use-of-empty-return-value"]);
 });
 
+it("is able to process partial request", async () => {
+  const response = await sendRequest(client, "console.log('hello')".repeat(10000));
+  expect(getRules(response.issues)).toEqual([]);
+});
+
 function getRules(issues: any[]) {
   return issues.map(issue => issue.ruleName);
 }
 
 function getClient(): Promise<net.Socket> {
   return new Promise(resolve => {
-    const client = net.connect(port, "localhost", () => resolve(client));
+    const server = net
+      .createServer(client => {
+        resolve(client);
+        client.on("end", () => {
+          server.close();
+        });
+      })
+      .listen(0, "localhost", () => {
+        start(server.address().port);
+      });
   });
 }
 
 function sendRequest(client: net.Socket, content: string): Promise<any> {
   return new Promise(resolve => {
-    write(client, content);
     let dataAggregated = "";
-
     const listener = (data: any) => {
-      dataAggregated += data;
       try {
+        dataAggregated += data;
         const response = JSON.parse(dataAggregated);
         client.removeListener("data", listener);
         resolve(response);
-      } finally {
+      } catch (e) {
+        // ignore
       }
     };
     client.on("data", listener);
+    client.write(requestBuilder(content));
   });
 }
 
-function write(client: net.Socket, content: string) {
-  client.write(
-    JSON.stringify({
-      file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
-      content,
-      rules: [
-        {
-          ruleName: "no-identical-expressions",
-          ruleArguments: [],
-        },
-        {
-          ruleName: "triple-equals",
-          ruleArguments: ["allow-null-check"],
-        },
-        {
-          ruleName: "no-useless-cast",
-          ruleArguments: [],
-        },
-        {
-          ruleName: "no-use-of-empty-return-value",
-          ruleArguments: [],
-        },
-      ],
-    }),
-  );
+function requestBuilder(content: string): string {
+  return JSON.stringify({
+    file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
+    content,
+    rules: [
+      {
+        ruleName: "no-identical-expressions",
+        ruleArguments: [],
+      },
+      {
+        ruleName: "triple-equals",
+        ruleArguments: ["allow-null-check"],
+      },
+      {
+        ruleName: "no-useless-cast",
+        ruleArguments: [],
+      },
+      {
+        ruleName: "no-use-of-empty-return-value",
+        ruleArguments: [],
+      },
+    ],
+  });
 }

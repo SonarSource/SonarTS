@@ -19,10 +19,18 @@
  */
 package org.sonar.plugin.typescript;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.IOUtils;
 import org.sonar.api.Startable;
 import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.config.Configuration;
@@ -41,12 +49,15 @@ public class ContextualServer implements Startable {
   private static final String TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY = "sonar.typescript.internal.typescriptLocation";
 
   private static final Logger LOG = Loggers.get(ContextualServer.class);
+  private static final Gson GSON = new Gson();
 
   private final Configuration configuration;
   private final ExecutableBundleFactory bundleFactory;
   private final TempFolder tempFolder;
 
-  private static AtomicReference<Process> serverProcess = new AtomicReference<>();
+  private Process serverProcess;
+  private ServerSocket serverSocket;
+  private Socket socket;
 
   public ContextualServer(Configuration configuration, ExecutableBundleFactory bundleFactory, TempFolder tempFolder) {
     this.configuration = configuration;
@@ -58,78 +69,75 @@ public class ContextualServer implements Startable {
   public void start() {
     LOG.info("Starting SonarTS Server");
 
-    if (serverProcess.get() != null && serverProcess.get().isAlive()) {
+    if (isAlive()) {
       LOG.warn("Skipping SonarTS Server start, already running");
-      return;
-    }
-
-    if (configuration == null) {
-      LOG.warn("Skipping SonarTS Server start due to missing configuration");
       return;
     }
 
     startSonarTSServer();
   }
 
+  synchronized SensorContextUtils.AnalysisResponse analyze(SensorContextUtils.ContextualAnalysisRequest request) throws IOException {
+    final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
+    String requestJson = GSON.toJson(request);
+    writer.append(requestJson);
+    writer.flush();
+    JsonReader jsonReader = new JsonReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+    return GSON.fromJson(jsonReader, SensorContextUtils.AnalysisResponse.class);
+  }
+
   private void startSonarTSServer() {
     ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir(), configuration);
-
-    ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand().commandLineTokens());
-    setNodePath(processBuilder);
-
     try {
-      processBuilder.inheritIO();
-      serverProcess.set(processBuilder.start());
-      // TODO find a better way to wait until the server is up
-      // e.g. loop with accessing the port
-      synchronized (this) {
-        wait(1000);
-      }
+      serverSocket = new ServerSocket(0);
+      serverSocket.setSoTimeout(5_000);
+      ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand(serverSocket.getLocalPort()).commandLineTokens());
+      setNodePath(processBuilder);
+      serverProcess = processBuilder.start();
+      socket = serverSocket.accept();
       LOG.info("SonarTS Server is started");
-
     } catch (IOException e) {
       LOG.error("Failed to start SonarTS Server", e);
-
-    } catch (InterruptedException e) {
-      LOG.error("Failed to wait until the SonarTS Server is up", e);
-      throw new RuntimeException(e);
+      if (isAlive()) {
+        terminate();
+      }
     }
   }
 
   private void setNodePath(ProcessBuilder processBuilder) {
     Optional<String> typescriptLocation = configuration.get(TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
-
     if (typescriptLocation.isPresent()) {
       SensorContextUtils.setNodePath(new File(typescriptLocation.get()), processBuilder);
-
     } else {
-      LOG.error("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY + " is missing");
+      LOG.warn("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY + " is missing");
     }
   }
 
   @Override
   public void stop() {
-    Process process = serverProcess.get();
-    if (process != null && process.isAlive()) {
-
-      process.destroy();
-      synchronized (this) {
-        try {
-          wait(200);
-        } catch (InterruptedException e) {
-          LOG.error("Failed to wait until the SonarTS Server is stopped", e);
-          throw new RuntimeException(e);
-        }
-      }
-
-      if (process.isAlive()) {
-        process.destroyForcibly();
-      }
-
+    if (isAlive()) {
+      terminate();
       LOG.info("SonarTS Server is stopped");
-
     } else {
-      LOG.warn("Failed to stop SonarTS Server");
+      LOG.warn("SonarTS Server was already stopped");
     }
+  }
+
+  private void terminate() {
+    try {
+      IOUtils.closeQuietly(socket);
+      IOUtils.closeQuietly(serverSocket);
+      serverProcess.destroy();
+      boolean terminated = serverProcess.waitFor(200, TimeUnit.MILLISECONDS);
+      if (!terminated) {
+        serverProcess.destroyForcibly();
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
+
+  boolean isAlive() {
+    return serverProcess != null && serverProcess.isAlive();
   }
 }

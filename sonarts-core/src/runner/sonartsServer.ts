@@ -21,61 +21,68 @@ import * as net from "net";
 import * as path from "path";
 import * as fs from "fs";
 import * as ts from "typescript";
+import * as tslint from "tslint";
 import { getIssues } from "./rules";
 import { FileCache, createService } from "./languageService";
 import { parseTsConfig } from "../utils/parser";
 
-export function start(port: number): Promise<{ server: net.Server; port: number }> {
-  const EMPTY_ANSWER = '{"issues":[]}';
-  const fileCache = new FileCache();
-  // key is ts file path, value is corresponding tsconfig path
-  const tsConfigCache: Map<string, string> = new Map();
-  const servicesPerTsconfig: Map<string, ts.LanguageService> = new Map();
+const fileCache = new FileCache();
+// key is ts file path, value is corresponding tsconfig path
+const tsConfigCache: Map<string, string> = new Map();
+const servicesPerTsconfig: Map<string, ts.LanguageService> = new Map();
 
-  const server = net.createServer(socket => {
-    socket.on("data", data => {
-      const { file, rules, content } = JSON.parse(data.toString());
+const EMPTY_ANSWER: { issues: any[] } = { issues: [] };
 
-      fileCache.newContent({ file, content });
-
-      let tsConfig;
-      if (tsConfigCache.has(file)) {
-        tsConfig = tsConfigCache.get(file)!;
-      } else {
-        tsConfig = getTsConfig(file);
-        if (tsConfig) {
-          tsConfigCache.set(file, tsConfig);
-        } else {
-          console.error("No tsconfig.json file found for " + file);
-          socket.write(EMPTY_ANSWER);
-          return;
-        }
+export function start(port: number) {
+  const client = net.createConnection(port, "localhost", () => {
+    console.log("sonartsServer connected to " + port);
+    let accumulatedData = "";
+    client.on("data", data => {
+      accumulatedData += data;
+      try {
+        const request = JSON.parse(accumulatedData.toString());
+        accumulatedData = "";
+        const issues = handleAnalysisRequest(request);
+        client.write(JSON.stringify(issues));
+      } catch (e) {
+        // ignore
       }
-
-      let service = servicesPerTsconfig.get(tsConfig);
-      if (!service) {
-        const { files, options } = parseTsConfig(tsConfig);
-        service = createService(files, options, fileCache);
-        servicesPerTsconfig.set(tsConfig, service);
-      }
-
-      const program = service.getProgram();
-      const sourceFile = program.getSourceFile(file);
-      if (!sourceFile) {
-        console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
-        socket.write(EMPTY_ANSWER);
-        return;
-      }
-      const issues = getIssues(rules, program, sourceFile);
-      socket.write(JSON.stringify(issues));
     });
   });
-  return new Promise(resolve => {
-    server.listen(port, "localhost", () => {
-      console.log(`SonarTS Server started on port ${port} from folder ${__dirname}`);
-      resolve({ server, port });
-    });
-  });
+}
+
+function handleAnalysisRequest(request: AnalysisRequest): any {
+  const { file, rules, content } = request;
+
+  fileCache.newContent({ file, content });
+
+  let tsConfig;
+  if (tsConfigCache.has(file)) {
+    tsConfig = tsConfigCache.get(file)!;
+  } else {
+    tsConfig = getTsConfig(file);
+    if (tsConfig) {
+      tsConfigCache.set(file, tsConfig);
+    } else {
+      console.error("No tsconfig.json file found for " + file);
+      return EMPTY_ANSWER;
+    }
+  }
+
+  let service = servicesPerTsconfig.get(tsConfig);
+  if (!service) {
+    const { files, options } = parseTsConfig(tsConfig);
+    service = createService(files, options, fileCache);
+    servicesPerTsconfig.set(tsConfig, service);
+  }
+
+  const program = service.getProgram();
+  const sourceFile = program.getSourceFile(file);
+  if (!sourceFile) {
+    console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
+    return EMPTY_ANSWER;
+  }
+  return getIssues(rules, program, sourceFile);
 }
 
 function getTsConfig(filePath: string): string | undefined {
@@ -90,4 +97,10 @@ function getTsConfig(filePath: string): string | undefined {
   } while (currentDirectory !== path.dirname(currentDirectory));
 
   return undefined;
+}
+
+interface AnalysisRequest {
+  file: string;
+  rules: tslint.IOptions[];
+  content: string;
 }

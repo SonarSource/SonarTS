@@ -19,15 +19,7 @@
  */
 package org.sonar.plugin.typescript;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -47,11 +39,12 @@ public class ContextualSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(ContextualSensor.class);
 
-  private CheckFactory checkFactory;
-  private static AtomicReference<Socket> socketReference = new AtomicReference<>();
+  private final ContextualServer contextualServer;
+  private final CheckFactory checkFactory;
 
-  public ContextualSensor(CheckFactory checkFactory) {
+  public ContextualSensor(CheckFactory checkFactory, ContextualServer contextualServer) {
     this.checkFactory = checkFactory;
+    this.contextualServer = contextualServer;
   }
 
   @Override
@@ -63,42 +56,22 @@ public class ContextualSensor implements Sensor {
   public void execute(SensorContext sensorContext) {
     Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
     LOG.info("Starting SonarTS Analysis");
-    inputFiles.forEach(inputFile ->
-      connect().ifPresent(socket -> {
-        LOG.info("Analysing " + inputFile.uri().toString());
-        try {
-          final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
-          TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
-          String request = getContextualRequest(inputFile, typeScriptRules);
-          writer.append(request);
-          writer.flush();
-          JsonReader jsonReader = new JsonReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-          SensorContextUtils.AnalysisResponse response = new Gson().fromJson(jsonReader, SensorContextUtils.AnalysisResponse.class);
-          for (SensorContextUtils.Issue issue : response.issues) {
-            SensorContextUtils.saveIssue(sensorContext, typeScriptRules, issue, inputFile);
-          }
-        } catch (IOException e) {
-          LOG.error("Failed writing to SonarTS Server " + socket.getLocalAddress(), e);
-        }
-      }));
-  }
-
-  private static Optional<Socket> connect() {
-    return Optional.ofNullable(socketReference.updateAndGet(socket -> {
-      if (socket == null) {
-        try {
-          return new Socket("localhost", 55555);
-        } catch (IOException e) {
-          LOG.error("Failed to connect to SonarTS Server", e);
-          return null;
-        }
+    inputFiles.forEach(inputFile -> {
+      if (!inputFile.uri().getScheme().equals("file")) {
+        LOG.error("File with uri [" + inputFile.uri() + "] can not be analyzed as it's not file scheme.");
+        return;
       }
-      return socket;
-    }));
-  }
 
-  private static String getContextualRequest(InputFile inputFile, TypeScriptRules typeScriptRules) throws IOException {
-    return new Gson().toJson(new ContextualAnalysisRequest(inputFile, typeScriptRules));
+      try {
+        TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
+        ContextualAnalysisRequest request = new ContextualAnalysisRequest(inputFile, typeScriptRules);
+        SensorContextUtils.AnalysisResponse response = contextualServer.analyze(request);
+        for (SensorContextUtils.Issue issue : response.issues) {
+          SensorContextUtils.saveIssue(sensorContext, typeScriptRules, issue, inputFile);
+        }
+      } catch (IOException e) {
+        LOG.error("Failed writing to SonarTS Server ", e);
+      }
+    });
   }
-
 }

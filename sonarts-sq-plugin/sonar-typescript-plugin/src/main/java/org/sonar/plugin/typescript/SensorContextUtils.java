@@ -22,6 +22,8 @@ package org.sonar.plugin.typescript;
 import com.google.gson.JsonElement;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -207,7 +209,8 @@ public class SensorContextUtils {
     List<RuleToExecute> rules;
 
     ContextualAnalysisRequest(InputFile inputFile, TypeScriptRules typeScriptRules) throws IOException {
-      this.file = inputFile.absolutePath();
+      Path path = Paths.get(inputFile.uri());
+      this.file = path.toString();
       this.content = inputFile.contents();
       this.rules = SensorContextUtils.convertToRulesToExecute(typeScriptRules);
     }
