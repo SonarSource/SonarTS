@@ -32,7 +32,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.sonar.api.Startable;
-import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.TempFolder;
 import org.sonar.api.utils.log.Logger;
@@ -41,8 +40,9 @@ import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 import org.sonarsource.api.sonarlint.SonarLintSide;
 
-@InstantiationStrategy("PER_PROCESS")
-@SonarLintSide
+import static org.sonarsource.api.sonarlint.SonarLintSide.MULTIPLE_ANALYSES;
+
+@SonarLintSide(lifespan = MULTIPLE_ANALYSES)
 public class ContextualServer implements Startable {
 
   // SonarLint should pass in this property an absolute path to the directory containing TypeScript dependency

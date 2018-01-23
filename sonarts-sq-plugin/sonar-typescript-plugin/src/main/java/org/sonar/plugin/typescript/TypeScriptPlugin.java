@@ -23,8 +23,7 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
-import org.sonar.plugin.typescript.executable.SonarLintTSCoreBundleFactory;
-import org.sonar.plugin.typescript.executable.SonarScannerTSCoreBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
 import org.sonar.plugin.typescript.lcov.LCOVCoverageSensor;
 
 public class TypeScriptPlugin implements Plugin {
@@ -55,6 +54,7 @@ public class TypeScriptPlugin implements Plugin {
       SonarWayRecommendedProfile.class,
       TypeScriptRulesDefinition.class,
       TypeScriptExclusionsFileFilter.class,
+      new SonarTSCoreBundleFactory(SONARTS_BUNDLE_ZIP),
       PropertyDefinition.builder(FILE_SUFFIXES_KEY)
         .defaultValue(FILE_SUFFIXES_DEFVALUE)
         .name("File Suffixes")
@@ -92,12 +92,10 @@ public class TypeScriptPlugin implements Plugin {
         .build());
 
     if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
-      context.addExtension(new SonarLintTSCoreBundleFactory(SONARTS_BUNDLE_ZIP));
       context.addExtension(ContextualSensor.class);
       context.addExtension(ContextualServer.class);
 
     } else {
-      context.addExtension(new SonarScannerTSCoreBundleFactory(SONARTS_BUNDLE_ZIP));
       context.addExtension(ExternalTypescriptSensor.class);
       context.addExtension(LCOVCoverageSensor.class);
     }

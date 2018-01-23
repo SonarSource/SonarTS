@@ -20,18 +20,21 @@
 package org.sonar.plugin.typescript.executable;
 
 import java.io.File;
-import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.batch.BatchSide;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Configuration;
 import org.sonarsource.api.sonarlint.SonarLintSide;
 
-// FIXME Once there is a proper way not using @InstantiationStrategy we can revert to a single extension
-@InstantiationStrategy("PER_PROCESS")
-@SonarLintSide
-public class SonarLintTSCoreBundleFactory implements ExecutableBundleFactory {
+import static org.sonarsource.api.sonarlint.SonarLintSide.MULTIPLE_ANALYSES;
+
+@BatchSide
+@ScannerSide
+@SonarLintSide(lifespan = MULTIPLE_ANALYSES)
+public class SonarTSCoreBundleFactory implements ExecutableBundleFactory {
 
   private String bundleLocation;
 
-  public SonarLintTSCoreBundleFactory(String bundleLocation) {
+  public SonarTSCoreBundleFactory(String bundleLocation) {
     this.bundleLocation = bundleLocation;
   }
 

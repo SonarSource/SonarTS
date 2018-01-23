@@ -20,7 +20,6 @@
 package org.sonar.plugin.typescript;
 
 import java.io.IOException;
-import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.sensor.Sensor;
@@ -33,7 +32,6 @@ import org.sonarsource.api.sonarlint.SonarLintSide;
 
 import static org.sonar.plugin.typescript.SensorContextUtils.getInputFiles;
 
-@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 @SonarLintSide
 public class ContextualSensor implements Sensor {
 

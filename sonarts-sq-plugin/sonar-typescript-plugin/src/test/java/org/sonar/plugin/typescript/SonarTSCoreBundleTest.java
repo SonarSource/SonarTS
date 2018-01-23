@@ -36,7 +36,7 @@ import org.sonar.api.config.internal.MapSettings;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.SonarTSCommand;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundle;
-import org.sonar.plugin.typescript.executable.SonarLintTSCoreBundleFactory;
+import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,12 +52,12 @@ public class SonarTSCoreBundleTest {
 
   @Before
   public void setUp() throws Exception {
-    DEPLOY_DESTINATION =  temporaryFolder.newFolder("deployDestination");
+    DEPLOY_DESTINATION = temporaryFolder.newFolder("deployDestination");
   }
 
   @Test
   public void should_create_command() throws Exception {
-    ExecutableBundle bundle = new SonarLintTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings().asConfig());
+    ExecutableBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings().asConfig());
     File projectBaseDir = new File("/myProject");
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
@@ -65,7 +65,8 @@ public class SonarTSCoreBundleTest {
 
     SonarTSCommand ruleCommand = bundle.getSonarTsRunnerCommand();
     String ruleCommandContent = bundle.getRequestForRunner(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), getTypeScriptRules());
-    assertThat(ruleCommand.commandLine()).isEqualTo("node --max-old-space-size=2048 " + new File(DEPLOY_DESTINATION, "sonarts-bundle/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
+    assertThat(ruleCommand.commandLine())
+      .isEqualTo("node --max-old-space-size=2048 " + new File(DEPLOY_DESTINATION, "sonarts-bundle/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
     assertThat(ruleCommandContent).contains("file1.ts");
     assertThat(ruleCommandContent).contains("file2.ts");
     assertThat(ruleCommandContent).contains("tsconfig.json");
@@ -85,14 +86,14 @@ public class SonarTSCoreBundleTest {
   public void should_fail_when_bad_zip() throws Exception {
     expectedException.expect(IllegalStateException.class);
     expectedException.expectMessage("Failed to deploy SonarTS bundle (with classpath '/badZip.zip')");
-    new SonarLintTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings().asConfig());
+    new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings().asConfig());
   }
 
   @Test
   public void should_execute_node_from_settings() {
     MapSettings settings = getSettings();
     settings.setProperty("sonar.typescript.node", "/usr/local/bin/node");
-    SonarTSCoreBundle bundle = new SonarLintTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings.asConfig());
+    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings.asConfig());
     SonarTSCommand command = bundle.getSonarTsRunnerCommand();
     String commandLine = command.commandLine();
     assertThat(commandLine).startsWith("/usr/local/bin/node");

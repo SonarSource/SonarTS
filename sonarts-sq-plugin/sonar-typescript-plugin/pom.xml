@@ -76,7 +76,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
@@ -87,6 +86,10 @@
                     <skipDependenciesPackaging>true</skipDependenciesPackaging>
                     <sonarLintSupported>true</sonarLintSupported>
                     <sonarQubeMinVersion>${sonar.min.version}</sonarQubeMinVersion>
+                    <excludes>
+                      <!-- Can be dropped once SonarLintSide.java will be removed from this project -->
+                      <exclude>**/SonarLintSide*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
