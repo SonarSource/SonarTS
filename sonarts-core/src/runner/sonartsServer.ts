@@ -26,86 +26,86 @@ import { getIssues } from "./rules";
 import { FileCache, createService } from "./languageService";
 import { parseTsConfig } from "../utils/parser";
 
-const fileCache = new FileCache();
-// key is ts file path, value is corresponding tsconfig path
-const tsConfigCache: Map<string, string> = new Map();
-const servicesPerTsconfig: Map<string, ts.LanguageService> = new Map();
-
 const EMPTY_ANSWER: { issues: any[] } = { issues: [] };
+export class SonarTsServer {
+  readonly fileCache = new FileCache();
+  // key is ts file path, value is corresponding tsconfig path
+  readonly tsConfigCache: Map<string, string> = new Map();
+  readonly servicesPerTsconfig: Map<string, ts.LanguageService> = new Map();
+
+  public start(port: number) {
+    logTypeScriptMetaInfo();
+    const client = net.createConnection(port, "localhost", () => {
+      console.log("SonarTS Server connected to " + port);
+      let accumulatedData = "";
+      client.on("data", data => {
+        accumulatedData += data;
+        try {
+          const request = JSON.parse(accumulatedData.toString());
+          accumulatedData = "";
+          const issues = this.handleAnalysisRequest(request);
+          client.write(JSON.stringify(issues));
+        } catch (e) {
+          // ignore
+        }
+      });
+    });
+  }
+
+  private handleAnalysisRequest(request: AnalysisRequest): any {
+    const { file, rules, content } = request;
+
+    this.fileCache.newContent({ file, content });
+
+    let tsConfig;
+    if (this.tsConfigCache.has(file)) {
+      tsConfig = this.tsConfigCache.get(file)!;
+    } else {
+      tsConfig = this.getTsConfig(file);
+      if (tsConfig) {
+        this.tsConfigCache.set(file, tsConfig);
+      } else {
+        console.error("No tsconfig.json file found for " + file);
+        return EMPTY_ANSWER;
+      }
+    }
+
+    let service = this.servicesPerTsconfig.get(tsConfig);
+    if (!service) {
+      const { files, options } = parseTsConfig(tsConfig);
+      service = createService(files, options, this.fileCache);
+      this.servicesPerTsconfig.set(tsConfig, service);
+    }
+
+    const program = service.getProgram();
+    const sourceFile = program.getSourceFile(file);
+    if (!sourceFile) {
+      console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
+      return EMPTY_ANSWER;
+    }
+    return getIssues(rules, program, sourceFile);
+  }
+
+  private getTsConfig(filePath: string): string | undefined {
+    let currentDirectory = filePath;
+    do {
+      currentDirectory = path.dirname(currentDirectory);
+      const possibleTsConfig = path.join(currentDirectory, "tsconfig.json");
+
+      if (fs.existsSync(possibleTsConfig)) {
+        return possibleTsConfig;
+      }
+    } while (currentDirectory !== path.dirname(currentDirectory));
+
+    return undefined;
+  }
+}
 
 function logTypeScriptMetaInfo() {
   const version = require("typescript/package.json").version;
   const location = path.dirname(path.dirname(require.resolve("typescript")));
 
   console.log(`Using typescript at [${location}], version ${version}`);
-}
-
-export function start(port: number) {
-  logTypeScriptMetaInfo();
-
-  const client = net.createConnection(port, "localhost", () => {
-    console.log("SonarTS Server connected to " + port);
-    let accumulatedData = "";
-    client.on("data", data => {
-      accumulatedData += data;
-      try {
-        const request = JSON.parse(accumulatedData.toString());
-        accumulatedData = "";
-        const issues = handleAnalysisRequest(request);
-        client.write(JSON.stringify(issues));
-      } catch (e) {
-        // ignore
-      }
-    });
-  });
-}
-
-function handleAnalysisRequest(request: AnalysisRequest): any {
-  const { file, rules, content } = request;
-
-  fileCache.newContent({ file, content });
-
-  let tsConfig;
-  if (tsConfigCache.has(file)) {
-    tsConfig = tsConfigCache.get(file)!;
-  } else {
-    tsConfig = getTsConfig(file);
-    if (tsConfig) {
-      tsConfigCache.set(file, tsConfig);
-    } else {
-      console.error("No tsconfig.json file found for " + file);
-      return EMPTY_ANSWER;
-    }
-  }
-
-  let service = servicesPerTsconfig.get(tsConfig);
-  if (!service) {
-    const { files, options } = parseTsConfig(tsConfig);
-    service = createService(files, options, fileCache);
-    servicesPerTsconfig.set(tsConfig, service);
-  }
-
-  const program = service.getProgram();
-  const sourceFile = program.getSourceFile(file);
-  if (!sourceFile) {
-    console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
-    return EMPTY_ANSWER;
-  }
-  return getIssues(rules, program, sourceFile);
-}
-
-function getTsConfig(filePath: string): string | undefined {
-  let currentDirectory = filePath;
-  do {
-    currentDirectory = path.dirname(currentDirectory);
-    const possibleTsConfig = path.join(currentDirectory, "tsconfig.json");
-
-    if (fs.existsSync(possibleTsConfig)) {
-      return possibleTsConfig;
-    }
-  } while (currentDirectory !== path.dirname(currentDirectory));
-
-  return undefined;
 }
 
 interface AnalysisRequest {
