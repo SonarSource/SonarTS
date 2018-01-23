@@ -44,7 +44,7 @@ export function start(port: number) {
   logTypeScriptMetaInfo();
 
   const client = net.createConnection(port, "localhost", () => {
-    console.log("sonartsServer connected to " + port);
+    console.log("SonarTS Server connected to " + port);
     let accumulatedData = "";
     client.on("data", data => {
       accumulatedData += data;

@@ -49,7 +49,7 @@ public class TypeScriptPlugin implements Plugin {
   @Override
   public void define(Context context) {
     context.addExtensions(
-      ExternalProcessErrorConsumer.class,
+      ExternalProcessStreamConsumer.class,
       TypeScriptLanguage.class,
       SonarWayProfile.class,
       SonarWayRecommendedProfile.class,
