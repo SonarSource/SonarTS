@@ -33,7 +33,16 @@ const servicesPerTsconfig: Map<string, ts.LanguageService> = new Map();
 
 const EMPTY_ANSWER: { issues: any[] } = { issues: [] };
 
+function logTypeScriptMetaInfo() {
+  const version = require("typescript/package.json").version;
+  const location = path.dirname(path.dirname(require.resolve("typescript")));
+
+  console.log(`Using typescript at [${location}], version ${version}`);
+}
+
 export function start(port: number) {
+  logTypeScriptMetaInfo();
+
   const client = net.createConnection(port, "localhost", () => {
     console.log("sonartsServer connected to " + port);
     let accumulatedData = "";
