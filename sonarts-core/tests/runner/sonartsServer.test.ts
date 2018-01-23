@@ -17,11 +17,12 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { start } from "../../src/runner/sonartsServer";
+import { SonarTsServer } from "../../src/runner/sonartsServer";
 import * as net from "net";
 import * as path from "path";
 
 let client: net.Socket;
+const sonartsServer = new SonarTsServer();
 
 beforeEach(async () => {
   client = await getClient();
@@ -71,7 +72,7 @@ function getClient(): Promise<net.Socket> {
         });
       })
       .listen(0, "localhost", () => {
-        start(server.address().port);
+        sonartsServer.start(server.address().port);
       });
   });
 }
