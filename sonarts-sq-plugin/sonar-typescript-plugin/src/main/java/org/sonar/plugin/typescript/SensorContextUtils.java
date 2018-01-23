@@ -137,9 +137,14 @@ public class SensorContextUtils {
     }
   }
 
-  private static class Position {
+  static class Position {
     Integer line;
     Integer character;
+
+    public Position(Integer line, Integer character) {
+      this.line = line;
+      this.character = character;
+    }
 
     @Override
     public String toString() {

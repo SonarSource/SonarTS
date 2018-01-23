@@ -21,13 +21,20 @@ package org.sonar.plugin.typescript;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.sonar.api.batch.fs.internal.DefaultInputFile;
+import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.utils.internal.JUnitTempFolder;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.plugin.typescript.SensorContextUtils.AnalysisResponse;
+import org.sonar.plugin.typescript.SensorContextUtils.ContextualAnalysisRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.sonar.plugin.typescript.TestUtils.BASE_DIR;
+import static org.sonar.plugin.typescript.TestUtils.createInputFile;
+import static org.sonar.plugin.typescript.TestUtils.TYPE_SCRIPT_RULES;
 
 public class ContextualServerTest {
 
@@ -39,7 +46,7 @@ public class ContextualServerTest {
 
   @Test
   public void should_start_and_stop() {
-    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), mockTSServer(), temp);
+    ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     assertThat(contextualServer.isAlive()).isTrue();
     assertThat(logTester.logs()).contains("SonarTS Server is started");
@@ -59,7 +66,7 @@ public class ContextualServerTest {
 
   @Test
   public void should_not_start_or_stop_twice() {
-    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), mockTSServer(), temp);
+    ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     contextualServer.start();
 
@@ -71,10 +78,28 @@ public class ContextualServerTest {
 
   @Test
   public void should_fail_when_not_started() {
-    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), new TestBundleFactory().command("--version"), temp);
+    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), new TestBundleFactory().command(TestBundleFactory.getNodeExecutable(), "--version"), temp);
     contextualServer.start();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsOnlyOnce("Failed to start SonarTS Server");
     assertThat(contextualServer.isAlive()).isFalse();
+  }
+
+  @Test
+  public void should_provide_analysis_results() throws Exception {
+    ContextualServer contextualServer = getContextualServer();
+    contextualServer.start();
+
+    DefaultInputFile inputFile = createInputFile(SensorContextTester.create(BASE_DIR), "function foo() {}", "foo/file.ts");
+
+    ContextualAnalysisRequest request = new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES);
+    AnalysisResponse analyze = contextualServer.analyze(request);
+
+    assertThat(analyze.issues).hasSize(1);
+    assertThat(analyze.cpdTokens).isEmpty();
+  }
+
+  private ContextualServer getContextualServer() {
+    return new ContextualServer(defaultConfiguration(), mockTSServer(), temp);
   }
 
   private TestBundleFactory mockTSServer() {
