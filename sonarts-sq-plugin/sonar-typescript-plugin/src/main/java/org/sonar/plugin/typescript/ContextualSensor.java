@@ -55,7 +55,7 @@ public class ContextualSensor implements Sensor {
   @Override
   public void execute(SensorContext sensorContext) {
     Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
-    LOG.info("Starting SonarTS Analysis");
+    LOG.info("Started SonarTS Analysis");
     inputFiles.forEach(inputFile -> {
       if (!inputFile.uri().getScheme().equals("file")) {
         LOG.error("File with uri [" + inputFile.uri() + "] can not be analyzed as it's not file scheme.");
@@ -73,5 +73,6 @@ public class ContextualSensor implements Sensor {
         LOG.error("Failed writing to SonarTS Server ", e);
       }
     });
+    LOG.info("Finished SonarTS Analysis");
   }
 }

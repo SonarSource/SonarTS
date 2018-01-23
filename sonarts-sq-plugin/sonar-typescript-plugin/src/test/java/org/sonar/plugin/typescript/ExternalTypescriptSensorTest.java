@@ -22,7 +22,6 @@ package org.sonar.plugin.typescript;
 import com.google.common.collect.Sets;
 import java.io.BufferedReader;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import org.junit.Rule;
@@ -33,8 +32,6 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
-import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
-import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
@@ -57,10 +54,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.sonar.plugin.typescript.TestUtils.BASE_DIR;
+import static org.sonar.plugin.typescript.TestUtils.CHECK_FACTORY;
+import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 
 public class ExternalTypescriptSensorTest {
-
-  private static final File BASE_DIR = new File("src/test/resources").getAbsoluteFile();
 
   private FileLinesContext fileLinesContext;
   private NoSonarFilter noSonarFilter;
@@ -330,34 +328,15 @@ public class ExternalTypescriptSensorTest {
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
 
     noSonarFilter = mock(NoSonarFilter.class);
-    CheckFactory checkFactory = new CheckFactory(new TestActiveRules("S1751", "S113"));
-    return new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, checkFactory, errorConsumer);
+    return new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, CHECK_FACTORY, errorConsumer);
   }
 
   private DefaultInputFile createTestInputFile(SensorContextTester sensorContext) {
-    DefaultInputFile testInputFile = new TestInputFileBuilder("moduleKey", "foo/file.ts")
-      .setModuleBaseDir(BASE_DIR.toPath())
-      .setType(Type.MAIN)
-      .setLanguage(TypeScriptLanguage.KEY)
-      .setCharset(StandardCharsets.UTF_8)
-      .setContents(FILE_CONTENT)
-      .build();
-
-    sensorContext.fileSystem().add(testInputFile);
-    return testInputFile;
+    return createInputFile(sensorContext, FILE_CONTENT, "foo/file.ts");
   }
 
   private DefaultInputFile createTestInputFile(SensorContextTester sensorContext, String relativePath) {
-    DefaultInputFile testInputFile = new TestInputFileBuilder("moduleKey", relativePath)
-      .setModuleBaseDir(sensorContext.fileSystem().baseDir().toPath())
-      .setType(Type.MAIN)
-      .setLanguage(TypeScriptLanguage.KEY)
-      .setCharset(StandardCharsets.UTF_8)
-      .setContents(FILE_CONTENT)
-      .build();
-
-    sensorContext.fileSystem().add(testInputFile);
-    return testInputFile;
+    return createInputFile(sensorContext, FILE_CONTENT, relativePath);
   }
 
   public static class LineTrimmingExternalProcessErrorConsumer extends ExternalProcessErrorConsumer {
