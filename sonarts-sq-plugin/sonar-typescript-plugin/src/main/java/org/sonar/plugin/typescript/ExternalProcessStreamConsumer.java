@@ -31,11 +31,9 @@ import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonarsource.api.sonarlint.SonarLintSide;
 
 @BatchSide
 @ScannerSide
-@SonarLintSide
 public class ExternalProcessStreamConsumer implements Startable {
 
   private static final Logger LOG = Loggers.get(ExternalProcessStreamConsumer.class);
