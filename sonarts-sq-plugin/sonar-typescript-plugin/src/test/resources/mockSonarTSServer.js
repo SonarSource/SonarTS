@@ -3,7 +3,8 @@
 const net = require('net');
 
 const client = net.createConnection(process.argv[2], () => {
-    console.log('client connected')
+    console.log('SonarTS Server connected to 12345');
+    console.error('this is error')
 
     client.on("data", data => {
       client.write(`{ "issues": [ { failure: 'Issue message',

@@ -54,6 +54,7 @@ public class ContextualServer implements Startable {
   private final Configuration configuration;
   private final ExecutableBundleFactory bundleFactory;
   private final TempFolder tempFolder;
+  private final ExternalProcessStreamConsumer externalProcessStreamConsumer;
 
   private Process serverProcess;
   private ServerSocket serverSocket;
@@ -63,10 +64,12 @@ public class ContextualServer implements Startable {
     this.configuration = configuration;
     this.bundleFactory = bundleFactory;
     this.tempFolder = tempFolder;
+    this.externalProcessStreamConsumer = new ExternalProcessStreamConsumer();
   }
 
   @Override
   public void start() {
+    externalProcessStreamConsumer.start();
     LOG.info("Starting SonarTS Server");
 
     if (isAlive()) {
@@ -94,6 +97,8 @@ public class ContextualServer implements Startable {
       ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand(serverSocket.getLocalPort()).commandLineTokens());
       setNodePath(processBuilder);
       serverProcess = processBuilder.start();
+      externalProcessStreamConsumer.consumeStream(serverProcess.getErrorStream(), LOG::error);
+      externalProcessStreamConsumer.consumeStream(serverProcess.getInputStream(), LOG::info);
       socket = serverSocket.accept();
       LOG.info("SonarTS Server is started");
     } catch (IOException e) {
@@ -115,6 +120,7 @@ public class ContextualServer implements Startable {
 
   @Override
   public void stop() {
+    externalProcessStreamConsumer.stop();
     if (isAlive()) {
       terminate();
       LOG.info("SonarTS Server is stopped");

@@ -19,6 +19,8 @@
  */
 package org.sonar.plugin.typescript;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -43,14 +45,28 @@ public class ContextualServerTest {
 
   @Rule
   public final LogTester logTester = new LogTester();
+  private ExternalProcessStreamConsumer externalProcessStreamConsumer;
+
+  @Before
+  public void setUp() {
+    externalProcessStreamConsumer = new ExternalProcessStreamConsumer();
+    externalProcessStreamConsumer.start();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    externalProcessStreamConsumer.stop();
+  }
 
   @Test
-  public void should_start_and_stop() {
+  public void should_start_and_stop() throws Exception {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     assertThat(contextualServer.isAlive()).isTrue();
-    assertThat(logTester.logs()).contains("SonarTS Server is started");
+    Thread.sleep(2_000);
     contextualServer.stop();
+    assertThat(logTester.logs()).contains("SonarTS Server is started");
+    assertThat(logTester.logs().stream().anyMatch(log -> log.startsWith("SonarTS Server connected to"))).isTrue();
     assertThat(logTester.logs()).contains("SonarTS Server is stopped");
   }
 
@@ -65,14 +81,14 @@ public class ContextualServerTest {
   }
 
   @Test
-  public void should_not_start_or_stop_twice() {
+  public void should_not_start_or_stop_twice() throws Exception {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     contextualServer.start();
 
+    contextualServer.stop();
+    contextualServer.stop();
     assertThat(logTester.logs(LoggerLevel.WARN)).containsOnlyOnce("Skipping SonarTS Server start, already running");
-    contextualServer.stop();
-    contextualServer.stop();
     assertThat(logTester.logs(LoggerLevel.WARN)).containsOnlyOnce("SonarTS Server was already stopped");
   }
 
@@ -96,6 +112,15 @@ public class ContextualServerTest {
 
     assertThat(analyze.issues).hasSize(1);
     assertThat(analyze.cpdTokens).isEmpty();
+  }
+
+  @Test
+  public void consume_stdout_stderr() throws Exception {
+    ContextualServer contextualServer = getContextualServer();
+    contextualServer.start();
+    Thread.sleep(2_000);
+    assertThat(logTester.logs(LoggerLevel.INFO)).contains("SonarTS Server connected to 12345");
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("this is error");
   }
 
   private ContextualServer getContextualServer() {

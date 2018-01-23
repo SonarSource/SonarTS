@@ -66,7 +66,7 @@ public class ExternalTypescriptSensor implements Sensor {
   private static final int MIN_NODE_VERSION = 6;
 
   private final CheckFactory checkFactory;
-  private final ExternalProcessErrorConsumer errorConsumer;
+  private final ExternalProcessStreamConsumer errorConsumer;
   private final ExecutableBundleFactory executableBundleFactory;
   private final NoSonarFilter noSonarFilter;
   private final FileLinesContextFactory fileLinesContextFactory;
@@ -76,7 +76,7 @@ public class ExternalTypescriptSensor implements Sensor {
    */
   public ExternalTypescriptSensor(
     ExecutableBundleFactory executableBundleFactory, NoSonarFilter noSonarFilter, FileLinesContextFactory fileLinesContextFactory,
-    CheckFactory checkFactory, ExternalProcessErrorConsumer errorConsumer) {
+    CheckFactory checkFactory, ExternalProcessStreamConsumer errorConsumer) {
     this.executableBundleFactory = executableBundleFactory;
     this.noSonarFilter = noSonarFilter;
     this.fileLinesContextFactory = fileLinesContextFactory;
@@ -215,7 +215,7 @@ public class ExternalTypescriptSensor implements Sensor {
     LOG.debug(String.format("Starting external process `%s`", commandLine));
     try {
       Process process = processBuilder.start();
-      errorConsumer.consumeStdError(process);
+      errorConsumer.consumeStream(process.getErrorStream(), new DetectMissingTypescript());
       OutputStreamWriter writerToSonar = new OutputStreamWriter(process.getOutputStream(), StandardCharsets.UTF_8);
       writerToSonar.write(request);
       writerToSonar.close();
@@ -324,4 +324,23 @@ public class ExternalTypescriptSensor implements Sensor {
     return null;
   }
 
+  private static class DetectMissingTypescript implements ExternalProcessStreamConsumer.StreamConsumer {
+
+    private boolean tsNotFound;
+
+    @Override
+    public void consumeLine(String line) {
+      if (line.contains("Error: Cannot find module 'typescript'")) {
+        tsNotFound = true;
+      }
+      LOG.error(line);
+    }
+
+    @Override
+    public void finished() {
+      if (tsNotFound) {
+        LOG.error("Failed to find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
+      }
+    }
+  }
 }

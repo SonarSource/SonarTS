@@ -41,9 +41,7 @@ import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.utils.log.LogTester;
-import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.api.utils.log.Loggers;
 import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 
@@ -322,7 +320,7 @@ public class ExternalTypescriptSensorTest {
     return createSensor(new TestBundleFactory(), new LineTrimmingExternalProcessErrorConsumer());
   }
 
-  private ExternalTypescriptSensor createSensor(ExecutableBundleFactory executableBundleFactory, ExternalProcessErrorConsumer errorConsumer) {
+  private ExternalTypescriptSensor createSensor(ExecutableBundleFactory executableBundleFactory, ExternalProcessStreamConsumer errorConsumer) {
     FileLinesContextFactory fileLinesContextFactory = mock(FileLinesContextFactory.class);
     fileLinesContext = mock(FileLinesContext.class);
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
@@ -339,38 +337,42 @@ public class ExternalTypescriptSensorTest {
     return createInputFile(sensorContext, FILE_CONTENT, relativePath);
   }
 
-  public static class LineTrimmingExternalProcessErrorConsumer extends ExternalProcessErrorConsumer {
-
-    private static final Logger LOG = Loggers.get(LineTrimmingExternalProcessErrorConsumer.class);
+  public static class LineTrimmingExternalProcessErrorConsumer extends ExternalProcessStreamConsumer {
 
     private int trimmingLimit = 100;
 
+    public LineTrimmingExternalProcessErrorConsumer() {
+      start();
+    }
+
     @Override
-    protected void readErrors(BufferedReader errorReader) {
+    protected void readErrors(BufferedReader errorReader, StreamConsumer streamConsumer) {
       errorReader.lines().forEach(line -> {
         if (line.length() > trimmingLimit) {
-          LOG.error(line.substring(0, trimmingLimit - 1) + "...");
+          streamConsumer.consumeLine(line.substring(0, trimmingLimit - 1) + "...");
         } else {
-          LOG.error(line);
+          streamConsumer.consumeLine(line);
         }
       });
+      streamConsumer.finished();
     }
   }
 
-  private static class TestableErrorConsumer extends ExternalProcessErrorConsumer {
+  private static class TestableErrorConsumer extends ExternalProcessStreamConsumer {
 
     private volatile Boolean running = null;
     private int delay;
 
     TestableErrorConsumer(int delay) {
       this.delay = delay;
+      start();
     }
 
     @Override
-    protected void readErrors(BufferedReader errorReader) {
+    protected void readErrors(BufferedReader errorReader, StreamConsumer streamConsumer) {
       running = true;
       sleep(delay);
-      super.readErrors(errorReader);
+      super.readErrors(errorReader, streamConsumer);
       running = false;
     }
   }

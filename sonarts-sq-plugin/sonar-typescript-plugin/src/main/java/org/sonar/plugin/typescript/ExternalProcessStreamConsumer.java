@@ -21,11 +21,12 @@ package org.sonar.plugin.typescript;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
+import org.sonar.api.Startable;
 import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.utils.log.Logger;
@@ -35,33 +36,52 @@ import org.sonarsource.api.sonarlint.SonarLintSide;
 @BatchSide
 @ScannerSide
 @SonarLintSide
-public class ExternalProcessErrorConsumer {
+public class ExternalProcessStreamConsumer implements Startable {
 
-  private static final Logger LOG = Loggers.get(ExternalProcessErrorConsumer.class);
+  private static final Logger LOG = Loggers.get(ExternalProcessStreamConsumer.class);
+  private ExecutorService executorService;
 
-  public final void consumeStdError(Process process) {
-    final ExecutorService errorConsumer = Executors.newSingleThreadExecutor();
-    errorConsumer.submit(() -> {
-      try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8))) {
-        readErrors(errorReader);
+  public final void consumeStream(InputStream inputStream, StreamConsumer streamConsumer) {
+    executorService.submit(() -> {
+      try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+        readErrors(errorReader, streamConsumer);
       } catch (IOException e) {
-        LOG.error("Error while reading error stream", e);
+        LOG.error("Error while reading stream", e);
       }
     });
   }
 
-  protected void readErrors(BufferedReader errorReader) {
-    AtomicBoolean tsNotFound = new AtomicBoolean(false);
-    errorReader.lines().forEach(line -> {
-      if (line.contains("Error: Cannot find module 'typescript'")) {
-        tsNotFound.set(true);
-      }
+  protected void readErrors(BufferedReader errorReader, StreamConsumer streamConsumer) {
+    errorReader.lines().forEach(streamConsumer::consumeLine);
+    streamConsumer.finished();
+  }
 
-      LOG.error(line);
-    });
+  @Override
+  public void start() {
+    if (executorService == null) {
+      executorService = Executors.newCachedThreadPool(r -> {
+        Thread thread = new Thread(r);
+        thread.setName("sonarts-stream-consumer");
+        thread.setDaemon(true);
+        return thread;
+      });
+    }
+  }
 
-    if (tsNotFound.get()) {
-      LOG.error("Failed to find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
+  @Override
+  public void stop() {
+    if (executorService != null && !executorService.isShutdown()) {
+      executorService.shutdown();
+    }
+    executorService = null;
+  }
+
+  interface StreamConsumer {
+
+    void consumeLine(String line);
+
+    default void finished() {
+
     }
   }
 }
