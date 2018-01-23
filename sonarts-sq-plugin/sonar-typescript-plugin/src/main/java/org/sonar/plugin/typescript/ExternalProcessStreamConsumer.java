@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import org.sonar.api.Startable;
 import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
@@ -70,6 +71,14 @@ public class ExternalProcessStreamConsumer implements Startable {
   public void stop() {
     if (executorService != null && !executorService.isShutdown()) {
       executorService.shutdown();
+      try {
+        executorService.awaitTermination(ContextualServer.DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+      if (!executorService.isTerminated()) {
+        executorService.shutdownNow();
+      }
     }
     executorService = null;
   }

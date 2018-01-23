@@ -47,6 +47,7 @@ public class ContextualServer implements Startable {
 
   // SonarLint should pass in this property an absolute path to the directory containing TypeScript dependency
   private static final String TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY = "sonar.typescript.internal.typescriptLocation";
+  static final int DEFAULT_TIMEOUT_MS = 1_000;
 
   private static final Logger LOG = Loggers.get(ContextualServer.class);
   private static final Gson GSON = new Gson();
@@ -93,7 +94,7 @@ public class ContextualServer implements Startable {
     ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir(), configuration);
     try {
       serverSocket = new ServerSocket(0);
-      serverSocket.setSoTimeout(5_000);
+      serverSocket.setSoTimeout(DEFAULT_TIMEOUT_MS);
       ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand(serverSocket.getLocalPort()).commandLineTokens());
       setNodePath(processBuilder);
       serverProcess = processBuilder.start();
@@ -120,13 +121,13 @@ public class ContextualServer implements Startable {
 
   @Override
   public void stop() {
-    externalProcessStreamConsumer.stop();
     if (isAlive()) {
       terminate();
       LOG.info("SonarTS Server is stopped");
     } else {
       LOG.warn("SonarTS Server was already stopped");
     }
+    externalProcessStreamConsumer.stop();
   }
 
   private void terminate() {
@@ -134,7 +135,7 @@ public class ContextualServer implements Startable {
       IOUtils.closeQuietly(socket);
       IOUtils.closeQuietly(serverSocket);
       serverProcess.destroy();
-      boolean terminated = serverProcess.waitFor(200, TimeUnit.MILLISECONDS);
+      boolean terminated = serverProcess.waitFor(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
       if (!terminated) {
         serverProcess.destroyForcibly();
       }

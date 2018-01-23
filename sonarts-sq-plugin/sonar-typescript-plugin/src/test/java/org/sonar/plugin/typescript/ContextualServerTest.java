@@ -34,9 +34,10 @@ import org.sonar.plugin.typescript.SensorContextUtils.AnalysisResponse;
 import org.sonar.plugin.typescript.SensorContextUtils.ContextualAnalysisRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.sonar.plugin.typescript.TestUtils.BASE_DIR;
-import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 import static org.sonar.plugin.typescript.TestUtils.TYPE_SCRIPT_RULES;
+import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 
 public class ContextualServerTest {
 
@@ -63,11 +64,10 @@ public class ContextualServerTest {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     assertThat(contextualServer.isAlive()).isTrue();
-    Thread.sleep(2_000);
+    await().until(() -> logTester.logs().contains("SonarTS Server is started")
+      && logTester.logs().stream().anyMatch(log -> log.startsWith("SonarTS Server connected to")));
     contextualServer.stop();
-    assertThat(logTester.logs()).contains("SonarTS Server is started");
-    assertThat(logTester.logs().stream().anyMatch(log -> log.startsWith("SonarTS Server connected to"))).isTrue();
-    assertThat(logTester.logs()).contains("SonarTS Server is stopped");
+    await().until(() -> logTester.logs().contains("SonarTS Server is stopped"));
   }
 
   @Test
@@ -118,9 +118,10 @@ public class ContextualServerTest {
   public void consume_stdout_stderr() throws Exception {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
-    Thread.sleep(2_000);
-    assertThat(logTester.logs(LoggerLevel.INFO)).contains("SonarTS Server connected to 12345");
-    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("this is error");
+    await().until(() ->
+      logTester.logs(LoggerLevel.INFO).contains("SonarTS Server connected to 12345")
+        && logTester.logs(LoggerLevel.ERROR).contains("this is error")
+    );
   }
 
   private ContextualServer getContextualServer() {
