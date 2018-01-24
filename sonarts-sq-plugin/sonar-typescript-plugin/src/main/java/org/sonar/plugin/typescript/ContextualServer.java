@@ -47,7 +47,7 @@ public class ContextualServer implements Startable {
 
   // SonarLint should pass in this property an absolute path to the directory containing TypeScript dependency
   private static final String TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY = "sonar.typescript.internal.typescriptLocation";
-  static final int DEFAULT_TIMEOUT_MS = 1_000;
+  static final int DEFAULT_TIMEOUT_MS = 5_000;
 
   private static final Logger LOG = Loggers.get(ContextualServer.class);
   private static final Gson GSON = new Gson();
