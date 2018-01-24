@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sonarqube.ws.Issues.Issue;
-import org.sonarqube.ws.client.issue.SearchWsRequest;
+import org.sonarqube.ws.client.issues.SearchRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.typescript.its.Tests.newWsClient;
@@ -47,7 +47,7 @@ public class ComplexProjectStructureTest {
   public void test() {
     String projectLocation = "projects/" + PROJECT_KEY;
     orchestrator.executeBuild(
-      Tests.createScanner(projectLocation, PROJECT_KEY, projectLocation + "/module1/nestedDir" )
+      Tests.createScanner(projectLocation, PROJECT_KEY, projectLocation + "/module1/nestedDir")
         .setSourceDirs("")
         // to test that addition to this variable is performed correctly
         .setEnvironmentVariable("NODE_PATH", "foobar")
@@ -55,8 +55,8 @@ public class ComplexProjectStructureTest {
         .setProperty("module1.sonar.sources", "nestedDir/src")
         .setProfile("test-profile"));
 
-    SearchWsRequest request = new SearchWsRequest();
-    request.setProjectKeys(Collections.singletonList(PROJECT_KEY));
+    SearchRequest request = new SearchRequest();
+    request.setComponentKeys(Collections.singletonList(PROJECT_KEY));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
     assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(3);
 
