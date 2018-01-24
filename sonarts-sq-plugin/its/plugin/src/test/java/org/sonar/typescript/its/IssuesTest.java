@@ -27,7 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sonarqube.ws.Issues.Issue;
-import org.sonarqube.ws.client.issue.SearchWsRequest;
+import org.sonarqube.ws.client.issues.SearchRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.typescript.its.Tests.newWsClient;
@@ -47,8 +47,8 @@ public class IssuesTest {
 
   @Test
   public void should_raise_issues_for_tslint_rule_with_configuration() {
-    SearchWsRequest request = new SearchWsRequest();
-    request.setProjectKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S103"));
+    SearchRequest request = new SearchRequest();
+    request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S103"));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
     assertThat(issuesList).hasSize(1);
     assertThat(issuesList.get(0).getLine()).isEqualTo(2);

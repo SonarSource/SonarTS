@@ -76,7 +76,6 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>

@@ -27,7 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sonarqube.ws.Issues.Issue;
-import org.sonarqube.ws.client.issue.SearchWsRequest;
+import org.sonarqube.ws.client.issues.SearchRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.typescript.its.Tests.newWsClient;
@@ -48,8 +48,8 @@ public class TypescriptPluginTest {
 
   @Test
   public void should_have_loaded_issues_into_project_and_ignore_issue_with_nosonar() {
-    SearchWsRequest request = new SearchWsRequest();
-    request.setProjectKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S1764"));
+    SearchRequest request = new SearchRequest();
+    request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S1764"));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
     assertThat(issuesList).hasSize(1);
     assertThat(issuesList.get(0).getLine()).isEqualTo(2);
@@ -57,8 +57,8 @@ public class TypescriptPluginTest {
 
   @Test
   public void should_raise_issues_using_type_checker() {
-    SearchWsRequest request = new SearchWsRequest();
-    request.setProjectKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S2201"));
+    SearchRequest request = new SearchRequest();
+    request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S2201"));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
     assertThat(issuesList).hasSize(1);
     assertThat(issuesList.get(0).getLine()).isEqualTo(11);

@@ -30,12 +30,12 @@ import org.junit.runners.Suite;
 import org.sonar.api.utils.System2;
 import org.sonar.api.utils.command.Command;
 import org.sonar.api.utils.command.CommandExecutor;
-import org.sonarqube.ws.WsMeasures;
-import org.sonarqube.ws.WsMeasures.Measure;
+import org.sonarqube.ws.Measures.ComponentWsResponse;
+import org.sonarqube.ws.Measures.Measure;
 import org.sonarqube.ws.client.HttpConnector;
 import org.sonarqube.ws.client.WsClient;
 import org.sonarqube.ws.client.WsClientFactories;
-import org.sonarqube.ws.client.measure.ComponentWsRequest;
+import org.sonarqube.ws.client.measures.ComponentRequest;
 
 import static java.util.Collections.singletonList;
 
@@ -76,8 +76,8 @@ public class Tests {
   }
 
   private static Measure getMeasure(String metricKey, String projectKey) {
-    WsMeasures.ComponentWsResponse response = newWsClient().measures().component(new ComponentWsRequest()
-      .setComponentKey(projectKey)
+    ComponentWsResponse response = newWsClient().measures().component(new ComponentRequest()
+      .setComponent(projectKey)
       .setMetricKeys(singletonList(metricKey)));
     List<Measure> measures = response.getComponent().getMeasuresList();
     return measures.size() == 1 ? measures.get(0) : null;

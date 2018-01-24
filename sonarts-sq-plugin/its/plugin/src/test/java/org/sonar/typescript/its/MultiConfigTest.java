@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sonarqube.ws.Issues.Issue;
-import org.sonarqube.ws.client.issue.SearchWsRequest;
+import org.sonarqube.ws.client.issues.SearchRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.typescript.its.Tests.newWsClient;
@@ -49,8 +49,8 @@ public class MultiConfigTest {
       Tests.createScanner("projects/" + PROJECT_KEY, PROJECT_KEY)
         .setProfile("test-profile"));
 
-    SearchWsRequest request = new SearchWsRequest();
-    request.setProjectKeys(Collections.singletonList(PROJECT_KEY));
+    SearchRequest request = new SearchRequest();
+    request.setComponentKeys(Collections.singletonList(PROJECT_KEY));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
     assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(3, 4);
   }
