@@ -22,9 +22,10 @@ import * as net from "net";
 import * as path from "path";
 
 let client: net.Socket;
-const sonartsServer = new SonarTsServer();
+let sonartsServer: SonarTsServer;
 
 beforeEach(async () => {
+  sonartsServer = new SonarTsServer();
   client = await getClient();
 });
 
