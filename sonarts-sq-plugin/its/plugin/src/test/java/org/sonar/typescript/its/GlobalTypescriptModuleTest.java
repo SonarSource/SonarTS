@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.regex.Pattern;
+import org.apache.commons.io.FileUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -46,6 +47,9 @@ public class GlobalTypescriptModuleTest {
     Tests.runNPMInstall(nodeProjectDir);
 
     File nodeModulesGlobal = new File(nodeProjectDir, "node_modules_global");
+    if (nodeModulesGlobal.exists()) {
+      FileUtils.deleteDirectory(nodeModulesGlobal);
+    }
     File nodeModules = new File(nodeProjectDir, "node_modules");
     Files.move(nodeModules.toPath(), nodeModulesGlobal.toPath());
 
