@@ -19,6 +19,7 @@
  */
 package org.sonar.plugin.typescript;
 
+import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -81,6 +82,17 @@ public class ContextualServerTest {
   }
 
   @Test
+  public void should_not_try_to_send_request_if_start_process_failed() throws Exception {
+    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), mockFailingTSServer(), temp);
+    ContextualAnalysisRequest request = getContextualAnalysisRequest();
+    contextualServer.start();
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Failed to start SonarTS Server");
+
+    contextualServer.analyze(request);
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains("Skipped analysis as SonarTS Server is not running");
+  }
+
+  @Test
   public void should_not_start_or_stop_twice() throws Exception {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
@@ -105,9 +117,7 @@ public class ContextualServerTest {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
 
-    DefaultInputFile inputFile = createInputFile(SensorContextTester.create(BASE_DIR), "function foo() {}", "foo/file.ts");
-
-    ContextualAnalysisRequest request = new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES);
+    ContextualAnalysisRequest request = getContextualAnalysisRequest();
     AnalysisResponse analyze = contextualServer.analyze(request);
 
     assertThat(analyze.issues).hasSize(1);
@@ -124,12 +134,21 @@ public class ContextualServerTest {
     );
   }
 
+  private ContextualAnalysisRequest getContextualAnalysisRequest() throws IOException {
+    DefaultInputFile inputFile = createInputFile(SensorContextTester.create(BASE_DIR), "function foo() {}", "foo/file.ts");
+    return new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES);
+  }
+
   private ContextualServer getContextualServer() {
     return new ContextualServer(defaultConfiguration(), mockTSServer(), temp);
   }
 
   private TestBundleFactory mockTSServer() {
     return TestBundleFactory.nodeScript("/mockSonarTSServer.js");
+  }
+
+  private TestBundleFactory mockFailingTSServer() {
+    return TestBundleFactory.nodeScript("/mockFailingSonarTSServer.js");
   }
 
   private Configuration defaultConfiguration() {
