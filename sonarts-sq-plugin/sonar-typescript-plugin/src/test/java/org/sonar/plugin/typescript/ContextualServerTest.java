@@ -42,6 +42,8 @@ import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 
 public class ContextualServerTest {
 
+  private static final int CONNECTION_TIMEOUT = 1_000;
+
   @org.junit.Rule
   public JUnitTempFolder temp = new JUnitTempFolder();
 
@@ -51,7 +53,7 @@ public class ContextualServerTest {
 
   @Before
   public void setUp() {
-    externalProcessStreamConsumer = new ExternalProcessStreamConsumer();
+    externalProcessStreamConsumer = new ExternalProcessStreamConsumer(CONNECTION_TIMEOUT);
     externalProcessStreamConsumer.start();
   }
 
@@ -73,7 +75,7 @@ public class ContextualServerTest {
 
   @Test
   public void should_log_warning_if_not_typescript_location_provided() {
-    ContextualServer contextualServer = new ContextualServer(new MapSettings().asConfig(), mockTSServer(), temp);
+    ContextualServer contextualServer = new ContextualServer(new MapSettings().asConfig(), mockTSServer(), temp, CONNECTION_TIMEOUT);
     contextualServer.start();
 
     assertThat(logTester.logs(LoggerLevel.WARN))
@@ -83,7 +85,7 @@ public class ContextualServerTest {
 
   @Test
   public void should_not_try_to_send_request_if_start_process_failed() throws Exception {
-    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), mockFailingTSServer(), temp);
+    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), mockFailingTSServer(), temp, CONNECTION_TIMEOUT);
     ContextualAnalysisRequest request = getContextualAnalysisRequest();
     contextualServer.start();
     assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Failed to start SonarTS Server");
@@ -106,7 +108,7 @@ public class ContextualServerTest {
 
   @Test
   public void should_fail_when_not_started() {
-    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), new TestBundleFactory().command(TestBundleFactory.getNodeExecutable(), "--version"), temp);
+    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), new TestBundleFactory().command(TestBundleFactory.getNodeExecutable(), "--version"), temp, CONNECTION_TIMEOUT);
     contextualServer.start();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsOnlyOnce("Failed to start SonarTS Server");
     assertThat(contextualServer.isAlive()).isFalse();
@@ -140,7 +142,7 @@ public class ContextualServerTest {
   }
 
   private ContextualServer getContextualServer() {
-    return new ContextualServer(defaultConfiguration(), mockTSServer(), temp);
+    return new ContextualServer(defaultConfiguration(), mockTSServer(), temp, CONNECTION_TIMEOUT);
   }
 
   private TestBundleFactory mockTSServer() {

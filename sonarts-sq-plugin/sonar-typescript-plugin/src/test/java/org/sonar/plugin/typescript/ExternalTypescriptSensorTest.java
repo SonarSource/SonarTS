@@ -342,6 +342,7 @@ public class ExternalTypescriptSensorTest {
     private int trimmingLimit = 100;
 
     public LineTrimmingExternalProcessErrorConsumer() {
+      super(1_000);
       start();
     }
 
@@ -364,6 +365,7 @@ public class ExternalTypescriptSensorTest {
     private int delay;
 
     TestableErrorConsumer(int delay) {
+      super(1_000);
       this.delay = delay;
       start();
     }
