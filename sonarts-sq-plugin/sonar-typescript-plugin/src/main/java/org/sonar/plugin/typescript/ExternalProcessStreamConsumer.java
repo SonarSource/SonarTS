@@ -39,6 +39,7 @@ public class ExternalProcessStreamConsumer implements Startable {
 
   private static final Logger LOG = Loggers.get(ExternalProcessStreamConsumer.class);
   private ExecutorService executorService;
+  private static final int DEFAULT_TIMEOUT_MS = 5_000;
 
   public final void consumeStream(InputStream inputStream, StreamConsumer streamConsumer) {
     executorService.submit(() -> {
@@ -72,7 +73,7 @@ public class ExternalProcessStreamConsumer implements Startable {
     if (executorService != null && !executorService.isShutdown()) {
       executorService.shutdown();
       try {
-        executorService.awaitTermination(ContextualServer.DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+        executorService.awaitTermination(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }

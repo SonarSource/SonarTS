@@ -48,7 +48,7 @@ public class ContextualServer implements Startable {
 
   // SonarLint should pass in this property an absolute path to the directory containing TypeScript dependency
   private static final String TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY = "sonar.typescript.internal.typescriptLocation";
-  static final int DEFAULT_TIMEOUT_MS = 5_000;
+  private static final int DEFAULT_TIMEOUT_MS = 5_000;
 
   private static final Logger LOG = Loggers.get(ContextualServer.class);
   private static final Gson GSON = new Gson();
@@ -57,15 +57,21 @@ public class ContextualServer implements Startable {
   private final ExecutableBundleFactory bundleFactory;
   private final TempFolder tempFolder;
   private final ExternalProcessStreamConsumer externalProcessStreamConsumer;
+  private final int connectionTimeout;
 
   private Process serverProcess;
   private ServerSocket serverSocket;
   private Socket socket;
 
   public ContextualServer(Configuration configuration, ExecutableBundleFactory bundleFactory, TempFolder tempFolder) {
+    this(configuration, bundleFactory, tempFolder, DEFAULT_TIMEOUT_MS);
+  }
+
+  ContextualServer(Configuration configuration, ExecutableBundleFactory bundleFactory, TempFolder tempFolder, int connectionTimeout) {
     this.configuration = configuration;
     this.bundleFactory = bundleFactory;
     this.tempFolder = tempFolder;
+    this.connectionTimeout = connectionTimeout;
     this.externalProcessStreamConsumer = new ExternalProcessStreamConsumer();
   }
 
@@ -100,7 +106,7 @@ public class ContextualServer implements Startable {
     ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir(), configuration);
     try {
       serverSocket = new ServerSocket(0);
-      serverSocket.setSoTimeout(DEFAULT_TIMEOUT_MS);
+      serverSocket.setSoTimeout(connectionTimeout);
       ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand(serverSocket.getLocalPort()).commandLineTokens());
       setNodePath(processBuilder);
       serverProcess = processBuilder.start();
@@ -141,7 +147,7 @@ public class ContextualServer implements Startable {
       IOUtils.closeQuietly(socket);
       IOUtils.closeQuietly(serverSocket);
       serverProcess.destroy();
-      boolean terminated = serverProcess.waitFor(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+      boolean terminated = serverProcess.waitFor(connectionTimeout, TimeUnit.MILLISECONDS);
       if (!terminated) {
         serverProcess.destroyForcibly();
       }
