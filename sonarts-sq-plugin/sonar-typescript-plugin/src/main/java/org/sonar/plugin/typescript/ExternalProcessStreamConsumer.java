@@ -40,6 +40,11 @@ public class ExternalProcessStreamConsumer implements Startable {
   private static final Logger LOG = Loggers.get(ExternalProcessStreamConsumer.class);
   private ExecutorService executorService;
   private int connectionTimeout;
+  private static final int DEFAULT_TIMEOUT_MS = 5_000;
+
+  public ExternalProcessStreamConsumer() {
+    this(DEFAULT_TIMEOUT_MS);
+  }
 
   public ExternalProcessStreamConsumer(int connectionTimeout) {
     this.connectionTimeout = connectionTimeout;
