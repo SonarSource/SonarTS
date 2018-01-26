@@ -32,6 +32,7 @@ import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.sonarsource.api.sonarlint.SonarLintSide;
 
 @BatchSide
 @ScannerSide
@@ -39,16 +40,7 @@ public class ExternalProcessStreamConsumer implements Startable {
 
   private static final Logger LOG = Loggers.get(ExternalProcessStreamConsumer.class);
   private ExecutorService executorService;
-  private int connectionTimeout;
   private static final int DEFAULT_TIMEOUT_MS = 5_000;
-
-  public ExternalProcessStreamConsumer() {
-    this(DEFAULT_TIMEOUT_MS);
-  }
-
-  public ExternalProcessStreamConsumer(int connectionTimeout) {
-    this.connectionTimeout = connectionTimeout;
-  }
 
   public final void consumeStream(InputStream inputStream, StreamConsumer streamConsumer) {
     executorService.submit(() -> {
@@ -82,7 +74,7 @@ public class ExternalProcessStreamConsumer implements Startable {
     if (executorService != null && !executorService.isShutdown()) {
       executorService.shutdown();
       try {
-        executorService.awaitTermination(connectionTimeout, TimeUnit.MILLISECONDS);
+        executorService.awaitTermination(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }

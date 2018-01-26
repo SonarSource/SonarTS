@@ -53,7 +53,7 @@ public class ContextualServerTest {
 
   @Before
   public void setUp() {
-    externalProcessStreamConsumer = new ExternalProcessStreamConsumer(CONNECTION_TIMEOUT);
+    externalProcessStreamConsumer = new ExternalProcessStreamConsumer();
     externalProcessStreamConsumer.start();
   }
 

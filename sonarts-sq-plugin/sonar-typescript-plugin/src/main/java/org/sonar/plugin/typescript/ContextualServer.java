@@ -72,7 +72,7 @@ public class ContextualServer implements Startable {
     this.bundleFactory = bundleFactory;
     this.tempFolder = tempFolder;
     this.connectionTimeout = connectionTimeout;
-    this.externalProcessStreamConsumer = new ExternalProcessStreamConsumer(this.connectionTimeout);
+    this.externalProcessStreamConsumer = new ExternalProcessStreamConsumer();
   }
 
   @Override
