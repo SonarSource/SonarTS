@@ -46,6 +46,7 @@ import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -311,9 +312,7 @@ public class ExternalTypescriptSensorTest {
 
   private void executeSensor(SensorContextTester sensorContext, TestBundleFactory testBundle, TestableErrorConsumer errorConsumer) {
     createSensor(testBundle, errorConsumer).execute(sensorContext);
-    while (errorConsumer.running != null && errorConsumer.running) {
-      sleep(errorConsumer.delay);
-    }
+    await().until(() -> errorConsumer.running == null || !errorConsumer.running);
   }
 
   private ExternalTypescriptSensor createSensor() {
@@ -360,7 +359,7 @@ public class ExternalTypescriptSensorTest {
 
   private static class TestableErrorConsumer extends ExternalProcessStreamConsumer {
 
-    private volatile Boolean running = null;
+    volatile Boolean running = null;
     private int delay;
 
     TestableErrorConsumer(int delay) {
