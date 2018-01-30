@@ -19,7 +19,9 @@
  */
 package org.sonar.plugin.typescript;
 
+import com.google.common.base.Stopwatch;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -134,6 +136,17 @@ public class ContextualServerTest {
       logTester.logs(LoggerLevel.INFO).contains("SonarTS Server connected to 12345")
         && logTester.logs(LoggerLevel.ERROR).contains("this is error")
     );
+  }
+
+  @Test
+  public void should_use_default_timeout() {
+    ContextualServer server = new ContextualServer(new MapSettings().asConfig(), mockFailingTSServer(), temp);
+    Stopwatch stopwatch = Stopwatch.createStarted();
+    try {
+      server.start();
+    } catch (Exception e) {
+      assertThat(stopwatch.elapsed(TimeUnit.MILLISECONDS)).isGreaterThan(5_000);
+    }
   }
 
   private ContextualAnalysisRequest getContextualAnalysisRequest() throws IOException {
