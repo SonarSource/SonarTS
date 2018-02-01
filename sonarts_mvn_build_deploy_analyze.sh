@@ -130,8 +130,7 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.analysis.sha1=$TRAVIS_PULL_REQUEST_SHA \
     -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG \
     -Dsonar.analysis.prNumber=$TRAVIS_PULL_REQUEST \
-    -Dsonar.pullrequest.github.id=$TRAVIS_PULL_REQUEST \
-    -Dsonar.pullrequest.github.repository=$TRAVIS_REPO_SLUG
+    -Dsonar.pullrequest.id=$TRAVIS_PULL_REQUEST
 
 else
   echo '======= Build, no analysis, no deploy'
