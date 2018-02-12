@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile>
+  <name>profile-double-quotes</name>
+  <language>ts</language>
+  <rules>
+    <rule>
+      <repositoryKey>typescript</repositoryKey>
+      <key>S1441</key>
+      <priority>INFO</priority>
+      <parameters>
+        <parameter>
+          <key>singleQuotes</key>
+          <value>false</value>
+        </parameter>
+      </parameters>
+    </rule>
+  </rules>
+</profile>
+

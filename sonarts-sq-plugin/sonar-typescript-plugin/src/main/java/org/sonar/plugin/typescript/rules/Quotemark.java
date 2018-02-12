@@ -34,8 +34,7 @@ public class Quotemark extends TypeScriptRule {
 
   @Override
   public JsonElement configuration() {
-
-    return ruleConfiguration(singleQuotes ? "single" : "double", "jsx-double");
+    return ruleConfiguration(singleQuotes ? "single" : "double", "jsx-double", "avoid-escape");
   }
 
   @Override
