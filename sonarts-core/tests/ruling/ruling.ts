@@ -83,7 +83,7 @@ export async function runRules(tsConfigFiles: string[], rule?: string) {
   // after the process finishes, the function chains the promise with the next tsconfig
   function runCommand(tsConfigFile: string): Promise<void> {
     console.log("  *", getFileNameForSnapshot(tsConfigFile));
-    let command = `node ${tsNode} ${worker} ${tsConfigFile}`;
+    let command = `${tsNode} ${worker} ${tsConfigFile}`;
     if (rule) {
       command += ` ${rule}`;
     }
