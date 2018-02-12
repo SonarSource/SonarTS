@@ -53,7 +53,7 @@ function run() {
   verifyRspecId();
 
   const ruleNameDash = getDashName();
-  const { ruleTitle, rspecKey } = getRuleTitleAndRspecKey();
+  const { ruleTitle, rspecKey, ruleType } = getRuleTitleAndRspecKey();
 
   //// From README.md:
   //- Add rule key to tslint-sonarts.json
@@ -119,7 +119,7 @@ function run() {
     try {
       const fileText = fs.readFileSync(path.join(rspecRuleFolder, `${rspecId}.json`), "utf8");
       const ruleData = JSON.parse(fileText);
-      return { ruleTitle: ruleData["title"], rspecKey: ruleData["ruleSpecification"] };
+      return { ruleTitle: ruleData["title"], rspecKey: ruleData["ruleSpecification"], ruleType: ruleData["type"] };
     } catch (err) {
       throw new Error("Could not find metadata for the rule. Have you run the rspec-api (with correct parameters)?");
     }
@@ -147,11 +147,12 @@ function run() {
   }
 
   function updateReadme() {
-    const { head, ruleTitles, ruleLinks, tail } = parseReadme();
+    const { head, bugRuleTitles, middleHead, smellRuleTitles, ruleLinks, tail } = parseReadme();
 
-    if (ruleTitles.length !== ruleLinks.length) {
+    if (bugRuleTitles.length + smellRuleTitles.length !== ruleLinks.length) {
       console.log("ruleTitles");
-      console.log(ruleTitles);
+      console.log(bugRuleTitles);
+      console.log(smellRuleTitles);
 
       console.log("ruleLinks");
       console.log(ruleLinks);
@@ -159,18 +160,44 @@ function run() {
       throw new Error("Could not parse README.md.");
     }
 
-    ruleTitles.push(`* ${ruleTitle} ([\`${ruleNameDash}\`])`);
     ruleLinks.push(`[\`${ruleNameDash}\`]: ./sonarts-core/docs/rules/${ruleNameDash}.md`);
+    const title = `* ${ruleTitle} ([\`${ruleNameDash}\`])`;
 
-    const linksToTitles: { [x: string]: string } = {};
-    for (let i = 0; i < ruleTitles.length; i++) {
-      linksToTitles[ruleLinks[i]] = ruleTitles[i];
+    if (ruleType === "BUG") {
+      bugRuleTitles.push(title);
+    } else {
+      smellRuleTitles.push(title);
     }
 
-    const sortedRuleLinks = Object.keys(linksToTitles).sort();
-    const sortedRuleTitles = sortedRuleLinks.map(ruleKey => linksToTitles[ruleKey]);
+    ruleLinks.sort();
+    bugRuleTitles.sort(compareRuleTitles);
+    smellRuleTitles.sort(compareRuleTitles);
 
-    fs.writeFileSync(readmePath, [...head, ...sortedRuleTitles, "", ...sortedRuleLinks, "", ...tail].join("\n"));
+    fs.writeFileSync(
+      readmePath,
+      [...head, ...bugRuleTitles, "", ...middleHead, ...smellRuleTitles, "", ...ruleLinks, "", ...tail].join("\n"),
+    );
+  }
+
+  function retriveRuleKey(ruleTitle: string) {
+    const match = ruleTitle.match(/\(\[\`([\w-]+)\`\]\)/);
+    if (!match) {
+      throw new Error("Can not retrive rule key from title: " + ruleTitle);
+    }
+    return match[1];
+  }
+
+  function compareRuleTitles(title1: string, title2: string) {
+    const key1 = retriveRuleKey(title1);
+    const key2 = retriveRuleKey(title2);
+
+    if (key1 < key2) {
+      return -1;
+    } else if (key1 > key2) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   function parseReadme() {
@@ -179,18 +206,19 @@ function run() {
     const lines = readme.split("\n");
 
     const head: string[] = [];
-    const ruleTitles: string[] = [];
+    const middleHead: string[] = [];
+    const bugRuleTitles: string[] = [];
+    const smellRuleTitles: string[] = [];
     const ruleLinks: string[] = [];
     const tail: string[] = [];
 
     // 0: start
-    // 1: ## Rules
-    // 2: newlines
-    // 3: rules
-    // 4: newlines
-    // 5: rules 2
-    // 6: newline
-    // 7: after
+    // 1: ### Bug Detection :bug: + newline + bug desc + newline
+    // 2: bug rules + newline
+    // 3: ### Code Smell Detection :pig: + newline + code smell desc + newline
+    // 4: code smell rules + newline
+    // 5: links
+    // 6: tail
 
     let state = 0;
 
@@ -200,32 +228,37 @@ function run() {
           processHead(line);
           break;
         case 1:
+          processUntilRuleHead(line, head, bugRuleTitles);
+          break;
         case 2:
-          processAfterHead(line);
+          processRuleTitles(line, bugRuleTitles);
           break;
         case 3:
-          processRuleTitles(line);
+          processUntilRuleHead(line, middleHead, smellRuleTitles);
           break;
         case 4:
-          processRuleLinks(line);
+          processRuleTitles(line, smellRuleTitles);
           break;
         case 5:
+          processRuleLinks(line);
+          break;
+        case 6:
           tail.push(line);
           break;
       }
     }
 
-    return { head, ruleTitles, ruleLinks, tail };
+    return { head, bugRuleTitles, middleHead, smellRuleTitles, ruleLinks, tail };
 
     function processHead(line: string) {
-      if (line.trim() === "## Rules") {
+      if (line.trim() === "### Bug Detection :bug:") {
         state = 1;
       }
       head.push(line);
     }
 
-    function processAfterHead(line: string) {
-      if (line.length > 0) {
+    function processUntilRuleHead(line: string, head: string[], ruleTitles: string[]) {
+      if (line.startsWith("*")) {
         state++;
         ruleTitles.push(line);
       } else {
@@ -233,7 +266,7 @@ function run() {
       }
     }
 
-    function processRuleTitles(line: string) {
+    function processRuleTitles(line: string, ruleTitles: string[]) {
       if (line.length === 0) {
         state++;
       } else {
