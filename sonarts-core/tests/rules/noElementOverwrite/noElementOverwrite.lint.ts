@@ -118,3 +118,24 @@ function indexChanges() {
   i += 1;
   nums[i] = 2;
 }
+
+interface MyObj {
+  arr: number[];
+  map: Map<string, number>;
+}
+
+function issue431(arg: number) {
+  let obj1: MyObj = {
+    arr: [],
+    map: new Map<string, number>()
+  };
+  let obj2: MyObj = {
+    arr: [],
+    map: new Map<string, number>()
+  };
+  obj1.arr[arg] = 1;
+  obj2.arr[arg] = 2;
+
+  obj1.map.set("hello", 1);
+  obj2.map.set("hello", 1);
+}

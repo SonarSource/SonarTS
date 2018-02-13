@@ -25,14 +25,15 @@ import { nodeToSonarLine } from "../runner/sonarUtils";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import {
   isAssignment,
-  isExpressionStatement,
-  isElementAccessExpression,
   isCallExpression,
-  isPropertyAccessExpression,
+  isElementAccessExpression,
+  isExpressionStatement,
   isIdentifier,
   isNumericLiteral,
+  isPropertyAccessExpression,
   isStringLiteral,
 } from "../utils/nodes";
+import areEquivalent from "../utils/areEquivalent";
 
 export class Rule extends Lint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -70,11 +71,11 @@ class Visitor extends TypedSonarRuleVisitor {
 
   private checkStatements(statements: ts.NodeArray<ts.Statement>) {
     const usedKeys: Map<string, KeyWriteCollectionUsage> = new Map();
-    let collection: ts.Symbol | null = null;
+    let collection: ts.Node | null = null;
     statements.forEach(statement => {
       const keyWriteUsage = this.keyWriteUsage(statement);
       if (keyWriteUsage) {
-        if (collection && keyWriteUsage.collectionSymbol !== collection) {
+        if (collection && !areEquivalent(keyWriteUsage.collectionNode, collection)) {
           usedKeys.clear();
         }
         const sameKeyWriteUsage = usedKeys.get(keyWriteUsage.indexOrKey);
@@ -82,7 +83,7 @@ class Visitor extends TypedSonarRuleVisitor {
           this.addIssue(keyWriteUsage.node, this.message(keyWriteUsage.indexOrKey, sameKeyWriteUsage.node));
         }
         usedKeys.set(keyWriteUsage.indexOrKey, keyWriteUsage);
-        collection = keyWriteUsage.collectionSymbol;
+        collection = keyWriteUsage.collectionNode;
       } else {
         usedKeys.clear();
       }
@@ -108,7 +109,7 @@ class Visitor extends TypedSonarRuleVisitor {
       const index = this.extractIndex(lhs.argumentExpression);
       if (!index) return;
       return {
-        collectionSymbol: array,
+        collectionNode: lhs.expression,
         indexOrKey: index,
         node: lhs.expression,
       };
@@ -134,11 +135,10 @@ class Visitor extends TypedSonarRuleVisitor {
       const propertyAccess = node.expression;
       const type = this.program.getTypeChecker().getTypeAtLocation(propertyAccess.expression);
       if (type.symbol && type.symbol.name === typeName && propertyAccess.name.text === method) {
-        const lhsSymbol = this.program.getTypeChecker().getSymbolAtLocation(propertyAccess.expression);
         const key = this.extractIndex(node.arguments[0]);
-        if (!lhsSymbol || !key) return;
+        if (!key) return;
         return {
-          collectionSymbol: lhsSymbol,
+          collectionNode: propertyAccess.expression,
           indexOrKey: key,
           node: propertyAccess.expression,
         };
@@ -157,7 +157,7 @@ class Visitor extends TypedSonarRuleVisitor {
       const property = lhs.name.text;
       if (!property) return;
       return {
-        collectionSymbol: objectSymbol,
+        collectionNode: lhs.expression,
         indexOrKey: property,
         node: lhs.expression,
       };
@@ -180,7 +180,7 @@ class Visitor extends TypedSonarRuleVisitor {
 }
 
 interface KeyWriteCollectionUsage {
-  collectionSymbol: ts.Symbol;
+  collectionNode: ts.Node;
   indexOrKey: string;
   node: ts.Node;
 }
