@@ -53,6 +53,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
+* Extra semicolons should be removed ([`no-extra-semicolon`])
 * Conditions should not always evaluate to "true" or to "false" ([`no-gratuitous-expressions`])
 * Functions should not have identical implementations ([`no-identical-functions`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
@@ -82,6 +83,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
 [`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
 [`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
+[`no-extra-semicolon`]: ./sonarts-core/docs/rules/no-extra-semicolon.md
 [`no-gratuitous-expressions`]: ./sonarts-core/docs/rules/no-gratuitous-expressions.md
 [`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./sonarts-core/docs/rules/no-identical-expressions.md

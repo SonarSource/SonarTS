@@ -68,6 +68,7 @@ import org.sonar.plugin.typescript.rules.NoElementOverwrite;
 import org.sonar.plugin.typescript.rules.NoEmptyDestructuring;
 import org.sonar.plugin.typescript.rules.NoEmptyInterface;
 import org.sonar.plugin.typescript.rules.NoEmptyNestedBlocks;
+import org.sonar.plugin.typescript.rules.NoExtraSemicolon;
 import org.sonar.plugin.typescript.rules.NoEval;
 import org.sonar.plugin.typescript.rules.NoForInArray;
 import org.sonar.plugin.typescript.rules.NoGratuitousExpressions;
@@ -235,6 +236,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoEmptyDestructuring.class,
       NoEmptyInterface.class,
       NoEmptyNestedBlocks.class,
+      NoExtraSemicolon.class,
       NoEval.class,
       NoForInArray.class,
       NoGratuitousExpressions.class,
