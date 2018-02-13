@@ -21,6 +21,8 @@ import { SonarTsServer } from "../../src/runner/sonartsServer";
 import * as net from "net";
 import * as path from "path";
 
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
 let client: net.Socket;
 let sonartsServer: SonarTsServer;
 
