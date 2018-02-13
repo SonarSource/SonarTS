@@ -28,9 +28,14 @@ const rspecRuleFolder = path.join(
 );
 const templatesFolder = path.join(rootFolder, "sonarts-core/resources/new-rule-templates");
 const ruleTemplatePath = path.join(templatesFolder, "rule.template_ts");
+const javaRuleTemplatePath = path.join(templatesFolder, "rule.template_java");
 const unitTestTemplatePath = path.join(templatesFolder, "unitTest.template_ts");
 const tslintSonarTSPath = path.join(rootFolder, "sonarts-core/tslint-sonarts.json");
 const readmePath = path.join(rootFolder, "README.md");
+const typeScriptRulesPath = path.join(
+  rootFolder,
+  "sonarts-sq-plugin/sonar-typescript-plugin/src/main/java/org/sonar/plugin/typescript/TypeScriptRules.java",
+);
 
 try {
   run();
@@ -41,34 +46,49 @@ try {
 }
 
 function run() {
-  if (process.argv.length !== 4) {
+  if (process.argv.length !== 4 && process.argv.length !== 5) {
     showHelp();
-    throw new Error(`Invalid number of arguments: expected 2, but got ${process.argv.length - 2}`);
+    throw new Error(
+      `Invalid number of arguments: expected 2 or 3 (with "javaonly"), but got ${process.argv.length - 2}`,
+    );
   }
 
   const rspecId = process.argv[2];
   const ruleClassName = process.argv[3];
+  const javaOnlyParameter = process.argv[4];
+  if (!!javaOnlyParameter && javaOnlyParameter !== "javaonly") {
+    throw new Error(`'javaonly' is expected as last parameter. But '${javaOnlyParameter}' was passed`);
+  }
+  const javaOnly = !!javaOnlyParameter;
 
   verifyClassName();
   verifyRspecId();
 
   const ruleNameDash = getDashName();
+  const javaRuleClassName = getJavaClassName();
   const { ruleTitle, rspecKey, ruleType } = getRuleTitleAndRspecKey();
 
-  //// From README.md:
-  //- Add rule key to tslint-sonarts.json
-  updateSonarTsJson();
+  if (!javaOnly) {
+    //- Create file for rule implementation in src/rules. File name should start with lower case and have suffix Rule
+    //- Create test folder in test/rules with the name of the rule file
+    //- In this folder create files <rule file name>.test.ts and <rule file name>.lint.ts
+    createTsFiles();
 
-  //- Create file for rule implementation in src/rules. File name should start with lower case and have suffix Rule
-  //- Create test folder in test/rules with the name of the rule file
-  //- In this folder create files <rule file name>.test.ts and <rule file name>.lint.ts
-  createFiles();
+    //- Add rule key to tslint-sonarts.json
+    updateSonarTsJson();
 
-  //- In folder docs/rules create rule documentation file <rule key>.md
-  createRuleDoc();
+    //- In folder docs/rules create rule documentation file <rule key>.md
+    createRuleDoc();
 
-  //- In README.md add reference to the documentation file.
-  updateReadme();
+    //- In README.md add reference to the documentation file.
+    updateReadme();
+  }
+
+  //- Create file for rule in java part. File name should start with upper case and NOT have suffix Rule
+  createJavaFile();
+
+  // Add java rule class to TypeScriptRules.java
+  updateTypeScriptRules();
 
   // Done!
 
@@ -82,8 +102,8 @@ function run() {
     );
   }
 
-  /** Creates rule source and test files from templates */
-  function createFiles() {
+  /** Creates rule typescript source and test files from templates */
+  function createTsFiles() {
     const ruleMetadata: { [x: string]: string } = {};
     ruleMetadata["___RULE_NAME_DASH___"] = ruleNameDash;
     ruleMetadata["___RULE_CLASS_NAME___"] = ruleClassName;
@@ -107,6 +127,22 @@ function run() {
     copyWithReplace(unitTestTemplatePath, path.join(testPath, `${ruleClassName}.test.ts`), ruleMetadata);
 
     fs.writeFileSync(path.join(testPath, `${ruleClassName}.lint.ts`), "\n");
+  }
+
+  /** Creates rule java source from template */
+  function createJavaFile() {
+    const ruleMetadata: { [x: string]: string } = {};
+    ruleMetadata["___RULE_NAME_DASH___"] = ruleNameDash;
+    ruleMetadata["___JAVA_RULE_CLASS_NAME___"] = javaRuleClassName;
+    ruleMetadata["___RULE_KEY___"] = rspecId;
+    copyWithReplace(
+      javaRuleTemplatePath,
+      path.join(
+        rootFolder,
+        `sonarts-sq-plugin/sonar-typescript-plugin/src/main/java/org/sonar/plugin/typescript/rules/${javaRuleClassName}.java`,
+      ),
+      ruleMetadata,
+    );
   }
 
   /** Creates the `*.md` documentation file, tries to convert rule description from html to markdown */
@@ -177,6 +213,23 @@ function run() {
       readmePath,
       [...head, ...bugRuleTitles, "", ...middleHead, ...smellRuleTitles, "", ...ruleLinks, "", ...tail].join("\n"),
     );
+  }
+
+  function updateTypeScriptRules() {
+    const { head1, imports, head2, rules, tail } = parseTypeScriptRules();
+
+    let lastRule = rules[rules.length - 1];
+    rules[rules.length - 1] = lastRule + ",";
+    rules.push(`      ${javaRuleClassName}.class,`);
+
+    rules.sort();
+    lastRule = rules[rules.length - 1];
+    rules[rules.length - 1] = lastRule.slice(0, lastRule.length - 1);
+
+    imports.push(`import org.sonar.plugin.typescript.rules.${javaRuleClassName};`);
+    imports.sort();
+
+    fs.writeFileSync(typeScriptRulesPath, [...head1, ...imports, ...head2, ...rules, ...tail].join("\n"));
   }
 
   function retriveRuleKey(ruleTitle: string) {
@@ -283,6 +336,76 @@ function run() {
     }
   }
 
+  function parseTypeScriptRules() {
+    const readme = fs.readFileSync(typeScriptRulesPath, "utf8");
+
+    const lines = readme.split("\n");
+
+    const head1: string[] = [];
+    const imports: string[] = [];
+    const head2: string[] = [];
+    const rules: string[] = [];
+    const tail: string[] = [];
+
+    let state = 0;
+
+    for (const line of lines) {
+      switch (state) {
+        case 0:
+          processHead1(line);
+          break;
+        case 1:
+          processImports(line);
+          break;
+        case 2:
+          processHead2(line);
+          break;
+        case 3:
+          processRule(line);
+          break;
+        case 4:
+          tail.push(line);
+          break;
+      }
+    }
+
+    return { head1, head2, imports, rules, tail };
+
+    function processHead1(line: string) {
+      if (line.trim().startsWith("import")) {
+        state++;
+        imports.push(line);
+      } else {
+        head1.push(line);
+      }
+    }
+
+    function processHead2(line: string) {
+      if (line.trim() === "return Collections.unmodifiableList(Arrays.asList(") {
+        state++;
+      }
+      head2.push(line);
+    }
+
+    function processImports(line: string) {
+      if (!line.trim().startsWith("import")) {
+        state++;
+        head2.push(line);
+      } else {
+        imports.push(line);
+      }
+    }
+
+    function processRule(line: string) {
+      if (line.trim() === "));") {
+        state++;
+        tail.push(line);
+      } else {
+        rules.push(line);
+      }
+    }
+  }
+
   function verifyClassName() {
     const re = /^[a-z]+([A-Z][a-z0-9]+)*Rule$/;
     if (!ruleClassName.match(re)) {
@@ -300,6 +423,12 @@ function run() {
   function getDashName() {
     return ruleClassName.slice(0, -4).replace(/([A-Z])/g, letter => "-" + letter.toLowerCase());
   }
+
+  function getJavaClassName() {
+    let name = ruleClassName.slice(0, -4);
+    name = name[0].toUpperCase() + name.slice(1);
+    return name;
+  }
 }
 
 function showHelp() {
@@ -308,10 +437,12 @@ Before using the script, first run the rule API from SonarTS folder. For example
   "java -jar /tools/rule-api-1.17.0.1017.jar generate -language ts -rule S4142 -preserve-filenames -no-language-in-filenames
 
 Usage:
-  RSPEC-KEY className
+  RSPEC-KEY className [javaonly]
 
 Example:
   S4142 myFirstAwesomeRule
+or (if only java classes should be generated):
+  S4142 myFirstAwesomeRule javaonly 
   `);
 }
 
