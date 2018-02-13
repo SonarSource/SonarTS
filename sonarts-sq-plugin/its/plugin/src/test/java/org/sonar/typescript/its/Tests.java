@@ -20,6 +20,7 @@
 package org.sonar.typescript.its;
 
 import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.build.SonarScanner;
 import com.sonar.orchestrator.locator.FileLocation;
 import java.io.File;
@@ -50,7 +51,8 @@ import static java.util.Collections.singletonList;
   FutureSyntaxTest.class,
   ComplexProjectStructureTest.class,
   IssuesTest.class,
-  FileWithBomTest.class
+  FileWithBomTest.class,
+  TslintRulesTest.class
 })
 public class Tests {
 
@@ -58,11 +60,19 @@ public class Tests {
     new File("../../sonar-typescript-plugin/target"), "sonar-typescript-plugin-*.jar");
 
   @ClassRule
-  public static final Orchestrator ORCHESTRATOR = Orchestrator.builderEnv()
-    .restoreProfileAtStartup(FileLocation.ofClasspath("/profiles/testProfile.xml"))
-    .restoreProfileAtStartup(FileLocation.ofClasspath("/profiles/testProfileIssues.xml"))
-    .addPlugin(PLUGIN_LOCATION)
-    .build();
+  public static final Orchestrator ORCHESTRATOR;
+
+  static {
+    OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv();
+    orchestratorBuilder.addPlugin(PLUGIN_LOCATION);
+
+    File profilesDir = new File("src/test/resources/profiles/");
+    for (File file : profilesDir.listFiles()) {
+      orchestratorBuilder.restoreProfileAtStartup(FileLocation.of(file));
+    }
+
+    ORCHESTRATOR = orchestratorBuilder.build();
+  }
 
   public static WsClient newWsClient() {
     return WsClientFactories.getDefault().newClient(HttpConnector.newBuilder()
