@@ -29,7 +29,6 @@ public class MccabeComplexityTest {
   @Test
   public void default_configuration() throws Exception {
     MccabeComplexity cyclomaticComplexity = new MccabeComplexity();
-    cyclomaticComplexity.enable();
     String configuration = new Gson().toJson(cyclomaticComplexity.configuration());
     assertThat(configuration).isEqualTo("[10]");
   }
@@ -37,7 +36,6 @@ public class MccabeComplexityTest {
   @Test
   public void custom_configuration() throws Exception {
     MccabeComplexity cyclomaticComplexity = new MccabeComplexity();
-    cyclomaticComplexity.enable();
     cyclomaticComplexity.threshold = 5;
     String configuration = new Gson().toJson(cyclomaticComplexity.configuration());
     assertThat(configuration).isEqualTo("[5]");

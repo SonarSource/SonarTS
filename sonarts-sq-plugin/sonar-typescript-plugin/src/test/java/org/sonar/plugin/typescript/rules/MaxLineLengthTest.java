@@ -29,7 +29,6 @@ public class MaxLineLengthTest {
   @Test
   public void default_configuration() throws Exception {
     MaxLineLength maxLineLength = new MaxLineLength();
-    maxLineLength.enable();
     String configuration = new Gson().toJson(maxLineLength.configuration());
     assertThat(configuration).isEqualTo("[180]");
   }
@@ -37,7 +36,6 @@ public class MaxLineLengthTest {
   @Test
   public void custom_configuration() throws Exception {
     MaxLineLength maxLineLength = new MaxLineLength();
-    maxLineLength.enable();
     maxLineLength.maximumLineLength = 120;
     String configuration = new Gson().toJson(maxLineLength.configuration());
     assertThat(configuration).isEqualTo("[120]");

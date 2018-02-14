@@ -30,7 +30,6 @@ public class NoMagicNumbersTest {
   @Test
   public void configuration() throws Exception {
     NoMagicNumbers noMagicNumbers = new NoMagicNumbers();
-    noMagicNumbers.enable();
     String configuration = new Gson().toJson(noMagicNumbers.configuration());
     assertThat(configuration).isEqualTo("[1,0,-1]");
   }

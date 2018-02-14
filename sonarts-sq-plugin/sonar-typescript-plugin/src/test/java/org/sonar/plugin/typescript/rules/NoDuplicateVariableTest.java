@@ -29,7 +29,6 @@ public class NoDuplicateVariableTest {
   @Test
   public void default_configuration() throws Exception {
     NoDuplicateVariable noDuplicateVariable = new NoDuplicateVariable();
-    noDuplicateVariable.enable();
     String configuration = new Gson().toJson(noDuplicateVariable.configuration());
     assertThat(configuration).isEqualTo("[\"check-parameters\"]");
   }

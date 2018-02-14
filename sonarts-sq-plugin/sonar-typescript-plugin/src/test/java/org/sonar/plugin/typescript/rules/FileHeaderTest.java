@@ -29,7 +29,6 @@ public class FileHeaderTest {
   @Test
   public void default_configuration() throws Exception {
     FileHeader fileHeader = new FileHeader();
-    fileHeader.enable();
     String configuration = new Gson().toJson(fileHeader.configuration());
     assertThat(configuration).isEqualTo("[\"\"]");
   }
@@ -37,7 +36,6 @@ public class FileHeaderTest {
   @Test
   public void custom_configuration() throws Exception {
     FileHeader fileHeader = new FileHeader();
-    fileHeader.enable();
     fileHeader.headerFormat = "SonarQube, open source software quality management tool.";
     String configuration = new Gson().toJson(fileHeader.configuration());
     assertThat(configuration).isEqualTo("[\"SonarQube, open source software quality management tool.\"]");

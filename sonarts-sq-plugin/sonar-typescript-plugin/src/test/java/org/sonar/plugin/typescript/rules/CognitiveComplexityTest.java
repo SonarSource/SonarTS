@@ -28,7 +28,6 @@ public class CognitiveComplexityTest {
   @Test
   public void default_configuration() throws Exception {
     CognitiveComplexity rule = new CognitiveComplexity();
-    rule.enable();
     String configuration = new Gson().toJson(rule.configuration());
     assertThat(configuration).isEqualTo("[15]");
   }
@@ -36,7 +35,6 @@ public class CognitiveComplexityTest {
   @Test
   public void custom_configuration() throws Exception {
     CognitiveComplexity rule = new CognitiveComplexity();
-    rule.enable();
     rule.threshold = 10;
     String configuration = new Gson().toJson(rule.configuration());
     assertThat(configuration).isEqualTo("[10]");

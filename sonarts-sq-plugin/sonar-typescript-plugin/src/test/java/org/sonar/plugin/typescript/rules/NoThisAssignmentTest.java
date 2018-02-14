@@ -29,7 +29,6 @@ public class NoThisAssignmentTest {
   @Test
   public void test_configuration() throws Exception {
     NoThisAssignment noThisAssignment = new NoThisAssignment();
-    noThisAssignment.enable();
     String configuration = new Gson().toJson(noThisAssignment.configuration());
     assertThat(configuration).isEqualTo("[{\"allow-destructuring\":true}]");
   }
