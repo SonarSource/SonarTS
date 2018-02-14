@@ -29,7 +29,6 @@ public class QuotemarkTest {
   @Test
   public void default_configuration() throws Exception {
     Quotemark quotemark = new Quotemark();
-    quotemark.enable();
     String configuration = new Gson().toJson(quotemark.configuration());
     assertThat(configuration).isEqualTo("[\"single\",\"jsx-double\",\"avoid-escape\"]");
   }
@@ -37,7 +36,6 @@ public class QuotemarkTest {
   @Test
   public void custom_configuration() throws Exception {
     Quotemark quotemark = new Quotemark();
-    quotemark.enable();
     quotemark.singleQuotes = false;
     String configuration = new Gson().toJson(quotemark.configuration());
     assertThat(configuration).isEqualTo("[\"double\",\"jsx-double\",\"avoid-escape\"]");

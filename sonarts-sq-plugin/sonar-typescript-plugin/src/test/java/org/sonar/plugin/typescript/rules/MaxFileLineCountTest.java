@@ -29,7 +29,6 @@ public class MaxFileLineCountTest {
   @Test
   public void default_configuration() throws Exception {
     MaxFileLineCount maxFileLineCount = new MaxFileLineCount();
-    maxFileLineCount.enable();
     String configuration = new Gson().toJson(maxFileLineCount.configuration());
     assertThat(configuration).isEqualTo("[1000]");
   }
@@ -37,7 +36,6 @@ public class MaxFileLineCountTest {
   @Test
   public void custom_configuration() throws Exception {
     MaxFileLineCount maxFileLineCount = new MaxFileLineCount();
-    maxFileLineCount.enable();
     maxFileLineCount.maximum = 50;
     String configuration = new Gson().toJson(maxFileLineCount.configuration());
     assertThat(configuration).isEqualTo("[50]");

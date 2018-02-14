@@ -29,7 +29,6 @@ public class PreferConstTest {
   @Test
   public void test_configuration() throws Exception {
     PreferConst preferConst = new PreferConst();
-    preferConst.enable();
     String configuration = new Gson().toJson(preferConst.configuration());
     assertThat(configuration).isEqualTo("[{\"destructuring\":\"all\"}]");
   }
