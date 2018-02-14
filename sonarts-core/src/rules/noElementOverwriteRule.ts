@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { descendants } from "../utils/navigation";
 import { nodeToSonarLine } from "../runner/sonarUtils";
-import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
+import { getIssueLocationAtNode, TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import {
   isAssignment,
   isCallExpression,
@@ -50,6 +50,11 @@ export class Rule extends Lint.Rules.TypedRule {
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): Lint.RuleFailure[] {
     return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
+  }
+
+  public static message(index: string, previousUsage: ts.Node) {
+    const line = nodeToSonarLine(previousUsage);
+    return `Verify this is the index that was intended; "${index}" was already set on line ${line}.`;
   }
 }
 
@@ -80,7 +85,12 @@ class Visitor extends TypedSonarRuleVisitor {
         }
         const sameKeyWriteUsage = usedKeys.get(keyWriteUsage.indexOrKey);
         if (sameKeyWriteUsage) {
-          this.addIssue(keyWriteUsage.node, this.message(keyWriteUsage.indexOrKey, sameKeyWriteUsage.node));
+          this.addIssue(
+            keyWriteUsage.node,
+            Rule.message(keyWriteUsage.indexOrKey, sameKeyWriteUsage.node),
+          ).addSecondaryLocation(
+            getIssueLocationAtNode(sameKeyWriteUsage.node, `Previous write to "${keyWriteUsage.indexOrKey}".`),
+          );
         }
         usedKeys.set(keyWriteUsage.indexOrKey, keyWriteUsage);
         collection = keyWriteUsage.collectionNode;
@@ -171,11 +181,6 @@ class Visitor extends TypedSonarRuleVisitor {
     }
     const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
     return symbol && symbol.name;
-  }
-
-  private message(index: string, previousUsage: ts.Node) {
-    const line = nodeToSonarLine(previousUsage);
-    return `Verify this is the index that was intended; "${index}" was already set on line ${line}.`;
   }
 }
 
