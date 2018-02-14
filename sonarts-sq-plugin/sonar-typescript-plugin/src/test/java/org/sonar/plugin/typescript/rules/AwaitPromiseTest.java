@@ -19,19 +19,18 @@
  */
 package org.sonar.plugin.typescript.rules;
 
-import com.google.gson.JsonElement;
-import org.sonar.check.Rule;
+import com.google.gson.Gson;
+import org.junit.Test;
 
-@Rule(key = "S4123")
-public class AwaitPromise extends TypeScriptRule {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  @Override
-  public JsonElement configuration() {
-    return ruleConfiguration("Thenable", "PromiseLike");
+public class AwaitPromiseTest {
+
+  @Test
+  public void test_configuration() throws Exception {
+    AwaitPromise awaitPromise = new AwaitPromise();
+    String configuration = new Gson().toJson(awaitPromise.configuration());
+    assertThat(configuration).isEqualTo("[\"Thenable\",\"PromiseLike\"]");
   }
 
-  @Override
-  public String tsLintKey() {
-    return "await-promise";
-  }
 }
