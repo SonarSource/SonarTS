@@ -37,6 +37,7 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.plugin.typescript.rules.AdjacentOverloadSignatures;
 import org.sonar.plugin.typescript.rules.AwaitPromise;
+import org.sonar.plugin.typescript.rules.BanCommaOperator;
 import org.sonar.plugin.typescript.rules.ClassName;
 import org.sonar.plugin.typescript.rules.CognitiveComplexity;
 import org.sonar.plugin.typescript.rules.Curly;
@@ -68,8 +69,8 @@ import org.sonar.plugin.typescript.rules.NoElementOverwrite;
 import org.sonar.plugin.typescript.rules.NoEmptyDestructuring;
 import org.sonar.plugin.typescript.rules.NoEmptyInterface;
 import org.sonar.plugin.typescript.rules.NoEmptyNestedBlocks;
-import org.sonar.plugin.typescript.rules.NoExtraSemicolon;
 import org.sonar.plugin.typescript.rules.NoEval;
+import org.sonar.plugin.typescript.rules.NoExtraSemicolon;
 import org.sonar.plugin.typescript.rules.NoForInArray;
 import org.sonar.plugin.typescript.rules.NoGratuitousExpressions;
 import org.sonar.plugin.typescript.rules.NoIdenticalConditions;
@@ -206,6 +207,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
     return Collections.unmodifiableList(Arrays.asList(
       AdjacentOverloadSignatures.class,
       AwaitPromise.class,
+      BanCommaOperator.class,
       ClassName.class,
       CognitiveComplexity.class,
       Curly.class,
@@ -237,8 +239,8 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoEmptyDestructuring.class,
       NoEmptyInterface.class,
       NoEmptyNestedBlocks.class,
-      NoExtraSemicolon.class,
       NoEval.class,
+      NoExtraSemicolon.class,
       NoForInArray.class,
       NoGratuitousExpressions.class,
       NoIdenticalConditions.class,
