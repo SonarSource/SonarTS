@@ -139,3 +139,11 @@ function issue431(arg: number) {
   obj1.map.set("hello", 1);
   obj2.map.set("hello", 1);
 }
+
+function secondary() {
+  let fruits = [];
+  fruits[1] = "banana";
+//^^^^^^ > {{Previous write to "1".}}
+  fruits[1] = "apple";
+//^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 145.}}
+}
