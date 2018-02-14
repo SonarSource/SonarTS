@@ -1,0 +1,15 @@
+{
+  "title": "Comma operator should not be used",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "misra"
+  ],
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-878",
+  "sqKey": "S878"
+}
