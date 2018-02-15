@@ -68,8 +68,8 @@ import org.sonar.plugin.typescript.rules.NoElementOverwrite;
 import org.sonar.plugin.typescript.rules.NoEmptyDestructuring;
 import org.sonar.plugin.typescript.rules.NoEmptyInterface;
 import org.sonar.plugin.typescript.rules.NoEmptyNestedBlocks;
-import org.sonar.plugin.typescript.rules.NoExtraSemicolon;
 import org.sonar.plugin.typescript.rules.NoEval;
+import org.sonar.plugin.typescript.rules.NoExtraSemicolon;
 import org.sonar.plugin.typescript.rules.NoForInArray;
 import org.sonar.plugin.typescript.rules.NoGratuitousExpressions;
 import org.sonar.plugin.typescript.rules.NoIdenticalConditions;
@@ -104,6 +104,7 @@ import org.sonar.plugin.typescript.rules.NoUnsafeFinally;
 import org.sonar.plugin.typescript.rules.NoUnthrownError;
 import org.sonar.plugin.typescript.rules.NoUnusedArray;
 import org.sonar.plugin.typescript.rules.NoUnusedExpression;
+import org.sonar.plugin.typescript.rules.NoUnusedVariable;
 import org.sonar.plugin.typescript.rules.NoUseOfEmptyReturnValue;
 import org.sonar.plugin.typescript.rules.NoUselessCast;
 import org.sonar.plugin.typescript.rules.NoUselessIncrement;
@@ -237,8 +238,8 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoEmptyDestructuring.class,
       NoEmptyInterface.class,
       NoEmptyNestedBlocks.class,
-      NoExtraSemicolon.class,
       NoEval.class,
+      NoExtraSemicolon.class,
       NoForInArray.class,
       NoGratuitousExpressions.class,
       NoIdenticalConditions.class,
@@ -273,6 +274,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoUnthrownError.class,
       NoUnusedArray.class,
       NoUnusedExpression.class,
+      NoUnusedVariable.class,
       NoUseOfEmptyReturnValue.class,
       NoUselessCast.class,
       NoUselessIncrement.class,
