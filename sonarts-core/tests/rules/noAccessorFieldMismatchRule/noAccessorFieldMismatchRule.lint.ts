@@ -173,3 +173,15 @@ class Issue476 {
   public get y(): number { return this._x; }
 //           ^  {{Refactor this getter so that it actually refers to the property '_y'}}
 }
+
+export const ObjectLiteralFP = {
+
+  _experiments: "blah",
+
+  getExperiments(): string {
+//^^^^^^^^^^^^^^ {{Refactor this getter so that it actually refers to the property '_experiments'}}
+    // TypeScript creates special transient symbol for this._experiments which is not the same as symbol for property _experiments
+    // that's why we don't have correct usage info in symbol table
+    return this._experiments;  // FP here
+  }
+};
