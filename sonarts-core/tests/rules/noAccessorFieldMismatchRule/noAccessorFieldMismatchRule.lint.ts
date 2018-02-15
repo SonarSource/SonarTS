@@ -150,3 +150,26 @@ class Exceptions {
     return `v is ${this.z}`;
   }
 }
+
+class Issue476 {
+
+  static _filter: string = '';
+  private _filter: string = '';
+
+  private _x: number = 2;
+  static _x: number = 1;
+
+  private _y: number = 2;
+  static _y: number = 1;
+
+  public get filter(): string {
+    return this._filter; // OK
+  }
+
+  public get x(): number {
+    return Issue476._x;
+  }
+
+  public get y(): number { return this._x; }
+//           ^  {{Refactor this getter so that it actually refers to the property '_y'}}
+}
