@@ -99,7 +99,7 @@ class Visitor extends SonarRuleVisitor {
         accessor.name,
         `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${matchingFields[0]
           .name!.getText()}'`,
-      );
+      ).addSecondaryLocation(matchingFields[0], "Property which should be referred.");
     }
   }
 

@@ -160,6 +160,7 @@ class Issue476 {
   static _x: number = 1;
 
   private _y: number = 2;
+//^^^^^^^^^^^^^^^^^^^^^^^  > {{Property which should be referred.}}
   static _y: number = 1;
 
   public get filter(): string {
