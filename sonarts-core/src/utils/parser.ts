@@ -61,7 +61,6 @@ export function parseFile(filename: string): { sourceFile: ts.SourceFile; progra
 
 export function createProgram(configFile: string): ts.Program {
   const { options, files } = parseTsConfig(configFile);
-
   const host = ts.createCompilerHost(options, true);
   return ts.createProgram(files, options, host);
 }

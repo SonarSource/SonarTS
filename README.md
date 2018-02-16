@@ -58,6 +58,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Functions should not have identical implementations ([`no-identical-functions`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
+* Boolean literals should not be redundant ([`no-redundant-boolean`])
 * Redundant pairs of parentheses should be removed ([`no-redundant-parentheses`])
 * Primitive return types should be used ([`no-return-type-any`]) ([`requires type-check`])
 * Conditionals should start on new lines ([`no-same-line-conditional`])
@@ -95,6 +96,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
 [`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
+[`no-redundant-boolean`]: ./sonarts-core/docs/rules/no-redundant-boolean.md
 [`no-redundant-parentheses`]: ./sonarts-core/docs/rules/no-redundant-parentheses.md
 [`no-return-type-any`]: ./sonarts-core/docs/rules/no-return-type-any.md
 [`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
