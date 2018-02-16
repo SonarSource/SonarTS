@@ -43,16 +43,15 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Visitor extends SonarRuleVisitor {
-  private static readonly EQUAL_KINDS = [
-    ts.SyntaxKind.EqualsEqualsEqualsToken,
-    ts.SyntaxKind.EqualsEqualsToken,
-    ts.SyntaxKind.ExclamationEqualsEqualsToken,
-    ts.SyntaxKind.ExclamationEqualsToken,
-  ];
-
   public visitBinaryExpression(node: ts.BinaryExpression) {
     if (
-      is(node.operatorToken, ...Visitor.EQUAL_KINDS, ts.SyntaxKind.BarBarToken, ts.SyntaxKind.AmpersandAmpersandToken)
+      is(
+        node.operatorToken,
+        ts.SyntaxKind.EqualsEqualsToken,
+        ts.SyntaxKind.ExclamationEqualsToken,
+        ts.SyntaxKind.BarBarToken,
+        ts.SyntaxKind.AmpersandAmpersandToken,
+      )
     ) {
       this.check(node.left);
       this.check(node.right);

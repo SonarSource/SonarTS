@@ -1,4 +1,5 @@
-<p>Redundant Boolean literals should be removed from expressions to improve readability.</p>
+<p>Boolean literals should be avoided in comparison expressions <code>==</code>, <code>!=</code> to improve code readability. This rule also reports
+on redundant boolean operations.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
 if (booleanMethod() == true) { /* ... */ }
@@ -21,4 +22,6 @@ doSomething(booleanMethod());
 booleanVariable = booleanMethod();
 booleanVariable = Boolean(notBooleanMethod());
 </pre>
+<h2>Exceptions</h2>
+<p>Expressions with strict comparison operators (<code>===</code> and <code>!==</code>) are ignored.</p>
 
