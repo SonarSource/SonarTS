@@ -1,10 +1,12 @@
 function foo(x: string | null | number) {
-  //            ^^^^^^^^^^^^^^^^^^^^^^ {{Replace this union type with a type alias. It is also used on lines 5,7.}}
+  //            ^^^^^^^^^^^^^^^^^^^^^^ {{Replace this union type with a type alias. It is also used on lines 5,8.}}
 }
 
 const bar: string | null | number = null;
+//         ^^^^^^^^^^^^^^^^^^^^^^ <
 
 function zoo(): string | null | number {
+//              ^^^^^^^^^^^^^^^^^^^^^^ <
   return null;
 }
 
