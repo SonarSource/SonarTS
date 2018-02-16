@@ -19,8 +19,8 @@
  */
 
 import * as ts from "typescript";
-import {lineAndCharacter} from "./navigation";
-import {TreeVisitor} from "./visitor";
+import { lineAndCharacter } from "./navigation";
+import { TreeVisitor } from "./visitor";
 import * as tslint from "tslint";
 
 export class SonarRuleVisitor extends TreeVisitor {
@@ -135,7 +135,7 @@ export class SonarIssue extends tslint.RuleFailure {
   public addSecondaryLocation(node: ts.Node, message: string): SonarIssue;
   public addSecondaryLocation(secondaryLocation: IssueLocation): SonarIssue;
   public addSecondaryLocation(): SonarIssue {
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
       this.secondaryLocations.push(arguments[0]);
     } else {
       const issueLocation = getIssueLocationAtNode(arguments[0]);
