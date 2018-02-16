@@ -31,7 +31,7 @@ export class Rule extends tslint.Rules.TypedRule {
     description: "Getters and setters should access the expected fields",
     optionsDescription: "",
     options: null,
-    rspecKey: "RSPEC-2870",
+    rspecKey: "RSPEC-4275",
     type: "functionality",
     typescriptOnly: false,
   };
@@ -75,13 +75,13 @@ class Visitor extends SonarRuleVisitor {
       ts.SyntaxKind.ClassExpression,
       ts.SyntaxKind.ObjectLiteralExpression,
     ]) as ts.ClassDeclaration | ts.ClassExpression | ts.ObjectLiteralExpression;
-    let matchingField: Field | undefined;
+    let matchingFields: Field[];
     let accessorIsPublic: boolean;
     if (containingStructure.kind === ts.SyntaxKind.ObjectLiteralExpression) {
-      matchingField = Visitor.matchingField(Array.from(containingStructure.properties), [], setterOrGetter.name);
+      matchingFields = Visitor.matchingFields(Array.from(containingStructure.properties), [], setterOrGetter.name);
       accessorIsPublic = true;
     } else {
-      matchingField = Visitor.matchingField(
+      matchingFields = Visitor.matchingFields(
         Array.from(containingStructure.members),
         Visitor.fieldsDeclaredInConstructorParameters(containingStructure),
         setterOrGetter.name,
@@ -91,14 +91,15 @@ class Visitor extends SonarRuleVisitor {
     if (
       accessorIsPublic &&
       accessor.body &&
-      matchingField &&
+      matchingFields.length > 0 &&
       Visitor.bodyIsSimple(accessor.body, setterOrGetter.type) &&
-      !this.fieldIsUsed(accessor, matchingField)
+      !this.fieldIsUsed(accessor, matchingFields)
     ) {
       this.addIssue(
         accessor.name,
-        `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${matchingField.name!.getText()}'`,
-      );
+        `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${matchingFields[0]
+          .name!.getText()}'`,
+      ).addSecondaryLocation(matchingFields[0], "Property which should be referred.");
     }
   }
 
@@ -125,11 +126,11 @@ class Visitor extends SonarRuleVisitor {
     }
   }
 
-  private static matchingField(
+  private static matchingFields(
     members: Array<ts.ClassElement | ts.ObjectLiteralElement>,
     constructorDeclaredParameters: Array<ts.ParameterDeclaration>,
     targetName: string,
-  ): Field | undefined {
+  ): Field[] {
     return members
       .filter(
         element =>
@@ -140,7 +141,7 @@ class Visitor extends SonarRuleVisitor {
       )
       .map(element => element as Field)
       .concat(constructorDeclaredParameters)
-      .find(element => !!element.name && Visitor.fieldNameMatches(element.name.getText(), targetName));
+      .filter(element => !!element.name && Visitor.fieldNameMatches(element.name.getText(), targetName));
   }
 
   private static fieldNameMatches(fieldName: string, targetName: string): boolean {
@@ -182,14 +183,15 @@ class Visitor extends SonarRuleVisitor {
     }
   }
 
-  private fieldIsUsed(method: ts.MethodDeclaration | ts.AccessorDeclaration, field: Field): boolean {
+  private fieldIsUsed(method: ts.MethodDeclaration | ts.AccessorDeclaration, fields: Field[]): boolean {
     const body = method.body;
-    const usage = this.symbols.getUsage(field.name!);
-    if (usage && body) {
-      return !!this.symbols.allUsages(usage.symbol).find(usage => usage.isUsedInside(body));
-    } else {
-      return false;
+    for (let field of fields) {
+      const usage = this.symbols.getUsage(field.name!);
+      if (usage && body && !!this.symbols.allUsages(usage.symbol).find(usage => usage.isUsedInside(body))) {
+        return true;
+      }
     }
+    return false;
   }
 }
 

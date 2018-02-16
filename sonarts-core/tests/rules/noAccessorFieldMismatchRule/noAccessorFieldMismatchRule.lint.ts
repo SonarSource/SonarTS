@@ -150,3 +150,39 @@ class Exceptions {
     return `v is ${this.z}`;
   }
 }
+
+class Issue476 {
+
+  static _filter: string = '';
+  private _filter: string = '';
+
+  private _x: number = 2;
+  static _x: number = 1;
+
+  private _y: number = 2;
+//^^^^^^^^^^^^^^^^^^^^^^^  > {{Property which should be referred.}}
+  static _y: number = 1;
+
+  public get filter(): string {
+    return this._filter; // OK
+  }
+
+  public get x(): number {
+    return Issue476._x;
+  }
+
+  public get y(): number { return this._x; }
+//           ^  {{Refactor this getter so that it actually refers to the property '_y'}}
+}
+
+export const ObjectLiteralFP = {
+
+  _experiments: "blah",
+
+  getExperiments(): string {
+//^^^^^^^^^^^^^^ {{Refactor this getter so that it actually refers to the property '_experiments'}}
+    // TypeScript creates special transient symbol for this._experiments which is not the same as symbol for property _experiments
+    // that's why we don't have correct usage info in symbol table
+    return this._experiments;  // FP here
+  }
+};
