@@ -66,7 +66,9 @@ class Visitor extends TypedSonarRuleVisitor {
         if (typeUsages.length === Rule.REPEATED_USAGE_THRESHOLD) {
           const lines = typeUsages.map(u => nodeToSonarLine(u));
           lines.shift();
-          this.addIssue(typeUsages[0], Visitor.message(type, lines));
+          const [first, ...rest] = typeUsages;
+          const issue = this.addIssue(first, Visitor.message(type, lines));
+          rest.forEach(usage => issue.addSecondaryLocation(usage, "Usage of this type"));
         }
       }
     }
