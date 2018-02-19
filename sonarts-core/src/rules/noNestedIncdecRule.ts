@@ -77,9 +77,8 @@ class Visitor extends SonarRuleVisitor {
     if (isIncDec(node)) {
       this.visitNode((node as ts.PrefixUnaryExpression).operand);
     } else if (isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.CommaToken) {
-      const commaExpr = node as ts.BinaryExpression;
-      this.visitIncrementor(commaExpr.left);
-      this.visitIncrementor(commaExpr.right);
+      this.visitIncrementor(node.left);
+      this.visitIncrementor(node.right);
     } else {
       this.visitNode(node);
     }
