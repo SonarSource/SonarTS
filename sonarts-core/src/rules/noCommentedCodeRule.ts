@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor, IssueLocation } from "../utils/sonarAnalysis";
-import { toTokens, lineAndCharacter, getText, getCommentsBefore, getCommentsAfter } from "../utils/navigation";
+import { toTokens, lineAndCharacterByPos, getText, getCommentsBefore, getCommentsAfter } from "../utils/navigation";
 import * as nodes from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -107,8 +107,8 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private isAdjacent(comment: ts.CommentRange, currentGroup: ts.CommentRange[]) {
-    const groupLine = lineAndCharacter(currentGroup[currentGroup.length - 1].end, this.sourceFile).line;
-    const commentLine = lineAndCharacter(comment.pos, this.sourceFile).line;
+    const groupLine = lineAndCharacterByPos(currentGroup[currentGroup.length - 1].end, this.sourceFile).line;
+    const commentLine = lineAndCharacterByPos(comment.pos, this.sourceFile).line;
     return groupLine + 1 === commentLine;
   }
 

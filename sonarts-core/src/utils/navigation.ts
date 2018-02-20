@@ -108,8 +108,16 @@ export function toTokens(node: ts.Node): ts.Node[] {
   return result.reverse();
 }
 
-export function lineAndCharacter(pos: number, file: ts.SourceFile): ts.LineAndCharacter {
+export function lineAndCharacterByPos(pos: number, file: ts.SourceFile): ts.LineAndCharacter {
   return file.getLineAndCharacterOfPosition(pos);
+}
+
+export function startLineAndCharacter(node: ts.Node): ts.LineAndCharacter {
+  return node.getSourceFile().getLineAndCharacterOfPosition(node.getStart());
+}
+
+export function endLineAndCharacter(node: ts.Node): ts.LineAndCharacter {
+  return node.getSourceFile().getLineAndCharacterOfPosition(node.getEnd());
 }
 
 export function localAncestorsChain(node: ts.Node): ts.Node[] {

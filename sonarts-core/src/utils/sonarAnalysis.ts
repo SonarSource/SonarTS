@@ -19,7 +19,7 @@
  */
 
 import * as ts from "typescript";
-import { lineAndCharacter } from "./navigation";
+import { lineAndCharacterByPos } from "./navigation";
 import { TreeVisitor } from "./visitor";
 import * as tslint from "tslint";
 
@@ -66,8 +66,8 @@ export class IssueLocation {
   ) {
     this.message = message;
 
-    const startPosition = lineAndCharacter(start, sourceFile);
-    const endPosition = lineAndCharacter(end, sourceFile);
+    const startPosition = lineAndCharacterByPos(start, sourceFile);
+    const endPosition = lineAndCharacterByPos(end, sourceFile);
 
     this.startLine = startPosition.line;
     this.startColumn = startPosition.character;
