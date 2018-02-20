@@ -132,14 +132,14 @@ export class SonarIssue extends tslint.RuleFailure {
     return this;
   }
 
-  public addSecondaryLocation(node: ts.Node, message: string): SonarIssue;
+  public addSecondaryLocation(node: ts.Node, message?: string): SonarIssue;
   public addSecondaryLocation(secondaryLocation: IssueLocation): SonarIssue;
-  public addSecondaryLocation(): SonarIssue {
-    if (arguments.length === 1) {
-      this.secondaryLocations.push(arguments[0]);
+  public addSecondaryLocation(nodeOrLocation: ts.Node | IssueLocation, message?: string): SonarIssue {
+    if (nodeOrLocation instanceof IssueLocation) {
+      this.secondaryLocations.push(nodeOrLocation);
     } else {
-      const issueLocation = getIssueLocationAtNode(arguments[0]);
-      issueLocation.message = arguments[1];
+      const issueLocation = getIssueLocationAtNode(nodeOrLocation);
+      issueLocation.message = message;
       this.addSecondaryLocation(issueLocation);
     }
     return this;
