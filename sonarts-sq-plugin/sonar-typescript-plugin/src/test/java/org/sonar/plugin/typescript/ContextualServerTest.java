@@ -81,8 +81,12 @@ public class ContextualServerTest {
     contextualServer.start();
 
     assertThat(logTester.logs(LoggerLevel.WARN))
-      .containsOnlyOnce("No value provided by SonarLint for TypeScript location; property sonar.typescript.internal.typescriptLocation is missing");
-    contextualServer.stop();
+      .containsOnlyOnce(
+        "No value provided by SonarLint for TypeScript location; property sonar.typescript.internal.typescriptLocation is missing",
+        "Skipping SonarTS Server start.")
+      .doesNotContain("Starting SonarTS Server");
+
+    assertThat(contextualServer.isAlive()).isFalse();
   }
 
   @Test

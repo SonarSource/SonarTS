@@ -77,15 +77,20 @@ public class ContextualServer implements Startable {
 
   @Override
   public void start() {
-    externalProcessStreamConsumer.start();
-    LOG.info("Starting SonarTS Server");
+    Optional<String> typescriptLocation = configuration.get(TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
+    if (!typescriptLocation.isPresent()) {
+      LOG.warn("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY + " is missing");
+      LOG.warn("Skipping SonarTS Server start.");
+      return;
+    }
 
     if (isAlive()) {
       LOG.warn("Skipping SonarTS Server start, already running");
       return;
     }
 
-    startSonarTSServer();
+    LOG.info("Starting SonarTS Server");
+    startSonarTSServer(new File(typescriptLocation.get()));
   }
 
   synchronized SensorContextUtils.AnalysisResponse analyze(SensorContextUtils.ContextualAnalysisRequest request) throws IOException {
@@ -102,14 +107,15 @@ public class ContextualServer implements Startable {
     return GSON.fromJson(jsonReader, SensorContextUtils.AnalysisResponse.class);
   }
 
-  private void startSonarTSServer() {
+  private void startSonarTSServer(File typescriptLocation) {
     ExecutableBundle bundle = bundleFactory.createAndDeploy(tempFolder.newDir(), configuration);
     try {
       serverSocket = new ServerSocket(0);
       serverSocket.setSoTimeout(connectionTimeout);
       ProcessBuilder processBuilder = new ProcessBuilder(bundle.getSonarTSServerCommand(serverSocket.getLocalPort()).commandLineTokens());
-      setNodePath(processBuilder);
+      SensorContextUtils.setNodePath(typescriptLocation, processBuilder);
       serverProcess = processBuilder.start();
+      externalProcessStreamConsumer.start();
       externalProcessStreamConsumer.consumeStream(serverProcess.getErrorStream(), LOG::error);
       externalProcessStreamConsumer.consumeStream(serverProcess.getInputStream(), LOG::info);
       socket = serverSocket.accept();
@@ -119,15 +125,6 @@ public class ContextualServer implements Startable {
       if (isAlive()) {
         terminate();
       }
-    }
-  }
-
-  private void setNodePath(ProcessBuilder processBuilder) {
-    Optional<String> typescriptLocation = configuration.get(TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
-    if (typescriptLocation.isPresent()) {
-      SensorContextUtils.setNodePath(new File(typescriptLocation.get()), processBuilder);
-    } else {
-      LOG.warn("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY + " is missing");
     }
   }
 
