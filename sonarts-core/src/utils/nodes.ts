@@ -90,6 +90,10 @@ export function isFunctionDeclaration(node: ts.Node): node is ts.FunctionDeclara
   return is(node, ts.SyntaxKind.FunctionDeclaration);
 }
 
+export function isFunctionExpression(node: ts.Node): node is ts.FunctionExpression {
+  return is(node, ts.SyntaxKind.FunctionExpression);
+}
+
 export function isFunctionLikeDeclaration(node: ts.Node): node is ts.FunctionLikeDeclaration {
   return is(node, ...FUNCTION_LIKE);
 }
@@ -104,6 +108,17 @@ export function isInterfaceDeclaration(node: ts.Node): node is ts.InterfaceDecla
 
 export function isIfStatement(node: ts.Node): node is ts.IfStatement {
   return is(node, ts.SyntaxKind.IfStatement);
+}
+
+export function isIterationStatement(node: ts.Node): node is ts.IterationStatement {
+  return is(
+    node,
+    ts.SyntaxKind.WhileStatement,
+    ts.SyntaxKind.DoStatement,
+    ts.SyntaxKind.ForStatement,
+    ts.SyntaxKind.ForInStatement,
+    ts.SyntaxKind.ForOfStatement,
+  );
 }
 
 export function isLabeledStatement(node: ts.Node): node is ts.LabeledStatement {
