@@ -25,6 +25,7 @@
     "no-misleading-array-reverse": true,
     "no-misspelled-operator": true,
     "no-multiline-string-literals": true,
+    "no-nested-incdec": false,
     "no-redundant-boolean": true,
     "no-redundant-parentheses": true,
     "no-return-type-any": true,
