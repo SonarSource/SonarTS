@@ -120,6 +120,7 @@ import org.sonar.plugin.typescript.rules.ParametersMaxNumber;
 import org.sonar.plugin.typescript.rules.PreferConst;
 import org.sonar.plugin.typescript.rules.PreferForOf;
 import org.sonar.plugin.typescript.rules.PreferImmediateReturn;
+import org.sonar.plugin.typescript.rules.PreferReadonly;
 import org.sonar.plugin.typescript.rules.PreferTemplate;
 import org.sonar.plugin.typescript.rules.Quotemark;
 import org.sonar.plugin.typescript.rules.RestrictPlusOperands;
@@ -294,6 +295,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       PreferConst.class,
       PreferForOf.class,
       PreferImmediateReturn.class,
+      PreferReadonly.class,
       PreferTemplate.class,
       Quotemark.class,
       RestrictPlusOperands.class,
