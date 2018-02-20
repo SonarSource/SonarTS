@@ -8,6 +8,25 @@ Credentials should be stored outside of the code in a strongly-protected encrypt
 This rule flags instances of hard-coded credentials used in database and LDAP connections. It looks for hard-coded credentials in connection
 strings, and for variable names that match any of the patterns from the provided list.
 
+## Noncompliant Code Example
+
+```typescript
+const password = "asdasd";
+
+let my_pwd;
+my_pwd = "qwerewt";
+
+login({ passwd: "zxvxcv"});
+
+const url = "https://example.com?password=hl2OAIXXZ60";
+```
+
+## Compliant Solution
+
+```typescript
+const password = loadCredentials();
+```
+
 ## See
 
 <ul>
