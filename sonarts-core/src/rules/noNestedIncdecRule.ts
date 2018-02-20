@@ -23,7 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isBinaryExpression, isPrefixUnaryExpression, isPostfixUnaryExpression } from "../utils/nodes";
 
-export class Rule extends tslint.Rules.TypedRule {
+export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-nested-incdec",
     description:
@@ -39,7 +39,7 @@ export class Rule extends tslint.Rules.TypedRule {
   public static MESSAGE_INC = "Extract this increment operation into a dedicated statement.";
   public static MESSAGE_DEC = "Extract this decrement operation into a dedicated statement.";
 
-  public applyWithProgram(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
+  public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
