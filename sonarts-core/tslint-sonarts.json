@@ -15,6 +15,7 @@
     "no-empty-nested-blocks": false,
     "no-extra-semicolon": true,
     "no-gratuitous-expressions": true,
+    "no-hardcoded-credentials": true,
     "no-identical-conditions": true,
     "no-identical-expressions": true,
     "no-identical-functions": true,

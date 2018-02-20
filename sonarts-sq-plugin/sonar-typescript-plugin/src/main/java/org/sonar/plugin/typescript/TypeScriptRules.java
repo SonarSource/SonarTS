@@ -74,6 +74,7 @@ import org.sonar.plugin.typescript.rules.NoEval;
 import org.sonar.plugin.typescript.rules.NoExtraSemicolon;
 import org.sonar.plugin.typescript.rules.NoForInArray;
 import org.sonar.plugin.typescript.rules.NoGratuitousExpressions;
+import org.sonar.plugin.typescript.rules.NoHardcodedCredentials;
 import org.sonar.plugin.typescript.rules.NoIdenticalConditions;
 import org.sonar.plugin.typescript.rules.NoIdenticalExpressions;
 import org.sonar.plugin.typescript.rules.NoIdenticalFunctions;
@@ -248,6 +249,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoExtraSemicolon.class,
       NoForInArray.class,
       NoGratuitousExpressions.class,
+      NoHardcodedCredentials.class,
       NoIdenticalConditions.class,
       NoIdenticalExpressions.class,
       NoIdenticalFunctions.class,

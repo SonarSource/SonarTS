@@ -55,6 +55,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Extra semicolons should be removed ([`no-extra-semicolon`])
 * Conditions should not always evaluate to "true" or to "false" ([`no-gratuitous-expressions`])
+* Credentials should not be hard-coded ([`no-hardcoded-credentials`])
 * Functions should not have identical implementations ([`no-identical-functions`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
@@ -87,6 +88,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
 [`no-extra-semicolon`]: ./sonarts-core/docs/rules/no-extra-semicolon.md
 [`no-gratuitous-expressions`]: ./sonarts-core/docs/rules/no-gratuitous-expressions.md
+[`no-hardcoded-credentials`]: ./sonarts-core/docs/rules/no-hardcoded-credentials.md
 [`no-identical-conditions`]: ./sonarts-core/docs/rules/no-identical-conditions.md
 [`no-identical-expressions`]: ./sonarts-core/docs/rules/no-identical-expressions.md
 [`no-identical-functions`]: ./sonarts-core/docs/rules/no-identical-functions.md
