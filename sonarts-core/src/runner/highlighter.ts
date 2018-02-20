@@ -19,7 +19,7 @@
  */
 import * as ts from "typescript";
 import { toSonarLine } from "./sonarUtils";
-import { getComments, getText, lineAndCharacter, toTokens } from "../utils/navigation";
+import { getComments, getText, toTokens, startLineAndCharacter, endLineAndCharacter } from "../utils/navigation";
 import { is } from "../utils/nodes";
 
 export default function getHighlighting(sourceFile: ts.SourceFile): { highlights: HighlightedToken[] } {
@@ -70,8 +70,8 @@ function isKeyword(node: ts.Node): boolean {
 }
 
 function highlight(node: ts.Node, highlightKind: SonarTypeOfText): HighlightedToken {
-  const startPosition = lineAndCharacter(node.getStart(), node.getSourceFile());
-  const endPosition = lineAndCharacter(node.getEnd(), node.getSourceFile());
+  const startPosition = startLineAndCharacter(node);
+  const endPosition = endLineAndCharacter(node);
   return {
     startLine: toSonarLine(startPosition.line),
     startCol: startPosition.character,

@@ -21,7 +21,13 @@ import * as ts from "typescript";
 import { toSonarLine } from "./sonarUtils";
 import { getOverallComplexity } from "../utils/cyclomaticComplexity";
 import { getOverallCognitiveComplexity } from "../utils/cognitiveComplexity";
-import { getComments, getCommentsAfter, getText, lineAndCharacter } from "../utils/navigation";
+import {
+  getComments,
+  getCommentsAfter,
+  getText,
+  lineAndCharacterByPos,
+  startLineAndCharacter,
+} from "../utils/navigation";
 import { is } from "../utils/nodes";
 
 export default function getMetrics(sourceFile: ts.SourceFile): Metrics {
@@ -123,7 +129,7 @@ export function findExecutableLines(sourceFile: ts.SourceFile): number[] {
 
   walk(sourceFile, node => {
     if (EXECUTABLE_STATEMENT_KINDS.includes(node.kind)) {
-      lines.add(toSonarLine(lineAndCharacter(node.getStart(), sourceFile).line));
+      lines.add(toSonarLine(startLineAndCharacter(node).line));
     }
   });
 
@@ -159,7 +165,8 @@ function walk(node: ts.Node, walker: (node: ts.Node) => void): void {
     toWalk.push(currentNode);
     stack.push(...currentNode.getChildren());
   }
-  toWalk.reverse().forEach(walker);
+  toWalk.reverse();
+  toWalk.forEach(walker);
 }
 
 function walkAndCountIf(root: ts.Node, condition: (node: ts.Node) => boolean): number {
@@ -173,8 +180,8 @@ function walkAndCountIf(root: ts.Node, condition: (node: ts.Node) => boolean): n
 }
 
 function addLines(start: number, end: number, lines: Set<number>, sourceFile: ts.SourceFile) {
-  const firstLine = toSonarLine(lineAndCharacter(start, sourceFile).line);
-  const lastLine = toSonarLine(lineAndCharacter(end, sourceFile).line);
+  const firstLine = toSonarLine(lineAndCharacterByPos(start, sourceFile).line);
+  const lastLine = toSonarLine(lineAndCharacterByPos(end, sourceFile).line);
 
   for (let i = firstLine; i <= lastLine; i++) {
     lines.add(i);

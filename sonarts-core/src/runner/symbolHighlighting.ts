@@ -21,7 +21,7 @@ import * as ts from "typescript";
 import { toSonarLine } from "./sonarUtils";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { UsageFlag } from "../symbols/table";
-import { lineAndCharacter } from "../utils/navigation";
+import { startLineAndCharacter, endLineAndCharacter } from "../utils/navigation";
 
 export default function getSymbolHighlighting(sourceFile: ts.SourceFile, program: ts.Program) {
   const symbols: SymbolHighlighting[] = [];
@@ -50,8 +50,8 @@ export interface SymbolHighlighting extends TextRange {
 }
 
 function getTextRange(node: ts.Node): TextRange {
-  const startPosition = lineAndCharacter(node.getStart(), node.getSourceFile());
-  const endPosition = lineAndCharacter(node.getEnd(), node.getSourceFile());
+  const startPosition = startLineAndCharacter(node);
+  const endPosition = endLineAndCharacter(node);
 
   return {
     startLine: toSonarLine(startPosition.line),

@@ -18,7 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import { lineAndCharacter, toTokens } from "../utils/navigation";
+import { toTokens, startLineAndCharacter, endLineAndCharacter } from "../utils/navigation";
 import { toSonarLine } from "./sonarUtils";
 
 export default function getCpdTokens(sourceFile: ts.SourceFile): { cpdTokens: CpdToken[] } {
@@ -37,8 +37,8 @@ export default function getCpdTokens(sourceFile: ts.SourceFile): { cpdTokens: Cp
       text = "LITERAL";
     }
 
-    const startPosition = lineAndCharacter(token.getStart(), sourceFile);
-    const endPosition = lineAndCharacter(token.getEnd(), sourceFile);
+    const startPosition = startLineAndCharacter(token);
+    const endPosition = endLineAndCharacter(token);
 
     cpdTokens.push({
       startLine: toSonarLine(startPosition.line),

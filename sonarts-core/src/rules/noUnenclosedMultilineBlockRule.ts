@@ -20,7 +20,7 @@
 import * as ts from "typescript";
 import * as tslint from "tslint";
 import { SonarRuleMetaData } from "../sonarRule";
-import { lineAndCharacter } from "../utils/navigation";
+import { startLineAndCharacter, endLineAndCharacter } from "../utils/navigation";
 import { is } from "../utils/nodes";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
@@ -114,15 +114,14 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private countStatementsInTheSamePile(reference: ts.Statement, statements: ts.Statement[]): number {
-    const file = reference.getSourceFile();
-    let startOfPile = lineAndCharacter(reference.getStart(), file);
+    const startOfPile = startLineAndCharacter(reference);
     let lastLineOfPile = startOfPile.line;
     for (const statement of statements) {
-      const currentLine = lineAndCharacter(statement.getEnd(), file).line;
-      const currentIndentation = lineAndCharacter(statement.getStart(), file).character;
+      const currentLine = endLineAndCharacter(statement).line;
+      const currentIndentation = startLineAndCharacter(statement).character;
       if (currentLine > startOfPile.line) {
         if (currentIndentation === startOfPile.character) {
-          lastLineOfPile = lineAndCharacter(statement.getEnd(), file).line;
+          lastLineOfPile = endLineAndCharacter(statement).line;
         } else {
           break;
         }
@@ -160,14 +159,13 @@ class ChainedStatements {
   private readonly positions: Positions;
 
   constructor(readonly topStatement: ConditionOrLoop, readonly prev: ts.Statement, readonly next: ts.Statement) {
-    const file = topStatement.getSourceFile();
     this.positions = {
-      prevTopStart: lineAndCharacter(this.topStatement.getStart(), file),
-      prevTopEnd: lineAndCharacter(this.topStatement.getEnd(), file),
-      prevStart: lineAndCharacter(this.prev.getStart(), file),
-      prevEnd: lineAndCharacter(this.prev.getEnd(), file),
-      nextStart: lineAndCharacter(this.next.getStart(), file),
-      nextEnd: lineAndCharacter(this.next.getEnd(), file),
+      prevTopStart: startLineAndCharacter(this.topStatement),
+      prevTopEnd: endLineAndCharacter(this.topStatement),
+      prevStart: startLineAndCharacter(this.prev),
+      prevEnd: endLineAndCharacter(this.prev),
+      nextStart: startLineAndCharacter(this.next),
+      nextEnd: endLineAndCharacter(this.next),
     };
   }
 

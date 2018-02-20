@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
-import { lineAndCharacter, findChild } from "../utils/navigation";
+import { findChild, startLineAndCharacter, endLineAndCharacter } from "../utils/navigation";
 import { is, isBlock, isArrowFunction } from "../utils/nodes";
 import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonarAnalysis";
 
@@ -67,8 +67,7 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 
   private static message(functionBlock: ts.Block): string {
-    const lineOfOriginalFunction =
-      lineAndCharacter(functionBlock.parent!.getStart(), functionBlock.getSourceFile()).line + 1;
+    const lineOfOriginalFunction = startLineAndCharacter(functionBlock.parent!).line + 1;
     return `Update this function so that its implementation is not identical to the one on line ${lineOfOriginalFunction}.`;
   }
 
@@ -107,9 +106,8 @@ class Visitor extends SonarRuleVisitor {
 
   private static isBigEnough(block: ts.Block) {
     if (block.statements.length > 0) {
-      const firstLine = lineAndCharacter(block.statements[0].getStart(), block.getSourceFile()).line;
-      const lastLine = lineAndCharacter(block.statements[block.statements.length - 1].getEnd(), block.getSourceFile())
-        .line;
+      const firstLine = startLineAndCharacter(block.statements[0]).line;
+      const lastLine = endLineAndCharacter(block.statements[block.statements.length - 1]).line;
       return lastLine - firstLine > 1;
     }
 
