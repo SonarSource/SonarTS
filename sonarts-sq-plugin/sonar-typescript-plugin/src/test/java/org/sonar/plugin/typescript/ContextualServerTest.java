@@ -81,7 +81,7 @@ public class ContextualServerTest {
     ContextualServer contextualServer = new ContextualServer(new MapSettings().asConfig(), mockTSServer(), temp, CONNECTION_TIMEOUT);
     contextualServer.start();
 
-    assertThat(logTester.logs(LoggerLevel.WARN))
+    assertThat(logTester.logs(LoggerLevel.DEBUG))
       .containsOnlyOnce(
         "No value provided by SonarLint for TypeScript location; property sonar.typescript.internal.typescriptLocation is missing",
         "Skipping SonarTS Server start.")
@@ -108,8 +108,8 @@ public class ContextualServerTest {
 
     contextualServer.stop();
     contextualServer.stop();
-    assertThat(logTester.logs(LoggerLevel.WARN)).containsOnlyOnce("Skipping SonarTS Server start, already running");
-    assertThat(logTester.logs(LoggerLevel.WARN)).containsOnlyOnce("SonarTS Server was already stopped");
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsOnlyOnce("Skipping SonarTS Server start, already running");
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).containsOnlyOnce("SonarTS Server was already stopped");
   }
 
   @Test
