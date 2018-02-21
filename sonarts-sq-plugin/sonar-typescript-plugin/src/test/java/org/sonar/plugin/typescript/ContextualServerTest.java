@@ -37,6 +37,7 @@ import org.sonar.plugin.typescript.SensorContextUtils.AnalysisResponse;
 import org.sonar.plugin.typescript.SensorContextUtils.ContextualAnalysisRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 import static org.sonar.plugin.typescript.TestUtils.BASE_DIR;
 import static org.sonar.plugin.typescript.TestUtils.TYPE_SCRIPT_RULES;
@@ -96,8 +97,7 @@ public class ContextualServerTest {
     contextualServer.start();
     assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Failed to start SonarTS Server");
 
-    contextualServer.analyze(request);
-    assertThat(logTester.logs(LoggerLevel.WARN)).contains("Skipped analysis as SonarTS Server is not running");
+    assertThatThrownBy(() -> contextualServer.analyze(request)).isInstanceOf(IllegalStateException.class);
   }
 
   @Test

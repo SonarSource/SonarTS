@@ -36,7 +36,6 @@ import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.TempFolder;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonar.plugin.typescript.SensorContextUtils.AnalysisResponse;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 import org.sonarsource.api.sonarlint.SonarLintSide;
@@ -94,11 +93,9 @@ public class ContextualServer implements Startable {
   }
 
   synchronized SensorContextUtils.AnalysisResponse analyze(SensorContextUtils.ContextualAnalysisRequest request) throws IOException {
-    if (!serverProcess.isAlive()) {
-      LOG.warn("Skipped analysis as SonarTS Server is not running");
-      return new AnalysisResponse();
+    if (!isAlive()) {
+      throw new IllegalStateException("ContextualServer is not started.");
     }
-
     final OutputStreamWriter writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
     String requestJson = GSON.toJson(request);
     writer.append(requestJson);

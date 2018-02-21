@@ -52,6 +52,10 @@ public class ContextualSensor implements Sensor {
 
   @Override
   public void execute(SensorContext sensorContext) {
+    if (!contextualServer.isAlive()) {
+      LOG.warn("Skipped analysis as SonarTS Server is not running");
+      return;
+    }
     Iterable<InputFile> inputFiles = getInputFiles(sensorContext);
     LOG.info("Started SonarTS Analysis");
     inputFiles.forEach(inputFile -> {
