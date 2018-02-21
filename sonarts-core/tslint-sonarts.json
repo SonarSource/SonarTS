@@ -31,6 +31,7 @@
     "no-return-type-any": true,
     "no-same-line-conditional": true,
     "no-self-assignment": true,
+    "no-small-switch": true,
     "no-statements-same-line": true,
     "no-unconditional-jump": true,
     "no-unenclosed-multiline-block": true,

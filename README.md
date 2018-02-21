@@ -64,6 +64,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Redundant pairs of parentheses should be removed ([`no-redundant-parentheses`])
 * Primitive return types should be used ([`no-return-type-any`]) ([`requires type-check`])
 * Conditionals should start on new lines ([`no-same-line-conditional`])
+* "switch" statements should have at least 3 "case" clauses ([`no-small-switch`])
 * Statements should be on separate lines ([`no-statements-same-line`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
@@ -106,6 +107,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-return-type-any`]: ./sonarts-core/docs/rules/no-return-type-any.md
 [`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
+[`no-small-switch`]: ./sonarts-core/docs/rules/no-small-switch.md
 [`no-statements-same-line`]: ./sonarts-core/docs/rules/no-statements-same-line.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
 [`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
