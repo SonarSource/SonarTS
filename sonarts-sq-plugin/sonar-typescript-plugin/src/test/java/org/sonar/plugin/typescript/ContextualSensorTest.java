@@ -111,7 +111,7 @@ public class ContextualSensorTest {
     ContextualSensor contextualSensor = new ContextualSensor(CHECK_FACTORY, contextualServer);
     contextualSensor.execute(mock(SensorContext.class));
 
-    assertThat(logTester.logs(LoggerLevel.WARN)).contains("Skipped analysis as SonarTS Server is not running");
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Skipped analysis as SonarTS Server is not running");
   }
 
   @Test

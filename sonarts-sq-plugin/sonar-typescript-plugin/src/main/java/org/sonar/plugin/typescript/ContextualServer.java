@@ -78,13 +78,13 @@ public class ContextualServer implements Startable {
   public void start() {
     Optional<String> typescriptLocation = configuration.get(TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY);
     if (!typescriptLocation.isPresent()) {
-      LOG.warn("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY + " is missing");
-      LOG.warn("Skipping SonarTS Server start.");
+      LOG.debug("No value provided by SonarLint for TypeScript location; property " + TYPESCRIPT_DEPENDENCY_LOCATION_PROPERTY + " is missing");
+      LOG.debug("Skipping SonarTS Server start.");
       return;
     }
 
     if (isAlive()) {
-      LOG.warn("Skipping SonarTS Server start, already running");
+      LOG.debug("Skipping SonarTS Server start, already running");
       return;
     }
 
@@ -131,7 +131,7 @@ public class ContextualServer implements Startable {
       terminate();
       LOG.info("SonarTS Server is stopped");
     } else {
-      LOG.warn("SonarTS Server was already stopped");
+      LOG.debug("SonarTS Server was already stopped");
     }
     externalProcessStreamConsumer.stop();
   }
