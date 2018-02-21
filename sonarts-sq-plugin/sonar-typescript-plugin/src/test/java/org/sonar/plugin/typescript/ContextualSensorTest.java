@@ -25,10 +25,12 @@ import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
+import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.utils.internal.JUnitTempFolder;
 import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.plugin.typescript.SensorContextUtils.AnalysisResponse;
 import org.sonar.plugin.typescript.SensorContextUtils.Issue;
 import org.sonar.plugin.typescript.SensorContextUtils.Position;
@@ -68,6 +70,7 @@ public class ContextualSensorTest {
     issue.name = inputFile.absolutePath();
     mockedResponse.issues[0] = issue;
 
+    when(contextualServer.isAlive()).thenReturn(true);
     when(contextualServer.analyze(any())).thenReturn(mockedResponse);
 
     ContextualSensor contextualSensor = new ContextualSensor(CHECK_FACTORY, contextualServer);
@@ -89,6 +92,7 @@ public class ContextualSensorTest {
     sensorContext.fileSystem().add(spiedInputFile);
 
     ContextualServer contextualServer = mock(ContextualServer.class);
+    when(contextualServer.isAlive()).thenReturn(true);
     verify(contextualServer, never()).analyze(any());
 
     ContextualSensor contextualSensor = new ContextualSensor(CHECK_FACTORY, contextualServer);
@@ -98,6 +102,17 @@ public class ContextualSensorTest {
     assertThat(logTester.logs()).contains("File with uri [https://example.org/foo/file.ts] can not be analyzed as it's not file scheme.");
   }
 
+  @Test
+  public void should_not_analyze_when_server_not_alive() throws Exception {
+    ContextualServer contextualServer = mock(ContextualServer.class);
+    when(contextualServer.isAlive()).thenReturn(false);
+    verify(contextualServer, never()).analyze(any());
+
+    ContextualSensor contextualSensor = new ContextualSensor(CHECK_FACTORY, contextualServer);
+    contextualSensor.execute(mock(SensorContext.class));
+
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains("Skipped analysis as SonarTS Server is not running");
+  }
 
   @Test
   public void should_have_description() throws Exception {
