@@ -17,10 +17,10 @@ for(x of arr) {
   doSomething(() => { return "bar";});
 }
 
-while(foo()) {
+  while(foo()) {
+//^^^^^  {{Refactor this loop; it's executed only once}}
   bar();
   break;
-//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
 while(foo()) {
@@ -29,15 +29,15 @@ while(foo()) {
 //^^^^^^^^ {{Remove this "continue" statement or make it conditional}}
 }
 
-while(foo()) {
+  while(foo()) {
+//^^^^^  {{Refactor this loop; it's executed only once}}
   bar();
   throw x;
-//^^^^^   {{Remove this "throw" statement or make it conditional}}
 }
 
-while(foo())
+  while(foo())
+//^^^^^  {{Refactor this loop; it's executed only once}}
   break;
-//^^^^^  {{Remove this "break" statement or make it conditional}}
 
 function f() {
   while(foo()) {
@@ -47,22 +47,22 @@ function f() {
     }
   }
   while(foo()) {
+//^^^^^  {{Refactor this loop; it's executed only once}}    
     bar();
     return;
-//  ^^^^^^  {{Remove this "return" statement or make it conditional}}
   }
 }
 
-do {
+  do {
+//^^  {{Refactor this loop; it's executed only once}}  
   bar();
   break;
-//^^^^^  {{Remove this "break" statement or make it conditional}}
 } while (foo())
 
-for (i = 0; foo(); i++) {
+  for (i = 0; foo(); i++) {
+//^^^  {{Refactor this loop; it's executed only once}}  
   bar();
   break;
-//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
 for (p in obj) {
@@ -72,9 +72,9 @@ for (p in obj) {
 
 for (p in obj) {
   while(true) {
+//^^^^^  {{Refactor this loop; it's executed only once}}   
     bar();
     break;
-//  ^^^^^  {{Remove this "break" statement or make it conditional}}
   }
 }
 
@@ -84,29 +84,31 @@ for (p in obj) {
 //^^^^^^^^  {{Remove this "continue" statement or make it conditional}}
 }
 
-for(p of arr) {
+  for(p of arr) {
+//^^^  {{Refactor this loop; it's executed only once}}   
   bar();
   break;
-//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
 for(p of arr) {
   return p;  // Compliant: used to return the first element of an array
 }
 
-while(foo()) {
+  while(foo()) {
+//^^^^^  {{Refactor this loop; it's executed only once}}
   if (bar()) {
     break;
+//  ^^^^^ < {{loop is broken here.}}
   }
   baz();
   break;
-//^^^^^  {{Remove this "break" statement or make it conditional}}
+//^^^^^  < {{loop is broken here.}}
 }
 
 if (cond()) {
   while(foo()) {
+//^^^^^  {{Refactor this loop; it's executed only once}}    
     break;
-//  ^^^^^  {{Remove this "break" statement or make it conditional}}
   }
 }
 
@@ -144,10 +146,10 @@ for (i = 0; foo(); i++) {
   break; // Compliant
 }
 
-for (i = 0; foo();) {
+  for (i = 0; foo();) {
+//^^^  {{Refactor this loop; it's executed only once}}  
   baz();
   break;
-//^^^^^  {{Remove this "break" statement or make it conditional}}
 }
 
 for (i = 0; foo(); i++) {
@@ -164,8 +166,46 @@ for (;;) {
   return 42; // OK
 }
 
-for (;;) {
+  for (;;) {
+//^^^  {{Refactor this loop; it's executed only once}}  
   foo();
   return 42;
-//^^^^^^  {{Remove this "return" statement or make it conditional}}
+}
+
+
+
+  while (foo()) {
+//^^^^^ {{Refactor this loop; it's executed only once}}
+  if (bar()) {
+    doSomething();
+    break;
+//  ^^^^^ < {{loop is broken here.}}
+  } else {
+    doSomethingElse();
+    break;
+//  ^^^^^ < {{loop is broken here.}}
+  }
+}
+
+function twoReturns() {
+  while (foo()) {
+//^^^^^ {{Refactor this loop; it's executed only once}}
+    if (bar()) {
+      return 42;
+    } else {
+      return 0;
+    }
+  }
+}
+
+function tryCatch() {
+  while (cond()) {
+    try {
+      doSomething();
+    } catch (e) {
+      continue;
+    }
+
+    doSomethingElse();
+  }
 }
