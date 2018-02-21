@@ -53,9 +53,9 @@
   </modules>
 
   <scm>
-    <connection>scm:git:git@github.com:SonarSource/SonarTS-Plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:SonarSource/SonarTS-Plugin.git</developerConnection>
-    <url>https://github.com/SonarSource/SonarTS-Plugin</url>
+    <connection>scm:git:git@github.com:SonarSource/SonarTS.git</connection>
+    <developerConnection>scm:git:git@github.com:SonarSource/SonarTS.git</developerConnection>
+    <url>https://github.com/SonarSource/SonarTS</url>
     <tag>HEAD</tag>
   </scm>
   <issueManagement>
