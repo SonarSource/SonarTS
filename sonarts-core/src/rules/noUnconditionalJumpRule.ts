@@ -40,7 +40,10 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 }
 
+const CONDITIONAL_STATEMENTS = nav.CONDITIONAL_STATEMENTS.concat(ts.SyntaxKind.TryStatement);
 class Visitor extends SonarRuleVisitor {
+  private loopsAndJumps: Map<ts.IterationStatement, ts.Node[]> = new Map();
+
   public visitBreakStatement(node: ts.BreakOrContinueStatement): void {
     this.checkJump(node);
   }
@@ -58,33 +61,43 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private checkJump(node: ts.BreakOrContinueStatement | ts.ThrowStatement | ts.ReturnStatement) {
-    if (this.isConditional(node)) return;
+    const keyword = nav.keyword(node);
+    if (node.kind === ts.SyntaxKind.ContinueStatement) {
+      if (!this.isConditional(node)) {
+        this.addIssue(keyword, `Remove this "continue" statement or make it conditional`);
+      }
+      return;
+    }
     if (node.kind === ts.SyntaxKind.BreakStatement && this.isInsideForIn(node)) return;
     if (node.kind === ts.SyntaxKind.ReturnStatement && this.isInsideForOf(node)) return;
+
     const cfg = this.buildCfg(node);
     if (!cfg) return;
-    const keyword = nav.keyword(node);
-    const loop = nav.firstLocalAncestor(node, ...nav.LOOP_STATEMENTS);
-    if (!loop) return;
-    if (node.kind === ts.SyntaxKind.ContinueStatement) {
-      this.raiseIssue(keyword);
-    } else {
+    const loop = nav.firstLocalAncestor(node, ...nav.LOOP_STATEMENTS) as ts.IterationStatement;
+    if (loop) {
       const loopingBlock = cfg.findLoopingBlock(loop);
       if (loopingBlock && this.actuallyLoops(loopingBlock)) return;
-      this.raiseIssue(keyword);
+      const jumpsForThisLoop = this.loopsAndJumps.get(loop) || [];
+      jumpsForThisLoop.push(keyword);
+      this.loopsAndJumps.set(loop, jumpsForThisLoop);
     }
   }
 
-  private raiseIssue(keyword: ts.Node) {
-    this.addIssue(keyword, `Remove this "${keyword.getText()}" statement or make it conditional`);
+  public visitSourceFile(node: ts.SourceFile) {
+    super.visitSourceFile(node);
+
+    this.loopsAndJumps.forEach((jumps: ts.Node[], loop: ts.IterationStatement) => {
+      const issue = this.addIssue(loop.getFirstToken(), "Refactor this loop; it's executed only once");
+      jumps.forEach(jump => issue.addSecondaryLocation(jump, "loop is broken here."));
+    });
   }
 
   private isConditional(node: ts.Node): boolean {
     const parents = nav.localAncestorsChain(node).map(p => p.kind);
     const conditionalsAndLoops = parents.filter(kind =>
-      nav.LOOP_STATEMENTS.concat(nav.CONDITIONAL_STATEMENTS).includes(kind),
+      nav.LOOP_STATEMENTS.concat(CONDITIONAL_STATEMENTS).includes(kind),
     );
-    return conditionalsAndLoops.length > 0 && nav.CONDITIONAL_STATEMENTS.includes(conditionalsAndLoops[0]);
+    return conditionalsAndLoops.length > 0 && CONDITIONAL_STATEMENTS.includes(conditionalsAndLoops[0]);
   }
 
   private isInsideForIn(node: ts.BreakStatement): boolean {
