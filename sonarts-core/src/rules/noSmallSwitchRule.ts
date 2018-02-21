@@ -54,7 +54,7 @@ class Visitor extends SonarRuleVisitor {
       }
     });
 
-    if (clauses.length < 2 || (clauses.length == 2 && hasDefault)) {
+    if (clauses.length < 2 || (clauses.length === 2 && hasDefault)) {
       this.addIssue(node.getFirstToken(), Rule.MESSAGE);
     }
 
