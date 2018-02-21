@@ -5,29 +5,19 @@ A dead store happens when a local variable is assigned a value that is not read 
 ## Noncompliant Code Example
 
 ```typescript
-function pow(a, b) {
-  if(b == 0) {
-    return 0;
-  }
-  var x = a;
-  for(var i = 1; i < b; i++) {
-    x = x * a;  //Dead store because the last return statement should return x instead of returning a
-  }
+function foo(a: number, b: number) {
+  let c = a * b;
+  c += 42; // Noncompliant
   return a;
 }
 ```
 
 ## Compliant Solution
 ```typescript
-function pow(a, b) {
-  if(b == 0) {
-    return 0;
-  }
-  var x = a;
-  for(var i = 1; i < b; i++) {
-    x = x * a;
-  }
-  return x;
+function foo(a: number, b: number) {
+  let c = a * b;
+  c += 42;
+  return c;
 }
 ```
 
