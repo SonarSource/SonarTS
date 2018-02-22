@@ -78,7 +78,7 @@
     <sonar.version>7.0-RC1</sonar.version>
     <sonar.min.version>6.7</sonar.min.version>
     <sonar-orchestrator.version>3.14.0.887</sonar-orchestrator.version>
-    <sonarlint.version>2.5.0.36</sonarlint.version>
+    <sonarlint.version>3.1.0.1376</sonarlint.version>
     <gson.version>2.6.2</gson.version>
     <commons-io.version>2.5</commons-io.version>
     <guava.version>19.0</guava.version>
@@ -141,12 +141,6 @@
         <groupId>org.sonarsource.sonarqube</groupId>
         <artifactId>sonar-testing-harness</artifactId>
         <version>${sonar.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.sonarsource.sonarlint.core</groupId>
-        <artifactId>sonarlint-core</artifactId>
-        <version>${sonarlint.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

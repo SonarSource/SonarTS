@@ -56,7 +56,7 @@ import static java.util.Collections.singletonList;
 })
 public class Tests {
 
-  private static final FileLocation PLUGIN_LOCATION = FileLocation.byWildcardMavenFilename(
+  static final FileLocation PLUGIN_LOCATION = FileLocation.byWildcardMavenFilename(
     new File("../../sonar-typescript-plugin/target"), "sonar-typescript-plugin-*.jar");
 
   @ClassRule
