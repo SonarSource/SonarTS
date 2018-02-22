@@ -52,7 +52,7 @@ export class Rule extends tslint.Rules.AbstractRule {
 }
 
 class Visitor extends SonarRuleVisitor {
-  private literals: Map<string, ts.StringLiteral[]> = new Map();
+  private readonly literals: Map<string, ts.StringLiteral[]> = new Map();
   private static readonly noSeparatorRegexp = /^\w*$/;
 
   constructor(ruleName: string, private readonly threshold: number) {
