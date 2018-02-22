@@ -20,9 +20,12 @@
 package org.sonar.plugin.typescript.executable;
 
 import java.io.File;
+import java.io.InputStream;
 import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Configuration;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 import org.sonarsource.api.sonarlint.SonarLintSide;
 
 import static org.sonarsource.api.sonarlint.SonarLintSide.MULTIPLE_ANALYSES;
@@ -32,14 +35,31 @@ import static org.sonarsource.api.sonarlint.SonarLintSide.MULTIPLE_ANALYSES;
 @SonarLintSide(lifespan = MULTIPLE_ANALYSES)
 public class SonarTSCoreBundleFactory implements ExecutableBundleFactory {
 
+  private static final Logger LOG = Loggers.get(SonarTSCoreBundleFactory.class);
+
   private String bundleLocation;
 
   public SonarTSCoreBundleFactory(String bundleLocation) {
     this.bundleLocation = bundleLocation;
   }
 
+  /**
+   * Extracting "sonarts-core.zip" (containing tslint and tslint-sonarts)
+   * to deployDestination (".sonar" directory of the analyzed project).
+   */
   @Override
   public SonarTSCoreBundle createAndDeploy(File deployDestination, Configuration configuration) {
-    return SonarTSCoreBundle.createAndDeploy(bundleLocation, deployDestination, configuration);
+    InputStream bundle = getClass().getResourceAsStream(bundleLocation);
+    if (bundle == null) {
+      throw new IllegalStateException("SonarTS bundle not found at " + bundleLocation);
+    }
+    try {
+      LOG.debug("Deploying bundle to {}", deployDestination.getAbsolutePath());
+      Zip.extract(bundle, deployDestination);
+      return new SonarTSCoreBundle(new File(deployDestination, "sonarts-bundle"), configuration);
+    } catch (Exception e) {
+      throw new IllegalStateException("Failed to deploy SonarTS bundle (with classpath '" + bundleLocation + "')", e);
+    }
   }
+
 }
