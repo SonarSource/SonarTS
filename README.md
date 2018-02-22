@@ -51,6 +51,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
 * Sections of code should not be "commented out" ([`no-commented-code`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
+* String literals should not be duplicated ([`no-duplicate-string`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
 * Extra semicolons should be removed ([`no-extra-semicolon`])
@@ -85,6 +86,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
 [`no-commented-code`]: ./sonarts-core/docs/rules/no-commented-code.md
 [`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md
+[`no-duplicate-string`]: ./sonarts-core/docs/rules/no-duplicate-string.md
 [`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
 [`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
 [`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
