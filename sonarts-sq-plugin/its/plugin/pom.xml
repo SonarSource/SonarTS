@@ -45,6 +45,10 @@
             <version>${sonarlint.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -55,6 +59,7 @@
                     <includes>
                         <include>**/Tests.java</include>
                         <include>**/SonarLintTest.java</include>
+                        <include>**/JavaRulesIntegrationTest.java</include>
                     </includes>
                 </configuration>
             </plugin>
