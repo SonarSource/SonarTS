@@ -44,23 +44,21 @@ export class Rule extends tslint.Rules.TypedRule {
 
 class Visitor extends SonarRuleVisitor {
   public visitBinaryExpression(node: ts.BinaryExpression) {
-    if (is(node.operatorToken, ts.SyntaxKind.BarBarToken) && node.right.getText() === "false") {
+    if (isOrFalse(node)) {
       if (is(node.parent, ts.SyntaxKind.ConditionalExpression, ts.SyntaxKind.IfStatement)) {
         this.addIssue(node.right, Rule.MESSAGE);
       }
-    } else {
-      if (
-        is(
-          node.operatorToken,
-          ts.SyntaxKind.EqualsEqualsToken,
-          ts.SyntaxKind.ExclamationEqualsToken,
-          ts.SyntaxKind.BarBarToken,
-          ts.SyntaxKind.AmpersandAmpersandToken,
-        )
-      ) {
-        this.check(node.left);
-        this.check(node.right);
-      }
+    } else if (
+      is(
+        node.operatorToken,
+        ts.SyntaxKind.EqualsEqualsToken,
+        ts.SyntaxKind.ExclamationEqualsToken,
+        ts.SyntaxKind.BarBarToken,
+        ts.SyntaxKind.AmpersandAmpersandToken,
+      )
+    ) {
+      this.check(node.left);
+      this.check(node.right);
     }
 
     super.visitBinaryExpression(node);
@@ -91,4 +89,8 @@ class Visitor extends SonarRuleVisitor {
 
 function isBooleanLiteral(expr: ts.Expression) {
   return is(expr, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword);
+}
+
+function isOrFalse(node: ts.BinaryExpression) {
+  return is(node.operatorToken, ts.SyntaxKind.BarBarToken) && is(node.right, ts.SyntaxKind.FalseKeyword);
 }
