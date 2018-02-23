@@ -1,5 +1,5 @@
 {
-  "title": "Assignments should not be made from within sub-expressions",
+  "title": "Assignments should not be made from within conditions",
   "type": "CODE_SMELL",
   "status": "ready",
   "remediation": {

@@ -17,15 +17,13 @@ class A {
   }
 
   public setX(val: number) { // Noncompliant: field 'x' is not updated
-    if (val &gt;= 0 &amp;&amp; val &lt; 10) {
-      this.y = val;
-    }
+    this.y = val;
   }
 
   public getY() { // Noncompliant: field 'y' is not used in the return value
     return this.x;
   }
-}{code}
+}
 </pre>
 <h2>Compliant Solution</h2>
 <pre>
@@ -38,14 +36,12 @@ class A {
   }
 
   public setX(val: number) {
-    if (val &gt;= 0 &amp;&amp; val &lt; 10) {
-      this.x = val;
-    }
+    this.x = val;
   }
 
   public getY() {
     return this.y;
   }
-}{code}
+}
 </pre>
 
