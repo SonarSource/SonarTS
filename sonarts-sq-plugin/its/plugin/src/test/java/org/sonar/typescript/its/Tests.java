@@ -93,9 +93,10 @@ public class Tests {
     return measures.size() == 1 ? measures.get(0) : null;
   }
 
-  static void runNPMInstall(File projectDir) {
+  static void runNPMInstall(File projectDir, String... args) {
     Command command = Command.create(System2.INSTANCE.isOsWindows() ? "npm.cmd" : "npm");
     command.addArgument("install");
+    command.addArguments(args);
     command.setDirectory(projectDir);
 
     try {

@@ -52,27 +52,26 @@ public class SonarLintTest {
   public static TemporaryFolder temp = new TemporaryFolder();
 
   private StandaloneSonarLintEngine sonarlintEngine;
-  private File baseDir;
+  private File projectDir;
 
   private List<String> logs = new ArrayList<>();
 
   @Before
   public void prepare() throws Exception {
-    String typescriptLocation = Paths.get("../../../sonarts-core/node_modules/").toAbsolutePath().normalize().toString();
-    System.out.println(typescriptLocation);
+    projectDir = temp.newFolder();
+    Tests.runNPMInstall(projectDir,"typescript", "--no-save");
     StandaloneGlobalConfiguration config = StandaloneGlobalConfiguration.builder()
       .addPlugin(Tests.PLUGIN_LOCATION.getFile().toURI().toURL())
       .setSonarLintUserHome(temp.newFolder().toPath())
       .setLogOutput((formattedMessage, level) -> logs.add(formattedMessage))
-      .setExtraProperties(ImmutableMap.of("sonar.typescript.internal.typescriptLocation", typescriptLocation))
+      .setExtraProperties(ImmutableMap.of("sonar.typescript.internal.typescriptLocation", new File(projectDir, "node_modules").getAbsolutePath()))
       .build();
     sonarlintEngine = new StandaloneSonarLintEngineImpl(config);
-    baseDir = temp.newFolder();
   }
 
   @Test
   public void test() throws Exception {
-    Files.write(baseDir.toPath().resolve("tsconfig.json"), "{\"include\": [\"**/*\"]}".getBytes(StandardCharsets.UTF_8));
+    Files.write(projectDir.toPath().resolve("tsconfig.json"), "{}".getBytes(StandardCharsets.UTF_8));
     ClientInputFile inputFile = prepareInputFile("foo.ts",
       "function foo() {\n" +
         "    let x = 4; \n" +
@@ -81,7 +80,7 @@ public class SonarLintTest {
 
     final List<Issue> issues = new ArrayList<>();
 
-    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(baseDir.toPath(), temp.newFolder().toPath(), Collections.singletonList
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(), Collections.singletonList
       (inputFile), ImmutableMap.of());
     sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
@@ -95,7 +94,7 @@ public class SonarLintTest {
   }
 
   private ClientInputFile prepareInputFile(String filename, String content) throws IOException {
-    Path filePath = baseDir.toPath().resolve(filename).toAbsolutePath();
+    Path filePath = projectDir.toPath().resolve(filename).toAbsolutePath();
     Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));
     return new ClientInputFile() {
       @Override
