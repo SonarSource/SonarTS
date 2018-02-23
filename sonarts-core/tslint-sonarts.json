@@ -5,6 +5,7 @@
     "no-accessor-field-mismatch": true,
     "no-all-duplicated-branches": true,
     "no-array-delete": true,
+    "no-big-function": true,
     "no-case-with-or": true,
     "no-collection-size-mischeck": true,
     "no-commented-code": true,
