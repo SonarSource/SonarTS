@@ -1,5 +1,5 @@
-<p>Assignments within sub-expressions are hard to spot and therefore make the code less readable. Ideally, sub-expressions should not have
-side-effects.</p>
+<p>Assignments within conditions are hard to spot and therefore make the code less readable. Moreover it often can be a typo and the comparison
+(<code>==</code>) was intended instead. Ideally, conditions should not have side-effects.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
 if ((str = cont.substring(pos1, pos2)) != '') {  // Noncompliant
@@ -21,8 +21,6 @@ if (str != '') {
   <li> <a href="http://cwe.mitre.org/data/definitions/481.html">MITRE, CWE-481</a> - Assigning instead of Comparing </li>
   <li> <a href="https://www.securecoding.cert.org/confluence/x/nYFtAg">CERT, EXP45-C.</a> - Do not perform assignments in selection statements </li>
   <li> <a href="https://www.securecoding.cert.org/confluence/x/1gCTAw">CERT, EXP51-J.</a> - Do not perform assignments in conditional expressions
-  </li>
-  <li> <a href="https://www.securecoding.cert.org/confluence/x/KQvhAg">CERT, EXP19-CPP.</a> - Do not perform assignments in conditional expressions
   </li>
 </ul>
 
