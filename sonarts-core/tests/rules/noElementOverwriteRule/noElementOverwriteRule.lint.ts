@@ -81,9 +81,11 @@ class Test {
   }
 }
 
+declare var global: string[];
+
 global[1] = "foo";
   global[1] = "bar";
-//^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 84.}}
+//^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 86.}}
 
 function anotherCollection() {
   let x = [1,], y = [1, ];
@@ -98,12 +100,12 @@ function switchTest(kind: number) {
     case 1:
       result[1] = 1;
       result[1] = 2;
-    //^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 99.}}
+    //^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 101.}}
       break;
     case 2:
       result[2] = 1;
       result[2] = 2;
-    //^^^^^^ {{Verify this is the index that was intended; "2" was already set on line 104.}}
+    //^^^^^^ {{Verify this is the index that was intended; "2" was already set on line 106.}}
       break;
   }
 }
@@ -145,5 +147,5 @@ function secondary() {
   fruits[1] = "banana";
 //^^^^^^ > {{Previous write to "1".}}
   fruits[1] = "apple";
-//^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 145.}}
+//^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 147.}}
 }
