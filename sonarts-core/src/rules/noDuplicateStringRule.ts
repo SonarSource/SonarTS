@@ -76,7 +76,8 @@ class Visitor extends SonarRuleVisitor {
 
     this.literals.forEach(literals => {
       if (literals.length >= this.threshold) {
-        this.addIssue(literals[0], Rule.message(literals.length)).setCost(literals.length - 1);
+        const issue = this.addIssue(literals[0], Rule.message(literals.length)).setCost(literals.length - 1);
+        literals.slice(1).forEach(literal => issue.addSecondaryLocation(literal, "Duplicate"));
       }
     });
   }
