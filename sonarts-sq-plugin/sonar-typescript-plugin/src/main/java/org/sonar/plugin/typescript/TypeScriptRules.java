@@ -64,6 +64,7 @@ import org.sonar.plugin.typescript.rules.NoConsole;
 import org.sonar.plugin.typescript.rules.NoDeadStore;
 import org.sonar.plugin.typescript.rules.NoDebugger;
 import org.sonar.plugin.typescript.rules.NoDuplicateImports;
+import org.sonar.plugin.typescript.rules.NoDuplicateString;
 import org.sonar.plugin.typescript.rules.NoDuplicateSuper;
 import org.sonar.plugin.typescript.rules.NoDuplicateVariable;
 import org.sonar.plugin.typescript.rules.NoDuplicatedBranches;
@@ -243,6 +244,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoDeadStore.class,
       NoDebugger.class,
       NoDuplicateImports.class,
+      NoDuplicateString.class,
       NoDuplicateSuper.class,
       NoDuplicateVariable.class,
       NoDuplicatedBranches.class,
