@@ -49,6 +49,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Functions should not be too complex ([`mccabe-complexity`])
 * Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
+* Functions should not have too many lines of code ([`no-big-function`])
 * Sections of code should not be "commented out" ([`no-commented-code`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
@@ -81,6 +82,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
 [`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
 [`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
+[`no-big-function`]: ./sonarts-core/docs/rules/no-big-function.md
 [`no-case-with-or`]: ./sonarts-core/docs/rules/no-case-with-or.md
 [`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
 [`no-commented-code`]: ./sonarts-core/docs/rules/no-commented-code.md

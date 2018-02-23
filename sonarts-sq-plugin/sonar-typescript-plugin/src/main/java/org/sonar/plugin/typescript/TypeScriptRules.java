@@ -55,6 +55,7 @@ import org.sonar.plugin.typescript.rules.NoAngleBracketTypeAssertion;
 import org.sonar.plugin.typescript.rules.NoAny;
 import org.sonar.plugin.typescript.rules.NoArg;
 import org.sonar.plugin.typescript.rules.NoArrayDelete;
+import org.sonar.plugin.typescript.rules.NoBigFunction;
 import org.sonar.plugin.typescript.rules.NoCaseWithOr;
 import org.sonar.plugin.typescript.rules.NoCollectionSizeMischeck;
 import org.sonar.plugin.typescript.rules.NoCommentedCode;
@@ -234,6 +235,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoAny.class,
       NoArg.class,
       NoArrayDelete.class,
+      NoBigFunction.class,
       NoCaseWithOr.class,
       NoCollectionSizeMischeck.class,
       NoCommentedCode.class,
