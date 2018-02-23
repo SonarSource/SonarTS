@@ -43,3 +43,18 @@ function ignoreTripleEquals(mayBeBoolean?: boolean) {
   console.log(y !== true);
   return mayBeBoolean !== false;
 }
+
+function ignoreOrFalse(mayBeSomething? : any) {
+  console.log(mayBeSomething || false);
+
+  if (foo(mayBeSomething || false)) {
+  }
+
+  if (mayBeSomething || false) { 
+//                      ^^^^^ {{Remove the unnecessary boolean literal.}}
+  }
+
+  let x = mayBeSomething || false ? 1 : 2;
+//                          ^^^^^ {{Remove the unnecessary boolean literal.}}
+  return mayBeSomething || false;
+}
