@@ -54,6 +54,7 @@
                 <configuration>
                     <includes>
                         <include>**/Tests.java</include>
+                        <include>**/SonarLintTest.java</include>
                     </includes>
                 </configuration>
             </plugin>
