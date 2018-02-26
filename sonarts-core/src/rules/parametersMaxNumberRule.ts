@@ -36,7 +36,7 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  private static DEFAULT_MAX = 7;
+  private static readonly DEFAULT_MAX = 7;
 
   static message(parametersNumber: number, max: number) {
     return `This function has ${parametersNumber} parameters, which is greater than the ${max} authorized.`;

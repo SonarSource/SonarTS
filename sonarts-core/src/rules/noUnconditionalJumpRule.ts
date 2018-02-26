@@ -42,7 +42,7 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 const CONDITIONAL_STATEMENTS = nav.CONDITIONAL_STATEMENTS.concat(ts.SyntaxKind.TryStatement);
 class Visitor extends SonarRuleVisitor {
-  private loopsAndJumps: Map<ts.IterationStatement, ts.Node[]> = new Map();
+  private readonly loopsAndJumps: Map<ts.IterationStatement, ts.Node[]> = new Map();
 
   public visitBreakStatement(node: ts.BreakOrContinueStatement): void {
     this.checkJump(node);
