@@ -10,4 +10,5 @@ module.exports = {
     "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
   },
   testMatch: ["<rootDir>/tests/**/*.test.ts"],
+  collectCoverageFrom: ["src/**/*.ts"]
 };
