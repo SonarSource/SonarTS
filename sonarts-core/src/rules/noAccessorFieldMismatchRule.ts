@@ -185,7 +185,7 @@ class Visitor extends SonarRuleVisitor {
 
   private fieldIsUsed(method: ts.MethodDeclaration | ts.AccessorDeclaration, fields: Field[]): boolean {
     const body = method.body;
-    for (let field of fields) {
+    for (const field of fields) {
       const usage = this.symbols.getUsage(field.name!);
       if (usage && body && !!this.symbols.allUsages(usage.symbol).find(usage => usage.isUsedInside(body))) {
         return true;
