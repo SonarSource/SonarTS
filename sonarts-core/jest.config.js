@@ -1,4 +1,5 @@
 module.exports = {
+  collectCoverageFrom: ["src/**/*.ts"],
   globals: {
     "ts-jest": {
       skipBabel: true,
