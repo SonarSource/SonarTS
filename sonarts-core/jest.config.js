@@ -1,4 +1,5 @@
 module.exports = {
+  collectCoverageFrom: ["src/**/*.ts"],
   globals: {
     "ts-jest": {
       skipBabel: true,
@@ -10,5 +11,4 @@ module.exports = {
     "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
   },
   testMatch: ["<rootDir>/tests/**/*.test.ts"],
-  collectCoverageFrom: ["src/**/*.ts"]
 };
