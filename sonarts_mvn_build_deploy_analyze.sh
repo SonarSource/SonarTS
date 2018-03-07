@@ -132,6 +132,19 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.analysis.prNumber=$TRAVIS_PULL_REQUEST \
     -Dsonar.pullrequest.id=$TRAVIS_PULL_REQUEST
 
+elif [[ "$TRAVIS_BRANCH" == "dogfood-on-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+  echo '======= Build dogfood branch'
+  cd sonarts-sq-plugin
+
+    # get current version from pom
+  CURRENT_VERSION=`maven_expression "project.version"`
+
+  . set_maven_build_version $TRAVIS_BUILD_NUMBER  
+
+  mvn deploy \
+    -Pdeploy-sonarsource,release \
+    -B -e -V $*    
+
 else
   echo '======= Build, no analysis, no deploy'
 
