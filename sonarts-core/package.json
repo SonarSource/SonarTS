@@ -59,6 +59,7 @@
     "awesome-typescript-loader": "3.3.0",
     "glob": "7.1.2",
     "jest": "21.2.1",
+    "jest-sonar-reporter": "^1.3.0",
     "json-stable-stringify": "1.0.1",
     "license-check": "1.1.5",
     "lodash": "4.17.4",
