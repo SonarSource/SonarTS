@@ -8,3 +8,4 @@ node_modules/
 coverage/
 lib/
 yarn-error.log
+test-report.xml
