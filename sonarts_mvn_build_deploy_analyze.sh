@@ -123,14 +123,14 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   sonar-scanner \
     -Dsonar.host.url=$SONAR_HOST_URL \
     -Dsonar.login=$SONAR_TOKEN \
-    -Dsonar.branch.name=$TRAVIS_PULL_REQUEST_BRANCH \
-    -Dsonar.branch.target=$TRAVIS_BRANCH \
+    -Dsonar.pullrequest.branch=$TRAVIS_PULL_REQUEST_BRANCH \
+    -Dsonar.pullrequest.base=$TRAVIS_BRANCH \
     -Dsonar.analysis.buildNumber=$TRAVIS_BUILD_NUMBER \
     -Dsonar.analysis.pipeline=$TRAVIS_BUILD_NUMBER \
     -Dsonar.analysis.sha1=$TRAVIS_PULL_REQUEST_SHA \
     -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG \
     -Dsonar.analysis.prNumber=$TRAVIS_PULL_REQUEST \
-    -Dsonar.pullrequest.id=$TRAVIS_PULL_REQUEST
+    -Dsonar.pullrequest.key=$TRAVIS_PULL_REQUEST
 
 elif [[ "$TRAVIS_BRANCH" == "dogfood-on-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   echo '======= Build dogfood branch'
