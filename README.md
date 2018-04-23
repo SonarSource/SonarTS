@@ -156,6 +156,7 @@ npm install tslint-sonarts -g   # or install globally
 ```
 tslint --project ./tsconfig.json 'src/**/*.{ts,tsx}'
 ```
+_[We also have a plugin for ESLint](https://github.com/SonarSource/eslint-plugin-sonarjs)_
 
 ## Use in SonarQube
 
