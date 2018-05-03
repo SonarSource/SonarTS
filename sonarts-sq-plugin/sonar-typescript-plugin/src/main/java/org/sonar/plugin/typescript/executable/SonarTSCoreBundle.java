@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
@@ -123,7 +124,15 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    */
   @Override
   public String getNodeExecutable() {
-    return configuration.get(TypeScriptPlugin.NODE_EXECUTABLE).orElse(TypeScriptPlugin.NODE_EXECUTABLE_DEFAULT);
+    Optional<String> nodeExecutableOptional = configuration.get(TypeScriptPlugin.NODE_EXECUTABLE);
+    if (nodeExecutableOptional.isPresent()) {
+      String nodeExecutable = nodeExecutableOptional.get();
+      File file = new File(nodeExecutable);
+      if (file.exists()) {
+        return nodeExecutable;
+      }
+    }
+    return TypeScriptPlugin.NODE_EXECUTABLE_DEFAULT;
   }
 
   @Override

@@ -90,12 +90,23 @@ public class SonarTSCoreBundleTest {
   }
 
   @Test
-  public void should_execute_node_from_settings() {
+  public void should_execute_node_from_settings() throws Exception {
     MapSettings settings = getSettings();
-    settings.setProperty("sonar.typescript.node", "/usr/local/bin/node");
+    File customNode = temporaryFolder.newFile("custom-node.exe");
+    settings.setProperty("sonar.typescript.node", customNode.getAbsolutePath());
     SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings.asConfig());
     SonarTSCommand command = bundle.getSonarTsRunnerCommand();
     String commandLine = command.commandLine();
-    assertThat(commandLine).startsWith("/usr/local/bin/node");
+    assertThat(commandLine).startsWith(customNode.getAbsolutePath());
+  }
+
+  @Test
+  public void should_use_default_node_if_custom_doesnt_exists() throws Exception {
+    MapSettings settings = getSettings();
+    settings.setProperty("sonar.typescript.node", "/path/that/doesnt/exists/node");
+    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings.asConfig());
+    SonarTSCommand command = bundle.getSonarTsRunnerCommand();
+    String commandLine = command.commandLine();
+    assertThat(commandLine).startsWith("node");
   }
 }
