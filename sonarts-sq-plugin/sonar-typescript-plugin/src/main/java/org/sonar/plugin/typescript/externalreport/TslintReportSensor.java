@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
+import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
@@ -42,6 +43,7 @@ import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.TypeScriptLanguage;
+import org.sonar.plugin.typescript.TypeScriptRules;
 
 import static org.sonar.plugin.typescript.TypeScriptPlugin.TSLINT_REPORT_PATHS;
 
@@ -49,6 +51,8 @@ public class TslintReportSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(TslintReportSensor.class);
   private final Gson gson = new Gson();
+
+  private final Set<String> activatedTslintKeys = new HashSet<>();
 
   private static final Set<String> BUG_TSLINT_RULES = new HashSet<>(Arrays.asList(
     "await-promise",
@@ -108,6 +112,15 @@ public class TslintReportSensor implements Sensor {
     "use-default-type-parameter",
     "use-isnan"));
 
+  public TslintReportSensor(CheckFactory checkFactory) {
+    TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
+    typeScriptRules.forEach(typeScriptRule -> {
+      if (typeScriptRule.isEnabled()) {
+        activatedTslintKeys.add(typeScriptRule.tsLintKey());
+      }
+    });
+  }
+
   @Override
   public void execute(SensorContext context) {
     boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
@@ -139,7 +152,11 @@ public class TslintReportSensor implements Sensor {
     }
   }
 
-  private static void saveTslintError(SensorContext context, TslintError tslintError) {
+  private void saveTslintError(SensorContext context, TslintError tslintError) {
+    if (activatedTslintKeys.contains(tslintError.ruleName)) {
+      return;
+    }
+
     InputFile inputFile = context.fileSystem().inputFile(context.fileSystem().predicates().hasRelativePath(tslintError.name));
     if (inputFile == null) {
       LOG.warn("No input file found for " + tslintError.name + ". No TSLint issues will be imported on this file.");

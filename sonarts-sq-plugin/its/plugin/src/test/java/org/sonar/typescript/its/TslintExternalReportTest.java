@@ -49,9 +49,11 @@ public class TslintExternalReportTest {
       SearchRequest request = new SearchRequest();
       request.setComponentKeys(Collections.singletonList(PROJECT_KEY));
       List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
-      assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(2, 5, 5, 7);
+      assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(2, 3, 3, 5, 5, 7);
       assertThat(issuesList).extracting("rule").containsExactlyInAnyOrder(
         "typescript:S1854",
+        "typescript:S878",
+        "typescript:S905",
         "external_tslint:curly",
         "external_tslint:prefer-const",
         "external_tslint:semicolon");

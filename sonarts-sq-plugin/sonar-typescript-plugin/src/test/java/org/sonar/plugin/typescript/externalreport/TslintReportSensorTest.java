@@ -27,6 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
+import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
@@ -37,6 +38,7 @@ import org.sonar.api.rules.RuleType;
 import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
+import org.sonar.plugin.typescript.TestActiveRules;
 import org.sonar.plugin.typescript.TypeScriptLanguage;
 import org.sonar.plugin.typescript.TypeScriptPlugin;
 
@@ -52,7 +54,11 @@ public class TslintReportSensorTest {
   private static final String CONTENT = "foo('aaaaaaa')\nif (cond) \n{ }";
 
   private SensorContextTester context = SensorContextTester.create(BASE_DIR);
-  private TslintReportSensor tslintReportSensor = new TslintReportSensor();
+  private static final CheckFactory CHECK_FACTORY = new CheckFactory(new TestActiveRules("S1751", "S113"));
+  // S121 - "curly" at tslint
+  private static final CheckFactory CHECK_FACTORY_WITH_TSLINT_RULE = new CheckFactory(new TestActiveRules("S1751", "S113", "S121"));
+
+  private TslintReportSensor tslintReportSensor = new TslintReportSensor(CHECK_FACTORY);
 
   @Before
   public void setUp() throws Exception {
@@ -78,6 +84,18 @@ public class TslintReportSensorTest {
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Missing semicolon");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(1);
+  }
+
+  @Test
+  public void should_skip_duplicates() throws Exception {
+    // when in SQ TS profile there is an activated rule matching to an external issue,
+    // that external issue is ignored
+    setTslintReport("tslint-report.json");
+    new TslintReportSensor(CHECK_FACTORY_WITH_TSLINT_RULE).execute(context);
+
+    Collection<ExternalIssue> externalIssues = context.allExternalIssues();
+    assertThat(externalIssues).hasSize(1);
+    assertThat(externalIssues.iterator().next().primaryLocation().message()).isEqualTo("Missing semicolon");
   }
 
   @Test
