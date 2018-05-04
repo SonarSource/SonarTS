@@ -79,7 +79,7 @@ public class TypeScriptPlugin implements Plugin {
         .description("Node.js executable used to run the analysis.")
         .subCategory(GENERAL_SUBCATEGORY)
         .category(TYPESCRIPT_CATEGORY)
-        .onQualifiers(Qualifiers.PROJECT)
+        .hidden()
         .build(),
       PropertyDefinition.builder(TS_EXCLUSIONS_KEY)
         .defaultValue(TS_EXCLUSIONS_DEFAULT_VALUE)
