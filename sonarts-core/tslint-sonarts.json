@@ -45,6 +45,7 @@
     "no-useless-intersection": true,
     "no-variable-usage-before-declaration": true,
     "parameters-max-number": true,
+    "prefer-default-last": true,
     "prefer-immediate-return": true,
     "use-primitive-type": true,
     "use-type-alias": true
