@@ -237,7 +237,9 @@ public class ExternalTypescriptSensorTest {
 
     executeSensor(sensorContext, testBundle);
 
-    assertThat(logTester.logs()).contains("No tsconfig.json file found for " + inputFile.uri() + " (looking up the directories tree). This file will not be analyzed.");
+    assertThat(logTester.logs()).contains("No tsconfig.json file found for [" +
+      inputFile.uri() + "] (looking up the directories tree until project base directory [" +
+      sensorContext.fileSystem().baseDir().getAbsolutePath() + "]). This file will not be analyzed.");
   }
 
   @Test
