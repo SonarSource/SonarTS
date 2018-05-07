@@ -80,7 +80,7 @@ public class TypeScriptPlugin implements Plugin {
         .build(),
       PropertyDefinition.builder(TSLINT_REPORT_PATHS)
         .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
-        .name("TSLint Result Files")
+        .name("TSLint Report Files")
         .description("Paths (absolute or relative) to the JSON files with TSLint errors/issues.")
         .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
         .subCategory(GENERAL_SUBCATEGORY)

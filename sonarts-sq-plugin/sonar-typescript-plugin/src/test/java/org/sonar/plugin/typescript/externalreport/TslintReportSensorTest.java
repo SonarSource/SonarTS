@@ -96,6 +96,9 @@ public class TslintReportSensorTest {
     Collection<ExternalIssue> externalIssues = context.allExternalIssues();
     assertThat(externalIssues).hasSize(1);
     assertThat(externalIssues.iterator().next().primaryLocation().message()).isEqualTo("Missing semicolon");
+
+    assertThat(logTester.logs(LoggerLevel.DEBUG))
+      .contains("TSLint issue for rule 'curly' is skipped because this rule is activated in your SonarQube profile for TypeScript (rule key in SQ typescript:S121)");
   }
 
   @Test
@@ -105,7 +108,7 @@ public class TslintReportSensorTest {
     tslintReportSensor.execute(context);
 
     assertThat(context.allExternalIssues()).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Current version of SonarQube doesn't support import of external issues (at least 7.2 required).");
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("Import of external issues requires SonarQube 7.2 or greater.");
   }
 
   @Test
@@ -122,7 +125,7 @@ public class TslintReportSensorTest {
     tslintReportSensor.execute(context);
 
     assertThat(context.allExternalIssues()).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("No TSLint issues information will be saved because file cannot be found.");
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("No TSLint issues information will be saved as the report file can't be read.");
   }
 
   @Test

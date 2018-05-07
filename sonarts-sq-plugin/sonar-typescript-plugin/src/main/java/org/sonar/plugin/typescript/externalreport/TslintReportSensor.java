@@ -26,7 +26,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
@@ -52,7 +54,8 @@ public class TslintReportSensor implements Sensor {
   private static final Logger LOG = Loggers.get(TslintReportSensor.class);
   private final Gson gson = new Gson();
 
-  private final Set<String> activatedTslintKeys = new HashSet<>();
+  // key - tslint key, value - SQ key
+  private final Map<String, String> activatedRules = new HashMap<>();
 
   private static final Set<String> BUG_TSLINT_RULES = new HashSet<>(Arrays.asList(
     "await-promise",
@@ -116,7 +119,8 @@ public class TslintReportSensor implements Sensor {
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     typeScriptRules.forEach(typeScriptRule -> {
       if (typeScriptRule.isEnabled()) {
-        activatedTslintKeys.add(typeScriptRule.tsLintKey());
+        String tsLintKey = typeScriptRule.tsLintKey();
+        activatedRules.put(tsLintKey, typeScriptRules.ruleKeyFromTsLintKey(tsLintKey).toString());
       }
     });
   }
@@ -128,8 +132,10 @@ public class TslintReportSensor implements Sensor {
 
     if (tslintReportPaths.length == 0) {
       return;
-    } else if (!externalIssuesSupported) {
-      LOG.error("Current version of SonarQube doesn't support import of external issues (at least 7.2 required).");
+    }
+
+    if (!externalIssuesSupported) {
+      LOG.error("Import of external issues requires SonarQube 7.2 or greater.");
       return;
     }
 
@@ -148,12 +154,16 @@ public class TslintReportSensor implements Sensor {
         saveTslintError(context, tslintError);
       }
     } catch (IOException e) {
-      LOG.error("No TSLint issues information will be saved because file cannot be found.", e);
+      LOG.error("No TSLint issues information will be saved as the report file can't be read.", e);
     }
   }
 
   private void saveTslintError(SensorContext context, TslintError tslintError) {
-    if (activatedTslintKeys.contains(tslintError.ruleName)) {
+    String tslintKey = tslintError.ruleName;
+
+    if (activatedRules.containsKey(tslintKey)) {
+      String message = "TSLint issue for rule '{}' is skipped because this rule is activated in your SonarQube profile for TypeScript (rule key in SQ {})";
+      LOG.debug(message, tslintKey, activatedRules.get(tslintKey));
       return;
     }
 
@@ -171,8 +181,8 @@ public class TslintReportSensor implements Sensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .forRule(RuleKey.of("tslint", tslintError.ruleName))
-      .type(BUG_TSLINT_RULES.contains(tslintError.ruleName) ? RuleType.BUG : RuleType.CODE_SMELL)
+      .forRule(RuleKey.of("tslint", tslintKey))
+      .type(BUG_TSLINT_RULES.contains(tslintKey) ? RuleType.BUG : RuleType.CODE_SMELL)
       .severity(Severity.MAJOR)
       .remediationEffortMinutes(5L)
       .save();
