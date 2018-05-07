@@ -182,7 +182,8 @@ public class ExternalTypescriptSensor implements Sensor {
     for (InputFile inputFile : inputFiles) {
       File tsConfig = findTsConfig(inputFile, projectBaseDir);
       if (tsConfig == null) {
-        LOG.error("No tsconfig.json file found for " + inputFile.uri() + " (looking up the directories tree). This file will not be analyzed.");
+        String message = "No tsconfig.json file found for [%s] (looking up the directories tree until project base directory [%s]). This file will not be analyzed.";
+        LOG.error(String.format(message, inputFile.uri(), projectBaseDir.getAbsolutePath()));
       } else {
         inputFileByTsconfig.computeIfAbsent(tsConfig.getAbsolutePath(), x -> new ArrayList<>()).add(inputFile);
       }
