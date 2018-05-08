@@ -110,12 +110,15 @@ export function writeResults(results: Results) {
   Object.keys(results).forEach(rule => {
     const content: string[] = [];
 
-    Object.keys(results[rule]).forEach(file => {
-      const lines = results[rule][file];
-      content.push(`${file}: ${lines.join()}`);
-    });
-
-    writeSnapshot(rule, content.join("\n") + "\n");
+    Object.keys(results[rule])
+      .sort((a, b) => a.localeCompare(b))
+      .forEach(file => {
+        const lines = results[rule][file].sort((a, b) => a - b);
+        content.push(`${file}: ${lines.join()}`);
+      });
+    if (content.length > 0) {
+      writeSnapshot(rule, content.join("\n") + "\n");
+    }
   });
 }
 

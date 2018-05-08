@@ -1,5 +1,5 @@
 src/angular/tools/@angular/tsc-wrapped/src/tsc.ts: 181
-src/rxjs/spec/Scheduler-spec.ts: 54
 src/rxjs/spec/observables/bindCallback-spec.ts: 326
-src/vscode/src/vs/platform/configuration/common/model.ts: 163
+src/rxjs/spec/Scheduler-spec.ts: 54
 src/vscode/src/vs/editor/test/common/viewModel/characterHardWrappingLineMapper.test.ts: 16
+src/vscode/src/vs/platform/configuration/common/model.ts: 163
