@@ -169,8 +169,7 @@ public class TslintReportSensor implements Sensor {
     }
 
     FilePredicates predicates = context.fileSystem().predicates();
-    InputFile inputFile = context.fileSystem().inputFile(predicates.hasRelativePath(tslintError.name));
-    inputFile = inputFile == null ? context.fileSystem().inputFile(predicates.hasAbsolutePath(tslintError.name)) : inputFile;
+    InputFile inputFile = context.fileSystem().inputFile(predicates.or(predicates.hasRelativePath(tslintError.name), predicates.hasAbsolutePath(tslintError.name)));
     if (inputFile == null) {
       LOG.warn("No input file found for " + tslintError.name + ". No TSLint issues will be imported on this file.");
       return;
