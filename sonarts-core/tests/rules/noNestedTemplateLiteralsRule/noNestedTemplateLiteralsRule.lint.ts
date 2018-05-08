@@ -1,11 +1,11 @@
-function fooNestedTemplateLiterals() {
+function nokNestedTemplateLiterals() {
   let color = "red";
   let count = 3;
   let message = `I have ${color ? `${count} ${color}` : count} apples`;
   //                              ^^^^^^^^^^^^^^^^^^^ {{Extract this template literal into a dedicated statement.}}
 }
 
-function fooNestedTemplateLiterals2(x: number) {
+function nokNestedTemplateLiterals2(x: number) {
   let color = "red";
   let count = 3;
   let message = `I have ${color ? `${x ? `indeed 0` : count} ${color}` : count} apples`;
@@ -13,7 +13,7 @@ function fooNestedTemplateLiterals2(x: number) {
   // [11:41-11:51] {{Extract this template literal into a dedicated statement.}}
 }
 
-function fooNestedTemplateLiterals3(x: number) {
+function nokNestedTemplateLiterals3(x: number) {
   let color = "red";
   let count = 3;
   let message = `I have ${color ? `${x ? `indeed ${0}` : count} ${color}` : count} apples`;
@@ -21,14 +21,14 @@ function fooNestedTemplateLiterals3(x: number) {
   // [19:41-19:54] {{Extract this template literal into a dedicated statement.}}
 }
 
-function fooNestedTaggedTemplateLiterals(x: number) {
+function nokNestedTaggedTemplateLiterals(x: number) {
   let color = "red";
   let count = 3;
   let message = tag1`I have ${color ? tag2`${count} ${color}` : count} apples`;
   //                                      ^^^^^^^^^^^^^^^^^^^ {{Extract this template literal into a dedicated statement.}}
 }
 
-function fooNestedTaggedTemplateLiterals2(x: number) {
+function nokNestedTaggedTemplateLiterals2(x: number) {
   let color = "red";
   let count = 3;
   let message = tag1`I have ${color ? `${count} ${color}` : count} apples`;
@@ -43,7 +43,7 @@ function tag2(strings: any, ...keys: any[]) {
   console.log(strings[2]);
 }
 
-function barNestedTemplateLiterals() {
+function okNestedTemplateLiterals() {
   let color = "red";
   let count = 3;
   let nestedMessage = `${count} ${color}`;
