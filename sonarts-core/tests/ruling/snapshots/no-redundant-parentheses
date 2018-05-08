@@ -1,7 +1,7 @@
-src/TypeScript/src/server/editorServices.ts: 674,674
 src/angular/tools/@angular/tsc-wrapped/src/collector.ts: 20,24
 src/console/src/components/PopupFooter.tsx: 145
 src/desktop/app/src/lib/dispatcher/app-store.ts: 1240,1364
-src/vscode/src/vs/editor/test/common/modesTestUtils.ts: 24
+src/TypeScript/src/server/editorServices.ts: 674
 src/vscode/src/vs/editor/test/common/model/textModelWithTokens.test.ts: 324
 src/vscode/src/vs/editor/test/common/modes/textToHtmlTokenizer.test.ts: 80,86,92
+src/vscode/src/vs/editor/test/common/modesTestUtils.ts: 24

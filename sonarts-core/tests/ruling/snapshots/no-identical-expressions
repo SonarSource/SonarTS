@@ -1,9 +1,9 @@
-src/TypeScript/src/services/services.ts: 1125,1125,1125
-src/angular/packages/core/src/view/types.ts: 287
 src/angular/packages/benchpress/src/metric/perflog_metric.ts: 319
 src/angular/packages/compiler/test/aot/static_reflector_spec.ts: 187,194,201,208,215,224,233,242
+src/angular/packages/core/src/view/types.ts: 287
 src/angular/tools/@angular/tsc-wrapped/test/evaluator.spec.ts: 101
 src/desktop/app/test/unit/progress/clone-test.ts: 42
 src/postgraphql/src/graphql/schema/connection/createConnectionGqlField.ts: 98
+src/TypeScript/src/services/services.ts: 1125
 src/vscode/src/vs/editor/browser/widget/diffEditorWidget.ts: 700
 src/vscode/src/vs/platform/contextkey/test/common/contextkey.test.ts: 80

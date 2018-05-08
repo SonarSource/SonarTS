@@ -1,4 +1,4 @@
 src/vscode/src/vs/base/common/diff/diff.ts: 394,395
-src/vscode/src/vs/platform/configuration/node/configurationService.ts: 40
 src/vscode/src/vs/editor/contrib/snippet/test/browser/snippetController2.old.test.ts: 237,252,267,282,297,312,326,339,357,375,394,420,444,461,474,487,501,515,529,546,562,575
 src/vscode/src/vs/editor/contrib/snippet/test/common/snippetController.test.ts: 230,245,260,275,290,305,319,332,350,368,387,413,437,454,467,480,494,511,527,540
+src/vscode/src/vs/platform/configuration/node/configurationService.ts: 40

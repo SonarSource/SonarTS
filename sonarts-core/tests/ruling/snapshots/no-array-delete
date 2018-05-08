@@ -1,6 +1,6 @@
-src/TypeScript/src/compiler/transformers/module/module.ts: 982,982,982,982
-src/TypeScript/src/compiler/transformers/module/system.ts: 916,1569,916,1569,916,1569,916,1569
-src/TypeScript/src/services/shims.ts: 1220,1220,1220
+src/TypeScript/src/compiler/transformers/module/module.ts: 982
+src/TypeScript/src/compiler/transformers/module/system.ts: 916,1569
 src/TypeScript/src/harness/unittests/session.ts: 460
 src/TypeScript/src/harness/unittests/tsserverProjectSystem.ts: 342
+src/TypeScript/src/services/shims.ts: 1220
 src/vscode/src/vs/workbench/browser/parts/editor/editorGroupsControl.ts: 1922
