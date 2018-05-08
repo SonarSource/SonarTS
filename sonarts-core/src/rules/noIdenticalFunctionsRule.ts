@@ -51,7 +51,7 @@ export class Rule extends tslint.Rules.AbstractRule {
       for (let j = 0; j < i; j++) {
         const originalFunctionBlock = functionBlocks[j];
 
-        if (areEquivalent(duplicatingFunctionBlock, originalFunctionBlock)) {
+        if (areEquivalent(duplicatingFunctionBlock, originalFunctionBlock, true)) {
           visitor
             .addIssue(
               Rule.issueNode(duplicatingFunctionBlock.parent as ts.FunctionLikeDeclaration),

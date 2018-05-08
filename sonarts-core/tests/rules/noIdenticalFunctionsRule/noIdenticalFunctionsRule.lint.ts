@@ -94,3 +94,18 @@ function bar3() {
   console.log("Hello");
   return 42;
 }
+
+// NOK different literal values
+
+function foo1() {
+  foo("Hello");
+  foo("World");
+  return 42;
+}
+
+  function foo2() {
+//^^^^^^^^ {{Update this function so that its implementation is not identical to the one on line 100.}}
+  foo("Hello, world!");
+  foo("");
+  return 0;
+}
