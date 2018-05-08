@@ -45,24 +45,7 @@ export default function areEquivalent(
   ignoreLiterals = false,
 ): boolean {
   if (isNode(first) && isNode(second)) {
-    if (first.kind !== second.kind) {
-      return false;
-    }
-
-    const childCount = first.getChildCount();
-
-    if (childCount !== second.getChildCount()) {
-      return false;
-    }
-
-    if (childCount === 0 && COMPARED_BY_TEXT.has(first.kind)) {
-      if (ignoreLiterals && is(first, ts.SyntaxKind.StringLiteral, ts.SyntaxKind.NumericLiteral)) {
-        return true;
-      }
-      return first.getText() === second.getText();
-    }
-
-    return areEquivalent(first.getChildren(), second.getChildren(), ignoreLiterals);
+    return areEquivalentNodes(first, second, ignoreLiterals);
   } else if (isNodeArray(first) && isNodeArray(second)) {
     return (
       first.length === second.length &&
@@ -71,6 +54,27 @@ export default function areEquivalent(
   } else {
     return false;
   }
+}
+
+function areEquivalentNodes(first: ts.Node, second: ts.Node, ignoreLiterals = false): boolean {
+  if (first.kind !== second.kind) {
+    return false;
+  }
+
+  const childCount = first.getChildCount();
+
+  if (childCount !== second.getChildCount()) {
+    return false;
+  }
+
+  if (childCount === 0 && COMPARED_BY_TEXT.has(first.kind)) {
+    if (ignoreLiterals && is(first, ts.SyntaxKind.StringLiteral, ts.SyntaxKind.NumericLiteral)) {
+      return true;
+    }
+    return first.getText() === second.getText();
+  }
+
+  return areEquivalent(first.getChildren(), second.getChildren(), ignoreLiterals);
 }
 
 function isNode(node: ts.Node | ts.Node[]): node is ts.Node {
