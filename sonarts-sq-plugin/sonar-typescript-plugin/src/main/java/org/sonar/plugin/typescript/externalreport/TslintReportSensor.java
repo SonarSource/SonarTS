@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.rule.CheckFactory;
@@ -167,7 +168,9 @@ public class TslintReportSensor implements Sensor {
       return;
     }
 
-    InputFile inputFile = context.fileSystem().inputFile(context.fileSystem().predicates().hasRelativePath(tslintError.name));
+    FilePredicates predicates = context.fileSystem().predicates();
+    InputFile inputFile = context.fileSystem().inputFile(predicates.hasRelativePath(tslintError.name));
+    inputFile = inputFile == null ? context.fileSystem().inputFile(predicates.hasAbsolutePath(tslintError.name)) : inputFile;
     if (inputFile == null) {
       LOG.warn("No input file found for " + tslintError.name + ". No TSLint issues will be imported on this file.");
       return;

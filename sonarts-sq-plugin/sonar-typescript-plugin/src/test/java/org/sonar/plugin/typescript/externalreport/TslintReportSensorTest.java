@@ -20,13 +20,16 @@
 package org.sonar.plugin.typescript.externalreport;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Collection;
 import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
+import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
@@ -48,6 +51,9 @@ import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 public class TslintReportSensorTest {
 
   @Rule
+  public TemporaryFolder tmpDir = new TemporaryFolder();
+
+  @Rule
   public final LogTester logTester = new LogTester();
 
   private static final File BASE_DIR = new File("src/test/resources/externalIssues/").getAbsoluteFile();
@@ -59,11 +65,12 @@ public class TslintReportSensorTest {
   private static final CheckFactory CHECK_FACTORY_WITH_TSLINT_RULE = new CheckFactory(new TestActiveRules("S1751", "S113", "S121"));
 
   private TslintReportSensor tslintReportSensor = new TslintReportSensor(CHECK_FACTORY);
+  private DefaultInputFile inputFile = createInputFile(context, CONTENT, "myFile.ts");
 
   @Before
   public void setUp() throws Exception {
     context.setRuntime(getRuntime(7, 2));
-    context.fileSystem().add(createInputFile(context, CONTENT, "myFile.ts"));
+    context.fileSystem().add(inputFile);
   }
 
   @Test
@@ -84,6 +91,38 @@ public class TslintReportSensorTest {
     assertThat(first.severity()).isEqualTo(Severity.MAJOR);
     assertThat(first.primaryLocation().message()).isEqualTo("Missing semicolon");
     assertThat(first.primaryLocation().textRange().start().line()).isEqualTo(1);
+  }
+
+  @Test
+  public void should_support_absolute_ts_file_paths_in_report() throws Exception {
+    String report = "[ " +
+      " {\n" +
+      "    \"endPosition\": {\n" +
+      "      \"character\": 1,\n" +
+      "      \"line\": 2,\n" +
+      "      \"position\": 18\n" +
+      "    },\n" +
+      "    \"failure\": \"misplaced opening brace\",\n" +
+      "    \"name\": \"%s\",\n" +
+      "    \"ruleName\": \"curly\",\n" +
+      "    \"startPosition\": {\n" +
+      "      \"character\": 0,\n" +
+      "      \"line\": 2,\n" +
+      "      \"position\": 19\n" +
+      "    },\n" +
+      "    \"ruleSeverity\": \"ERROR\"\n" +
+      "  }\n" +
+      "]";
+
+    File reportFile = tmpDir.newFile();
+    FileWriter writer = new FileWriter(reportFile);
+    writer.write(String.format(report, inputFile.absolutePath()));
+    writer.close();
+
+    setTslintReport(reportFile.getAbsolutePath());
+    tslintReportSensor.execute(context);
+
+    assertThat(context.allExternalIssues()).hasSize(1);
   }
 
   @Test
