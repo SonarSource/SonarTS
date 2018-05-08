@@ -24,6 +24,7 @@ import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
+import org.sonar.plugin.typescript.externalreport.TslintReportSensor;
 import org.sonar.plugin.typescript.lcov.LCOVCoverageSensor;
 
 public class TypeScriptPlugin implements Plugin {
@@ -38,6 +39,9 @@ public class TypeScriptPlugin implements Plugin {
 
   public static final String LCOV_REPORT_PATHS = "sonar.typescript.lcov.reportPaths";
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
+
+  public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.jsonReportPaths";
+  public static final String TSLINT_REPORT_PATHS_DEFAULT_VALUE = "";
 
   public static final String NODE_EXECUTABLE = "sonar.typescript.node";
   public static final String NODE_EXECUTABLE_DEFAULT = "node";
@@ -54,6 +58,7 @@ public class TypeScriptPlugin implements Plugin {
       SonarWayRecommendedProfile.class,
       TypeScriptRulesDefinition.class,
       TypeScriptExclusionsFileFilter.class,
+      TslintReportSensor.class,
       new SonarTSCoreBundleFactory(SONARTS_BUNDLE_ZIP),
       PropertyDefinition.builder(FILE_SUFFIXES_KEY)
         .defaultValue(FILE_SUFFIXES_DEFVALUE)
@@ -70,6 +75,15 @@ public class TypeScriptPlugin implements Plugin {
         .description("Paths (absolute or relative) to the files with LCOV data.")
         .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
         .subCategory(TESTS_AND_COVERAGE_SUBCATEGORY)
+        .category(TYPESCRIPT_CATEGORY)
+        .multiValues(true)
+        .build(),
+      PropertyDefinition.builder(TSLINT_REPORT_PATHS)
+        .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
+        .name("TSLint Report Files")
+        .description("Paths (absolute or relative) to the JSON files with TSLint errors/issues.")
+        .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
+        .subCategory(GENERAL_SUBCATEGORY)
         .category(TYPESCRIPT_CATEGORY)
         .multiValues(true)
         .build(),
