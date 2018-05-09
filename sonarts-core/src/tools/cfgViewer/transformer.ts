@@ -43,6 +43,9 @@ export default function toVisData(cfg: ControlFlowGraph): VisData {
         viewerEdges.push(createEdge(block, successorBlock));
       });
     }
+    if (block.successorWithoutJump) {
+      viewerEdges.push(createEdge(block, block.successorWithoutJump, "w/o jump"));
+    }
   });
 
   if (viewerEdges.length > 0) {

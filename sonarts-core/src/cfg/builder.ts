@@ -83,7 +83,9 @@ class CfgBuilder {
         return this.buildSwitchStatement(current, statement as ts.SwitchStatement);
 
       case SyntaxKind.ReturnStatement:
-        return this.buildReturnStatement(statement as ts.ReturnStatement);
+        const returnBlock = this.buildReturnStatement(statement as ts.ReturnStatement);
+        returnBlock.successorWithoutJump = current;
+        return returnBlock;
 
       // Just add declaration statement as element to the current cfg block. Do not enter inside.
       case SyntaxKind.DebuggerStatement:
@@ -121,10 +123,14 @@ class CfgBuilder {
         return this.buildLabeledStatement(current, statement as ts.LabeledStatement);
 
       case SyntaxKind.BreakStatement:
-        return this.buildBreakStatement(statement as ts.BreakStatement);
+        const breakBlock = this.buildBreakStatement(statement as ts.BreakStatement);
+        breakBlock.successorWithoutJump = current;
+        return breakBlock;
 
       case SyntaxKind.ContinueStatement:
-        return this.buildContinueStatement(statement as ts.ContinueStatement);
+        const continueBlock = this.buildContinueStatement(statement as ts.ContinueStatement);
+        continueBlock.successorWithoutJump = current;
+        return continueBlock;
 
       case SyntaxKind.TryStatement:
         throw new Error("No support for 'try' statement in CFG builder.");
@@ -174,7 +180,9 @@ class CfgBuilder {
     }
     if (breakable) {
       const continueTarget = breakable.continueTarget;
-      return this.createBlockPredecessorOf(continueTarget!);
+      const continueBlock = this.createBlockPredecessorOf(continueTarget!);
+      continueBlock.addElement(continueStatement);
+      return continueBlock;
     } else {
       throw new Error("No point found to continue for continue-statement at line " + getLine(continueStatement));
     }
@@ -191,7 +199,9 @@ class CfgBuilder {
 
     if (breakable) {
       const breakTarget = breakable.breakTarget;
-      return this.createBlockPredecessorOf(breakTarget);
+      const breakBlock = this.createBlockPredecessorOf(breakTarget);
+      breakBlock.addElement(breakStatement);
+      return breakBlock;
     } else {
       throw new Error("No break target found for break-statement at line " + getLine(breakStatement));
     }

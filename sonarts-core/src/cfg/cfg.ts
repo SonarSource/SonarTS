@@ -84,6 +84,11 @@ export class ControlFlowGraph {
             successor.replacePredecessor(block, predecessor);
           });
         }
+        this.blocks.forEach(b => {
+          if (b.successorWithoutJump === block) {
+            b.successorWithoutJump = successor;
+          }
+        });
         if (block === this.start) {
           this.startBlock = successor;
         }
@@ -110,6 +115,7 @@ export class ControlFlowGraph {
 export interface CfgBlock {
   loopingStatement: ts.IterationStatement | undefined;
   branchingElement: ts.Node | undefined;
+  successorWithoutJump: CfgBlock | undefined;
 
   addElement(element: ts.Node): void;
 
@@ -128,6 +134,7 @@ export abstract class CfgBlockWithPredecessors {
   public predecessors: CfgBlock[] = [];
   public loopingStatement: ts.IterationStatement | undefined;
   public branchingElement: ts.Node | undefined = undefined;
+  public successorWithoutJump: CfgBlock | undefined;
 
   public replacePredecessor(what: CfgBlock, withWhat: CfgBlock): void {
     const index = this.predecessors.indexOf(what);

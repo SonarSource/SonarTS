@@ -30,6 +30,7 @@
     "no-nested-incdec": false,
     "no-nested-template-literals": true,
     "no-redundant-boolean": true,
+    "no-redundant-jump": true,
     "no-redundant-parentheses": true,
     "no-return-type-any": true,
     "no-same-line-conditional": true,
