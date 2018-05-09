@@ -96,6 +96,7 @@ import org.sonar.plugin.typescript.rules.NoNestedIncdec;
 import org.sonar.plugin.typescript.rules.NoNestedTemplateLiterals;
 import org.sonar.plugin.typescript.rules.NoNonNullAssertion;
 import org.sonar.plugin.typescript.rules.NoRedundantBoolean;
+import org.sonar.plugin.typescript.rules.NoRedundantJump;
 import org.sonar.plugin.typescript.rules.NoRedundantParentheses;
 import org.sonar.plugin.typescript.rules.NoRequireImports;
 import org.sonar.plugin.typescript.rules.NoReturnAwait;
@@ -279,6 +280,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoNestedTemplateLiterals.class,
       NoNonNullAssertion.class,
       NoRedundantBoolean.class,
+      NoRedundantJump.class,
       NoRedundantParentheses.class,
       NoRequireImports.class,
       NoReturnAwait.class,

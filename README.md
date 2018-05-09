@@ -64,6 +64,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Increment (++) and decrement (--) operators should not be used in a method call or mixed with other operators in an expression ([`no-nested-incdec`])
 * Template literals should not be nested ([`no-nested-template-literals`])
 * Boolean literals should not be redundant ([`no-redundant-boolean`])
+* Jump statements should not be redundant ([`no-redundant-jump`])
 * Redundant pairs of parentheses should be removed ([`no-redundant-parentheses`])
 * Primitive return types should be used ([`no-return-type-any`]) ([`requires type-check`])
 * Conditionals should start on new lines ([`no-same-line-conditional`])
@@ -110,6 +111,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-nested-incdec`]: ./sonarts-core/docs/rules/no-nested-incdec.md
 [`no-nested-template-literals`]: ./sonarts-core/docs/rules/no-nested-template-literals.md
 [`no-redundant-boolean`]: ./sonarts-core/docs/rules/no-redundant-boolean.md
+[`no-redundant-jump`]: ./sonarts-core/docs/rules/no-redundant-jump.md
 [`no-redundant-parentheses`]: ./sonarts-core/docs/rules/no-redundant-parentheses.md
 [`no-return-type-any`]: ./sonarts-core/docs/rules/no-return-type-any.md
 [`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
