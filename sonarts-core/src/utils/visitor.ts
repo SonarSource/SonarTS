@@ -202,6 +202,10 @@ export class TreeVisitor {
     this.visitChildren(node);
   }
 
+  protected visitUnionTypeNode(node: ts.UnionTypeNode) {
+    this.visitChildren(node);
+  }
+
   protected visitJsxAttribute(node: ts.JsxAttribute) {
     this.visitChildren(node);
   }
@@ -562,6 +566,10 @@ export class TreeVisitor {
 
       case ts.SyntaxKind.IntersectionType:
         this.visitIntersectionTypeNode(node as ts.IntersectionTypeNode);
+        break;
+
+      case ts.SyntaxKind.UnionType:
+        this.visitUnionTypeNode(node as ts.UnionTypeNode);
         break;
 
       case ts.SyntaxKind.JsxAttribute:

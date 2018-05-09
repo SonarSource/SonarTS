@@ -10,6 +10,7 @@
     "no-collection-size-mischeck": true,
     "no-commented-code": true,
     "no-dead-store": true,
+    "no-duplicate-in-composite": true,
     "no-duplicate-string": true,
     "no-duplicated-branches": true,
     "no-element-overwrite": true,

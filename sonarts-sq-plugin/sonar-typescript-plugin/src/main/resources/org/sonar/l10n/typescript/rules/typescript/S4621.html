@@ -1,0 +1,38 @@
+<p>TypeScript type system offers a basic support for composite types (also known as
+  <em>algebraic data types</em>):</p>
+<p>-
+  <em>Union Types</em> represent a value that can be of several types. They are constructed using a vertical bar (
+  <code>|</code>) like the following
+  <code>type foo = number | string</code>. Union types, and their extension
+  <em>Discriminated Unions</em>, are frequently used in a Redux architecture.
+</p>
+<p>-
+  <em>Intersection Types</em> combine multiple values into one. They are constructed using an ampersand (
+  <code>&amp;</code>) like the following
+  <code>type bar = Person &amp; Serializable</code>. Intersection Types are often used to represent mixins.</p>
+<p>Even if they have no side effect at runtime, duplicating types when defining a "union" or "interaction" type makes the code
+  less readable. Moreover duplicated type might be a simple mistake and another type should be used instead.</p>
+<h2>Noncompliant Code Example</h2>
+<pre>
+let x: number | number | string; // Noncompliant
+
+function padLeft(value: string, padding: string | number | string) { // Noncompliant; string is duplicated twice
+  // ...
+}
+
+function extend(p : Person) : Person &amp; Person &amp; Loggable { // Noncompliant; Person is duplicated twice
+ // ...
+}
+</pre>
+<h2>Compliant Solution</h2>
+<pre>
+let x: number | string;
+
+function padLeft(value: string, padding: string | number | boolean) {
+  // ...
+}
+
+function extend(p : Person) : Person &amp; Loggable {
+  // ...
+}
+</pre>
