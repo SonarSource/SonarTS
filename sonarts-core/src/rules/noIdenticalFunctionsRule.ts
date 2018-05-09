@@ -68,7 +68,7 @@ export class Rule extends tslint.Rules.AbstractRule {
 
   private static message(functionBlock: ts.Block): string {
     const lineOfOriginalFunction = startLineAndCharacter(functionBlock.parent!).line + 1;
-    return `Update this function so that its implementation is not identical to the one on line ${lineOfOriginalFunction}.`;
+    return `Update or refactor this function so that its implementation doesn't duplicate the one on line ${lineOfOriginalFunction}.`;
   }
 
   private static issueNode(functionNode: ts.FunctionLikeDeclaration) {
