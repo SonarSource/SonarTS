@@ -129,6 +129,7 @@ import org.sonar.plugin.typescript.rules.PreferForOf;
 import org.sonar.plugin.typescript.rules.PreferImmediateReturn;
 import org.sonar.plugin.typescript.rules.PreferReadonly;
 import org.sonar.plugin.typescript.rules.PreferTemplate;
+import org.sonar.plugin.typescript.rules.PreferWhile;
 import org.sonar.plugin.typescript.rules.Quotemark;
 import org.sonar.plugin.typescript.rules.RestrictPlusOperands;
 import org.sonar.plugin.typescript.rules.Semicolon;
@@ -311,6 +312,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       PreferImmediateReturn.class,
       PreferReadonly.class,
       PreferTemplate.class,
+      PreferWhile.class,
       Quotemark.class,
       RestrictPlusOperands.class,
       Semicolon.class,
