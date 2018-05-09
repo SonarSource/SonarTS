@@ -35,15 +35,15 @@ function nokNestedTaggedTemplateLiterals2(x: number) {
   //                                  ^^^^^^^^^^^^^^^^^^^ {{Extract this template literal into a dedicated statement.}}
 }
 
-function nokNestedTaggedTemplateLiteralsTernary(x: number) {
+function nokNestedTemplateLiteralsTernary(x: number) {
   let color = "red";
   let count = 3;
-  let message = tag1`I have ${color ? `${count} ${color}` : `this is ${count}`} apples`;
-  // [41:38-41:57] {{Extract this template literal into a dedicated statement.}}
-  // [41:60-41:78] {{Extract this template literal into a dedicated statement.}}
+  let message = `I have ${color ? `${count} ${color}` : `this is ${count}`} apples`;
+  // [41:34-41:53] {{Extract this template literal into a dedicated statement.}}
+  // [41:56-41:74] {{Extract this template literal into a dedicated statement.}}
 }
 
-function nokNestedTaggedTemplateLiteralsMultiple(x: number) {
+function nokNestedTemplateLiteralsMultiple(x: number) {
   let color = "red";
   let count = 3;
   let message = `I have ${`${count} ${color}`} ${`this is ${count}`} apples`;

@@ -45,16 +45,16 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Visitor extends SonarRuleVisitor {
   public visitTemplateExpression(node: ts.TemplateExpression) {
-    this.raiseIssueIfNestedTemplate(node);
+    this.checkNestedTemplate(node);
     super.visitTemplateExpression(node);
   }
 
   public visitNoSubstitionTemplateLiteral(node: ts.NoSubstitutionTemplateLiteral) {
-    this.raiseIssueIfNestedTemplate(node);
+    this.checkNestedTemplate(node);
     super.visitNoSubstitionTemplateLiteral(node);
   }
 
-  private raiseIssueIfNestedTemplate(node: ts.TemplateLiteral) {
+  private checkNestedTemplate(node: ts.TemplateLiteral) {
     const parentTemplate = ancestorsChain(node).find(parent => is(parent, ts.SyntaxKind.TemplateExpression));
     if (parentTemplate) {
       this.addIssue(node, Rule.MESSAGE);
