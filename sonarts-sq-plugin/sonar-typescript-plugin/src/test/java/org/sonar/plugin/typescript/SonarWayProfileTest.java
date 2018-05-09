@@ -20,44 +20,25 @@
 package org.sonar.plugin.typescript;
 
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleFinder;
-import org.sonar.api.utils.ValidationMessages;
+import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInQualityProfile;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.Context;
 
 public class SonarWayProfileTest {
 
   @Test
   public void should_create_sonar_way_profile() {
-    ValidationMessages validation = ValidationMessages.create();
+    SonarWayProfile definition = new SonarWayProfile();
+    Context context = new Context();
+    definition.define(context);
 
-    RuleFinder ruleFinder = ruleFinder();
-    SonarWayProfile definition = new SonarWayProfile(ruleFinder);
-    RulesProfile profile = definition.createProfile(validation);
+    BuiltInQualityProfile profile = context.profile("ts", SonarWayProfile.PROFILE_NAME);
 
-    assertThat(profile.getLanguage()).isEqualTo(TypeScriptLanguage.KEY);
-    assertThat(profile.getName()).isEqualTo(SonarWayProfile.PROFILE_NAME);
-    assertThat(profile.getActiveRules()).extracting("repositoryKey").containsOnly(TypeScriptRulesDefinition.REPOSITORY_KEY);
-    assertThat(validation.hasErrors()).isFalse();
-    assertThat(profile.getActiveRules()).extracting("ruleKey").contains("S3923");
-    assertThat(profile.getActiveRules()).extracting("ruleKey").doesNotContain("S3801");
+    assertThat(profile.language()).isEqualTo(TypeScriptLanguage.KEY);
+    assertThat(profile.name()).isEqualTo(SonarWayProfile.PROFILE_NAME);
+    assertThat(profile.rules()).extracting("repoKey").containsOnly(TypeScriptRulesDefinition.REPOSITORY_KEY);
+    assertThat(profile.rules()).extracting("ruleKey").contains("S3923");
+    assertThat(profile.rules()).extracting("ruleKey").doesNotContain("S3801");
   }
-
-  static RuleFinder ruleFinder() {
-    return when(mock(RuleFinder.class).findByKey(anyString(), anyString())).thenAnswer(new Answer<Rule>() {
-      @Override
-      public Rule answer(InvocationOnMock invocation) {
-        Object[] arguments = invocation.getArguments();
-        return Rule.create((String) arguments[0], (String) arguments[1], (String) arguments[1]);
-      }
-    }).getMock();
-  }
-
 }
