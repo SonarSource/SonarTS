@@ -76,6 +76,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * This test reads all the available rules in the SQ plugin via reflection and runs the plugin on the test file used for sonarts-core unit test (*.lint.ts file)
+ * Note that only issues lines are compared!
  */
 @RunWith(Parameterized.class)
 public class JavaRulesIntegrationTest {
