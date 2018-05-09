@@ -29,7 +29,10 @@ import * as path from "path";
  */
 const TARGET = ts.ScriptTarget.ES2017;
 
-export function parseString(source: string, scriptKind: ts.ScriptKind = ts.ScriptKind.TSX) {
+export function parseString(
+  source: string,
+  scriptKind: ts.ScriptKind = ts.ScriptKind.TSX,
+): { sourceFile: ts.SourceFile; program: ts.Program } {
   const filename = "filename.ts";
   const host: ts.CompilerHost = {
     ...ts.createCompilerHost({ strict: true }),
@@ -38,6 +41,10 @@ export function parseString(source: string, scriptKind: ts.ScriptKind = ts.Scrip
   };
   const program = ts.createProgram([], { strict: true }, host);
   return { sourceFile: program.getSourceFiles()[0], program };
+}
+
+export function parseStringAsSourceFile(source: string, scriptKind: ts.ScriptKind = ts.ScriptKind.TSX): ts.SourceFile {
+  return ts.createSourceFile("filename.ts", source, TARGET, true, scriptKind);
 }
 
 /**
