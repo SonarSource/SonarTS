@@ -19,22 +19,18 @@
  */
 import { Network } from "vis";
 import { ControlFlowGraph } from "../../cfg/cfg";
-import { parseString } from "../../utils/parser";
+import { parseStringAsSourceFile } from "../../utils/parser";
 import toVisData from "./transformer";
 
 class Viewer {
-  private container: any;
-
-  constructor(container: any) {
-    this.container = container;
-  }
+  constructor(private readonly container: any) {}
 
   public show(source: string) {
-    const { sourceFile } = parseString(source);
+    const sourceFile = parseStringAsSourceFile(source);
     const graph = ControlFlowGraph.fromStatements(Array.from(sourceFile.statements));
 
     if (!graph) {
-      alert("The build of CFG faild.");
+      alert("The build of CFG failed.");
       return;
     }
 
