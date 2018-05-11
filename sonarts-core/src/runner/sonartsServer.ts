@@ -25,6 +25,7 @@ import * as tslint from "tslint";
 import { getIssues } from "./rules";
 import { FileCache, createService } from "./languageService";
 import { parseTsConfig } from "../utils/parser";
+import getDiagnostics from "./diagnostics";
 
 const EMPTY_ANSWER: { issues: any[] } = { issues: [] };
 export class SonarTsServer {
@@ -83,7 +84,9 @@ export class SonarTsServer {
       console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
       return EMPTY_ANSWER;
     }
-    return getIssues(rules, program, sourceFile);
+    const response = getIssues(rules, program, sourceFile);
+    Object.assign(response, getDiagnostics(sourceFile, program));
+    return response;
   }
 
   private getTsConfig(filePath: string): string | undefined {

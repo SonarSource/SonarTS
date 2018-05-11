@@ -123,5 +123,27 @@ public class ContextualSensorTest {
     assertThat(sensorDescriptor.languages()).containsOnly("ts");
     assertThat(sensorDescriptor.type()).isEqualTo(Type.MAIN);
   }
+
+  @Test
+  public void should_handle_diagnostics() throws Exception {
+    SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
+    createInputFile(sensorContext, "function foo(){}", "foo/file.ts");
+
+    ContextualServer contextualServer = mock(ContextualServer.class);
+    AnalysisResponse mockedResponse = new AnalysisResponse();
+    mockedResponse.diagnostics = new SensorContextUtils.Diagnostic[1];
+    SensorContextUtils.Diagnostic diagnostic = new SensorContextUtils.Diagnostic();
+    diagnostic.message = "Expression expected";
+    diagnostic.col = 0;
+    diagnostic.line = 1;
+    mockedResponse.diagnostics[0] = diagnostic;
+
+    when(contextualServer.isAlive()).thenReturn(true);
+    when(contextualServer.analyze(any())).thenReturn(mockedResponse);
+
+    ContextualSensor contextualSensor = new ContextualSensor(CHECK_FACTORY, contextualServer);
+    contextualSensor.execute(sensorContext);
+    assertThat(sensorContext.allAnalysisErrors()).hasSize(1);
+  }
 }
 

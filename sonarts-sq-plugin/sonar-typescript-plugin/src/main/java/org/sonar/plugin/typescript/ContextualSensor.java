@@ -68,8 +68,12 @@ public class ContextualSensor implements Sensor {
         TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
         ContextualAnalysisRequest request = new ContextualAnalysisRequest(inputFile, typeScriptRules);
         SensorContextUtils.AnalysisResponse response = contextualServer.analyze(request);
-        for (SensorContextUtils.Issue issue : response.issues) {
-          SensorContextUtils.saveIssue(sensorContext, typeScriptRules, issue, inputFile);
+        if (response.hasDiagnostics()) {
+          SensorContextUtils.reportAnalysisErrors(sensorContext, response, inputFile);
+        } else {
+          for (SensorContextUtils.Issue issue : response.issues) {
+            SensorContextUtils.saveIssue(sensorContext, typeScriptRules, issue, inputFile);
+          }
         }
       } catch (IOException e) {
         LOG.error("Failed writing to SonarTS Server ", e);

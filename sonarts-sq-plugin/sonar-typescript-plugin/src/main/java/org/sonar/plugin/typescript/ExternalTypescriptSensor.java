@@ -133,17 +133,20 @@ public class ExternalTypescriptSensor implements Sensor {
       for (SensorContextUtils.AnalysisResponse response : responses) {
         FileSystem fileSystem = sensorContext.fileSystem();
         InputFile inputFile = fileSystem.inputFile(fileSystem.predicates().hasAbsolutePath(response.filepath));
-        if (inputFile != null) {
+        if (inputFile == null) {
+          LOG.error("Failed to find input file for path `" + response.filepath + "`");
+          break;
+        }
+        if (!response.hasDiagnostics()) {
           saveHighlights(sensorContext, response.highlights, inputFile);
           saveSymbols(sensorContext, response.symbols, inputFile);
           saveMetrics(sensorContext, response, inputFile);
           saveCpd(sensorContext, response.cpdTokens, inputFile);
           SensorContextUtils.saveIssues(sensorContext, response.issues, typeScriptRules);
         } else {
-          LOG.error("Failed to find input file for path `" + response.filepath + "`");
+          SensorContextUtils.reportAnalysisErrors(sensorContext, response, inputFile);
         }
       }
-
     }
   }
 

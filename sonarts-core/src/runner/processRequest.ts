@@ -25,12 +25,13 @@ import getHighlighting from "./highlighter";
 import getCpdTokens from "./cpd";
 import getSymbolHighlighting from "./symbolHighlighting";
 import { createProgram } from "../utils/parser";
+import getDiagnostics from "./diagnostics";
 
 interface Sensor {
   (sourceFile: ts.SourceFile, program: ts.Program): any;
 }
 
-const sensors: Sensor[] = [getHighlighting, getMetrics, getCpdTokens, getSymbolHighlighting];
+const sensors: Sensor[] = [getHighlighting, getMetrics, getCpdTokens, getSymbolHighlighting, getDiagnostics];
 
 export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);

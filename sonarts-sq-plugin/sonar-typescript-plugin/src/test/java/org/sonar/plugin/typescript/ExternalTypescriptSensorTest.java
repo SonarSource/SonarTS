@@ -302,6 +302,16 @@ public class ExternalTypescriptSensorTest {
     assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
+  @Test
+  public void should_log_syntax_errors() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext);
+    TestBundleFactory testBundleFactory = TestBundleFactory.nodeScript("/mockDiagnostics.js", testInputFile.absolutePath());
+    executeSensor(sensorContext, testBundleFactory);
+    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Compilation error at foo" + File.separator + "file.ts:1 \"Expression expected.\"");
+    assertThat(sensorContext.allAnalysisErrors()).hasSize(1);
+  }
+
   private SensorContextTester createSensorContext() {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
     sensorContext.fileSystem().setWorkDir(tmpDir.getRoot().toPath());
