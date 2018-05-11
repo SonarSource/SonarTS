@@ -20,27 +20,26 @@
 package org.sonar.plugin.typescript;
 
 import org.junit.Test;
-import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.rules.RuleFinder;
-import org.sonar.api.utils.ValidationMessages;
+import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.BuiltInQualityProfile;
+import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition.Context;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.sonar.plugin.typescript.SonarWayProfileTest.ruleFinder;
 
 public class SonarWayRecommendedProfileTest {
 
   @Test
   public void should_create_sonar_way_recommended_profile() {
-    ValidationMessages validation = ValidationMessages.create();
+    SonarWayRecommendedProfile definition = new SonarWayRecommendedProfile();
+    Context context = new Context();
+    definition.define(context);
 
-    RuleFinder ruleFinder = ruleFinder();
-    SonarWayRecommendedProfile definition = new SonarWayRecommendedProfile(ruleFinder);
-    RulesProfile profile = definition.createProfile(validation);
+    BuiltInQualityProfile profile = context.profile("ts", SonarWayRecommendedProfile.PROFILE_NAME);
 
-    assertThat(profile.getLanguage()).isEqualTo(TypeScriptLanguage.KEY);
-    assertThat(profile.getName()).isEqualTo(SonarWayRecommendedProfile.PROFILE_NAME);
-    assertThat(profile.getActiveRules()).extracting("repositoryKey").containsOnly("typescript", TypeScriptRulesDefinition.REPOSITORY_KEY);
-    assertThat(validation.hasErrors()).isFalse();
+    assertThat(profile.language()).isEqualTo(TypeScriptLanguage.KEY);
+    assertThat(profile.name()).isEqualTo(SonarWayRecommendedProfile.PROFILE_NAME);
+    assertThat(profile.rules()).extracting("repoKey").containsOnly(TypeScriptRulesDefinition.REPOSITORY_KEY);
+    assertThat(profile.rules()).extracting("ruleKey").contains("S3353");
+    assertThat(profile.rules()).extracting("ruleKey").doesNotContain("S1541");
   }
 
 }

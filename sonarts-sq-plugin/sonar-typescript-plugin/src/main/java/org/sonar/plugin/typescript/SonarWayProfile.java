@@ -19,29 +19,18 @@
  */
 package org.sonar.plugin.typescript;
 
-import org.sonar.api.profiles.ProfileDefinition;
-import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.rules.RuleFinder;
-import org.sonar.api.utils.ValidationMessages;
-import org.sonarsource.analyzer.commons.ProfileDefinitionReader;
+import org.sonar.api.server.profile.BuiltInQualityProfilesDefinition;
+import org.sonarsource.analyzer.commons.BuiltInQualityProfileJsonLoader;
 
-public class SonarWayProfile extends ProfileDefinition {
+public class SonarWayProfile implements BuiltInQualityProfilesDefinition {
 
   public static final String PROFILE_NAME = "Sonar way";
-
   private static final String PROFILE_PATH = "org/sonar/l10n/typescript/rules/typescript/Sonar_way_profile.json";
-  private final RuleFinder ruleFinder;
-
-  public SonarWayProfile(RuleFinder ruleFinder) {
-    this.ruleFinder = ruleFinder;
-  }
 
   @Override
-  public RulesProfile createProfile(ValidationMessages validation) {
-    RulesProfile profile = RulesProfile.create(PROFILE_NAME, TypeScriptLanguage.KEY);
-    ProfileDefinitionReader definitionReader = new ProfileDefinitionReader(ruleFinder);
-    definitionReader.activateRules(profile, TypeScriptRulesDefinition.REPOSITORY_KEY, PROFILE_PATH);
-    return profile;
+  public void define(Context context) {
+    NewBuiltInQualityProfile profile = context.createBuiltInQualityProfile(PROFILE_NAME, TypeScriptLanguage.KEY);
+    BuiltInQualityProfileJsonLoader.load(profile, TypeScriptRulesDefinition.REPOSITORY_KEY, PROFILE_PATH);
+    profile.done();
   }
-
 }
