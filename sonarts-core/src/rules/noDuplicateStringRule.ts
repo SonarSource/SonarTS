@@ -62,7 +62,11 @@ class Visitor extends SonarRuleVisitor {
   visitStringLiteral(node: ts.StringLiteral) {
     const stringContent: string = getStringContent(node);
 
-    if (stringContent.length >= Rule.MIN_LENGTH && !stringContent.match(Visitor.noSeparatorRegexp)) {
+    if (
+      stringContent.length >= Rule.MIN_LENGTH &&
+      !stringContent.match(Visitor.noSeparatorRegexp) &&
+      !jsxAttribute(node)
+    ) {
       const sameStringLiterals = this.literals.get(stringContent) || [];
       sameStringLiterals.push(node);
       this.literals.set(stringContent, sameStringLiterals);
@@ -85,4 +89,9 @@ class Visitor extends SonarRuleVisitor {
 
 function getStringContent(node: ts.StringLiteral) {
   return node.getText().substr(1, node.getText().length - 2);
+}
+
+function jsxAttribute(node: ts.StringLiteral) {
+  const parent = node.parent;
+  return parent && parent.kind === ts.SyntaxKind.JsxAttribute;
 }
