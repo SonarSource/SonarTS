@@ -18,6 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
+import { is } from "./nodes";
 
 // compare literals and identifiers by actual text
 const COMPARED_BY_TEXT = new Set([
@@ -32,28 +33,48 @@ const COMPARED_BY_TEXT = new Set([
   ts.SyntaxKind.JsxText,
 ]);
 
-export default function areEquivalent(first: ts.Node | ts.Node[], second: ts.Node | ts.Node[]): boolean {
+/**
+ *
+ * @param first
+ * @param second
+ * @param ignoreLiterals when true, two nodes are considered equivalent even if string or numeric literals have different value
+ */
+export default function areEquivalent(
+  first: ts.Node | ts.Node[],
+  second: ts.Node | ts.Node[],
+  ignoreLiterals = false,
+): boolean {
   if (isNode(first) && isNode(second)) {
-    if (first.kind !== second.kind) {
-      return false;
-    }
-
-    const childCount = first.getChildCount();
-
-    if (childCount !== second.getChildCount()) {
-      return false;
-    }
-
-    if (childCount === 0 && COMPARED_BY_TEXT.has(first.kind)) {
-      return first.getText() === second.getText();
-    }
-
-    return areEquivalent(first.getChildren(), second.getChildren());
+    return areEquivalentNodes(first, second, ignoreLiterals);
   } else if (isNodeArray(first) && isNodeArray(second)) {
-    return first.length === second.length && first.every((leftNode, index) => areEquivalent(leftNode, second[index]));
+    return (
+      first.length === second.length &&
+      first.every((leftNode, index) => areEquivalent(leftNode, second[index], ignoreLiterals))
+    );
   } else {
     return false;
   }
+}
+
+function areEquivalentNodes(first: ts.Node, second: ts.Node, ignoreLiterals = false): boolean {
+  if (first.kind !== second.kind) {
+    return false;
+  }
+
+  const childCount = first.getChildCount();
+
+  if (childCount !== second.getChildCount()) {
+    return false;
+  }
+
+  if (childCount === 0 && COMPARED_BY_TEXT.has(first.kind)) {
+    if (ignoreLiterals && is(first, ts.SyntaxKind.StringLiteral, ts.SyntaxKind.NumericLiteral)) {
+      return true;
+    }
+    return first.getText() === second.getText();
+  }
+
+  return areEquivalent(first.getChildren(), second.getChildren(), ignoreLiterals);
 }
 
 function isNode(node: ts.Node | ts.Node[]): node is ts.Node {

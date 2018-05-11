@@ -1,7 +1,7 @@
 # no-identical-functions
 
 When two functions have the same implementation, either it was a mistake - something else was intended - or the duplication was intentional, but
-may be confusing to maintainers. In the latter case, the code should be refactored.</p>
+may be confusing to maintainers. In the latter case, the code should be refactored. Numerical and string literals are not taken into account.</p>
 
 ## Noncompliant Code Example
 ```typescript
