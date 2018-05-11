@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
-import { descendants } from "../utils/navigation";
+import { ancestorsChain } from "../utils/navigation";
 import { is } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -45,12 +45,19 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Visitor extends SonarRuleVisitor {
   public visitTemplateExpression(node: ts.TemplateExpression) {
-    const nestedTemplateLiteral = descendants(node).find(
-      child => is(child, ts.SyntaxKind.TemplateExpression) || is(child, ts.SyntaxKind.NoSubstitutionTemplateLiteral),
-    );
-    if (nestedTemplateLiteral) {
-      this.addIssue(nestedTemplateLiteral, Rule.MESSAGE);
-    }
+    this.checkNestedTemplate(node);
     super.visitTemplateExpression(node);
+  }
+
+  public visitNoSubstitionTemplateLiteral(node: ts.NoSubstitutionTemplateLiteral) {
+    this.checkNestedTemplate(node);
+    super.visitNoSubstitionTemplateLiteral(node);
+  }
+
+  private checkNestedTemplate(node: ts.TemplateLiteral) {
+    const parentTemplate = ancestorsChain(node).find(parent => is(parent, ts.SyntaxKind.TemplateExpression));
+    if (parentTemplate) {
+      this.addIssue(node, Rule.MESSAGE);
+    }
   }
 }

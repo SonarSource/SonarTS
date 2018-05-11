@@ -322,6 +322,10 @@ export class TreeVisitor {
     this.visitChildren(node);
   }
 
+  protected visitNoSubstitionTemplateLiteral(node: ts.NoSubstitutionTemplateLiteral) {
+    this.visitChildren(node);
+  }
+
   protected visitThrowStatement(node: ts.ThrowStatement) {
     this.visitChildren(node);
   }
@@ -674,6 +678,10 @@ export class TreeVisitor {
 
       case ts.SyntaxKind.TemplateExpression:
         this.visitTemplateExpression(node as ts.TemplateExpression);
+        break;
+
+      case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+        this.visitNoSubstitionTemplateLiteral(node as ts.NoSubstitutionTemplateLiteral);
         break;
 
       case ts.SyntaxKind.ThrowStatement:
