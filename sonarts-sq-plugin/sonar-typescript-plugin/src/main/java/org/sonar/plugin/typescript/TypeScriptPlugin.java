@@ -41,7 +41,7 @@ public class TypeScriptPlugin implements Plugin {
   public static final String LCOV_REPORT_PATHS = "sonar.typescript.lcov.reportPaths";
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
 
-  public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.jsonReportPaths";
+  public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.reportPaths";
   public static final String TSLINT_REPORT_PATHS_DEFAULT_VALUE = "";
 
   public static final String NODE_EXECUTABLE = "sonar.typescript.node";
