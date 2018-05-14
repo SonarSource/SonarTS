@@ -20,4 +20,12 @@ console.log('some message');
 //          ^^^^^^^^^^^^^^ < {{Duplicate}}
 
 
+function ignoreReactAttributes() {
+  <Foo bar="some string"></Foo>;
+  <Foo bar="some string"></Foo>;
+  <Foo bar="some string"></Foo>;
 
+  <Foo className="some-string"></Foo>;
+  let x = "some-string", y = "some-string", z = "some-string";
+//        ^^^^^^^^^^^^^ {{Define a constant instead of duplicating this literal 3 times.}} [[cost:2]]
+}

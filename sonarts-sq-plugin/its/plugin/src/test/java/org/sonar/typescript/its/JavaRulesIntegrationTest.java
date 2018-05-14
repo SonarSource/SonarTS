@@ -86,13 +86,13 @@ public class JavaRulesIntegrationTest {
 
   private static final Pattern ERROR_COMMENT = Pattern.compile(".*//.*\\^+\\s*\\{\\{.*}}.*");
   private static final Pattern MULTILINE_ERROR_COMMENT = Pattern.compile(".*//\\s*\\[(\\d+):(\\d+)-(\\d+):(\\d+)]\\s*\\{\\{.*");
-  private static final String FIXTURE_FILENAME = "fixture.ts";
+  private static final String FIXTURE_FILENAME = "fixture";
   private static final byte[] TSCONFIG = ("{" +
     "  \"compilerOptions\": {\n" +
     "    \"strict\": true,\n" +
     "    \"target\": \"esnext\"\n" +
     "  },\n" +
-    "  \"include\": [\"" + FIXTURE_FILENAME + "\"]\n" +
+    "  \"include\": [\"" + FIXTURE_FILENAME + ".*\"]\n" +
     "}").getBytes(StandardCharsets.UTF_8);
 
   // for some rules we don't have test file available, skip those
@@ -176,7 +176,7 @@ public class JavaRulesIntegrationTest {
 
     Path lintFile = lintFile(tsLintRule);
     String testFixture = new String(Files.readAllBytes(lintFile));
-    createInputFile(testFixture);
+    createInputFile(testFixture, lintFile.toString().endsWith("tsx") ? ".tsx" : ".ts");
 
     CheckFactory checkFactory = getCheckFactory(ruleKey);
     ExternalTypescriptSensor sensor = new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, checkFactory, errorConsumer);
@@ -247,8 +247,9 @@ public class JavaRulesIntegrationTest {
     return sb.toString();
   }
 
-  private void createInputFile(String content) throws IOException {
-    File filePath = new File(projectDir, FIXTURE_FILENAME);
+  private void createInputFile(String content, String extension) throws IOException {
+    String fixtureFilename = FIXTURE_FILENAME + extension;
+    File filePath = new File(projectDir, fixtureFilename);
     Files.write(filePath.toPath(), content.getBytes(StandardCharsets.UTF_8));
     InputFile inputFile = TestInputFileBuilder.create("module", projectDir, filePath)
       .setLanguage(TypeScriptLanguage.KEY)
