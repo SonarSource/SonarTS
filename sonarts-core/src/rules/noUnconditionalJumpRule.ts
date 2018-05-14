@@ -26,7 +26,7 @@ import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
-    description: "Jump statements should not be used unconditionally",
+    description: "Loops with at most one iteration should be refactored",
     options: null,
     optionsDescription: "",
     rspecKey: "RSPEC-1751",
@@ -40,15 +40,10 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 }
 
-const CONDITIONAL_STATEMENTS = nav.CONDITIONAL_STATEMENTS.concat(ts.SyntaxKind.TryStatement);
 class Visitor extends SonarRuleVisitor {
   private readonly loopsAndJumps: Map<ts.IterationStatement, ts.Node[]> = new Map();
 
-  public visitBreakStatement(node: ts.BreakOrContinueStatement): void {
-    this.checkJump(node);
-  }
-
-  public visitContinueStatement(node: ts.BreakOrContinueStatement) {
+  public visitBreakStatement(node: ts.BreakStatement): void {
     this.checkJump(node);
   }
 
@@ -60,14 +55,8 @@ class Visitor extends SonarRuleVisitor {
     this.checkJump(node);
   }
 
-  private checkJump(node: ts.BreakOrContinueStatement | ts.ThrowStatement | ts.ReturnStatement) {
+  private checkJump(node: ts.BreakStatement | ts.ThrowStatement | ts.ReturnStatement) {
     const keyword = nav.keyword(node);
-    if (node.kind === ts.SyntaxKind.ContinueStatement) {
-      if (!this.isConditional(node)) {
-        this.addIssue(keyword, `Remove this "continue" statement or make it conditional`);
-      }
-      return;
-    }
     if (node.kind === ts.SyntaxKind.BreakStatement && this.isInsideForIn(node)) return;
     if (node.kind === ts.SyntaxKind.ReturnStatement && this.isInsideForOf(node)) return;
 
@@ -90,14 +79,6 @@ class Visitor extends SonarRuleVisitor {
       const issue = this.addIssue(loop.getFirstToken(), "Refactor this loop; it's executed only once");
       jumps.forEach(jump => issue.addSecondaryLocation(jump, "loop is broken here."));
     });
-  }
-
-  private isConditional(node: ts.Node): boolean {
-    const parents = nav.localAncestorsChain(node).map(p => p.kind);
-    const conditionalsAndLoops = parents.filter(kind =>
-      nav.LOOP_STATEMENTS.concat(CONDITIONAL_STATEMENTS).includes(kind),
-    );
-    return conditionalsAndLoops.length > 0 && CONDITIONAL_STATEMENTS.includes(conditionalsAndLoops[0]);
   }
 
   private isInsideForIn(node: ts.BreakStatement): boolean {

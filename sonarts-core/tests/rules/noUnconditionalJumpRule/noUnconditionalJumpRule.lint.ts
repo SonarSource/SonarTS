@@ -25,8 +25,7 @@ for(x of arr) {
 
 while(foo()) {
   bar();
-  continue;
-//^^^^^^^^ {{Remove this "continue" statement or make it conditional}}
+  continue; // OK, covered by no-redundant-jump
 }
 
   while(foo()) {
@@ -80,8 +79,7 @@ for (p in obj) {
 
 for (p in obj) {
   foo();
-  continue;
-//^^^^^^^^  {{Remove this "continue" statement or make it conditional}}
+  continue; // OK, covered by no-redundant-jump
 }
 
   for(p of arr) {
@@ -134,8 +132,7 @@ while(foo()) {
     continue;
   }
   baz();
-  continue;
-//^^^^^^^^  {{Remove this "continue" statement or make it conditional}}
+  continue; // OK, covered by no-redundant-jump
 }
 
 for (i = 0; foo(); i++) {
@@ -154,8 +151,7 @@ for (i = 0; foo(); i++) {
 
 for (i = 0; foo(); i++) {
   baz();
-  continue;
-//^^^^^^^^  {{Remove this "continue" statement or make it conditional}}
+  continue; // OK, covered by no-redundant-jump
 }
 
 for (;;) {
