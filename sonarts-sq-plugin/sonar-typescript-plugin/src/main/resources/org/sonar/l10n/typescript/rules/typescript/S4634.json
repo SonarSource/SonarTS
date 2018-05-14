@@ -1,0 +1,12 @@
+{
+  "title": "Shorthand promises should be used",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "tags": [
+    "proficiency"
+  ],
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-4634",
+  "sqKey": "S4634",
+  "scope": "All"
+}
