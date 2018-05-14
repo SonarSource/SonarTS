@@ -23,7 +23,7 @@ import * as fs from "fs";
 import * as ts from "typescript";
 import * as tslint from "tslint";
 import { getIssues } from "./rules";
-import { FileCache, createService } from "./languageService";
+import { createService, FileCache } from "./languageService";
 import { parseTsConfig } from "../utils/parser";
 import getDiagnostics from "./diagnostics";
 
@@ -84,9 +84,11 @@ export class SonarTsServer {
       console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
       return EMPTY_ANSWER;
     }
-    const response = getIssues(rules, program, sourceFile);
-    Object.assign(response, getDiagnostics(sourceFile, program));
-    return response;
+    const diagnostics = getDiagnostics(sourceFile, program);
+    if (diagnostics.length > 0) {
+      return { diagnostics };
+    }
+    return getIssues(rules, program, sourceFile);
   }
 
   private getTsConfig(filePath: string): string | undefined {

@@ -31,7 +31,7 @@ interface Sensor {
   (sourceFile: ts.SourceFile, program: ts.Program): any;
 }
 
-const sensors: Sensor[] = [getHighlighting, getMetrics, getCpdTokens, getSymbolHighlighting, getDiagnostics];
+const sensors: Sensor[] = [getHighlighting, getMetrics, getCpdTokens, getSymbolHighlighting];
 
 export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);
@@ -41,8 +41,13 @@ export function processRequest(inputString: string) {
     const sourceFile = program.getSourceFile(filepath);
     const output: object = { filepath };
     if (sourceFile) {
-      sensors.forEach(sensor => Object.assign(output, sensor(sourceFile, program)));
-      Object.assign(output, rules.getIssues(input.rules, program, sourceFile));
+      const diagnostics = getDiagnostics(sourceFile, program);
+      if (diagnostics.length > 0) {
+        Object.assign(output, { diagnostics });
+      } else {
+        sensors.forEach(sensor => Object.assign(output, sensor(sourceFile, program)));
+        Object.assign(output, rules.getIssues(input.rules, program, sourceFile));
+      }
     } else {
       console.error(`Failed to find a source file matching path ${filepath} in program created with ${input.tsconfig}`);
     }

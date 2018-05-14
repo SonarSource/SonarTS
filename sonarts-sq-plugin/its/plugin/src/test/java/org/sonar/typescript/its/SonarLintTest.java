@@ -82,7 +82,7 @@ public class SonarLintTest {
 
     StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(), Collections.singletonList
       (inputFile), ImmutableMap.of());
-    sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
+    AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
       tuple("typescript:S2589", 3, inputFile.getPath(), "MAJOR"),
@@ -91,6 +91,7 @@ public class SonarLintTest {
       tuple("typescript:S108", 3, inputFile.getPath(), "MAJOR"));
 
     assertThat(logs).contains("SonarTS Server is started", "Started SonarTS Analysis");
+    assertThat(results.failedAnalysisFiles()).isEmpty();
   }
 
   @Test

@@ -53,7 +53,6 @@ it("should process full input", () => {
       ncloc: [1],
       commentLines: [],
       nosonarLines: [],
-      diagnostics: [],
       executableLines: [],
       statements: 0,
       functions: 1,

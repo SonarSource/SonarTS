@@ -22,19 +22,15 @@ import * as ts from "typescript";
 import { lineAndCharacterByPos } from "../utils/navigation";
 import { toSonarLine } from "./sonarUtils";
 
-export default function getDiagnostics(sourceFile: ts.SourceFile, program: ts.Program) {
+export default function getDiagnostics(sourceFile: ts.SourceFile, program: ts.Program): any[] {
   const diagnostics = program.getSyntacticDiagnostics(sourceFile);
-  return {
-    diagnostics: diagnostics
-      .filter(diagnostic => diagnostic.category === ts.DiagnosticCategory.Error)
-      .map(diagnostic => {
-        const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
-        const { line, character } = lineAndCharacterByPos(diagnostic.start!, sourceFile);
-        return {
-          message,
-          line: toSonarLine(line),
-          col: character,
-        };
-      }),
-  };
+  return diagnostics.filter(diagnostic => diagnostic.category === ts.DiagnosticCategory.Error).map(diagnostic => {
+    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
+    const { line, character } = lineAndCharacterByPos(diagnostic.start!, sourceFile);
+    return {
+      message,
+      line: toSonarLine(line),
+      col: character,
+    };
+  });
 }

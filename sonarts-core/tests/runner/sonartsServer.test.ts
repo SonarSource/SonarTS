@@ -57,7 +57,7 @@ it("creates cross-file type-checker-based issue", async () => {
 });
 
 it("is able to process partial request", async () => {
-  const response = await sendRequest(client, "console.log('hello')".repeat(10000));
+  const response = await sendRequest(client, "console.log('hello');".repeat(10000));
   expect(getRules(response.issues)).toEqual([]);
 });
 
