@@ -129,6 +129,7 @@ import org.sonar.plugin.typescript.rules.PreferConst;
 import org.sonar.plugin.typescript.rules.PreferDefaultLast;
 import org.sonar.plugin.typescript.rules.PreferForOf;
 import org.sonar.plugin.typescript.rules.PreferImmediateReturn;
+import org.sonar.plugin.typescript.rules.PreferPromiseShorthand;
 import org.sonar.plugin.typescript.rules.PreferReadonly;
 import org.sonar.plugin.typescript.rules.PreferTemplate;
 import org.sonar.plugin.typescript.rules.PreferWhile;
@@ -314,6 +315,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       PreferDefaultLast.class,
       PreferForOf.class,
       PreferImmediateReturn.class,
+      PreferPromiseShorthand.class,
       PreferReadonly.class,
       PreferTemplate.class,
       PreferWhile.class,
