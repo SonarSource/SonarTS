@@ -23,6 +23,7 @@ import org.sonar.api.Plugin;
 import org.sonar.api.SonarProduct;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
+import org.sonar.api.utils.Version;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
 import org.sonar.plugin.typescript.externalreport.TslintReportSensor;
 import org.sonar.plugin.typescript.lcov.LCOVCoverageSensor;
@@ -40,7 +41,7 @@ public class TypeScriptPlugin implements Plugin {
   public static final String LCOV_REPORT_PATHS = "sonar.typescript.lcov.reportPaths";
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
 
-  public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.jsonReportPaths";
+  public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.reportPaths";
   public static final String TSLINT_REPORT_PATHS_DEFAULT_VALUE = "";
 
   public static final String NODE_EXECUTABLE = "sonar.typescript.node";
@@ -78,15 +79,6 @@ public class TypeScriptPlugin implements Plugin {
         .category(TYPESCRIPT_CATEGORY)
         .multiValues(true)
         .build(),
-      PropertyDefinition.builder(TSLINT_REPORT_PATHS)
-        .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
-        .name("TSLint Report Files")
-        .description("Paths (absolute or relative) to the JSON files with TSLint errors/issues.")
-        .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
-        .subCategory(GENERAL_SUBCATEGORY)
-        .category(TYPESCRIPT_CATEGORY)
-        .multiValues(true)
-        .build(),
       PropertyDefinition.builder(NODE_EXECUTABLE)
         .defaultValue(NODE_EXECUTABLE_DEFAULT)
         .name("Node.js executable")
@@ -105,6 +97,8 @@ public class TypeScriptPlugin implements Plugin {
         .category(TYPESCRIPT_CATEGORY)
         .build());
 
+    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
+
     if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
       context.addExtension(ContextualSensor.class);
       context.addExtension(ContextualServer.class);
@@ -112,6 +106,19 @@ public class TypeScriptPlugin implements Plugin {
     } else {
       context.addExtension(ExternalTypescriptSensor.class);
       context.addExtension(LCOVCoverageSensor.class);
+    }
+
+    if (externalIssuesSupported) {
+      context.addExtension(
+        PropertyDefinition.builder(TSLINT_REPORT_PATHS)
+          .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
+          .name("TSLint Report Files")
+          .description("Paths (absolute or relative) to the JSON files with TSLint errors/issues.")
+          .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
+          .subCategory(GENERAL_SUBCATEGORY)
+          .category(TYPESCRIPT_CATEGORY)
+          .multiValues(true)
+          .build());
     }
   }
 }

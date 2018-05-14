@@ -43,7 +43,7 @@ public class TslintExternalReportTest {
     if (sqSupportsExternalIssues()) {
       orchestrator.resetData();
       SonarScanner build = Tests.createScanner("projects/tslint-report-project", PROJECT_KEY);
-      build.setProperty("sonar.typescript.tslint.jsonReportPaths", "report.json");
+      build.setProperty("sonar.typescript.tslint.reportPaths", "report.json");
       orchestrator.executeBuild(build);
 
       SearchRequest request = new SearchRequest();
