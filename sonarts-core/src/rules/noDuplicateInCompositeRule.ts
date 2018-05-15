@@ -26,16 +26,16 @@ import areEquivalent from "../utils/areEquivalent";
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-duplicate-in-composite",
-    description: "Composite types should not be defined with duplicated elements",
+    description: "Union and intersection types should not be defined with duplicated elements",
     rationale: tslint.Utils.dedent``,
     optionsDescription: "",
     options: null,
     rspecKey: "RSPEC-4621",
     type: "maintainability",
-    typescriptOnly: false,
+    typescriptOnly: true,
   };
 
-  public static MESSAGE = "Remove this duplicated type.";
+  public static MESSAGE = "Remove this duplicated type or replace with another one.";
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
@@ -54,19 +54,22 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private checkDuplication(node: ts.UnionOrIntersectionTypeNode) {
-    const alreadyVisited: { [index: number]: boolean } = {};
+    const alreadyChecked: { [typeIndex: number]: boolean } = {};
     node.types.forEach((currentType, currentIndex) => {
-      alreadyVisited[currentIndex] = true;
+      if (alreadyChecked[currentIndex]) {
+        return;
+      }
       const duplicateTypes: ts.TypeNode[] = [];
       node.types.forEach((type, index) => {
-        if (index !== currentIndex && !alreadyVisited[index] && areEquivalent(type, currentType)) {
-          alreadyVisited[index] = true;
+        if (areEquivalent(type, currentType)) {
+          alreadyChecked[index] = true;
           duplicateTypes.push(type);
         }
       });
-      if (duplicateTypes.length > 0) {
-        const issue = this.addIssue(duplicateTypes[0], Rule.MESSAGE);
-        duplicateTypes.slice(1).forEach(type => issue.addSecondaryLocation(type));
+      if (duplicateTypes.length > 1) {
+        const issue = this.addIssue(duplicateTypes[1], Rule.MESSAGE);
+        issue.addSecondaryLocation(duplicateTypes[0], "Original");
+        duplicateTypes.slice(2).forEach(type => issue.addSecondaryLocation(type, "Another duplicate"));
       }
     });
   }

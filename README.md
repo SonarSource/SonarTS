@@ -52,7 +52,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Functions should not have too many lines of code ([`no-big-function`])
 * Sections of code should not be "commented out" ([`no-commented-code`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
-* Composite types should not be defined with duplicated elements ([`no-duplicate-in-composite`])
+* Union and intersection types should not be defined with duplicated elements ([`no-duplicate-in-composite`])
 * String literals should not be duplicated ([`no-duplicate-string`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])

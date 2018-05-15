@@ -202,10 +202,6 @@ export class TreeVisitor {
     this.visitChildren(node);
   }
 
-  protected visitUnionTypeNode(node: ts.UnionTypeNode) {
-    this.visitChildren(node);
-  }
-
   protected visitJsxAttribute(node: ts.JsxAttribute) {
     this.visitChildren(node);
   }
@@ -255,6 +251,10 @@ export class TreeVisitor {
   }
 
   protected visitNonNullExpression(node: ts.NonNullExpression) {
+    this.visitChildren(node);
+  }
+
+  protected visitNoSubstitionTemplateLiteral(node: ts.NoSubstitutionTemplateLiteral) {
     this.visitChildren(node);
   }
 
@@ -326,10 +326,6 @@ export class TreeVisitor {
     this.visitChildren(node);
   }
 
-  protected visitNoSubstitionTemplateLiteral(node: ts.NoSubstitutionTemplateLiteral) {
-    this.visitChildren(node);
-  }
-
   protected visitThrowStatement(node: ts.ThrowStatement) {
     this.visitChildren(node);
   }
@@ -355,6 +351,10 @@ export class TreeVisitor {
   }
 
   protected visitTypeReference(node: ts.TypeReferenceNode) {
+    this.visitChildren(node);
+  }
+
+  protected visitUnionTypeNode(node: ts.UnionTypeNode) {
     this.visitChildren(node);
   }
 
@@ -568,10 +568,6 @@ export class TreeVisitor {
         this.visitIntersectionTypeNode(node as ts.IntersectionTypeNode);
         break;
 
-      case ts.SyntaxKind.UnionType:
-        this.visitUnionTypeNode(node as ts.UnionTypeNode);
-        break;
-
       case ts.SyntaxKind.JsxAttribute:
         this.visitJsxAttribute(node as ts.JsxAttribute);
         break;
@@ -618,6 +614,10 @@ export class TreeVisitor {
 
       case ts.SyntaxKind.NonNullExpression:
         this.visitNonNullExpression(node as ts.NonNullExpression);
+        break;
+
+      case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
+        this.visitNoSubstitionTemplateLiteral(node as ts.NoSubstitutionTemplateLiteral);
         break;
 
       case ts.SyntaxKind.NumericLiteral:
@@ -688,10 +688,6 @@ export class TreeVisitor {
         this.visitTemplateExpression(node as ts.TemplateExpression);
         break;
 
-      case ts.SyntaxKind.NoSubstitutionTemplateLiteral:
-        this.visitNoSubstitionTemplateLiteral(node as ts.NoSubstitutionTemplateLiteral);
-        break;
-
       case ts.SyntaxKind.ThrowStatement:
         this.visitThrowStatement(node as ts.ThrowStatement);
         break;
@@ -718,6 +714,10 @@ export class TreeVisitor {
 
       case ts.SyntaxKind.TypeReference:
         this.visitTypeReference(node as ts.TypeReferenceNode);
+        break;
+
+      case ts.SyntaxKind.UnionType:
+        this.visitUnionTypeNode(node as ts.UnionTypeNode);
         break;
 
       case ts.SyntaxKind.VariableDeclaration:
