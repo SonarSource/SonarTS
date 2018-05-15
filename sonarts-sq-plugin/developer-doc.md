@@ -4,9 +4,13 @@
 * Follow instructions [here](../CONTRIBUTING.md) or run `new-rule` tool
 ```
 # from project root
-java -jar <location of rule-api jar> generate -rule S1234 -no-language-in-filenames
+java -jar <location of rule-api jar> generate -rule S1234
 cd sonarts-core
 yarn new-rule S1234 noSomethingSomewhereRule 
+```
+* If RSPEC was updated you can regenerate rule MD description file. Note that only 1 file will be updated, you will need to manually update metadata inside TS rule (e.g. title) 
+```
+yarn new-rule S1234 noSomethingSomewhereRule  mdonly
 ```
  
 ## Adding a rule to the SonarQube Plugin
@@ -21,6 +25,16 @@ yarn new-rule S1234 noSomethingSomewhereRule
 * Add rule class to `TypeScriptRules.getRuleClasses()`
 * Run all tests and fix the red ones (some tests are there explicitly to check some basic mistakes when creating a new rule)
 * On RSPEC page of the rule fill `Tools` -> `TSLint-SonarTS` or `TSLint` with the tslint rule-key (use first one if the rule is part of tslint-sonarts)
+
+## Adding a TSLint core rule to the SonarQube Plugin
+* You can manually do steps from previous paragraph
+* Or just run
+```
+# from project root
+java -jar <location of rule-api jar> generate -rule S1234
+cd sonarts-core
+yarn new-rule S1234 noSomethingSomewhereRule javaonly 
+```
 
 ## Releasing
 

@@ -49,17 +49,18 @@ function run() {
   if (process.argv.length !== 4 && process.argv.length !== 5) {
     showHelp();
     throw new Error(
-      `Invalid number of arguments: expected 2 or 3 (with "javaonly"), but got ${process.argv.length - 2}`,
+      `Invalid number of arguments: expected 2 or 3 (with "javaonly" or "mdonly"), but got ${process.argv.length - 2}`,
     );
   }
 
   const rspecId = process.argv[2];
   const ruleClassName = process.argv[3];
-  const javaOnlyParameter = process.argv[4];
-  if (!!javaOnlyParameter && javaOnlyParameter !== "javaonly") {
-    throw new Error(`'javaonly' is expected as last parameter. But '${javaOnlyParameter}' was passed`);
+  const lastParameter = process.argv[4];
+  if (!!lastParameter && lastParameter !== "javaonly" && lastParameter !== "mdonly") {
+    throw new Error(`'javaonly' or 'mdonly' are expected as last parameter. But '${lastParameter}' was passed`);
   }
-  const javaOnly = !!javaOnlyParameter;
+  const javaOnly = !!lastParameter && lastParameter !== "javaonly";
+  const mdOnly = !!lastParameter && lastParameter !== "mdOnly";
 
   verifyClassName();
   verifyRspecId();
@@ -67,6 +68,16 @@ function run() {
   const ruleNameDash = getDashName();
   const javaRuleClassName = getJavaClassName();
   const { ruleTitle, rspecKey, ruleType } = getRuleTitleAndRspecKey();
+
+  if (mdOnly) {
+    //- In folder docs/rules create rule documentation file <rule key>.md
+    createRuleDoc();
+
+    //- In README.md add reference to the documentation file.
+    updateReadme();
+
+    return;
+  }
 
   if (!javaOnly) {
     //- Create file for rule implementation in src/rules. File name should start with lower case and have suffix Rule
