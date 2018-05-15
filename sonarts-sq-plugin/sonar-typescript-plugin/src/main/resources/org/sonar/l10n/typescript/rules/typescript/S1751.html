@@ -6,12 +6,12 @@ expects to find such a use of a loop statement. If the initial intention of the 
 <code>break</code> or <code>throw</code> statements in a more appropriate way.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
-for (int i = 0; i &lt; 10; i++) { // noncompliant, loop only executes once
+for (i = 0; i &lt; 10; i++) { // noncompliant, loop only executes once
   console.log("i is " + i);
   break;
 }
 
-for (int i = 0; i &lt; 10; i++) { // noncompliant, loop only executes once
+for (i = 0; i &lt; 10; i++) { // noncompliant, loop only executes once
   if(i == x) {
     break;
   } else {
@@ -22,11 +22,11 @@ for (int i = 0; i &lt; 10; i++) { // noncompliant, loop only executes once
 </pre>
 <h2>Compliant Solution</h2>
 <pre>
-for (int i = 0; i &lt; 10; i++) {
+for (i = 0; i &lt; 10; i++) {
   console.log("i is " + i);
 }
 
-for (int i = 0; i &lt; 10; i++) {
+for (i = 0; i &lt; 10; i++) {
   if(i == x) {
     break;
   } else {
