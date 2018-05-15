@@ -1,4 +1,5 @@
 /*
+/*
  * SonarTS
  * Copyright (C) 2017-2018 SonarSource SA
  * mailto:info AT sonarsource DOT com
@@ -20,7 +21,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { isNullType, isUndefinedType, isVoidType } from "../utils/navigation";
+import { isNullType, isUndefinedType, isVoidType } from "../utils/semantics";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isInterfaceDeclaration } from "../utils/nodes";
 
