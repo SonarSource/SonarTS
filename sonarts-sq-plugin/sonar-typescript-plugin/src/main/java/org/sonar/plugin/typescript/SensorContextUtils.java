@@ -34,8 +34,12 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class SensorContextUtils {
+
+  private static final Logger LOG = Loggers.get(SensorContextUtils.class);
 
   private SensorContextUtils() {
   }
@@ -47,6 +51,18 @@ public class SensorContextUtils {
       if (inputFile != null) {
         saveIssue(sensorContext, typeScriptRules, issue, inputFile);
       }
+    }
+  }
+
+  static void reportAnalysisErrors(SensorContext sensorContext, SensorContextUtils.AnalysisResponse response, InputFile inputFile) {
+    for (Diagnostic diagnostic : response.diagnostics) {
+      LOG.error("Compilation error at {}:{} \"{}\"", inputFile, diagnostic.line, diagnostic.message);
+      LOG.error("File {} will be ignored", inputFile, diagnostic.message);
+      sensorContext.newAnalysisError()
+        .onFile(inputFile)
+        .message(diagnostic.message)
+        .at(inputFile.newPointer(diagnostic.line, diagnostic.col))
+        .save();
     }
   }
 
@@ -166,6 +182,7 @@ public class SensorContextUtils {
     Highlight[] highlights = {};
     CpdToken[] cpdTokens = {};
     Symbol[] symbols = {};
+    Diagnostic[] diagnostics = {};
     int[] ncloc = {};
     int[] commentLines = {};
     Integer[] nosonarLines = {};
@@ -175,6 +192,10 @@ public class SensorContextUtils {
     int classes = 0;
     int complexity = 0;
     int cognitiveComplexity = 0;
+
+    boolean hasDiagnostics() {
+      return diagnostics.length > 0;
+    }
   }
 
   static class Highlight {
@@ -206,6 +227,12 @@ public class SensorContextUtils {
     Integer startCol;
     Integer endLine;
     Integer endCol;
+  }
+
+  static class Diagnostic {
+    String message;
+    Integer line;
+    Integer col;
   }
 
   static class ContextualAnalysisRequest {

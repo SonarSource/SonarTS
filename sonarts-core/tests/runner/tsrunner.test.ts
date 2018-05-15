@@ -81,6 +81,14 @@ it("should process files with BOM correctly", () => {
   });
 });
 
+it("should report syntax errors", () => {
+  const filepath = path.join(__dirname, "./fixtures/syntax-error-project/syntax-error.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/syntax-error-project/tsconfig.json");
+  const result = processRequest(inputForRequest(filepath, tsconfig));
+
+  expect(result[0].diagnostics).toEqual([{ col: 0, line: 4, message: "Expression expected." }]);
+});
+
 function inputForRequest(filepath: string, tsconfig: string): string {
   return JSON.stringify({
     filepaths: [path.normalize(filepath)],

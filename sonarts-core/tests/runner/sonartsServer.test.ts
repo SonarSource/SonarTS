@@ -57,8 +57,16 @@ it("creates cross-file type-checker-based issue", async () => {
 });
 
 it("is able to process partial request", async () => {
-  const response = await sendRequest(client, "console.log('hello')".repeat(10000));
+  const response = await sendRequest(client, "console.log('hello');".repeat(10000));
   expect(getRules(response.issues)).toEqual([]);
+});
+
+it("reports syntax error", async () => {
+  let response = await sendRequest(client, `function foo() { const x = `);
+  expect(response.diagnostics).toEqual([
+    { col: 26, line: 1, message: "Expression expected." },
+    { col: 27, line: 1, message: "'}' expected." },
+  ]);
 });
 
 function getRules(issues: any[]) {

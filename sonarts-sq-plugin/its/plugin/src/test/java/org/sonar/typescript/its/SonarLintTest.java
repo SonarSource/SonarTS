@@ -27,7 +27,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sonarsource.sonarlint.core.StandaloneSonarLintEngineImpl;
+import org.sonarsource.sonarlint.core.client.api.common.analysis.AnalysisResults;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.ClientInputFile;
 import org.sonarsource.sonarlint.core.client.api.common.analysis.Issue;
 import org.sonarsource.sonarlint.core.client.api.standalone.StandaloneAnalysisConfiguration;
@@ -82,7 +82,7 @@ public class SonarLintTest {
 
     StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(), Collections.singletonList
       (inputFile), ImmutableMap.of());
-    sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
+    AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
       tuple("typescript:S2589", 3, inputFile.getPath(), "MAJOR"),
@@ -91,7 +91,26 @@ public class SonarLintTest {
       tuple("typescript:S108", 3, inputFile.getPath(), "MAJOR"));
 
     assertThat(logs).contains("SonarTS Server is started", "Started SonarTS Analysis");
+    assertThat(results.failedAnalysisFiles()).isEmpty();
   }
+
+  @Test
+  public void reportParsingError() throws Exception {
+    Files.write(projectDir.toPath().resolve("tsconfig.json"), "{}".getBytes(StandardCharsets.UTF_8));
+    ClientInputFile inputFile = prepareInputFile("foo.ts",
+      "function foo() {\n" +
+        "    let x = 4; \n" +
+        "    if (x = \n" +
+        "}");
+
+    final List<Issue> issues = new ArrayList<>();
+
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(),
+      Collections.singletonList(inputFile), ImmutableMap.of());
+    AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
+    assertThat(results.failedAnalysisFiles()).containsExactly(inputFile);
+  }
+
 
   private ClientInputFile prepareInputFile(String filename, String content) throws IOException {
     Path filePath = projectDir.toPath().resolve(filename).toAbsolutePath();
