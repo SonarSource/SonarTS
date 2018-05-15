@@ -24,4 +24,16 @@ export function isArray(node: ts.Node, typeChecker: ts.TypeChecker): boolean {
   return !!type.symbol && type.symbol.name === "Array";
 }
 
+export function isNullType(type: ts.Type) {
+  return Boolean(type.flags & ts.TypeFlags.Null);
+}
+
+export function isUndefinedType(type: ts.Type) {
+  return Boolean(type.flags & ts.TypeFlags.Undefined);
+}
+
+export function isVoidType(type: ts.Type) {
+  return Boolean(type.flags & ts.TypeFlags.Void);
+}
+
 export const ARRAY_MUTATING_CALLS = ["reverse", "sort"];

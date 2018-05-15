@@ -252,15 +252,3 @@ export const COMPOUND_ASSIGNMENTS = [
 ];
 
 export const ACCESS_MODIFIERS = [Kind.PublicKeyword, Kind.PrivateKeyword, Kind.ProtectedKeyword];
-
-export function isNullType(type: ts.Type) {
-  return Boolean(type.flags & ts.TypeFlags.Null);
-}
-
-export function isUndefinedType(type: ts.Type) {
-  return Boolean(type.flags & ts.TypeFlags.Undefined);
-}
-
-export function isVoidType(type: ts.Type) {
-  return Boolean(type.flags & ts.TypeFlags.Void);
-}
