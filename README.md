@@ -52,6 +52,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Functions should not have too many lines of code ([`no-big-function`])
 * Sections of code should not be "commented out" ([`no-commented-code`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
+* Union and intersection types should not be defined with duplicated elements ([`no-duplicate-in-composite`])
 * String literals should not be duplicated ([`no-duplicate-string`])
 * Two branches in a conditional structure should not have exactly the same implementation ([`no-duplicated-branches`])
 * Nested blocks of code should not be left empty ([`no-empty-nested-blocks`])
@@ -91,6 +92,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
 [`no-commented-code`]: ./sonarts-core/docs/rules/no-commented-code.md
 [`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md
+[`no-duplicate-in-composite`]: ./sonarts-core/docs/rules/no-duplicate-in-composite.md
 [`no-duplicate-string`]: ./sonarts-core/docs/rules/no-duplicate-string.md
 [`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
 [`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
