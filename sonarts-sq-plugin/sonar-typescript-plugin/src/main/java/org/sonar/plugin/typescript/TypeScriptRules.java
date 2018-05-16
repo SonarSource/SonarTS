@@ -84,6 +84,7 @@ import org.sonar.plugin.typescript.rules.NoIdenticalFunctions;
 import org.sonar.plugin.typescript.rules.NoIgnoredInitialValue;
 import org.sonar.plugin.typescript.rules.NoIgnoredReturn;
 import org.sonar.plugin.typescript.rules.NoImplicitDependencies;
+import org.sonar.plugin.typescript.rules.NoInMisuse;
 import org.sonar.plugin.typescript.rules.NoInconsistentReturn;
 import org.sonar.plugin.typescript.rules.NoInferrableTypes;
 import org.sonar.plugin.typescript.rules.NoInternalModule;
@@ -270,6 +271,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoIgnoredInitialValue.class,
       NoIgnoredReturn.class,
       NoImplicitDependencies.class,
+      NoInMisuse.class,
       NoInconsistentReturn.class,
       NoInferrableTypes.class,
       NoInternalModule.class,

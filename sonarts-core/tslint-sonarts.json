@@ -24,6 +24,7 @@
     "no-identical-functions": true,
     "no-ignored-initial-value": true,
     "no-ignored-return": true,
+    "no-in-misuse": true,
     "no-inconsistent-return": false,
     "no-misleading-array-reverse": true,
     "no-misspelled-operator": true,

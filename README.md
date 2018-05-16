@@ -31,6 +31,7 @@ Some rules are raising issues on unused values ([`no-useless-increment`]), which
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Function parameters, caught exceptions and foreach variables' initial values should not be ignored ([`no-ignored-initial-value`]) ([`requires type-check`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
+* "in" operator should not be used on array ([`no-in-misuse`])
 * `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
@@ -107,6 +108,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-identical-functions`]: ./sonarts-core/docs/rules/no-identical-functions.md
 [`no-ignored-initial-value`]: ./sonarts-core/docs/rules/no-ignored-initial-value.md
 [`no-ignored-return`]: ./sonarts-core/docs/rules/no-ignored-return.md
+[`no-in-misuse`]: ./sonarts-core/docs/rules/no-in-misuse.md
 [`no-inconsistent-return`]: ./sonarts-core/docs/rules/no-inconsistent-return.md
 [`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
