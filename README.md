@@ -18,7 +18,7 @@ How does it work?
 
 ### Bug Detection :bug:
 
-Rules in this category aim to find places in code which has a high chance to be bugs, i.e. don't work as indented. 
+Rules in this category aim to find places in code which has a high chance to be bugs, i.e. don't work as indented.
 Most of the time this is a result of bad copy-paste ([`no-identical-conditions`]) or improvident API usage ([`no-misleading-array-reverse`]).
 Some rules are raising issues on unused values ([`no-useless-increment`]), which is at best wasted code and at worst a bug.
 
@@ -48,6 +48,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 
 * Cognitive Complexity of functions should not be too high ([`cognitive-complexity`])
 * Method overloads should be grouped together ([`consecutive-overloads`])
+* Union types should not have too many elements ([`max-union-size`])
 * Functions should not be too complex ([`mccabe-complexity`])
 * Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
@@ -88,6 +89,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 
 [`cognitive-complexity`]: ./sonarts-core/docs/rules/cognitive-complexity.md
 [`consecutive-overloads`]: ./sonarts-core/docs/rules/consecutive-overloads.md
+[`max-union-size`]: ./sonarts-core/docs/rules/max-union-size.md
 [`mccabe-complexity`]: ./sonarts-core/docs/rules/mccabe-complexity.md
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
 [`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
@@ -142,7 +144,6 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`prefer-promise-shorthand`]: ./sonarts-core/docs/rules/prefer-promise-shorthand.md
 [`use-primitive-type`]: ./sonarts-core/docs/rules/use-primitive-type.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
-
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
 ## Prerequisites
@@ -172,6 +173,7 @@ npm install tslint-sonarts -g   # or install globally
 ```
 tslint --project ./tsconfig.json 'src/**/*.{ts,tsx}'
 ```
+
 _[We also have a plugin for ESLint](https://github.com/SonarSource/eslint-plugin-sonarjs)_
 
 ## Use in SonarQube
