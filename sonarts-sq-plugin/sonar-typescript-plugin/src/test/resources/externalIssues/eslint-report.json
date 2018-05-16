@@ -1,0 +1,21 @@
+[
+  {
+    "filePath":"myFile.ts",
+    "messages":[
+      {
+        "ruleId":"use-isnan",
+        "message":"Use the isNaN function to compare with NaN.",
+        "line":2,
+        "column":9,
+        "endLine":2,
+        "endColumn":17
+      },
+      {
+        "ruleId": "semi",
+        "message": "Use the isNaN function to compare with NaN.",
+        "line": 3,
+        "column": 20
+      }
+    ]
+  }
+]

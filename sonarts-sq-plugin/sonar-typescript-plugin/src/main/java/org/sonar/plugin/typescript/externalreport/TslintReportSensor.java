@@ -19,7 +19,6 @@
  */
 package org.sonar.plugin.typescript.externalreport;
 
-import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,30 +29,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.rule.CheckFactory;
-import org.sonar.api.batch.rule.Severity;
-import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
-import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.rules.RuleType;
-import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonar.plugin.typescript.TypeScriptLanguage;
 import org.sonar.plugin.typescript.TypeScriptRules;
 
 import static org.sonar.plugin.typescript.TypeScriptPlugin.TSLINT_REPORT_PATHS;
 
-public class TslintReportSensor implements Sensor {
+public class TslintReportSensor extends AbstractReportSensor {
 
   private static final Logger LOG = Loggers.get(TslintReportSensor.class);
-  private final Gson gson = new Gson();
 
   // key - tslint key, value - SQ key
   private final Map<String, String> activatedRules = new HashMap<>();
@@ -127,26 +118,7 @@ public class TslintReportSensor implements Sensor {
   }
 
   @Override
-  public void execute(SensorContext context) {
-    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
-    String[] tslintReportPaths = context.config().getStringArray(TSLINT_REPORT_PATHS);
-
-    if (tslintReportPaths.length == 0) {
-      return;
-    }
-
-    if (!externalIssuesSupported) {
-      LOG.error("Import of external issues requires SonarQube 7.2 or greater.");
-      return;
-    }
-
-    for (String reportPath : tslintReportPaths) {
-      File tslintReport = getIOFile(context.fileSystem().baseDir(), reportPath);
-      importTslintReport(tslintReport, context);
-    }
-  }
-
-  private void importTslintReport(File report, SensorContext context) {
+  void importReport(File report, SensorContext context) {
     LOG.info("Importing {}", report.getAbsoluteFile());
 
     try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(report), StandardCharsets.UTF_8)) {
@@ -155,7 +127,7 @@ public class TslintReportSensor implements Sensor {
         saveTslintError(context, tslintError);
       }
     } catch (IOException e) {
-      LOG.error("No TSLint issues information will be saved as the report file can't be read.", e);
+      LOG.error(FILE_EXCEPTION_MESSAGE, e);
     }
   }
 
@@ -168,10 +140,8 @@ public class TslintReportSensor implements Sensor {
       return;
     }
 
-    FilePredicates predicates = context.fileSystem().predicates();
-    InputFile inputFile = context.fileSystem().inputFile(predicates.or(predicates.hasRelativePath(tslintError.name), predicates.hasAbsolutePath(tslintError.name)));
+    InputFile inputFile = getInputFile(context, tslintError.name);
     if (inputFile == null) {
-      LOG.warn("No input file found for " + tslintError.name + ". No TSLint issues will be imported on this file.");
       return;
     }
     NewExternalIssue newExternalIssue = context.newExternalIssue();
@@ -184,49 +154,42 @@ public class TslintReportSensor implements Sensor {
     newExternalIssue
       .at(primaryLocation)
       .forRule(RuleKey.of("tslint", tslintKey))
-      .type(BUG_TSLINT_RULES.contains(tslintKey) ? RuleType.BUG : RuleType.CODE_SMELL)
-      .severity(Severity.MAJOR)
-      .remediationEffortMinutes(5L)
+      .type(ruleType(tslintKey))
+      .severity(DEFAULT_SEVERITY)
+      .remediationEffortMinutes(DEFAULT_REMEDIATION_COST)
       .save();
   }
 
   private static TextRange getLocation(TslintError tslintError, InputFile inputFile) {
-    TextRange location;
     if (samePosition(tslintError.startPosition, tslintError.endPosition)) {
       // tslint allows issue location with 0 length, SonarQube doesn't allow that
-      location = inputFile.selectLine(tslintError.startPosition.line + 1);
+      return inputFile.selectLine(tslintError.startPosition.line + 1);
     } else {
-      location = inputFile.newRange(
+      return inputFile.newRange(
         tslintError.startPosition.line + 1,
         tslintError.startPosition.character,
         tslintError.endPosition.line + 1,
         tslintError.endPosition.character);
     }
-    return location;
   }
 
   private static boolean samePosition(TslintPosition p1, TslintPosition p2) {
     return p1.line == p2.line && p1.character == p2.character;
   }
 
-  /**
-   * Returns a java.io.File for the given path.
-   * If path is not absolute, returns a File with module base directory as parent path.
-   */
-  private static File getIOFile(File baseDir, String path) {
-    File file = new File(path);
-    if (!file.isAbsolute()) {
-      file = new File(baseDir, path);
-    }
-
-    return file;
+  @Override
+  String linterName() {
+    return "TSLint";
   }
 
   @Override
-  public void describe(SensorDescriptor sensorDescriptor) {
-    sensorDescriptor
-      .onlyOnLanguage(TypeScriptLanguage.KEY)
-      .name("Import of TSLint issues");
+  Set<String> bugRuleKeys() {
+    return BUG_TSLINT_RULES;
+  }
+
+  @Override
+  String reportsPropertyName() {
+    return TSLINT_REPORT_PATHS;
   }
 
   private static class TslintError {
