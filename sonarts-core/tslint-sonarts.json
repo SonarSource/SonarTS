@@ -1,6 +1,7 @@
 {
   "rules": {
     "cognitive-complexity": true,
+    "consecutive-overloads": true,
     "mccabe-complexity": false,
     "no-accessor-field-mismatch": true,
     "no-all-duplicated-branches": true,

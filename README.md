@@ -47,6 +47,7 @@ These rules also help to keep the high code quality and readability ([`no-commen
 And finally some rules report issues on different suspicious code patters ([`no-dead-store`], [`no-gratuitous-expressions`]).
 
 * Cognitive Complexity of functions should not be too high ([`cognitive-complexity`])
+* Method overloads should be grouped together ([`consecutive-overloads`])
 * Functions should not be too complex ([`mccabe-complexity`])
 * Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
@@ -86,6 +87,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
 
 [`cognitive-complexity`]: ./sonarts-core/docs/rules/cognitive-complexity.md
+[`consecutive-overloads`]: ./sonarts-core/docs/rules/consecutive-overloads.md
 [`mccabe-complexity`]: ./sonarts-core/docs/rules/mccabe-complexity.md
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
 [`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
