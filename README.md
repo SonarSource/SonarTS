@@ -73,6 +73,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * "switch" statements should have at least 3 "case" clauses ([`no-small-switch`])
 * Statements should be on separate lines ([`no-statements-same-line`])
 * Jump statements should not be used unconditionally ([`no-unconditional-jump`])
+* "undefined" should not be passed as the value of optional parameters ([`no-undefined-argument`])
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
@@ -124,6 +125,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-small-switch`]: ./sonarts-core/docs/rules/no-small-switch.md
 [`no-statements-same-line`]: ./sonarts-core/docs/rules/no-statements-same-line.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
+[`no-undefined-argument`]: ./sonarts-core/docs/rules/no-undefined-argument.md
 [`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md
 [`no-unthrown-error`]: ./sonarts-core/docs/rules/no-unthrown-error.md
 [`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md

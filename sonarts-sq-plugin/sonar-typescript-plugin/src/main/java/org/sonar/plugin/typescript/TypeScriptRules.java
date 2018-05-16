@@ -112,6 +112,7 @@ import org.sonar.plugin.typescript.rules.NoStatementsSameLine;
 import org.sonar.plugin.typescript.rules.NoStringThrow;
 import org.sonar.plugin.typescript.rules.NoThisAssignment;
 import org.sonar.plugin.typescript.rules.NoUnconditionalJump;
+import org.sonar.plugin.typescript.rules.NoUndefinedArgument;
 import org.sonar.plugin.typescript.rules.NoUnenclosedMultilineBlock;
 import org.sonar.plugin.typescript.rules.NoUnsafeFinally;
 import org.sonar.plugin.typescript.rules.NoUnthrownError;
@@ -299,6 +300,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoStringThrow.class,
       NoThisAssignment.class,
       NoUnconditionalJump.class,
+      NoUndefinedArgument.class,
       NoUnenclosedMultilineBlock.class,
       NoUnsafeFinally.class,
       NoUnthrownError.class,

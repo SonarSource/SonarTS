@@ -40,6 +40,7 @@
     "no-small-switch": true,
     "no-statements-same-line": true,
     "no-unconditional-jump": true,
+    "no-undefined-argument": true,
     "no-unenclosed-multiline-block": true,
     "no-unthrown-error": true,
     "no-unused-array": true,
