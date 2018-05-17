@@ -25,7 +25,6 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.sonar.api.SonarQubeSide;
 import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
@@ -45,9 +44,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 
 public class EslintReportSensorTest {
-
-  @Rule
-  public TemporaryFolder tmpDir = new TemporaryFolder();
 
   @Rule
   public final LogTester logTester = new LogTester();
