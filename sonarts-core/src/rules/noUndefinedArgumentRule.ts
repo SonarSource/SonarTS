@@ -50,19 +50,23 @@ class Visitor extends TypedSonarRuleVisitor {
     }
 
     const lastArgument = args[args.length - 1];
-    if (isIdentifier(lastArgument) && lastArgument.text === "undefined" && this.isLastParameterOptional(node)) {
+    if (
+      isIdentifier(lastArgument) &&
+      lastArgument.text === "undefined" &&
+      this.isOptionalParameter(args.length - 1, node)
+    ) {
       this.addIssue(lastArgument, Rule.MESSAGE);
     }
 
     super.visitCallExpression(node);
   }
 
-  private isLastParameterOptional(node: ts.CallExpression) {
+  private isOptionalParameter(parameterIndex: number, node: ts.CallExpression) {
     const declaration = this.program.getTypeChecker().getResolvedSignature(node).declaration;
     if (isFunctionLikeDeclaration(declaration)) {
       const { parameters } = declaration;
-      const lastParameter = parameters[parameters.length - 1];
-      return lastParameter && (lastParameter.initializer || lastParameter.questionToken);
+      const parameter = parameters[parameterIndex];
+      return parameter && (parameter.initializer || parameter.questionToken);
     }
     return false;
   }

@@ -1,4 +1,4 @@
-export function foo(p1: number, p2?: number, p3 = 42) {
+export function foo(p1: number | undefined, p2?: number, p3 = 42) {
 }
 
 foo(1, 2, 3);
@@ -6,6 +6,7 @@ foo(1, 2);
 foo(1);
 foo(1, 2, 42); // OK when default value is passed
 foo(1, 2, [undefined].length);
+foo(undefined); // OK, it's not an optional parameter 
 
 foo(1, 2, undefined);
 //        ^^^^^^^^^ {{Remove this redundant "undefined".}}
