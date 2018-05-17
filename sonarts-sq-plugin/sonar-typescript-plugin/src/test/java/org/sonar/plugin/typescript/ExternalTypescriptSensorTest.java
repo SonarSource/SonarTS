@@ -196,8 +196,8 @@ public class ExternalTypescriptSensorTest {
     executeSensor(sensorContext, testBundle);
   }
 
-  @Test
-  public void should_log_and_stop_with_old_node() throws Exception {
+  @Test(expected = IllegalStateException.class)
+  public void should_log_and_fail_with_old_node() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -207,13 +207,10 @@ public class ExternalTypescriptSensorTest {
 
     createTestInputFile(sensorContext);
     executeSensor(sensorContext, testBundle);
-
-    assertThat(logTester.logs()).contains("Only Node.js v6 or later is supported, got v4.2.4");
-    assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
-  @Test
-  public void should_log_and_stop_with_invalid_node_version() throws Exception {
+  @Test(expected = IllegalStateException.class)
+  public void should_log_and_fail_with_invalid_node_version() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -223,9 +220,6 @@ public class ExternalTypescriptSensorTest {
 
     createTestInputFile(sensorContext);
     executeSensor(sensorContext, testBundle);
-
-    assertThat(logTester.logs()).contains("Failed to parse Node.js version, got 'Invalid version'");
-    assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
   @Test
@@ -237,7 +231,7 @@ public class ExternalTypescriptSensorTest {
 
     executeSensor(sensorContext, testBundle);
 
-    assertThat(logTester.logs()).contains("No tsconfig.json file found for [" +
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("No tsconfig.json file found for [" +
       inputFile.uri() + "] (looking up the directories tree until project base directory [" +
       sensorContext.fileSystem().baseDir().getAbsolutePath() + "]). This file will not be analyzed.");
   }
