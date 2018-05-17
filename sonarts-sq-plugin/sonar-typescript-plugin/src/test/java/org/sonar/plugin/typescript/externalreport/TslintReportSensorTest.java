@@ -164,7 +164,7 @@ public class TslintReportSensorTest {
     tslintReportSensor.execute(context);
 
     assertThat(context.allExternalIssues()).isEmpty();
-    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("No TSLint issues information will be saved as the report file can't be read.");
+    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("No issues information will be saved as the report file can't be read.");
   }
 
   @Test

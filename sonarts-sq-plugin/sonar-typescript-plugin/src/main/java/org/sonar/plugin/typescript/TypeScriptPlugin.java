@@ -25,6 +25,7 @@ import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.utils.Version;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
+import org.sonar.plugin.typescript.externalreport.EslintReportSensor;
 import org.sonar.plugin.typescript.externalreport.TslintReportSensor;
 import org.sonar.plugin.typescript.lcov.LCOVCoverageSensor;
 
@@ -44,6 +45,9 @@ public class TypeScriptPlugin implements Plugin {
   public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.reportPaths";
   public static final String TSLINT_REPORT_PATHS_DEFAULT_VALUE = "";
 
+  public static final String ESLINT_REPORT_PATHS = "sonar.typescript.eslint.reportPaths";
+  public static final String ESLINT_REPORT_PATHS_DEFAULT_VALUE = "";
+
   public static final String NODE_EXECUTABLE = "sonar.typescript.node";
   public static final String NODE_EXECUTABLE_DEFAULT = "node";
 
@@ -60,6 +64,7 @@ public class TypeScriptPlugin implements Plugin {
       TypeScriptRulesDefinition.class,
       TypeScriptExclusionsFileFilter.class,
       TslintReportSensor.class,
+      EslintReportSensor.class,
       new SonarTSCoreBundleFactory(SONARTS_BUNDLE_ZIP),
       PropertyDefinition.builder(FILE_SUFFIXES_KEY)
         .defaultValue(FILE_SUFFIXES_DEFVALUE)
@@ -114,6 +119,17 @@ public class TypeScriptPlugin implements Plugin {
           .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
           .name("TSLint Report Files")
           .description("Paths (absolute or relative) to the JSON files with TSLint errors/issues.")
+          .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
+          .subCategory(GENERAL_SUBCATEGORY)
+          .category(TYPESCRIPT_CATEGORY)
+          .multiValues(true)
+          .build());
+
+      context.addExtension(
+        PropertyDefinition.builder(ESLINT_REPORT_PATHS)
+          .defaultValue(ESLINT_REPORT_PATHS_DEFAULT_VALUE)
+          .name("ESLint Report Files")
+          .description("Paths (absolute or relative) to the JSON files with ESLint errors/issues.")
           .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
           .subCategory(GENERAL_SUBCATEGORY)
           .category(TYPESCRIPT_CATEGORY)
