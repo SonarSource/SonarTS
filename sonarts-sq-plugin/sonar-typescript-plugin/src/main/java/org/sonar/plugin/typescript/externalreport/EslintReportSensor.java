@@ -101,6 +101,10 @@ public class EslintReportSensor extends AbstractReportSensor {
 
   private void saveEslintError(SensorContext context, EslintError eslintError, InputFile inputFile) {
     String eslintKey = eslintError.ruleId;
+    if (eslintKey == null) {
+      LOG.warn("Parse error issue from ESLint will not be imported, file " + inputFile.uri());
+      return;
+    }
 
     NewExternalIssue newExternalIssue = context.newExternalIssue();
 

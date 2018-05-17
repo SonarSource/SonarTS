@@ -17,5 +17,17 @@
         "column": 20
       }
     ]
+  },
+  {
+    "filePath":"parseError.ts",
+    "messages": [
+      {
+        "ruleId": null,
+        "severity": 2,
+        "message": "Parsing error: 'as' expected.",
+        "line": 1,
+        "column": 9
+      }
+    ]
   }
 ]

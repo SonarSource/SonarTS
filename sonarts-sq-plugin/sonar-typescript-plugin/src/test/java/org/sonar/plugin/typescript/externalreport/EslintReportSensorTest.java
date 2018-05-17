@@ -66,6 +66,7 @@ public class EslintReportSensorTest {
   public void setUp() throws Exception {
     context.setRuntime(getRuntime(7, 2));
     context.fileSystem().add(inputFile);
+    context.fileSystem().add(createInputFile(context, CONTENT, "parseError.ts"));
   }
 
   @Test
