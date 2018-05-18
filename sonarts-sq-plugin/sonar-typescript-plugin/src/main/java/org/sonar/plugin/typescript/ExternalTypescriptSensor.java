@@ -112,10 +112,7 @@ public class ExternalTypescriptSensor implements Sensor {
   private void analyze(
     Iterable<InputFile> inputFiles, SensorContext sensorContext, TypeScriptRules typeScriptRules, ExecutableBundle executableBundle, @Nullable File localTypescript) {
 
-    if (!isCompatibleNodeVersion(executableBundle.getNodeExecutable())) {
-      LOG.error("No TypeScript files will be analyzed");
-      return;
-    }
+    checkCompatibleNodeVersion(executableBundle.getNodeExecutable());
 
     File projectBaseDir = sensorContext.fileSystem().baseDir();
 
@@ -150,16 +147,18 @@ public class ExternalTypescriptSensor implements Sensor {
     }
   }
 
-  private static boolean isCompatibleNodeVersion(String nodeExecutable) {
+  private static void checkCompatibleNodeVersion(String nodeExecutable) {
     LOG.debug("Checking node version");
+    String messageSuffix = "No TypeScript files will be analyzed. You can exclude TypeScript files from analysis with 'sonar.exclusions' property.";
 
     String version;
     try {
       Process process = Runtime.getRuntime().exec(nodeExecutable + " -v");
       version = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8).trim();
     } catch (Exception e) {
-      LOG.error("Failed to get Node.js version", e);
-      return false;
+      String message = "Failed to get Node.js version." + messageSuffix;
+      LOG.error(message, e);
+      throw new IllegalStateException(message, e);
     }
 
     Pattern versionPattern = Pattern.compile("v?(\\d+)\\.\\d+\\.\\d+");
@@ -167,16 +166,17 @@ public class ExternalTypescriptSensor implements Sensor {
     if (versionMatcher.matches()) {
       int major = Integer.parseInt(versionMatcher.group(1));
       if (major < MIN_NODE_VERSION) {
-        LOG.error(String.format("Only Node.js v%s or later is supported, got %s", MIN_NODE_VERSION, version));
-        return false;
+        String message = String.format("Only Node.js v%s or later is supported, got %s. %s", MIN_NODE_VERSION, version, messageSuffix);
+        LOG.error(message);
+        throw new IllegalStateException(message);
       }
     } else {
-      LOG.error(String.format("Failed to parse Node.js version, got '%s'", version));
-      return false;
+      String message = String.format("Failed to parse Node.js version, got '%s'. %s", version, messageSuffix);
+      LOG.error(message);
+      throw new IllegalStateException(message);
     }
 
     LOG.debug(String.format("Using Node.js %s", version));
-    return true;
   }
 
   private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
@@ -330,7 +330,7 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private static class DetectMissingTypescript implements ExternalProcessStreamConsumer.StreamConsumer {
 
-    private boolean tsNotFound;
+    boolean tsNotFound;
 
     @Override
     public void consumeLine(String line) {
