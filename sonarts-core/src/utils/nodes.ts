@@ -233,3 +233,7 @@ export function isVariableStatement(node: ts.Node): node is ts.VariableStatement
 export function isUnionOrIntersectionTypeNode(node: ts.Node): node is ts.UnionOrIntersectionTypeNode {
   return is(node, ts.SyntaxKind.UnionType, ts.SyntaxKind.IntersectionType);
 }
+
+export function isSignatureDeclaration(node: ts.Node): node is ts.SignatureDeclaration {
+  return "parameters" in node;
+}

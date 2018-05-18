@@ -35,11 +35,11 @@ import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
-import org.sonar.plugin.typescript.rules.AdjacentOverloadSignatures;
 import org.sonar.plugin.typescript.rules.AwaitPromise;
 import org.sonar.plugin.typescript.rules.BanCommaOperator;
 import org.sonar.plugin.typescript.rules.ClassName;
 import org.sonar.plugin.typescript.rules.CognitiveComplexity;
+import org.sonar.plugin.typescript.rules.ConsecutiveOverloads;
 import org.sonar.plugin.typescript.rules.Curly;
 import org.sonar.plugin.typescript.rules.Deprecation;
 import org.sonar.plugin.typescript.rules.Eofline;
@@ -223,11 +223,11 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
 
   public static List<Class<? extends TypeScriptRule>> getRuleClasses() {
     return Collections.unmodifiableList(Arrays.asList(
-      AdjacentOverloadSignatures.class,
       AwaitPromise.class,
       BanCommaOperator.class,
       ClassName.class,
       CognitiveComplexity.class,
+      ConsecutiveOverloads.class,
       Curly.class,
       Deprecation.class,
       Eofline.class,

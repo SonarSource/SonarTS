@@ -17,15 +17,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugin.typescript.rules;
+import { Rule } from "../../../src/rules/consecutiveOverloadsRule";
+import runRule from "../../runRule";
 
-import org.sonar.check.Rule;
-
-@Rule(key = "S4136")
-public class AdjacentOverloadSignatures extends TypeScriptRule {
-
-  @Override
-  public String tsLintKey() {
-    return "adjacent-overload-signatures";
-  }
-}
+it("raises error", () => {
+  runRule(Rule, __filename);
+});
