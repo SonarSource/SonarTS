@@ -1,4 +1,5 @@
 src/angular/modules/playground/src/animate/app/animate-app.ts: 67
+src/angular/packages/benchpress/src/web_driver_extension.ts: 16
 src/angular/packages/benchpress/src/webdriver/ios_driver_extension.ts: 96
 src/angular/packages/common/src/directives/ng_class.ts: 59
 src/angular/packages/common/src/directives/ng_style.ts: 64
@@ -18,6 +19,7 @@ src/angular/packages/platform-browser/animations/src/animation_renderer.ts: 125,
 src/angular/packages/platform-browser/src/dom/dom_renderer.ts: 208
 src/angular/packages/platform-server/src/server_renderer.ts: 167
 src/angular/packages/platform-webworker/src/web_workers/worker/renderer.ts: 279
+src/angular/packages/router/src/config.ts: 316
 src/angular/packages/router/src/utils/collection.ts: 93
 src/angular/packages/upgrade/src/common/angular1.ts: 32
 src/angular/packages/upgrade/static/src/common/angular1.ts: 32
@@ -44,6 +46,8 @@ src/emission/src/lib/components/home/artwork_rails/artwork_rail_header.tsx: 172
 src/emission/src/lib/components/home/artwork_rails/artwork_rail.tsx: 316,317
 src/emission/src/lib/components/related_artists/related_artist.tsx: 97,98
 src/emission/src/lib/containers/artist.tsx: 165,166,167,168
+src/emission/src/lib/containers/home.tsx: 19
+src/postgraphql/src/graphql/schema/createMutationGqlField.ts: 21,22
 src/postgraphql/src/graphql/schema/createMutationPayloadGqlType.ts: 15
 src/postgraphql/src/graphql/utils/buildObject.ts: 33
 src/postgraphql/src/postgraphql/schema/createPostGraphQLSchema.ts: 21
@@ -78,6 +82,7 @@ src/vscode/src/vs/editor/browser/standalone/standaloneLanguages.ts: 520
 src/vscode/src/vs/editor/browser/viewParts/currentLineHighlight/currentLineHighlight.ts: 20
 src/vscode/src/vs/editor/browser/viewParts/currentLineMarginHighlight/currentLineMarginHighlight.ts: 19
 src/vscode/src/vs/editor/common/config/editorOptions.ts: 138,264,378,451,463,708,727,1201,1333,1466,1525
+src/vscode/src/vs/editor/common/view/viewEvents.ts: 295
 src/vscode/src/vs/editor/contrib/referenceSearch/browser/referencesWidget.ts: 505
 src/vscode/src/vs/editor/test/common/viewModel/splitLinesCollection.test.ts: 727
 src/vscode/src/vs/platform/markers/common/problemMatcher.ts: 679

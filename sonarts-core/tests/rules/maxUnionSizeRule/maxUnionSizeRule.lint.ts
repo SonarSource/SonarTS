@@ -19,6 +19,9 @@ interface nokInterfaceDeclaration {
 // Not applied when using type alias statement
 type T = A | B | C | D;
 
+// Raise an issue if not at top level
+type U = (A | B | C | D) & E;
+//        ^^^^^^^^^^^^^ {{Refactor this union type to have less than 3 elements.}}
 function okFn(a: T) {}
 
 let okVarA : T;

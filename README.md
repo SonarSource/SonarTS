@@ -18,7 +18,7 @@ How does it work?
 
 ### Bug Detection :bug:
 
-Rules in this category aim to find places in code which has a high chance to be bugs, i.e. don't work as indented.
+Rules in this category aim to find places in code which has a high chance to be bugs, i.e. don't work as indented. 
 Most of the time this is a result of bad copy-paste ([`no-identical-conditions`]) or improvident API usage ([`no-misleading-array-reverse`]).
 Some rules are raising issues on unused values ([`no-useless-increment`]), which is at best wasted code and at worst a bug.
 
@@ -144,6 +144,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`prefer-promise-shorthand`]: ./sonarts-core/docs/rules/prefer-promise-shorthand.md
 [`use-primitive-type`]: ./sonarts-core/docs/rules/use-primitive-type.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
+
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
 ## Prerequisites
@@ -173,7 +174,6 @@ npm install tslint-sonarts -g   # or install globally
 ```
 tslint --project ./tsconfig.json 'src/**/*.{ts,tsx}'
 ```
-
 _[We also have a plugin for ESLint](https://github.com/SonarSource/eslint-plugin-sonarjs)_
 
 ## Use in SonarQube

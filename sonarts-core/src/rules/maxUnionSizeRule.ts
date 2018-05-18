@@ -21,7 +21,6 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
-import { ancestorsChain } from "../utils/navigation";
 import { is } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -56,6 +55,7 @@ class Visitor extends SonarRuleVisitor {
   constructor(ruleName: string, private readonly max: number) {
     super(ruleName);
   }
+
   public visitUnionTypeNode(node: ts.UnionTypeNode) {
     if (node.types.length > this.max && !this.isFromTypeStatement(node)) {
       this.addIssue(node, Rule.message(this.max));
@@ -64,6 +64,6 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private isFromTypeStatement(node: ts.UnionTypeNode) {
-    return ancestorsChain(node).some(parent => is(parent, ts.SyntaxKind.TypeAliasDeclaration));
+    return is(node.parent, ts.SyntaxKind.TypeAliasDeclaration);
   }
 }
