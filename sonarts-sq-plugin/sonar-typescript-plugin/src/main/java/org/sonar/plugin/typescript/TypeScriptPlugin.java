@@ -35,6 +35,7 @@ public class TypeScriptPlugin implements Plugin {
   private static final String TESTS_AND_COVERAGE_SUBCATEGORY = "Tests and Coverage";
   private static final String TYPESCRIPT_CATEGORY = "TypeScript";
   private static final String GENERAL_SUBCATEGORY = "General";
+  private static final String LINTER_SUBCATEGORY = "Rule Engines";
 
   static final String FILE_SUFFIXES_KEY = "sonar.typescript.file.suffixes";
   public static final String FILE_SUFFIXES_DEFVALUE = ".ts,.tsx";
@@ -56,12 +57,14 @@ public class TypeScriptPlugin implements Plugin {
 
   @Override
   public void define(Context context) {
+    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
+
     context.addExtensions(
       ExternalProcessStreamConsumer.class,
       TypeScriptLanguage.class,
       SonarWayProfile.class,
       SonarWayRecommendedProfile.class,
-      TypeScriptRulesDefinition.class,
+      new TypeScriptRulesDefinition(externalIssuesSupported),
       TypeScriptExclusionsFileFilter.class,
       TslintReportSensor.class,
       EslintReportSensor.class,
@@ -102,8 +105,6 @@ public class TypeScriptPlugin implements Plugin {
         .category(TYPESCRIPT_CATEGORY)
         .build());
 
-    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
-
     if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
       context.addExtension(ContextualSensor.class);
       context.addExtension(ContextualServer.class);
@@ -118,9 +119,9 @@ public class TypeScriptPlugin implements Plugin {
         PropertyDefinition.builder(TSLINT_REPORT_PATHS)
           .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
           .name("TSLint Report Files")
-          .description("Paths (absolute or relative) to the JSON files with TSLint errors/issues.")
+          .description("Paths (absolute or relative) to the JSON files with TSLint issues.")
           .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
-          .subCategory(GENERAL_SUBCATEGORY)
+          .subCategory(LINTER_SUBCATEGORY)
           .category(TYPESCRIPT_CATEGORY)
           .multiValues(true)
           .build());
@@ -129,9 +130,9 @@ public class TypeScriptPlugin implements Plugin {
         PropertyDefinition.builder(ESLINT_REPORT_PATHS)
           .defaultValue(ESLINT_REPORT_PATHS_DEFAULT_VALUE)
           .name("ESLint Report Files")
-          .description("Paths (absolute or relative) to the JSON files with ESLint errors/issues.")
+          .description("Paths (absolute or relative) to the JSON files with ESLint issues.")
           .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
-          .subCategory(GENERAL_SUBCATEGORY)
+          .subCategory(LINTER_SUBCATEGORY)
           .category(TYPESCRIPT_CATEGORY)
           .multiValues(true)
           .build());
