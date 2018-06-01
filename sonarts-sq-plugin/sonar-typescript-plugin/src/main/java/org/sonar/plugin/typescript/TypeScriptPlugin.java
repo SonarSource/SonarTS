@@ -35,7 +35,7 @@ public class TypeScriptPlugin implements Plugin {
   private static final String TESTS_AND_COVERAGE_SUBCATEGORY = "Tests and Coverage";
   private static final String TYPESCRIPT_CATEGORY = "TypeScript";
   private static final String GENERAL_SUBCATEGORY = "General";
-  private static final String LINTER_SUBCATEGORY = "Rule Engines";
+  private static final String LINTER_SUBCATEGORY = "Popular Rule Engines";
 
   static final String FILE_SUFFIXES_KEY = "sonar.typescript.file.suffixes";
   public static final String FILE_SUFFIXES_DEFVALUE = ".ts,.tsx";

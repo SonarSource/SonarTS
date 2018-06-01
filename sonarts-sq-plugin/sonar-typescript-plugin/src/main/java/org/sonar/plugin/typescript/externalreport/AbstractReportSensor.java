@@ -114,6 +114,7 @@ public abstract class AbstractReportSensor implements Sensor {
       for (ExternalRule rule : rules) {
         NewRule newRule = externalRepo.createRule(rule.name).setName(rule.description);
         newRule.setHtmlDescription(String.format(description, repositoryName, rule.name, rule.url, repositoryName));
+        newRule.setDebtRemediationFunction(newRule.debtRemediationFunctions().constantPerIssue(DEFAULT_REMEDIATION_COST + "min"));
         if (bugRules.contains(rule.name)) {
           newRule.setType(RuleType.BUG);
         }
