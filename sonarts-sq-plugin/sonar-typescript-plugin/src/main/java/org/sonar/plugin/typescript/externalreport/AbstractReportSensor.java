@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
@@ -108,7 +109,7 @@ public abstract class AbstractReportSensor implements Sensor {
     String pathToRulesMeta = "org/sonar/l10n/typescript/rules/" + repositoryKey + "/rules.json";
     String description = "See the description of %s rule <code>%s</code> at <a href=\"%s\">%s website</a>.";
 
-    try (InputStreamReader inputStreamReader = new InputStreamReader(AbstractReportSensor.class.getClassLoader().getResourceAsStream(pathToRulesMeta))) {
+    try (InputStreamReader inputStreamReader = new InputStreamReader(AbstractReportSensor.class.getClassLoader().getResourceAsStream(pathToRulesMeta), StandardCharsets.UTF_8)) {
       ExternalRule[] rules = gson.fromJson(inputStreamReader, ExternalRule[].class);
       for (ExternalRule rule : rules) {
         NewRule newRule = externalRepo.createRule(rule.name).setName(rule.description);
