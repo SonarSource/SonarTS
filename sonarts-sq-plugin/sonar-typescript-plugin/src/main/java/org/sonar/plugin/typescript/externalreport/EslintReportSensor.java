@@ -33,6 +33,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.server.rule.RulesDefinition.Context;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -80,6 +81,8 @@ public class EslintReportSensor extends AbstractReportSensor {
     "no-dupe-class-members",
     "no-new-symbol"));
 
+  private static final String REPOSITORY = "eslint";
+
   @Override
   void importReport(File report, SensorContext context) {
     LOG.info("Importing {}", report.getAbsoluteFile());
@@ -115,7 +118,7 @@ public class EslintReportSensor extends AbstractReportSensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .forRule(RuleKey.of("eslint", eslintKey))
+      .forRule(RuleKey.of(REPOSITORY, eslintKey))
       .type(ruleType(eslintKey))
       .severity(DEFAULT_SEVERITY)
       .remediationEffortMinutes(DEFAULT_REMEDIATION_COST)
@@ -133,6 +136,10 @@ public class EslintReportSensor extends AbstractReportSensor {
         eslintError.endLine,
         eslintError.endColumn - 1);
     }
+  }
+
+  public static void createExternalRuleRepository(Context context) {
+    createExternalRuleRepository(context, REPOSITORY, "ESLint", BUG_ESLINT_RULES);
   }
 
   @Override
@@ -163,4 +170,5 @@ public class EslintReportSensor extends AbstractReportSensor {
     int endLine;
     int endColumn;
   }
+
 }

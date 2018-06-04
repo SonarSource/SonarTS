@@ -33,21 +33,44 @@ public class TypeScriptRulesDefinitionTest {
 
   @Test
   public void test() {
-    RulesDefinition.Repository repository = buildRepository();
+    TypeScriptRulesDefinition rulesDefinition = new TypeScriptRulesDefinition(false);
+    RulesDefinition.Context context = new RulesDefinition.Context();
+    rulesDefinition.define(context);
+    RulesDefinition.Repository repository = context.repository("typescript");
+
+    assertThat(context.repositories()).hasSize(1);
 
     assertThat(repository.name()).isEqualTo("SonarAnalyzer");
     assertThat(repository.language()).isEqualTo("ts");
+    assertThat(repository.isExternal()).isEqualTo(false);
     assertThat(repository.rules()).hasSize(TypeScriptRules.getRuleClasses().size());
 
     assertRuleProperties(repository);
     assertAllRuleParametersHaveDescription(repository);
   }
 
-  private RulesDefinition.Repository buildRepository() {
-    TypeScriptRulesDefinition rulesDefinition = new TypeScriptRulesDefinition();
+
+  @Test
+  public void test_external_repositories() {
+    TypeScriptRulesDefinition rulesDefinition = new TypeScriptRulesDefinition(true);
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
-    return context.repository("typescript");
+    RulesDefinition.Repository tslintRepository = context.repository("external_tslint");
+    RulesDefinition.Repository eslintRepository = context.repository("external_eslint");
+
+    assertThat(context.repositories()).hasSize(3);
+
+    assertThat(tslintRepository.name()).isEqualTo("TSLint");
+    assertThat(eslintRepository.name()).isEqualTo("ESLint");
+
+    assertThat(tslintRepository.language()).isEqualTo("ts");
+    assertThat(eslintRepository.language()).isEqualTo("ts");
+
+    assertThat(tslintRepository.isExternal()).isEqualTo(true);
+    assertThat(eslintRepository.isExternal()).isEqualTo(true);
+
+    assertThat(tslintRepository.rules().size()).isEqualTo(144);
+    assertThat(eslintRepository.rules().size()).isEqualTo(257);
   }
 
   private void assertRuleProperties(Repository repository) {
@@ -65,6 +88,5 @@ public class TypeScriptRulesDefinitionTest {
       }
     }
   }
-
 
 }

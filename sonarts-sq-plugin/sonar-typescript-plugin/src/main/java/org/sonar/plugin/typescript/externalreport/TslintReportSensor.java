@@ -36,6 +36,7 @@ import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.server.rule.RulesDefinition.Context;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.TypeScriptRules;
@@ -107,6 +108,8 @@ public class TslintReportSensor extends AbstractReportSensor {
     "use-default-type-parameter",
     "use-isnan"));
 
+  private static final String REPOSITORY = "tslint";
+
   public TslintReportSensor(CheckFactory checkFactory) {
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     typeScriptRules.forEach(typeScriptRule -> {
@@ -153,7 +156,7 @@ public class TslintReportSensor extends AbstractReportSensor {
 
     newExternalIssue
       .at(primaryLocation)
-      .forRule(RuleKey.of("tslint", tslintKey))
+      .forRule(RuleKey.of(REPOSITORY, tslintKey))
       .type(ruleType(tslintKey))
       .severity(DEFAULT_SEVERITY)
       .remediationEffortMinutes(DEFAULT_REMEDIATION_COST)
@@ -192,6 +195,10 @@ public class TslintReportSensor extends AbstractReportSensor {
     return TSLINT_REPORT_PATHS;
   }
 
+  public static void createExternalRuleRepository(Context context) {
+    createExternalRuleRepository(context, REPOSITORY, "TSLint", BUG_TSLINT_RULES);
+  }
+
   private static class TslintError {
     TslintPosition startPosition;
     TslintPosition endPosition;
@@ -204,4 +211,5 @@ public class TslintReportSensor extends AbstractReportSensor {
     int character;
     int line;
   }
+
 }

@@ -20,12 +20,20 @@
 package org.sonar.plugin.typescript;
 
 import org.sonar.api.server.rule.RulesDefinition;
+import org.sonar.plugin.typescript.externalreport.EslintReportSensor;
+import org.sonar.plugin.typescript.externalreport.TslintReportSensor;
 
 
 public class TypeScriptRulesDefinition implements RulesDefinition {
 
   public static final String REPOSITORY_KEY = "typescript";
   public static final String RULE_REPOSITORY_NAME = "SonarAnalyzer";
+
+  private boolean externalIssuesSupported;
+
+  public TypeScriptRulesDefinition(boolean externalIssuesSupported) {
+    this.externalIssuesSupported = externalIssuesSupported;
+  }
 
   @Override
   public void define(Context context) {
@@ -34,5 +42,10 @@ public class TypeScriptRulesDefinition implements RulesDefinition {
       .setName(RULE_REPOSITORY_NAME);
     TypeScriptRules.addToRepository(repository);
     repository.done();
+
+    if (externalIssuesSupported) {
+      TslintReportSensor.createExternalRuleRepository(context);
+      EslintReportSensor.createExternalRuleRepository(context);
+    }
   }
 }
