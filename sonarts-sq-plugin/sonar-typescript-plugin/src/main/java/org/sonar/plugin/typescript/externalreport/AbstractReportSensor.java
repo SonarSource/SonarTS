@@ -112,10 +112,10 @@ public abstract class AbstractReportSensor implements Sensor {
     try (InputStreamReader inputStreamReader = new InputStreamReader(AbstractReportSensor.class.getClassLoader().getResourceAsStream(pathToRulesMeta), StandardCharsets.UTF_8)) {
       ExternalRule[] rules = gson.fromJson(inputStreamReader, ExternalRule[].class);
       for (ExternalRule rule : rules) {
-        NewRule newRule = externalRepo.createRule(rule.name).setName(rule.description);
-        newRule.setHtmlDescription(String.format(description, repositoryName, rule.name, rule.url, repositoryName));
+        NewRule newRule = externalRepo.createRule(rule.key).setName(rule.name);
+        newRule.setHtmlDescription(String.format(description, repositoryName, rule.key, rule.url, repositoryName));
         newRule.setDebtRemediationFunction(newRule.debtRemediationFunctions().constantPerIssue(DEFAULT_REMEDIATION_COST + "min"));
-        if (bugRules.contains(rule.name)) {
+        if (bugRules.contains(rule.key)) {
           newRule.setType(RuleType.BUG);
         }
       }
@@ -135,8 +135,8 @@ public abstract class AbstractReportSensor implements Sensor {
 
   private static class ExternalRule {
     String url;
+    String key;
     String name;
-    String description;
   }
 
 }

@@ -1,722 +1,722 @@
 [
   {
-    "name": "adjacent-overload-signatures",
-    "description": "Enforces function overloads to be consecutive.",
+    "key": "adjacent-overload-signatures",
+    "name": "Enforces function overloads to be consecutive.",
     "url": "https://palantir.github.io/tslint/rules/adjacent-overload-signatures"
   },
   {
-    "name": "align",
-    "description": "Enforces vertical alignment.",
+    "key": "align",
+    "name": "Enforces vertical alignment.",
     "url": "https://palantir.github.io/tslint/rules/align"
   },
   {
-    "name": "array-type",
-    "description": "Requires using either 'T[]' or 'Array<T>' for arrays.",
+    "key": "array-type",
+    "name": "Requires using either 'T[]' or 'Array<T>' for arrays.",
     "url": "https://palantir.github.io/tslint/rules/array-type"
   },
   {
-    "name": "arrow-parens",
-    "description": "Requires parentheses around the parameters of arrow function definitions.",
+    "key": "arrow-parens",
+    "name": "Requires parentheses around the parameters of arrow function definitions.",
     "url": "https://palantir.github.io/tslint/rules/arrow-parens"
   },
   {
-    "name": "arrow-return-shorthand",
-    "description": "Suggests to convert `() => { return x; }` to `() => x`.",
+    "key": "arrow-return-shorthand",
+    "name": "Suggests to convert `() => { return x; }` to `() => x`.",
     "url": "https://palantir.github.io/tslint/rules/arrow-return-shorthand"
   },
   {
-    "name": "await-promise",
-    "description": "Warns for an awaited value that is not a Promise.",
+    "key": "await-promise",
+    "name": "Warns for an awaited value that is not a Promise.",
     "url": "https://palantir.github.io/tslint/rules/await-promise"
   },
   {
-    "name": "ban-comma-operator",
-    "description": "Disallows the comma operator to be used.",
+    "key": "ban-comma-operator",
+    "name": "Disallows the comma operator to be used.",
     "url": "https://palantir.github.io/tslint/rules/ban-comma-operator"
   },
   {
-    "name": "ban",
-    "description": "Bans the use of specific functions or global methods.",
+    "key": "ban",
+    "name": "Bans the use of specific functions or global methods.",
     "url": "https://palantir.github.io/tslint/rules/ban"
   },
   {
-    "name": "ban-types",
-    "description": "Bans specific types from being used",
+    "key": "ban-types",
+    "name": "Bans specific types from being used",
     "url": "https://palantir.github.io/tslint/rules/ban-types"
   },
   {
-    "name": "binary-expression-operand-order",
-    "description": "In a binary expression, a literal should always be on the right-hand side if possible",
+    "key": "binary-expression-operand-order",
+    "name": "In a binary expression, a literal should always be on the right-hand side if possible",
     "url": "https://palantir.github.io/tslint/rules/binary-expression-operand-order"
   },
   {
-    "name": "callable-types",
-    "description": "An interface or literal type with just a call signature can be written as a function type.",
+    "key": "callable-types",
+    "name": "An interface or literal type with just a call signature can be written as a function type.",
     "url": "https://palantir.github.io/tslint/rules/callable-types"
   },
   {
-    "name": "class-name",
-    "description": "Enforces PascalCased class and interface names.",
+    "key": "class-name",
+    "name": "Enforces PascalCased class and interface names.",
     "url": "https://palantir.github.io/tslint/rules/class-name"
   },
   {
-    "name": "comment-format",
-    "description": "Enforces formatting rules for single-line comments.",
+    "key": "comment-format",
+    "name": "Enforces formatting rules for single-line comments.",
     "url": "https://palantir.github.io/tslint/rules/comment-format"
   },
   {
-    "name": "completed-docs",
-    "description": "Enforces JSDoc comments for important items be filled out.",
+    "key": "completed-docs",
+    "name": "Enforces JSDoc comments for important items be filled out.",
     "url": "https://palantir.github.io/tslint/rules/completed-docs"
   },
   {
-    "name": "curly",
-    "description": "Enforces braces for `if`/`for`/`do`/`while` statements.",
+    "key": "curly",
+    "name": "Enforces braces for `if`/`for`/`do`/`while` statements.",
     "url": "https://palantir.github.io/tslint/rules/curly"
   },
   {
-    "name": "cyclomatic-complexity",
-    "description": "Enforces a threshold of cyclomatic complexity.",
+    "key": "cyclomatic-complexity",
+    "name": "Enforces a threshold of cyclomatic complexity.",
     "url": "https://palantir.github.io/tslint/rules/cyclomatic-complexity"
   },
   {
-    "name": "deprecation",
-    "description": "Warns when deprecated APIs are used.",
+    "key": "deprecation",
+    "name": "Warns when deprecated APIs are used.",
     "url": "https://palantir.github.io/tslint/rules/deprecation"
   },
   {
-    "name": "encoding",
-    "description": "Enforces UTF-8 file encoding.",
+    "key": "encoding",
+    "name": "Enforces UTF-8 file encoding.",
     "url": "https://palantir.github.io/tslint/rules/encoding"
   },
   {
-    "name": "eofline",
-    "description": "Ensures the file ends with a newline.",
+    "key": "eofline",
+    "name": "Ensures the file ends with a newline.",
     "url": "https://palantir.github.io/tslint/rules/eofline"
   },
   {
-    "name": "file-header",
-    "description": "Enforces a certain header comment for all files, matched by a regular expression.",
+    "key": "file-header",
+    "name": "Enforces a certain header comment for all files, matched by a regular expression.",
     "url": "https://palantir.github.io/tslint/rules/file-header"
   },
   {
-    "name": "forin",
-    "description": "Requires a `for ... in` statement to be filtered with an `if` statement.",
+    "key": "forin",
+    "name": "Requires a `for ... in` statement to be filtered with an `if` statement.",
     "url": "https://palantir.github.io/tslint/rules/forin"
   },
   {
-    "name": "import-blacklist",
-    "description": "Disallows importing the specified modules directly via `import` and `require`",
+    "key": "import-blacklist",
+    "name": "Disallows importing the specified modules directly via `import` and `require`",
     "url": "https://palantir.github.io/tslint/rules/import-blacklist"
   },
   {
-    "name": "import-spacing",
-    "description": "Ensures proper spacing between import statement keywords",
+    "key": "import-spacing",
+    "name": "Ensures proper spacing between import statement keywords",
     "url": "https://palantir.github.io/tslint/rules/import-spacing"
   },
   {
-    "name": "indent",
-    "description": "Enforces indentation with tabs or spaces.",
+    "key": "indent",
+    "name": "Enforces indentation with tabs or spaces.",
     "url": "https://palantir.github.io/tslint/rules/indent"
   },
   {
-    "name": "interface-name",
-    "description": "Requires interface names to begin with a capital 'I'",
+    "key": "interface-name",
+    "name": "Requires interface names to begin with a capital 'I'",
     "url": "https://palantir.github.io/tslint/rules/interface-name"
   },
   {
-    "name": "interface-over-type-literal",
-    "description": "Prefer an interface declaration over a type literal (`type T = { ... }`)",
+    "key": "interface-over-type-literal",
+    "name": "Prefer an interface declaration over a type literal (`type T = { ... }`)",
     "url": "https://palantir.github.io/tslint/rules/interface-over-type-literal"
   },
   {
-    "name": "jsdoc-format",
-    "description": "Enforces basic format rules for JSDoc comments.",
+    "key": "jsdoc-format",
+    "name": "Enforces basic format rules for JSDoc comments.",
     "url": "https://palantir.github.io/tslint/rules/jsdoc-format"
   },
   {
-    "name": "label-position",
-    "description": "Only allows labels in sensible locations.",
+    "key": "label-position",
+    "name": "Only allows labels in sensible locations.",
     "url": "https://palantir.github.io/tslint/rules/label-position"
   },
   {
-    "name": "linebreak-style",
-    "description": "Enforces a consistent linebreak style.",
+    "key": "linebreak-style",
+    "name": "Enforces a consistent linebreak style.",
     "url": "https://palantir.github.io/tslint/rules/linebreak-style"
   },
   {
-    "name": "match-default-export-name",
-    "description": "Requires that a default import have the same name as the declaration it imports",
+    "key": "match-default-export-name",
+    "name": "Requires that a default import have the same name as the declaration it imports",
     "url": "https://palantir.github.io/tslint/rules/match-default-export-name"
   },
   {
-    "name": "max-classes-per-file",
-    "description": "A file may not contain more than the specified number of classes",
+    "key": "max-classes-per-file",
+    "name": "A file may not contain more than the specified number of classes",
     "url": "https://palantir.github.io/tslint/rules/max-classes-per-file"
   },
   {
-    "name": "max-file-line-count",
-    "description": "Requires files to remain under a certain number of lines",
+    "key": "max-file-line-count",
+    "name": "Requires files to remain under a certain number of lines",
     "url": "https://palantir.github.io/tslint/rules/max-file-line-count"
   },
   {
-    "name": "max-line-length",
-    "description": "Requires lines to be under a certain max length.",
+    "key": "max-line-length",
+    "name": "Requires lines to be under a certain max length.",
     "url": "https://palantir.github.io/tslint/rules/max-line-length"
   },
   {
-    "name": "member-access",
-    "description": "Requires explicit visibility declarations for class members.",
+    "key": "member-access",
+    "name": "Requires explicit visibility declarations for class members.",
     "url": "https://palantir.github.io/tslint/rules/member-access"
   },
   {
-    "name": "member-ordering",
-    "description": "Enforces member ordering.",
+    "key": "member-ordering",
+    "name": "Enforces member ordering.",
     "url": "https://palantir.github.io/tslint/rules/member-ordering"
   },
   {
-    "name": "new-parens",
-    "description": "Requires parentheses when invoking a constructor via the `new` keyword.",
+    "key": "new-parens",
+    "name": "Requires parentheses when invoking a constructor via the `new` keyword.",
     "url": "https://palantir.github.io/tslint/rules/new-parens"
   },
   {
-    "name": "newline-before-return",
-    "description": "Enforces blank line before return when not the only line in the block.",
+    "key": "newline-before-return",
+    "name": "Enforces blank line before return when not the only line in the block.",
     "url": "https://palantir.github.io/tslint/rules/newline-before-return"
   },
   {
-    "name": "newline-per-chained-call",
-    "description": "Requires that chained method calls be broken apart onto separate lines.",
+    "key": "newline-per-chained-call",
+    "name": "Requires that chained method calls be broken apart onto separate lines.",
     "url": "https://palantir.github.io/tslint/rules/newline-per-chained-call"
   },
   {
-    "name": "no-angle-bracket-type-assertion",
-    "description": "Requires the use of `as Type` for type assertions instead of `<Type>`.",
+    "key": "no-angle-bracket-type-assertion",
+    "name": "Requires the use of `as Type` for type assertions instead of `<Type>`.",
     "url": "https://palantir.github.io/tslint/rules/no-angle-bracket-type-assertion"
   },
   {
-    "name": "no-any",
-    "description": "Disallows usages of `any` as a type declaration.",
+    "key": "no-any",
+    "name": "Disallows usages of `any` as a type declaration.",
     "url": "https://palantir.github.io/tslint/rules/no-any"
   },
   {
-    "name": "no-arg",
-    "description": "Disallows use of `arguments.callee`.",
+    "key": "no-arg",
+    "name": "Disallows use of `arguments.callee`.",
     "url": "https://palantir.github.io/tslint/rules/no-arg"
   },
   {
-    "name": "no-bitwise",
-    "description": "Disallows bitwise operators.",
+    "key": "no-bitwise",
+    "name": "Disallows bitwise operators.",
     "url": "https://palantir.github.io/tslint/rules/no-bitwise"
   },
   {
-    "name": "no-boolean-literal-compare",
-    "description": "Warns on comparison to a boolean literal, as in `x === true`.",
+    "key": "no-boolean-literal-compare",
+    "name": "Warns on comparison to a boolean literal, as in `x === true`.",
     "url": "https://palantir.github.io/tslint/rules/no-boolean-literal-compare"
   },
   {
-    "name": "no-conditional-assignment",
-    "description": "Disallows any type of assignment in conditionals.",
+    "key": "no-conditional-assignment",
+    "name": "Disallows any type of assignment in conditionals.",
     "url": "https://palantir.github.io/tslint/rules/no-conditional-assignment"
   },
   {
-    "name": "no-consecutive-blank-lines",
-    "description": "Disallows one or more blank lines in a row.",
+    "key": "no-consecutive-blank-lines",
+    "name": "Disallows one or more blank lines in a row.",
     "url": "https://palantir.github.io/tslint/rules/no-consecutive-blank-lines"
   },
   {
-    "name": "no-console",
-    "description": "Bans the use of specified `console` methods.",
+    "key": "no-console",
+    "name": "Bans the use of specified `console` methods.",
     "url": "https://palantir.github.io/tslint/rules/no-console"
   },
   {
-    "name": "no-construct",
-    "description": "Disallows access to the constructors of `String`, `Number`, and `Boolean`.",
+    "key": "no-construct",
+    "name": "Disallows access to the constructors of `String`, `Number`, and `Boolean`.",
     "url": "https://palantir.github.io/tslint/rules/no-construct"
   },
   {
-    "name": "no-debugger",
-    "description": "Disallows `debugger` statements.",
+    "key": "no-debugger",
+    "name": "Disallows `debugger` statements.",
     "url": "https://palantir.github.io/tslint/rules/no-debugger"
   },
   {
-    "name": "no-default-export",
-    "description": "Disallows default exports in ES6-style modules.",
+    "key": "no-default-export",
+    "name": "Disallows default exports in ES6-style modules.",
     "url": "https://palantir.github.io/tslint/rules/no-default-export"
   },
   {
-    "name": "no-duplicate-imports",
-    "description": "Disallows multiple import statements from the same module.",
+    "key": "no-duplicate-imports",
+    "name": "Disallows multiple import statements from the same module.",
     "url": "https://palantir.github.io/tslint/rules/no-duplicate-imports"
   },
   {
-    "name": "no-duplicate-super",
-    "description": "Warns if 'super()' appears twice in a constructor.",
+    "key": "no-duplicate-super",
+    "name": "Warns if 'super()' appears twice in a constructor.",
     "url": "https://palantir.github.io/tslint/rules/no-duplicate-super"
   },
   {
-    "name": "no-duplicate-switch-case",
-    "description": "Prevents duplicate cases in switch statements.",
+    "key": "no-duplicate-switch-case",
+    "name": "Prevents duplicate cases in switch statements.",
     "url": "https://palantir.github.io/tslint/rules/no-duplicate-switch-case"
   },
   {
-    "name": "no-duplicate-variable",
-    "description": "Disallows duplicate variable declarations in the same block scope.",
+    "key": "no-duplicate-variable",
+    "name": "Disallows duplicate variable declarations in the same block scope.",
     "url": "https://palantir.github.io/tslint/rules/no-duplicate-variable"
   },
   {
-    "name": "no-dynamic-delete",
-    "description": "Bans usage of the delete operator with computed key expressions.",
+    "key": "no-dynamic-delete",
+    "name": "Bans usage of the delete operator with computed key expressions.",
     "url": "https://palantir.github.io/tslint/rules/no-dynamic-delete"
   },
   {
-    "name": "no-empty-interface",
-    "description": "Forbids empty interfaces.",
+    "key": "no-empty-interface",
+    "name": "Forbids empty interfaces.",
     "url": "https://palantir.github.io/tslint/rules/no-empty-interface"
   },
   {
-    "name": "no-empty",
-    "description": "Disallows empty blocks.",
+    "key": "no-empty",
+    "name": "Disallows empty blocks.",
     "url": "https://palantir.github.io/tslint/rules/no-empty"
   },
   {
-    "name": "no-eval",
-    "description": "Disallows `eval` function invocations.",
+    "key": "no-eval",
+    "name": "Disallows `eval` function invocations.",
     "url": "https://palantir.github.io/tslint/rules/no-eval"
   },
   {
-    "name": "no-floating-promises",
-    "description": "Promises returned by functions must be handled appropriately.",
+    "key": "no-floating-promises",
+    "name": "Promises returned by functions must be handled appropriately.",
     "url": "https://palantir.github.io/tslint/rules/no-floating-promises"
   },
   {
-    "name": "no-for-in-array",
-    "description": "Disallows iterating over an array with a for-in loop.",
+    "key": "no-for-in-array",
+    "name": "Disallows iterating over an array with a for-in loop.",
     "url": "https://palantir.github.io/tslint/rules/no-for-in-array"
   },
   {
-    "name": "no-implicit-dependencies",
-    "description": "Disallows importing modules that are not listed as dependency in the project's package.json",
+    "key": "no-implicit-dependencies",
+    "name": "Disallows importing modules that are not listed as dependency in the project's package.json",
     "url": "https://palantir.github.io/tslint/rules/no-implicit-dependencies"
   },
   {
-    "name": "no-import-side-effect",
-    "description": "Avoid import statements with side-effect.",
+    "key": "no-import-side-effect",
+    "name": "Avoid import statements with side-effect.",
     "url": "https://palantir.github.io/tslint/rules/no-import-side-effect"
   },
   {
-    "name": "no-inferrable-types",
-    "description": "Disallows explicit type declarations for variables or parameters initialized to a number, string, or boolean.",
+    "key": "no-inferrable-types",
+    "name": "Disallows explicit type declarations for variables or parameters initialized to a number, string, or boolean.",
     "url": "https://palantir.github.io/tslint/rules/no-inferrable-types"
   },
   {
-    "name": "no-inferred-empty-object-type",
-    "description": "Disallow type inference of {} (empty object type) at function and constructor call sites",
+    "key": "no-inferred-empty-object-type",
+    "name": "Disallow type inference of {} (empty object type) at function and constructor call sites",
     "url": "https://palantir.github.io/tslint/rules/no-inferred-empty-object-type"
   },
   {
-    "name": "no-internal-module",
-    "description": "Disallows internal `module`",
+    "key": "no-internal-module",
+    "name": "Disallows internal `module`",
     "url": "https://palantir.github.io/tslint/rules/no-internal-module"
   },
   {
-    "name": "no-invalid-template-strings",
-    "description": "Warns on use of `${` in non-template strings.",
+    "key": "no-invalid-template-strings",
+    "name": "Warns on use of `${` in non-template strings.",
     "url": "https://palantir.github.io/tslint/rules/no-invalid-template-strings"
   },
   {
-    "name": "no-invalid-this",
-    "description": "Disallows using the `this` keyword outside of classes.",
+    "key": "no-invalid-this",
+    "name": "Disallows using the `this` keyword outside of classes.",
     "url": "https://palantir.github.io/tslint/rules/no-invalid-this"
   },
   {
-    "name": "no-irregular-whitespace",
-    "description": "Disallow irregular whitespace within a file, including strings and comments.",
+    "key": "no-irregular-whitespace",
+    "name": "Disallow irregular whitespace within a file, including strings and comments.",
     "url": "https://palantir.github.io/tslint/rules/no-irregular-whitespace"
   },
   {
-    "name": "no-magic-numbers",
-    "description": "Disallows the use constant number values outside of variable assignments",
+    "key": "no-magic-numbers",
+    "name": "Disallows the use constant number values outside of variable assignments",
     "url": "https://palantir.github.io/tslint/rules/no-magic-numbers"
   },
   {
-    "name": "no-mergeable-namespace",
-    "description": "Disallows mergeable namespaces in the same file.",
+    "key": "no-mergeable-namespace",
+    "name": "Disallows mergeable namespaces in the same file.",
     "url": "https://palantir.github.io/tslint/rules/no-mergeable-namespace"
   },
   {
-    "name": "no-misused-new",
-    "description": "Warns on apparent attempts to define constructors for interfaces or `new` for classes.",
+    "key": "no-misused-new",
+    "name": "Warns on apparent attempts to define constructors for interfaces or `new` for classes.",
     "url": "https://palantir.github.io/tslint/rules/no-misused-new"
   },
   {
-    "name": "no-namespace",
-    "description": "Disallows use of internal `module`s and `namespace`s.",
+    "key": "no-namespace",
+    "name": "Disallows use of internal `module`s and `namespace`s.",
     "url": "https://palantir.github.io/tslint/rules/no-namespace"
   },
   {
-    "name": "no-non-null-assertion",
-    "description": "Disallows non-null assertions using the `!` postfix operator.",
+    "key": "no-non-null-assertion",
+    "name": "Disallows non-null assertions using the `!` postfix operator.",
     "url": "https://palantir.github.io/tslint/rules/no-non-null-assertion"
   },
   {
-    "name": "no-null-keyword",
-    "description": "Disallows use of the `null` keyword literal.",
+    "key": "no-null-keyword",
+    "name": "Disallows use of the `null` keyword literal.",
     "url": "https://palantir.github.io/tslint/rules/no-null-keyword"
   },
   {
-    "name": "no-object-literal-type-assertion",
-    "description": "Forbids an object literal to appear in a type assertion expression",
+    "key": "no-object-literal-type-assertion",
+    "name": "Forbids an object literal to appear in a type assertion expression",
     "url": "https://palantir.github.io/tslint/rules/no-object-literal-type-assertion"
   },
   {
-    "name": "no-parameter-properties",
-    "description": "Disallows parameter properties in class constructors.",
+    "key": "no-parameter-properties",
+    "name": "Disallows parameter properties in class constructors.",
     "url": "https://palantir.github.io/tslint/rules/no-parameter-properties"
   },
   {
-    "name": "no-parameter-reassignment",
-    "description": "Disallows reassigning parameters.",
+    "key": "no-parameter-reassignment",
+    "name": "Disallows reassigning parameters.",
     "url": "https://palantir.github.io/tslint/rules/no-parameter-reassignment"
   },
   {
-    "name": "no-redundant-jsdoc",
-    "description": "Forbids JSDoc which duplicates TypeScript functionality.",
+    "key": "no-redundant-jsdoc",
+    "name": "Forbids JSDoc which duplicates TypeScript functionality.",
     "url": "https://palantir.github.io/tslint/rules/no-redundant-jsdoc"
   },
   {
-    "name": "no-reference-import",
-    "description": "Don't `<reference types=\"foo\" />` if you import `foo` anyway.",
+    "key": "no-reference-import",
+    "name": "Don't `<reference types=\"foo\" />` if you import `foo` anyway.",
     "url": "https://palantir.github.io/tslint/rules/no-reference-import"
   },
   {
-    "name": "no-reference",
-    "description": "Disallows `/// <reference path=>` imports (use ES6-style imports instead).",
+    "key": "no-reference",
+    "name": "Disallows `/// <reference path=>` imports (use ES6-style imports instead).",
     "url": "https://palantir.github.io/tslint/rules/no-reference"
   },
   {
-    "name": "no-require-imports",
-    "description": "Disallows invocation of `require()`.",
+    "key": "no-require-imports",
+    "name": "Disallows invocation of `require()`.",
     "url": "https://palantir.github.io/tslint/rules/no-require-imports"
   },
   {
-    "name": "no-return-await",
-    "description": "Disallows unnecessary `return await`.",
+    "key": "no-return-await",
+    "name": "Disallows unnecessary `return await`.",
     "url": "https://palantir.github.io/tslint/rules/no-return-await"
   },
   {
-    "name": "no-shadowed-variable",
-    "description": "Disallows shadowing variable declarations.",
+    "key": "no-shadowed-variable",
+    "name": "Disallows shadowing variable declarations.",
     "url": "https://palantir.github.io/tslint/rules/no-shadowed-variable"
   },
   {
-    "name": "no-sparse-arrays",
-    "description": "Forbids array literals to contain missing elements.",
+    "key": "no-sparse-arrays",
+    "name": "Forbids array literals to contain missing elements.",
     "url": "https://palantir.github.io/tslint/rules/no-sparse-arrays"
   },
   {
-    "name": "no-string-literal",
-    "description": "Forbids unnecessary string literal property access",
+    "key": "no-string-literal",
+    "name": "Forbids unnecessary string literal property access",
     "url": "https://palantir.github.io/tslint/rules/no-string-literal"
   },
   {
-    "name": "no-string-throw",
-    "description": "Flags throwing plain strings or concatenations of strings.",
+    "key": "no-string-throw",
+    "name": "Flags throwing plain strings or concatenations of strings.",
     "url": "https://palantir.github.io/tslint/rules/no-string-throw"
   },
   {
-    "name": "no-submodule-imports",
-    "description": "Disallows importing any submodule.",
+    "key": "no-submodule-imports",
+    "name": "Disallows importing any submodule.",
     "url": "https://palantir.github.io/tslint/rules/no-submodule-imports"
   },
   {
-    "name": "no-switch-case-fall-through",
-    "description": "Disallows falling through case statements.",
+    "key": "no-switch-case-fall-through",
+    "name": "Disallows falling through case statements.",
     "url": "https://palantir.github.io/tslint/rules/no-switch-case-fall-through"
   },
   {
-    "name": "no-this-assignment",
-    "description": "Disallows unnecessary references to `this`.",
+    "key": "no-this-assignment",
+    "name": "Disallows unnecessary references to `this`.",
     "url": "https://palantir.github.io/tslint/rules/no-this-assignment"
   },
   {
-    "name": "no-trailing-whitespace",
-    "description": "Disallows trailing whitespace at the end of a line.",
+    "key": "no-trailing-whitespace",
+    "name": "Disallows trailing whitespace at the end of a line.",
     "url": "https://palantir.github.io/tslint/rules/no-trailing-whitespace"
   },
   {
-    "name": "no-unbound-method",
-    "description": "Warns when a method is used outside of a method call.",
+    "key": "no-unbound-method",
+    "name": "Warns when a method is used outside of a method call.",
     "url": "https://palantir.github.io/tslint/rules/no-unbound-method"
   },
   {
-    "name": "no-unnecessary-callback-wrapper",
-    "description": "Replaces `x => f(x)` with just `f`",
+    "key": "no-unnecessary-callback-wrapper",
+    "name": "Replaces `x => f(x)` with just `f`",
     "url": "https://palantir.github.io/tslint/rules/no-unnecessary-callback-wrapper"
   },
   {
-    "name": "no-unnecessary-class",
-    "description": "Disallows classes that are not strictly necessary.",
+    "key": "no-unnecessary-class",
+    "name": "Disallows classes that are not strictly necessary.",
     "url": "https://palantir.github.io/tslint/rules/no-unnecessary-class"
   },
   {
-    "name": "no-unnecessary-initializer",
-    "description": "Forbids a 'var'/'let' statement or destructuring initializer to be initialized to 'undefined'.",
+    "key": "no-unnecessary-initializer",
+    "name": "Forbids a 'var'/'let' statement or destructuring initializer to be initialized to 'undefined'.",
     "url": "https://palantir.github.io/tslint/rules/no-unnecessary-initializer"
   },
   {
-    "name": "no-unnecessary-qualifier",
-    "description": "Warns when a namespace qualifier (`A.x`) is unnecessary.",
+    "key": "no-unnecessary-qualifier",
+    "name": "Warns when a namespace qualifier (`A.x`) is unnecessary.",
     "url": "https://palantir.github.io/tslint/rules/no-unnecessary-qualifier"
   },
   {
-    "name": "no-unnecessary-type-assertion",
-    "description": "Warns if a type assertion does not change the type of an expression.",
+    "key": "no-unnecessary-type-assertion",
+    "name": "Warns if a type assertion does not change the type of an expression.",
     "url": "https://palantir.github.io/tslint/rules/no-unnecessary-type-assertion"
   },
   {
-    "name": "no-unsafe-any",
-    "description": "Warns when using an expression of type 'any' in a dynamic way",
+    "key": "no-unsafe-any",
+    "name": "Warns when using an expression of type 'any' in a dynamic way",
     "url": "https://palantir.github.io/tslint/rules/no-unsafe-any"
   },
   {
-    "name": "no-unsafe-finally",
-    "description": "Disallows control flow statements, such as `return`, `continue`, `break` and `throws` in finally blocks.",
+    "key": "no-unsafe-finally",
+    "name": "Disallows control flow statements, such as `return`, `continue`, `break` and `throws` in finally blocks.",
     "url": "https://palantir.github.io/tslint/rules/no-unsafe-finally"
   },
   {
-    "name": "no-unused-expression",
-    "description": "Disallows unused expression statements.",
+    "key": "no-unused-expression",
+    "name": "Disallows unused expression statements.",
     "url": "https://palantir.github.io/tslint/rules/no-unused-expression"
   },
   {
-    "name": "no-unused-variable",
-    "description": "Disallows unused imports, variables, functions and private class members",
+    "key": "no-unused-variable",
+    "name": "Disallows unused imports, variables, functions and private class members",
     "url": "https://palantir.github.io/tslint/rules/no-unused-variable"
   },
   {
-    "name": "no-use-before-declare",
-    "description": "Disallows usage of variables before their declaration.",
+    "key": "no-use-before-declare",
+    "name": "Disallows usage of variables before their declaration.",
     "url": "https://palantir.github.io/tslint/rules/no-use-before-declare"
   },
   {
-    "name": "no-var-keyword",
-    "description": "Disallows usage of the `var` keyword.",
+    "key": "no-var-keyword",
+    "name": "Disallows usage of the `var` keyword.",
     "url": "https://palantir.github.io/tslint/rules/no-var-keyword"
   },
   {
-    "name": "no-var-requires",
-    "description": "Disallows the use of require statements except in import statements.",
+    "key": "no-var-requires",
+    "name": "Disallows the use of require statements except in import statements.",
     "url": "https://palantir.github.io/tslint/rules/no-var-requires"
   },
   {
-    "name": "no-void-expression",
-    "description": "Requires expressions of type `void` to appear in statement position.",
+    "key": "no-void-expression",
+    "name": "Requires expressions of type `void` to appear in statement position.",
     "url": "https://palantir.github.io/tslint/rules/no-void-expression"
   },
   {
-    "name": "number-literal-format",
-    "description": "Checks that decimal literals should begin with '0.' instead of just '.', and should not end with a trailing '0'.",
+    "key": "number-literal-format",
+    "name": "Checks that decimal literals should begin with '0.' instead of just '.', and should not end with a trailing '0'.",
     "url": "https://palantir.github.io/tslint/rules/number-literal-format"
   },
   {
-    "name": "object-literal-key-quotes",
-    "description": "Enforces consistent object literal property quote style.",
+    "key": "object-literal-key-quotes",
+    "name": "Enforces consistent object literal property quote style.",
     "url": "https://palantir.github.io/tslint/rules/object-literal-key-quotes"
   },
   {
-    "name": "object-literal-shorthand",
-    "description": "Enforces/disallows use of ES6 object literal shorthand.",
+    "key": "object-literal-shorthand",
+    "name": "Enforces/disallows use of ES6 object literal shorthand.",
     "url": "https://palantir.github.io/tslint/rules/object-literal-shorthand"
   },
   {
-    "name": "object-literal-sort-keys",
-    "description": "Checks ordering of keys in object literals",
+    "key": "object-literal-sort-keys",
+    "name": "Checks ordering of keys in object literals",
     "url": "https://palantir.github.io/tslint/rules/object-literal-sort-keys"
   },
   {
-    "name": "one-line",
-    "description": "Requires the specified tokens to be on the same line as the expression preceding them.",
+    "key": "one-line",
+    "name": "Requires the specified tokens to be on the same line as the expression preceding them.",
     "url": "https://palantir.github.io/tslint/rules/one-line"
   },
   {
-    "name": "one-variable-per-declaration",
-    "description": "Disallows multiple variable definitions in the same declaration statement.",
+    "key": "one-variable-per-declaration",
+    "name": "Disallows multiple variable definitions in the same declaration statement.",
     "url": "https://palantir.github.io/tslint/rules/one-variable-per-declaration"
   },
   {
-    "name": "only-arrow-functions",
-    "description": "Disallows traditional (non-arrow) function expressions.",
+    "key": "only-arrow-functions",
+    "name": "Disallows traditional (non-arrow) function expressions.",
     "url": "https://palantir.github.io/tslint/rules/only-arrow-functions"
   },
   {
-    "name": "ordered-imports",
-    "description": "Requires that import statements be alphabetized and grouped.",
+    "key": "ordered-imports",
+    "name": "Requires that import statements be alphabetized and grouped.",
     "url": "https://palantir.github.io/tslint/rules/ordered-imports"
   },
   {
-    "name": "prefer-conditional-expression",
-    "description": "Recommends to use a conditional expression instead of assigning to the same thing in each branch of an if statement.",
+    "key": "prefer-conditional-expression",
+    "name": "Recommends to use a conditional expression instead of assigning to the same thing in each branch of an if statement.",
     "url": "https://palantir.github.io/tslint/rules/prefer-conditional-expression"
   },
   {
-    "name": "prefer-const",
-    "description": "Requires that variable declarations use `const` instead of `let` and `var` if possible.",
+    "key": "prefer-const",
+    "name": "Requires that variable declarations use `const` instead of `let` and `var` if possible.",
     "url": "https://palantir.github.io/tslint/rules/prefer-const"
   },
   {
-    "name": "prefer-for-of",
-    "description": "Recommends a 'for-of' loop over a standard 'for' loop if the index is only used to access the array being iterated.",
+    "key": "prefer-for-of",
+    "name": "Recommends a 'for-of' loop over a standard 'for' loop if the index is only used to access the array being iterated.",
     "url": "https://palantir.github.io/tslint/rules/prefer-for-of"
   },
   {
-    "name": "prefer-function-over-method",
-    "description": "Warns for class methods that do not use 'this'.",
+    "key": "prefer-function-over-method",
+    "name": "Warns for class methods that do not use 'this'.",
     "url": "https://palantir.github.io/tslint/rules/prefer-function-over-method"
   },
   {
-    "name": "prefer-method-signature",
-    "description": "Prefer `foo(): void` over `foo: () => void` in interfaces and types.",
+    "key": "prefer-method-signature",
+    "name": "Prefer `foo(): void` over `foo: () => void` in interfaces and types.",
     "url": "https://palantir.github.io/tslint/rules/prefer-method-signature"
   },
   {
-    "name": "prefer-object-spread",
-    "description": "Enforces the use of the ES2015 object spread operator over `Object.assign()` where appropriate.",
+    "key": "prefer-object-spread",
+    "name": "Enforces the use of the ES2015 object spread operator over `Object.assign()` where appropriate.",
     "url": "https://palantir.github.io/tslint/rules/prefer-object-spread"
   },
   {
-    "name": "prefer-readonly",
-    "description": "Requires that private variables are marked as `readonly` if they're never modified outside of the constructor.",
+    "key": "prefer-readonly",
+    "name": "Requires that private variables are marked as `readonly` if they're never modified outside of the constructor.",
     "url": "https://palantir.github.io/tslint/rules/prefer-readonly"
   },
   {
-    "name": "prefer-switch",
-    "description": "Prefer a `switch` statement to an `if` statement with simple `===` comparisons.",
+    "key": "prefer-switch",
+    "name": "Prefer a `switch` statement to an `if` statement with simple `===` comparisons.",
     "url": "https://palantir.github.io/tslint/rules/prefer-switch"
   },
   {
-    "name": "prefer-template",
-    "description": "Prefer a template expression over string literal concatenation.",
+    "key": "prefer-template",
+    "name": "Prefer a template expression over string literal concatenation.",
     "url": "https://palantir.github.io/tslint/rules/prefer-template"
   },
   {
-    "name": "prefer-while",
-    "description": "Prefer `while` loops instead of `for` loops without an initializer and incrementor.",
+    "key": "prefer-while",
+    "name": "Prefer `while` loops instead of `for` loops without an initializer and incrementor.",
     "url": "https://palantir.github.io/tslint/rules/prefer-while"
   },
   {
-    "name": "promise-function-async",
-    "description": "Requires any function or method that returns a promise to be marked async.",
+    "key": "promise-function-async",
+    "name": "Requires any function or method that returns a promise to be marked async.",
     "url": "https://palantir.github.io/tslint/rules/promise-function-async"
   },
   {
-    "name": "quotemark",
-    "description": "Requires single or double quotes for string literals.",
+    "key": "quotemark",
+    "name": "Requires single or double quotes for string literals.",
     "url": "https://palantir.github.io/tslint/rules/quotemark"
   },
   {
-    "name": "radix",
-    "description": "Requires the radix parameter to be specified when calling `parseInt`.",
+    "key": "radix",
+    "name": "Requires the radix parameter to be specified when calling `parseInt`.",
     "url": "https://palantir.github.io/tslint/rules/radix"
   },
   {
-    "name": "restrict-plus-operands",
-    "description": "When adding two variables, operands must both be of type number or of type string.",
+    "key": "restrict-plus-operands",
+    "name": "When adding two variables, operands must both be of type number or of type string.",
     "url": "https://palantir.github.io/tslint/rules/restrict-plus-operands"
   },
   {
-    "name": "return-undefined",
-    "description": "Prefer `return;` in void functions and `return undefined;` in value-returning functions.",
+    "key": "return-undefined",
+    "name": "Prefer `return;` in void functions and `return undefined;` in value-returning functions.",
     "url": "https://palantir.github.io/tslint/rules/return-undefined"
   },
   {
-    "name": "semicolon",
-    "description": "Enforces consistent semicolon usage at the end of every statement.",
+    "key": "semicolon",
+    "name": "Enforces consistent semicolon usage at the end of every statement.",
     "url": "https://palantir.github.io/tslint/rules/semicolon"
   },
   {
-    "name": "space-before-function-paren",
-    "description": "Require or disallow a space before function parenthesis",
+    "key": "space-before-function-paren",
+    "name": "Require or disallow a space before function parenthesis",
     "url": "https://palantir.github.io/tslint/rules/space-before-function-paren"
   },
   {
-    "name": "space-within-parens",
-    "description": "Enforces spaces within parentheses or disallow them",
+    "key": "space-within-parens",
+    "name": "Enforces spaces within parentheses or disallow them",
     "url": "https://palantir.github.io/tslint/rules/space-within-parens"
   },
   {
-    "name": "strict-boolean-expressions",
-    "description": "Restricts the types allowed in boolean expressions",
+    "key": "strict-boolean-expressions",
+    "name": "Restricts the types allowed in boolean expressions",
     "url": "https://palantir.github.io/tslint/rules/strict-boolean-expressions"
   },
   {
-    "name": "strict-type-predicates",
-    "description": "Warns for type predicates that are always true or always false",
+    "key": "strict-type-predicates",
+    "name": "Warns for type predicates that are always true or always false",
     "url": "https://palantir.github.io/tslint/rules/strict-type-predicates"
   },
   {
-    "name": "switch-default",
-    "description": "Require a `default` case in all `switch` statements.",
+    "key": "switch-default",
+    "name": "Require a `default` case in all `switch` statements.",
     "url": "https://palantir.github.io/tslint/rules/switch-default"
   },
   {
-    "name": "switch-final-break",
-    "description": "Checks whether the final clause of a switch statement ends in `break;`.",
+    "key": "switch-final-break",
+    "name": "Checks whether the final clause of a switch statement ends in `break;`.",
     "url": "https://palantir.github.io/tslint/rules/switch-final-break"
   },
   {
-    "name": "trailing-comma",
-    "description": "Requires or disallows trailing commas in array and object literals, destructuring assignments, function typings, named imports and exports and function parameters.",
+    "key": "trailing-comma",
+    "name": "Requires or disallows trailing commas in array and object literals, destructuring assignments, function typings, named imports and exports and function parameters.",
     "url": "https://palantir.github.io/tslint/rules/trailing-comma"
   },
   {
-    "name": "triple-equals",
-    "description": "Requires `===` and `!==` in place of `==` and `!=`.",
+    "key": "triple-equals",
+    "name": "Requires `===` and `!==` in place of `==` and `!=`.",
     "url": "https://palantir.github.io/tslint/rules/triple-equals"
   },
   {
-    "name": "type-literal-delimiter",
-    "description": "Checks that type literal members are separated by semicolons",
+    "key": "type-literal-delimiter",
+    "name": "Checks that type literal members are separated by semicolons",
     "url": "https://palantir.github.io/tslint/rules/type-literal-delimiter"
   },
   {
-    "name": "typedef",
-    "description": "Requires type definitions to exist.",
+    "key": "typedef",
+    "name": "Requires type definitions to exist.",
     "url": "https://palantir.github.io/tslint/rules/typedef"
   },
   {
-    "name": "typedef-whitespace",
-    "description": "Requires or disallows whitespace for type definitions.",
+    "key": "typedef-whitespace",
+    "name": "Requires or disallows whitespace for type definitions.",
     "url": "https://palantir.github.io/tslint/rules/typedef-whitespace"
   },
   {
-    "name": "typeof-compare",
-    "description": "Makes sure result of `typeof` is compared to correct string values",
+    "key": "typeof-compare",
+    "name": "Makes sure result of `typeof` is compared to correct string values",
     "url": "https://palantir.github.io/tslint/rules/typeof-compare"
   },
   {
-    "name": "unified-signatures",
-    "description": "Warns for any two overloads that could be unified into one by using a union or an optional/rest parameter.",
+    "key": "unified-signatures",
+    "name": "Warns for any two overloads that could be unified into one by using a union or an optional/rest parameter.",
     "url": "https://palantir.github.io/tslint/rules/unified-signatures"
   },
   {
-    "name": "use-default-type-parameter",
-    "description": "Warns if an explicitly specified type argument is the default for that type parameter.",
+    "key": "use-default-type-parameter",
+    "name": "Warns if an explicitly specified type argument is the default for that type parameter.",
     "url": "https://palantir.github.io/tslint/rules/use-default-type-parameter"
   },
   {
-    "name": "use-isnan",
-    "description": "Enforces use of the `isNaN()` function to check for NaN references instead of a comparison to the `NaN` constant.",
+    "key": "use-isnan",
+    "name": "Enforces use of the `isNaN()` function to check for NaN references instead of a comparison to the `NaN` constant.",
     "url": "https://palantir.github.io/tslint/rules/use-isnan"
   },
   {
-    "name": "variable-name",
-    "description": "Checks variable names for various errors.",
+    "key": "variable-name",
+    "name": "Checks variable names for various errors.",
     "url": "https://palantir.github.io/tslint/rules/variable-name"
   },
   {
-    "name": "whitespace",
-    "description": "Enforces whitespace style conventions.",
+    "key": "whitespace",
+    "name": "Enforces whitespace style conventions.",
     "url": "https://palantir.github.io/tslint/rules/whitespace"
   }
 ]

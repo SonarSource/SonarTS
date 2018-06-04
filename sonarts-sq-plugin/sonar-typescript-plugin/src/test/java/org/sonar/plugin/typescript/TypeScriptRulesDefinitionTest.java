@@ -64,7 +64,10 @@ public class TypeScriptRulesDefinitionTest {
     assertThat(eslintRepository.name()).isEqualTo("ESLint");
 
     assertThat(tslintRepository.language()).isEqualTo("ts");
+    assertThat(eslintRepository.language()).isEqualTo("ts");
+
     assertThat(tslintRepository.isExternal()).isEqualTo(true);
+    assertThat(eslintRepository.isExternal()).isEqualTo(true);
 
     assertThat(tslintRepository.rules().size()).isEqualTo(144);
     assertThat(eslintRepository.rules().size()).isEqualTo(257);
