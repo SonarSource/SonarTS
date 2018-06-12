@@ -39,6 +39,7 @@ import org.sonarqube.ws.client.WsClientFactories;
 import org.sonarqube.ws.client.measures.ComponentRequest;
 
 import static java.util.Collections.singletonList;
+import static java.util.Objects.requireNonNull;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
@@ -63,8 +64,9 @@ public class Tests {
   public static final Orchestrator ORCHESTRATOR;
 
   static {
-    OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv();
-    orchestratorBuilder.addPlugin(PLUGIN_LOCATION);
+    OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv()
+      .setSonarVersion(requireNonNull(System.getProperty("sonar.runtimeVersion"), "Please set system property sonar.runtimeVersion"))
+      .addPlugin(PLUGIN_LOCATION);
 
     File profilesDir = new File("src/test/resources/profiles/");
     for (File file : profilesDir.listFiles()) {

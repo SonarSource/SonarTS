@@ -61,6 +61,6 @@ public class TslintExternalReportTest {
   }
 
   public static boolean sqSupportsExternalIssues() {
-    return orchestrator.getConfiguration().getSonarVersion().isGreaterThanOrEquals("7.2");
+    return orchestrator.getServer().version().isGreaterThanOrEquals(7, 2);
   }
 }
