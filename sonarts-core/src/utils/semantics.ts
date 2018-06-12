@@ -19,6 +19,14 @@
  */
 import * as ts from "typescript";
 
+export function isAny(type: ts.Type) {
+  return Boolean(type.flags & ts.TypeFlags.Any);
+}
+
+export function isUnion(type: ts.Type) {
+  return Boolean(type.flags & ts.TypeFlags.Union);
+}
+
 export function isArray(node: ts.Node, typeChecker: ts.TypeChecker): boolean {
   const type = typeChecker.getTypeAtLocation(node);
   return !!type.symbol && type.symbol.name === "Array";

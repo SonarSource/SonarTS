@@ -1,0 +1,7 @@
+src/desktop/app/src/lib/dispatcher/git-store.ts: 699
+src/desktop/app/src/lib/git/apply.ts: 42
+src/desktop/app/test/unit/git/branch-test.ts: 40,53,67,82
+src/desktop/app/test/unit/git/checkout-test.ts: 27
+src/desktop/app/test/unit/git/status-test.ts: 68
+src/postgraphql/src/postgraphql/__tests__/postgraphql-test.js: 21,31,45,61,74,86,100,101,123
+src/postgraphql/src/postgres/inventory/collection/__tests__/PgCollectionKey-test.js: 20

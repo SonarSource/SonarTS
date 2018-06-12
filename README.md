@@ -64,6 +64,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Credentials should not be hard-coded ([`no-hardcoded-credentials`])
 * Functions should not have identical implementations ([`no-identical-functions`])
 * Functions should use "return" consistently ([`no-inconsistent-return`])
+* "await" should only be used with promises ([`no-invalid-await`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
 * Increment (++) and decrement (--) operators should not be used in a method call or mixed with other operators in an expression ([`no-nested-incdec`])
 * Template literals should not be nested ([`no-nested-template-literals`])
@@ -115,6 +116,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-ignored-return`]: ./sonarts-core/docs/rules/no-ignored-return.md
 [`no-in-misuse`]: ./sonarts-core/docs/rules/no-in-misuse.md
 [`no-inconsistent-return`]: ./sonarts-core/docs/rules/no-inconsistent-return.md
+[`no-invalid-await`]: ./sonarts-core/docs/rules/no-invalid-await.md
 [`no-misleading-array-reverse`]: ./sonarts-core/docs/rules/no-misleading-array-reverse.md
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
 [`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
