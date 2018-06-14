@@ -17,21 +17,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugin.typescript.rules;
+import { Rule } from "../../../src/rules/noInvalidAwaitRule";
+import runRule from "../../runRule";
 
-import com.google.gson.JsonElement;
-import org.sonar.check.Rule;
-
-@Rule(key = "S4123")
-public class AwaitPromise extends TypeScriptRule {
-
-  @Override
-  public JsonElement configuration() {
-    return ruleConfiguration("Thenable", "PromiseLike");
-  }
-
-  @Override
-  public String tsLintKey() {
-    return "await-promise";
-  }
-}
+it("raises error", () => {
+  runRule(Rule, __filename);
+});

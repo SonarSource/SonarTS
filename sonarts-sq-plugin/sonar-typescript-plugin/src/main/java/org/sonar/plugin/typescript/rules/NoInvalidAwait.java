@@ -19,18 +19,13 @@
  */
 package org.sonar.plugin.typescript.rules;
 
-import com.google.gson.Gson;
-import org.junit.Test;
+import org.sonar.check.Rule;
 
-import static org.assertj.core.api.Assertions.assertThat;
+@Rule(key = "S4123")
+public class NoInvalidAwait extends TypeScriptRule {
 
-public class AwaitPromiseTest {
-
-  @Test
-  public void test_configuration() throws Exception {
-    AwaitPromise awaitPromise = new AwaitPromise();
-    String configuration = new Gson().toJson(awaitPromise.configuration());
-    assertThat(configuration).isEqualTo("[\"Thenable\",\"PromiseLike\"]");
+  @Override
+  public String tsLintKey() {
+    return "no-invalid-await";
   }
-
 }

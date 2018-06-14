@@ -42,6 +42,10 @@ export class TreeVisitor {
     this.visitChildren(node);
   }
 
+  protected visitAwaitExpression(node: ts.AwaitExpression) {
+    this.visitChildren(node);
+  }
+
   protected visitBinaryExpression(node: ts.BinaryExpression) {
     this.visitChildren(node);
   }
@@ -426,6 +430,10 @@ export class TreeVisitor {
 
       case ts.SyntaxKind.ArrayType:
         this.visitArrayType(node as ts.ArrayTypeNode);
+        break;
+
+      case ts.SyntaxKind.AwaitExpression:
+        this.visitAwaitExpression(node as ts.AwaitExpression);
         break;
 
       case ts.SyntaxKind.BinaryExpression:
