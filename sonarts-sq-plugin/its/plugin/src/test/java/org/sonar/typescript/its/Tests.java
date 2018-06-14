@@ -64,7 +64,7 @@ public class Tests {
 
   static {
     OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv()
-      .setSonarVersion(System.getProperty("sonar.runtimeVersion", "7.2.0.13185")) // FIXME update when 7.2 released
+      .setSonarVersion(System.getProperty("sonar.runtimeVersion", "7.2-RC1"))
       .addPlugin(PLUGIN_LOCATION);
 
     File profilesDir = new File("src/test/resources/profiles/");
