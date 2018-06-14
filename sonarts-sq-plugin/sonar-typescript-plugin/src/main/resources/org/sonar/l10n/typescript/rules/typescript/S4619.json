@@ -1,5 +1,5 @@
 {
-  "title": "\"in\" operator should not be used on array",
+  "title": "\"in\" should not be used on arrays",
   "type": "BUG",
   "status": "ready",
   "remediation": {

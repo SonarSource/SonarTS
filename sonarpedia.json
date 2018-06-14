@@ -1,8 +1,9 @@
 {
-  "rules-metadata-path":
-    "./sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/typescript",
-  "languages": ["TS"],
-  "latest-update": "2018-02-23T10:18:44.434Z",
+  "rules-metadata-path": "./sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/typescript",
+  "languages": [
+    "TS"
+  ],
+  "latest-update": "2018-06-14T14:24:36.517Z",
   "options": {
     "no-language-in-filenames": true
   }

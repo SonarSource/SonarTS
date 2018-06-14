@@ -1,6 +1,6 @@
 {
   "title": "Non-null assertions should not be used",
-  "type": "BUG",
+  "type": "CODE_SMELL",
   "status": "ready",
   "remediation": {
     "func": "Constant\/Issue",
@@ -11,5 +11,6 @@
   ],
   "defaultSeverity": "Minor",
   "ruleSpecification": "RSPEC-2966",
-  "sqKey": "S2966"
+  "sqKey": "S2966",
+  "scope": "Main"
 }
