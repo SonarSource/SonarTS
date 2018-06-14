@@ -63,8 +63,9 @@ public class Tests {
   public static final Orchestrator ORCHESTRATOR;
 
   static {
-    OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv();
-    orchestratorBuilder.addPlugin(PLUGIN_LOCATION);
+    OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv()
+      .setSonarVersion(System.getProperty("sonar.runtimeVersion", "7.2-RC1"))
+      .addPlugin(PLUGIN_LOCATION);
 
     File profilesDir = new File("src/test/resources/profiles/");
     for (File file : profilesDir.listFiles()) {

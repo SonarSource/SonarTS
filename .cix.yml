@@ -10,7 +10,7 @@ TEST:
 SQ_VERSION:
   - DEV
   - LATEST_RELEASE
-  - LTS
+  - LATEST_RELEASE[6.7]
 
 exclude:
 
@@ -29,7 +29,7 @@ exclude:
     SQ_VERSION: DEV
 
   - SLAVE: windows
-    SQ_VERSION: LTS
+    SQ_VERSION: LATEST_RELEASE[6.7]
 
 
     
@@ -37,7 +37,7 @@ exclude:
     SQ_VERSION: DEV
     
   - SLAVE: multicpu
-    SQ_VERSION: LTS
+    SQ_VERSION: LATEST_RELEASE[6.7]
 
   - SLAVE: multicpu
     TEST: ci
