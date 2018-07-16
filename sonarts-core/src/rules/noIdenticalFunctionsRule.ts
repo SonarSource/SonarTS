@@ -77,7 +77,7 @@ export class Rule extends tslint.Rules.AbstractRule {
     }
 
     if (is(functionNode, ts.SyntaxKind.MethodDeclaration, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor)) {
-      return findChild(functionNode, ts.SyntaxKind.Identifier);
+      return findChild(functionNode, ts.SyntaxKind.Identifier, ts.SyntaxKind.StringLiteral);
     }
 
     if (is(functionNode, ts.SyntaxKind.Constructor)) {
@@ -88,7 +88,7 @@ export class Rule extends tslint.Rules.AbstractRule {
       return functionNode.equalsGreaterThanToken;
     }
 
-    throw new Error("Unknow function kind " + ts.SyntaxKind[functionNode.kind]);
+    throw new Error("Unknown function kind " + ts.SyntaxKind[functionNode.kind]);
   }
 }
 
