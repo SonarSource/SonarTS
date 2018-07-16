@@ -161,12 +161,12 @@ export function descendants(node: ts.Node): ts.Node[] {
   return collectedDescendants;
 }
 
-export function findChild(node: ts.Node, kind: ts.SyntaxKind): ts.Node {
-  const child = node.getChildren().find(child => nodes.is(child, kind));
+export function findChild(node: ts.Node, ...kind: ts.SyntaxKind[]): ts.Node {
+  const child = node.getChildren().find(child => nodes.is(child, ...kind));
   if (child) {
     return child;
   } else {
-    throw new Error("Not found child with kind " + ts.SyntaxKind[kind]);
+    throw new Error("Not found child with kind " + kind.map(k => ts.SyntaxKind[k]));
   }
 }
 

@@ -109,3 +109,19 @@ function foo1() {
   foo("");
   return 0;
 }
+
+class MethodWithStringLiteralNames {
+
+  'weird function name'() {
+    console.log("this is valid!");
+    foo("");
+    return 0;
+  }
+
+  'another one'() {
+//^^^^^^^^^^^^^ {{Update or refactor this function so that its implementation doesn't duplicate the one on line 115.}}
+    console.log("this is valid!");
+    foo("");
+    return 0;
+  }
+}
