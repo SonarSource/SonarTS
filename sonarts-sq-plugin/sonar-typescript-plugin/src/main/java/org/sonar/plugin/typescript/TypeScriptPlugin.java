@@ -43,6 +43,9 @@ public class TypeScriptPlugin implements Plugin {
   public static final String LCOV_REPORT_PATHS = "sonar.typescript.lcov.reportPaths";
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
 
+  public static final String TSCONFIG_PATH = "sonar.typescript.tsconfigPath";
+  public static final String TSCONFIG_PATH_DEFAULT_VALUE = "";
+
   public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.reportPaths";
   public static final String TSLINT_REPORT_PATHS_DEFAULT_VALUE = "";
 
@@ -103,7 +106,17 @@ public class TypeScriptPlugin implements Plugin {
         .subCategory(GENERAL_SUBCATEGORY)
         .multiValues(true)
         .category(TYPESCRIPT_CATEGORY)
-        .build());
+        .build(),
+      PropertyDefinition.builder(TSCONFIG_PATH)
+          .defaultValue(TSCONFIG_PATH_DEFAULT_VALUE)
+          .name("tsconfig.json location")
+          .description("tsconfig.json location")
+          .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
+          .subCategory(GENERAL_SUBCATEGORY)
+          .multiValues(false)
+          .category(TYPESCRIPT_CATEGORY)
+          .build()
+      );
 
     if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
       context.addExtension(ContextualSensor.class);

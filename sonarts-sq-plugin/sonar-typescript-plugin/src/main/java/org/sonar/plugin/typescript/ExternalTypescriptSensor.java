@@ -31,9 +31,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.fs.FileSystem;
@@ -115,8 +117,17 @@ public class ExternalTypescriptSensor implements Sensor {
     checkCompatibleNodeVersion(executableBundle.getNodeExecutable());
 
     File projectBaseDir = sensorContext.fileSystem().baseDir();
+    Optional<String> tsconfigPathFromVariable = sensorContext.config().get(TypeScriptPlugin.TSCONFIG_PATH);
+    Map<String, List<InputFile>> inputFileByTsconfig;
+    if (tsconfigPathFromVariable.isPresent()){
+      inputFileByTsconfig = new HashMap<>();
+      File tsconfigFile = new File(projectBaseDir+"/"+tsconfigPathFromVariable.get());
+      List<InputFile> inputFileList = StreamSupport.stream(inputFiles.spliterator(), false).collect(Collectors.toList());
+      inputFileByTsconfig.put(tsconfigFile.getAbsolutePath(),inputFileList);
+    } else {
+      inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
+    }
 
-    Map<String, List<InputFile>> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
 
     for (Map.Entry<String, List<InputFile>> e : inputFileByTsconfig.entrySet()) {
       String tsconfigPath = e.getKey();
@@ -181,7 +192,6 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
     Map<String, List<InputFile>> inputFileByTsconfig = new HashMap<>();
-
     for (InputFile inputFile : inputFiles) {
       File tsConfig = findTsConfig(inputFile, projectBaseDir);
       if (tsConfig == null) {
@@ -196,6 +206,7 @@ public class ExternalTypescriptSensor implements Sensor {
 
   @Nullable
   private static File findTsConfig(InputFile inputFile, File projectBaseDir) {
+
     File currentDirectory = inputFile.file();
     do {
       currentDirectory = currentDirectory.getParentFile();
