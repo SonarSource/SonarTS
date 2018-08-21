@@ -62,7 +62,7 @@
     "jest-sonar-reporter": "1.3.0",
     "json-stable-stringify": "1.0.1",
     "license-check": "1.1.5",
-    "lodash": "4.17.4",
+    "lodash": "4.17.10",
     "minimist": "1.2.0",
     "prettier": "1.7.4",
     "sonarqube-scanner": "1.3.0",
