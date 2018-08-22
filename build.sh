@@ -16,7 +16,7 @@ npm install ../../../sonarts-core/tslint-sonarts-*.tgz
 rm ../../../sonarts-core/tslint-sonarts-*.tgz
 cd ../../
 
-mvn clean install -B -e -V
+mvn clean install -B -e -V -Dmaven.test.redirectTestOutputToFile=true
 
 cd ..
 
