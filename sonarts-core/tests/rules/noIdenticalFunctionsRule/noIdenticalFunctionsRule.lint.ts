@@ -125,3 +125,26 @@ class MethodWithStringLiteralNames {
     return 0;
   }
 }
+
+class MethodWithComputedProps {
+
+  ["f" + ids.next().value]() {
+    console.log("this is valid fun!");
+    foo2("");
+    return 0;
+  }
+
+  ["f" + ids.next().value]() {
+//^^^^^^^^^^^^^^^^^^^^^^^^ {{Update or refactor this function so that its implementation doesn't duplicate the one on line 131.}}
+    console.log("this is valid fun!");
+    foo2("");
+    return 0;
+  }
+}
+
+let ids = (function* idsGen() {
+  let i = 0;
+  while (true) {
+    yield i++;
+  }
+})();
