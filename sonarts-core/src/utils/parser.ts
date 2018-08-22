@@ -69,7 +69,9 @@ export function parseFile(filename: string): { sourceFile: ts.SourceFile; progra
 export function createProgram(configFile: string): ts.Program {
   const { options, files } = parseTsConfig(configFile);
   const host = ts.createCompilerHost(options, true);
-  return ts.createProgram(files, options, host);
+  // make sure traceResolution is disabled because it generates a lot of content on stdout
+  const optionsWithoutTrace = Object.assign(options, { traceResolution: false });
+  return ts.createProgram(files, optionsWithoutTrace, host);
 }
 
 export function parseTsConfig(tsConfig: string): { options: ts.CompilerOptions; files: string[] } {

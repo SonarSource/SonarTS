@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    /* Basic Options */
+    "module": "commonjs",
+    "traceResolution": true
+  }
+}
