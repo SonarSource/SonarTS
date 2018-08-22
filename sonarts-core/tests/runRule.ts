@@ -119,7 +119,11 @@ function parseErrorsFromMarkup(source: string) {
     if (/\^\s*{{/.test(line)) {
       const startColumn = line.indexOf("^");
       const endColumn = line.lastIndexOf("^") + 1;
-      const message = line.match(/\{\{(.+)\}\}/)[1];
+      const messageGroup = line.match(/\{\{(.+)\}\}/);
+      if (!messageGroup || messageGroup.length < 2) {
+        throw new Error(`Unable to read expected issue message at line ${lineNum}`);
+      }
+      const message = messageGroup[1];
       const costMatch = line.match(/\[\[cost:(\d+)\]\]/);
       const cost = costMatch ? +costMatch[1] : undefined;
       // "- 1" because comment with error description is placed on the next line after error.
