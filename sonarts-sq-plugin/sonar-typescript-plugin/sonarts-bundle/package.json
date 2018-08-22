@@ -4,7 +4,7 @@
   "description": "bundle for the SonarTS-Plugin",
   "license": "LGPL-3.0",
   "devDependencies": {
-    "tslint": "5.10.0",
+    "tslint": "5.11.0",
     "tslint-sonarts": "file:../../../sonarts-core/tslint-sonarts-1.7.0.tgz"
   }
 }
