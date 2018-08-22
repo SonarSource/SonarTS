@@ -77,7 +77,12 @@ export class Rule extends tslint.Rules.AbstractRule {
     }
 
     if (is(functionNode, ts.SyntaxKind.MethodDeclaration, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor)) {
-      return findChild(functionNode, ts.SyntaxKind.Identifier, ts.SyntaxKind.StringLiteral);
+      return findChild(
+        functionNode,
+        ts.SyntaxKind.Identifier,
+        ts.SyntaxKind.StringLiteral,
+        ts.SyntaxKind.ComputedPropertyName,
+      );
     }
 
     if (is(functionNode, ts.SyntaxKind.Constructor)) {
