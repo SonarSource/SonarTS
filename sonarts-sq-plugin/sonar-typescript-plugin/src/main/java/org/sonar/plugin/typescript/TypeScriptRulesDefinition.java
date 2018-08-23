@@ -20,7 +20,6 @@
 package org.sonar.plugin.typescript;
 
 import org.sonar.api.server.rule.RulesDefinition;
-import org.sonar.plugin.typescript.externalreport.EslintReportSensor;
 import org.sonar.plugin.typescript.externalreport.TslintReportSensor;
 
 
@@ -45,7 +44,6 @@ public class TypeScriptRulesDefinition implements RulesDefinition {
 
     if (externalIssuesSupported) {
       TslintReportSensor.createExternalRuleRepository(context);
-      EslintReportSensor.createExternalRuleRepository(context);
     }
   }
 }
