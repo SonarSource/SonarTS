@@ -211,5 +211,4 @@ public class TslintReportSensor extends AbstractReportSensor {
     int character;
     int line;
   }
-
 }

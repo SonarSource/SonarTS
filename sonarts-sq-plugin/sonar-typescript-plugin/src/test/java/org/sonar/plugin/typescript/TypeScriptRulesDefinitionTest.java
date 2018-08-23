@@ -49,28 +49,22 @@ public class TypeScriptRulesDefinitionTest {
     assertAllRuleParametersHaveDescription(repository);
   }
 
-
   @Test
   public void test_external_repositories() {
     TypeScriptRulesDefinition rulesDefinition = new TypeScriptRulesDefinition(true);
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
     RulesDefinition.Repository tslintRepository = context.repository("external_tslint");
-    RulesDefinition.Repository eslintRepository = context.repository("external_eslint");
 
-    assertThat(context.repositories()).hasSize(3);
+    assertThat(context.repositories()).hasSize(2);
 
     assertThat(tslintRepository.name()).isEqualTo("TSLint");
-    assertThat(eslintRepository.name()).isEqualTo("ESLint");
 
     assertThat(tslintRepository.language()).isEqualTo("ts");
-    assertThat(eslintRepository.language()).isEqualTo("ts");
 
     assertThat(tslintRepository.isExternal()).isEqualTo(true);
-    assertThat(eslintRepository.isExternal()).isEqualTo(true);
 
     assertThat(tslintRepository.rules().size()).isEqualTo(144);
-    assertThat(eslintRepository.rules().size()).isEqualTo(257);
   }
 
   private void assertRuleProperties(Repository repository) {
