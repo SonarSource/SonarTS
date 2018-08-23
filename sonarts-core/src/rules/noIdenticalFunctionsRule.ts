@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { findChild, startLineAndCharacter, endLineAndCharacter } from "../utils/navigation";
-import { is, isBlock, isArrowFunction } from "../utils/nodes";
+import { isBlock } from "../utils/nodes";
 import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -71,29 +71,25 @@ export class Rule extends tslint.Rules.AbstractRule {
     return `Update or refactor this function so that its implementation doesn't duplicate the one on line ${lineOfOriginalFunction}.`;
   }
 
-  private static issueNode(functionNode: ts.FunctionLikeDeclaration) {
-    if (is(functionNode, ts.SyntaxKind.FunctionExpression, ts.SyntaxKind.FunctionDeclaration)) {
-      return findChild(functionNode, ts.SyntaxKind.FunctionKeyword);
+  private static issueNode(functionNode: ts.FunctionLikeDeclaration): ts.Node {
+    switch (functionNode.kind) {
+      case ts.SyntaxKind.FunctionExpression:
+      case ts.SyntaxKind.FunctionDeclaration:
+        return findChild(functionNode, ts.SyntaxKind.FunctionKeyword);
+      case ts.SyntaxKind.MethodDeclaration:
+      case ts.SyntaxKind.GetAccessor:
+      case ts.SyntaxKind.SetAccessor:
+        return findChild(
+          functionNode,
+          ts.SyntaxKind.Identifier,
+          ts.SyntaxKind.StringLiteral,
+          ts.SyntaxKind.ComputedPropertyName,
+        );
+      case ts.SyntaxKind.Constructor:
+        return findChild(functionNode, ts.SyntaxKind.ConstructorKeyword);
+      case ts.SyntaxKind.ArrowFunction:
+        return functionNode.equalsGreaterThanToken;
     }
-
-    if (is(functionNode, ts.SyntaxKind.MethodDeclaration, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor)) {
-      return findChild(
-        functionNode,
-        ts.SyntaxKind.Identifier,
-        ts.SyntaxKind.StringLiteral,
-        ts.SyntaxKind.ComputedPropertyName,
-      );
-    }
-
-    if (is(functionNode, ts.SyntaxKind.Constructor)) {
-      return findChild(functionNode, ts.SyntaxKind.ConstructorKeyword);
-    }
-
-    if (isArrowFunction(functionNode)) {
-      return functionNode.equalsGreaterThanToken;
-    }
-
-    throw new Error("Unknown function kind " + ts.SyntaxKind[functionNode.kind]);
   }
 }
 

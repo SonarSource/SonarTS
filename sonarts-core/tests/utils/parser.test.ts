@@ -20,13 +20,15 @@
 import { parseTsConfig } from "../../src/utils/parser";
 import { join } from "path";
 
-it("should always set traceResolution to false", () => {
-  let config = parseTsConfig(join(__dirname, "tsconfigWithTraceResolution.json"));
-  expect(config.options.traceResolution).toBe(false);
+describe("#parseTsConfig", () => {
+  it("should always set traceResolution to false", () => {
+    let config = parseTsConfig(join(__dirname, "tsconfigWithTraceResolution.json"));
+    expect(config.options.traceResolution).toBe(false);
 
-  config = parseTsConfig(join(__dirname, "tsconfigWithoutTraceResolution.json"));
-  expect(config.options.traceResolution).toBe(false);
+    config = parseTsConfig(join(__dirname, "tsconfigWithoutTraceResolution.json"));
+    expect(config.options.traceResolution).toBe(false);
 
-  config = parseTsConfig(join(__dirname, "tsconfigWithTraceResolutionFalse.json"));
-  expect(config.options.traceResolution).toBe(false);
+    config = parseTsConfig(join(__dirname, "tsconfigWithTraceResolutionFalse.json"));
+    expect(config.options.traceResolution).toBe(false);
+  });
 });
