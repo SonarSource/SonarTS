@@ -1,0 +1,6 @@
+{
+    "compilerOptions": {
+        "module": "es6",
+        "traceResolution": true
+    }
+}

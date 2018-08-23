@@ -89,6 +89,22 @@ it("should report syntax errors", () => {
   expect(result[0].diagnostics).toEqual([{ col: 0, line: 4, message: "Expression expected." }]);
 });
 
+it("should ignore traceResolution property", () => {
+  let loggedOutput = "";
+  // monkey-patching stdout to test what has been logged
+  const stdoutWriteStream = process.stdout.write;
+  process.stdout.write = function(chunk: string | Buffer) {
+    loggedOutput += chunk.toString();
+    return true;
+  };
+  const filepath = path.join(__dirname, "./fixtures/with-trace-resolution-project/bar.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/with-trace-resolution-project/tsconfig.json");
+  const result = processRequest(inputForRequest(filepath, tsconfig));
+  expect(loggedOutput).toBe("");
+  expect(result[0].issues).toHaveLength(1);
+  process.stdout.write = stdoutWriteStream;
+});
+
 function inputForRequest(filepath: string, tsconfig: string): string {
   return JSON.stringify({
     filepaths: [path.normalize(filepath)],

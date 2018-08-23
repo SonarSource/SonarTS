@@ -106,6 +106,7 @@ export function parseTsConfig(tsConfig: string): { options: ts.CompilerOptions; 
       );
     }
   }
-
-  return { options: parsed.options, files: parsed.fileNames };
+  // make sure traceResolution is disabled because it generates a lot of content on stdout (see #688)
+  const options = Object.assign(parsed.options, { traceResolution: false });
+  return { options, files: parsed.fileNames };
 }
