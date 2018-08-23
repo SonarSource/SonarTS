@@ -40,11 +40,6 @@ import a1 = require("module-name-long")
 import a1 = require("module-name-long")
 import a3 = require("module-name-long")
 
-/* todo should be tested?
-var promise1 = import("module-name-long");
-var promise2 = import("module-name-long");
-var promise3 = import("module-name-long");
-*/
 export * from "module-name-long";
 export * from "module-name-long";
 export * from "module-name-long";
