@@ -48,7 +48,6 @@ src/console/src/views/models/AuthProviderPopup/AuthProviderSidePanel.tsx: 444
 src/console/src/views/PermissionsView/PermissionPopup/PermissionPopup.tsx: 336
 src/console/src/views/PermissionsView/RelationPermissionPopup/RelationPermissionPopup.tsx: 307
 src/console/src/views/ProjectRootView/AddProjectPopup.tsx: 222
-src/console/src/views/RelationsPopup/RelationFooter.tsx: 142
 src/console/src/views/RelationsPopup/RelationPopup.tsx: 612
 src/console/src/views/SchemaView/EnumsOverview/AddEnum.tsx: 286
 src/console/src/views/SchemaView/SchemaOverview/AddType.tsx: 334

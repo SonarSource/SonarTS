@@ -76,7 +76,13 @@ class Visitor extends SonarRuleVisitor {
     super.visitSourceFile(node);
 
     this.loopsAndJumps.forEach((jumps: ts.Node[], loop: ts.IterationStatement) => {
-      const issue = this.addIssue(loop.getFirstToken(), "Refactor this loop; it's executed only once");
+      const keyword = nav.findChild(
+        loop,
+        ts.SyntaxKind.ForKeyword,
+        ts.SyntaxKind.WhileKeyword,
+        ts.SyntaxKind.DoKeyword,
+      );
+      const issue = this.addIssue(keyword, "Refactor this loop; it's executed only once");
       jumps.forEach(jump => issue.addSecondaryLocation(jump, "loop is broken here."));
     });
   }

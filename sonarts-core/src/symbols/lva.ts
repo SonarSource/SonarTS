@@ -24,10 +24,10 @@ import { SymbolTable, Usage, UsageFlag } from "./table";
 import { is, isBlock, isAssignment } from "../utils/nodes";
 
 export class LiveVariableAnalyzer {
-  private blockAvailableReads: Map<CfgBlock, Set<ts.Symbol>>;
+  private blockAvailableReads!: Map<CfgBlock, Set<ts.Symbol>>;
   private deadUsages: Set<Usage> = new Set();
   private usedInNestedFunctionOrClass: Map<ts.Symbol, boolean> = new Map();
-  private root: ts.FunctionLikeDeclaration | ts.SourceFile;
+  private root!: ts.FunctionLikeDeclaration | ts.SourceFile;
   private static readonly FUNCTION_OR_SOURCE_FILE = [...FUNCTION_LIKE, ts.SyntaxKind.SourceFile];
 
   constructor(private readonly symbols: SymbolTable) {}

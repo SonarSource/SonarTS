@@ -1,6 +1,5 @@
 src/angular/modules/playground/src/web_workers/message_broker/index_common.ts: 22
 src/console/src/__mocks__/lokka.ts: 7
-src/emission/src/lib/__mocks__/metaphysics.ts: 2
 src/rxjs/spec/observables/defer-spec.ts: 47,61
 src/rxjs/spec/observables/if-spec.ts: 43,58,73,87
 src/rxjs/spec/observables/using-spec.ts: 31,48

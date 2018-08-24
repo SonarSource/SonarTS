@@ -83,8 +83,6 @@ it("property access", () => {
 });
 
 it("element access", () => {
-  // empty element access, possible theoretically based on ElementAccessExpression tree interface
-  expect(buildVisFromSource("x = a[];")).toMatchSnapshot();
   expect(buildVisFromSource("x = a[b];")).toMatchSnapshot();
   expect(buildVisFromSource("foo(x ? 1 : 2)[y ? 3 : 4];")).toMatchSnapshot();
 });

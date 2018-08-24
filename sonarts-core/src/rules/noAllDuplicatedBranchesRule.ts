@@ -41,7 +41,8 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public static MESSAGE = "Remove this conditional structure or edit its code blocks so that they're not all the same.";
-  public static MESSAGE_CONDITIONAL_EXPRESSION = 'This conditional operation returns the same value whether the condition is "true" or "false".';
+  public static MESSAGE_CONDITIONAL_EXPRESSION =
+    'This conditional operation returns the same value whether the condition is "true" or "false".';
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();

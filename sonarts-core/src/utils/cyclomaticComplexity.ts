@@ -19,7 +19,7 @@
  */
 
 import * as ts from "typescript";
-import { functionLikeMainToken } from "./navigation";
+import { functionLikeMainToken, findChild } from "./navigation";
 import { is, isFunctionLikeDeclaration } from "./nodes";
 
 export function getFunctionComplexityNodes(functionNode: ts.FunctionLikeDeclaration): ts.Node[] {
@@ -54,7 +54,8 @@ function getComplexityNodes(rootNode: ts.Node, skipFunctions: boolean): ts.Node[
         complexityNodes.push(node);
         break;
       case ts.SyntaxKind.WhileStatement:
-        complexityNodes.push((node as ts.WhileStatement).getFirstToken());
+        const whileKeyword = findChild(node, ts.SyntaxKind.WhileKeyword);
+        complexityNodes.push(whileKeyword);
         break;
       case ts.SyntaxKind.BinaryExpression:
         const binaryExpression = node as ts.BinaryExpression;

@@ -5,11 +5,10 @@ module.exports = {
       skipBabel: true,
     },
   },
-  mapCoverage: true,
   moduleFileExtensions: ["js", "ts"],
   testResultsProcessor: "jest-sonar-reporter",
   transform: {
-    "^.+\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js",
+    "^.+\\.ts$": "ts-jest",
   },
   testMatch: ["<rootDir>/tests/**/*.test.ts"],
 };

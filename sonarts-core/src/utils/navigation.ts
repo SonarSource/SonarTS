@@ -23,7 +23,13 @@ import * as nodes from "./nodes";
 const Kind = ts.SyntaxKind;
 
 export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | ts.ReturnStatement): ts.Node {
-  return node.getFirstToken();
+  return findChild(
+    node,
+    ts.SyntaxKind.BreakKeyword,
+    ts.SyntaxKind.ContinueKeyword,
+    ts.SyntaxKind.ThrowKeyword,
+    ts.SyntaxKind.ReturnKeyword,
+  );
 }
 
 export function collectLeftHandIdentifiers(
@@ -195,7 +201,7 @@ export function constructorOf(clazz: ts.ClassDeclaration | ts.ClassExpression): 
 /**
  * Returns
  * - function name token for methods and accessors
- * - "function" keyword for function declarations and expressions 
+ * - "function" keyword for function declarations and expressions
  * - "=>" for arrow function
  */
 export function functionLikeMainToken(functionNode: ts.FunctionLikeDeclaration): ts.Node {

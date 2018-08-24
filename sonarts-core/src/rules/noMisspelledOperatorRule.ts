@@ -55,6 +55,7 @@ class Visitor extends SonarRuleVisitor {
         const unaryExpression = expression as ts.PrefixUnaryExpression;
         const unaryOperator = unaryExpression.getFirstToken();
         if (
+          unaryOperator &&
           this.isPresentInCompoundAssignments(unaryOperator) &&
           this.areAdjacent(node.operatorToken, unaryOperator) &&
           !this.areAdjacent(unaryOperator, unaryExpression.operand)

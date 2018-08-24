@@ -20,7 +20,7 @@
 import * as Lint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { startLineAndCharacter, endLineAndCharacter } from "../utils/navigation";
+import { startLineAndCharacter, endLineAndCharacter, findChild } from "../utils/navigation";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 import { isIfStatement } from "../utils/nodes";
 
@@ -69,7 +69,8 @@ class Visitor extends SonarRuleVisitor {
           const ifTokenLine = startLineAndCharacter(statement).line;
           const previousStatementLastLine = endLineAndCharacter(previousStatement).line;
           if (ifTokenLine === previousStatementLastLine) {
-            this.addIssue(statement.getFirstToken(), Visitor.MESSAGE);
+            const ifKeyword = findChild(statement, ts.SyntaxKind.IfKeyword);
+            this.addIssue(ifKeyword, Visitor.MESSAGE);
           }
         }
       }

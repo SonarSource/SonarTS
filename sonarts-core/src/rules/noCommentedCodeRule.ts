@@ -48,7 +48,7 @@ interface SourceFileWithDiagnostics extends ts.SourceFile {
 }
 
 class Visitor extends SonarRuleVisitor {
-  sourceFile: ts.SourceFile;
+  sourceFile!: ts.SourceFile;
 
   protected visitSourceFile(sourceFile: ts.SourceFile) {
     this.sourceFile = sourceFile;
