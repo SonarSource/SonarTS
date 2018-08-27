@@ -1,14 +1,9 @@
-src/ag-grid/src/ts/columnController/balancedColumnTreeBuilder.ts: 4,11
-src/ag-grid/src/ts/columnController/columnUtils.ts: 8
 src/ag-grid/src/ts/gridApi.ts: 312,605,621
 src/ag-grid/src/ts/gridPanel/gridPanel.ts: 1004
 src/ag-grid/src/ts/layout/borderLayout.ts: 10
-src/ag-grid/src/ts/masterSlaveService.ts: 12,153
+src/ag-grid/src/ts/masterSlaveService.ts: 153
 src/ag-grid/src/ts/rendering/renderedRow.ts: 965
-src/ag-grid/src/ts/rowModels/floatingRowModel.ts: 4
-src/ag-grid/src/ts/selectionController.ts: 3
 src/ag-grid/src/ts/svgFactory.ts: 23
-src/ag-grid/src/ts/templateService.ts: 1
 src/angular/aio/aio-builds-setup/dockerbuild/scripts-js/lib/upload-server/build-verifier.ts: 11
 src/angular/aio/aio-builds-setup/dockerbuild/scripts-js/lib/verify-setup/nginx.e2e.ts: 174
 src/angular/aio/aio-builds-setup/dockerbuild/scripts-js/lib/verify-setup/server-integration.e2e.ts: 37,38
@@ -68,7 +63,7 @@ src/angular/packages/compiler-cli/test/diagnostics/expression_diagnostics_spec.t
 src/angular/packages/compiler-cli/test/main_spec.ts: 49,74
 src/angular/packages/compiler/test/aot/compiler_spec.ts: 23,39,110,263,375,472,474,481,499,501,634
 src/angular/packages/compiler/test/aot/jit_summaries_spec.ts: 31,45,51,264
-src/angular/packages/compiler/test/aot/static_reflector_spec.ts: 10,41,80,308,309,329,363,389,417,501,587,601,1057,1145
+src/angular/packages/compiler/test/aot/static_reflector_spec.ts: 41,51,80,308,309,329,363,389,417,501,587,601,1057,1145
 src/angular/packages/compiler/test/aot/static_symbol_resolver_spec.ts: 63,113,121,145,152,166,314,314
 src/angular/packages/compiler/test/aot/summary_resolver_spec.ts: 40
 src/angular/packages/compiler/test/aot/summary_serializer_spec.ts: 37,113,141,169,193,218
@@ -90,7 +85,6 @@ src/angular/packages/compiler/test/selector_spec.ts: 196,322
 src/angular/packages/compiler/test/style_url_resolver_spec.ts: 25
 src/angular/packages/compiler/test/template_parser/template_parser_spec.ts: 428,582,630,969,999,1118,1178,1493,1540,2235
 src/angular/packages/compiler/test/url_resolver_spec.ts: 18,18,19,25,31
-src/angular/packages/core/src/change_detection/change_detection.ts: 9
 src/angular/packages/core/test/animation/animation_integration_spec.ts: 245
 src/angular/packages/core/test/application_ref_spec.ts: 23
 src/angular/packages/core/test/change_detection/differs/default_iterable_differ_spec.ts: 52,59,74,82,237,531,531,546
@@ -177,7 +171,6 @@ src/console/src/views/Settings/PricingColumn.tsx: 208,209,209,210,211,212,259,30
 src/desktop/app/src/lib/dispatcher/app-store.ts: 1085,1085,1276
 src/desktop/app/src/lib/dispatcher/git-store.ts: 640
 src/desktop/app/src/lib/git/diff.ts: 26,26,58
-src/desktop/app/src/ui/index.tsx: 8
 src/desktop/app/test/unit/commit-identity-test.ts: 13
 src/desktop/app/test/unit/diff-parser-test.ts: 170
 src/desktop/app/test/unit/email-test.ts: 14,43
