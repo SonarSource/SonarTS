@@ -25,8 +25,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -40,6 +43,18 @@ import org.sonar.api.utils.log.Loggers;
 public class SensorContextUtils {
 
   private static final Logger LOG = Loggers.get(SensorContextUtils.class);
+
+  private static final Pattern UNREADABLE_CHARACTERS_PATTERN = Pattern.compile(
+      // VT - Vertical Tab
+    "\\u000B"
+      // FF - Form Feed
+      + "|\\u000C"
+      // NEL - Next Line
+      + "|\\u0085"
+      // LS - Line Separator
+      + "|\\u2028"
+      // PS - Paragraph Separator
+      + "|\\u2029");
 
   private SensorContextUtils() {
   }
@@ -135,7 +150,31 @@ public class SensorContextUtils {
     FilePredicate mainFilePredicate = sensorContext.fileSystem().predicates().and(
       fileSystem.predicates().hasType(InputFile.Type.MAIN),
       fileSystem.predicates().hasLanguage(TypeScriptLanguage.KEY));
-    return fileSystem.inputFiles(mainFilePredicate);
+    Iterable<InputFile> inputFiles = fileSystem.inputFiles(mainFilePredicate);
+    return excludeInputFilesWithUnreadableCharacters(inputFiles);
+  }
+
+  static List<InputFile> excludeInputFilesWithUnreadableCharacters(Iterable<InputFile> inputFiles) {
+    Map<String, Character> excludedFiles = new HashMap<>();
+    List<InputFile> result = new ArrayList<>();
+    for (InputFile inputFile : inputFiles) {
+      try {
+        String content = inputFile.contents();
+        Matcher matcher = UNREADABLE_CHARACTERS_PATTERN.matcher(content);
+        if (!matcher.find()) {
+          result.add(inputFile);
+        } else {
+          excludedFiles.put(inputFile.filename(), content.charAt(matcher.start()));
+        }
+      } catch (IOException e) {
+        // do nothing - analysis is done on TS side
+      }
+    }
+    if (!excludedFiles.isEmpty()) {
+      LOG.warn(String.format("Excluding %d file(s) because of unrecognized NEW_LINE characters:", excludedFiles.size()));
+      excludedFiles.forEach((fileName, invalidCharacter) -> LOG.warn(String.format(" - %s ('\\u%04x')", fileName, (int) invalidCharacter)));
+    }
+    return result;
   }
 
   static class Issue {
