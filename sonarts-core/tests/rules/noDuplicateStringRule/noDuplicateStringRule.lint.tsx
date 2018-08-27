@@ -1,20 +1,13 @@
 
-/// <reference lib="./module-name-long" />
-/// <reference lib="./module-name-long" />
-/// <reference lib="./module-name-long" />
-/// <reference lib="./module-name-long" />
-
 // taken from
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
-import defaultExport from "module-name-long";
-import defaultExport from "module-name-long";
-import defaultExport from "module-name-long";
-import defaultExport from "module-name-long";
+import defaultExport1 from "module-name-long";
+import defaultExport2 from "module-name-long";
+import defaultExport3 from "module-name-long";
 
-import * as name from "module-name-long";
-import * as name from "module-name-long";
-import * as name from "module-name-long";
-import * as name from "module-name-long";
+import * as name1 from "module-name-long";
+import * as name2 from "module-name-long";
+import * as name3 from "module-name-long";
 
 import { export1 } from "module-name-long";
 import { export2 } from "module-name-long";
@@ -23,14 +16,6 @@ import { export3 } from "module-name-long";
 import { export1 as alias1 } from "module-name-long";
 import { export1 as alias2 } from "module-name-long";
 import { export1 as alias3 } from "module-name-long";
-
-import defaultExport1, { export12 } from "module-name-long";
-import defaultExport2, { export12 } from "module-name-long";
-import defaultExport3, { export12 } from "module-name-long";
-
-import defaultExport11, * as name from "module-name-long";
-import defaultExport12, * as name from "module-name-long";
-import defaultExport13, * as name from "module-name-long";
 
 import "module-name-long";
 import "module-name-long";
@@ -43,10 +28,6 @@ import a3 = require("module-name-long")
 export * from "module-name-long";
 export * from "module-name-long";
 export * from "module-name-long";
-
-export {a} from "module-name-long";
-export {b} from "module-name-long";
-export {c} from "module-name-long";
 
 // too small
 console.log("a&b");
