@@ -22,7 +22,7 @@ import "module-name-long";
 import "module-name-long";
 
 import a1 = require("module-name-long")
-import a1 = require("module-name-long")
+import a2 = require("module-name-long")
 import a3 = require("module-name-long")
 
 export * from "module-name-long";
