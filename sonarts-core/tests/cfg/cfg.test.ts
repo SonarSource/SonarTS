@@ -205,6 +205,9 @@ it("object destructuring assignment", () => {
     propName3: locVarName2 = 42
   } = obj);`),
   ).toMatchSnapshot();
+
+  // with computed property
+  expect(buildVisFromSource(`const { [prop]: _, ...rest } = obj;`)).toMatchSnapshot();
 });
 
 it("jsx tag names", () => {

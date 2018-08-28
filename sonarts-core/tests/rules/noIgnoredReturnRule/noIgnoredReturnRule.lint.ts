@@ -75,3 +75,8 @@ function noSupportForUserTypes() {
 function unknownType(x: any) {
   x.foo();
 }
+
+function computedPropertyOnDestructuring(source: any, property: string) { // OK, used as computed property name
+  const { [property]: _, ...rest } = source;
+  return rest;
+}

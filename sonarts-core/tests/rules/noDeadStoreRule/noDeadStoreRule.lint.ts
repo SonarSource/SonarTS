@@ -124,6 +124,10 @@ function destructuring(x: any) {
   const { omit2, ...other2 } = x;
   //                ^^^^^^ {{Remove this useless assignment to local variable "other2".}}    
   doSomething(omit2)
+
+  let prop = "prop"; // OK, used as computed property name
+  const { [prop]: _, ...rest } = x;
+  doSomething(rest);
 }
 
 export default 1;
