@@ -22,16 +22,6 @@ import * as nodes from "./nodes";
 
 const Kind = ts.SyntaxKind;
 
-export function keyword(node: ts.BreakOrContinueStatement | ts.ThrowStatement | ts.ReturnStatement): ts.Node {
-  return findChild(
-    node,
-    ts.SyntaxKind.BreakKeyword,
-    ts.SyntaxKind.ContinueKeyword,
-    ts.SyntaxKind.ThrowKeyword,
-    ts.SyntaxKind.ReturnKeyword,
-  );
-}
-
 export function collectLeftHandIdentifiers(
   node: ts.Expression,
 ): { identifiers: ts.Identifier[]; nonIdentifiers: ts.Expression[] } {

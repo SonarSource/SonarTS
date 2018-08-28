@@ -56,7 +56,13 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private checkJump(node: ts.BreakStatement | ts.ThrowStatement | ts.ReturnStatement) {
-    const keyword = nav.keyword(node);
+    const keyword = nav.findChild(
+      node,
+      ts.SyntaxKind.BreakKeyword,
+      ts.SyntaxKind.ContinueKeyword,
+      ts.SyntaxKind.ThrowKeyword,
+      ts.SyntaxKind.ReturnKeyword,
+    );
     if (node.kind === ts.SyntaxKind.BreakStatement && this.isInsideForIn(node)) return;
     if (node.kind === ts.SyntaxKind.ReturnStatement && this.isInsideForOf(node)) return;
 
