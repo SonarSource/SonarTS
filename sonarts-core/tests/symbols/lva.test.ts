@@ -87,6 +87,7 @@ it("destructuring", () => {
   expect(isDead("x", func, lvaReturn)).toBe(false);
   expect(isDead("c", func, lvaReturn, 82)).toBe(true);
   expect(isDead("d", func, lvaReturn, 82)).toBe(true);
+  expect(isDead("computedProp", func, lvaReturn)).toBe(false);
 });
 
 function liveVariableAnalysis(functionName: string): { func: ts.FunctionLikeDeclaration; lvaReturn: LVAReturn } {

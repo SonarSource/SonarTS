@@ -81,4 +81,7 @@ function destructuring() {
   let a, b, c, d;
   ({a, b, prop1: c, prop2: d = 1} = obj); // 'c' and 'd' are written but not read
   read(a, b);
+
+  let computedProp = "prop";
+  const { [computedProp]: _, ...rest } = obj; // computedProp is read
 }

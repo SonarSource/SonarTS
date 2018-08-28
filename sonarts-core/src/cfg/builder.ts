@@ -446,6 +446,10 @@ class CfgBuilder {
       if (bindingElement.initializer) {
         current = this.buildExpression(current, bindingElement.initializer);
       }
+
+      if (bindingElement.propertyName && ts.isComputedPropertyName(bindingElement.propertyName)) {
+        current = this.buildExpression(current, bindingElement.propertyName.expression);
+      }
     }
     return current;
   }
