@@ -20,6 +20,7 @@
 package org.sonar.plugin.typescript;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile.Type;
@@ -78,13 +79,14 @@ public class ContextualSensorTest {
     assertThat(sensorContext.allIssues()).hasSize(1);
   }
 
-
   @Test
   public void should_not_execute_if_not_file_uri() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
 
     DefaultInputFile testInputFile = new TestInputFileBuilder("moduleKey", "foo/file.ts")
       .setLanguage(TypeScriptLanguage.KEY)
+      .setContents("function foo() { return `hello`; }\n")
+      .setCharset(StandardCharsets.UTF_8)
       .build();
 
     DefaultInputFile spiedInputFile = spy(testInputFile);
