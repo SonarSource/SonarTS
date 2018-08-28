@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
+import { is } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -63,9 +64,9 @@ class Visitor extends SonarRuleVisitor {
     const stringContent: string = getStringContent(node);
 
     if (
+      nodeIsStringConstant(node) &&
       stringContent.length >= Rule.MIN_LENGTH &&
-      !stringContent.match(Visitor.noSeparatorRegexp) &&
-      !jsxAttribute(node)
+      !stringContent.match(Visitor.noSeparatorRegexp)
     ) {
       const sameStringLiterals = this.literals.get(stringContent) || [];
       sameStringLiterals.push(node);
@@ -91,7 +92,12 @@ function getStringContent(node: ts.StringLiteral) {
   return node.getText().substr(1, node.getText().length - 2);
 }
 
-function jsxAttribute(node: ts.StringLiteral) {
-  const parent = node.parent;
-  return parent && parent.kind === ts.SyntaxKind.JsxAttribute;
+function nodeIsStringConstant(node: ts.StringLiteral) {
+  return !is(
+    node.parent,
+    ts.SyntaxKind.JsxAttribute,
+    ts.SyntaxKind.ImportDeclaration,
+    ts.SyntaxKind.ExternalModuleReference,
+    ts.SyntaxKind.ExportDeclaration,
+  );
 }
