@@ -37,6 +37,19 @@ export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);
   let program = createProgram(input.tsconfig, input.projectRoot);
 
+  let filesNumber: number = input.filepaths.length;
+  let currentFile: string;
+  let processedFilesCounter = 0;
+
+  const logProgress = () => {
+    console.error(`${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${currentFile}`);
+    if (processedFilesCounter < filesNumber) {
+      setTimeout(logProgress, 10 * 1000);
+    }
+  };
+
+  currentFile = input.filepaths[0];
+  logProgress();
   let output = input.filepaths.map((filepath: string) => {
     const sourceFile = program.getSourceFile(filepath);
     const output: object = { filepath };
@@ -51,6 +64,7 @@ export function processRequest(inputString: string) {
     } else {
       console.error(`Failed to find a source file matching path ${filepath} in program created with ${input.tsconfig}`);
     }
+    processedFilesCounter++;
     return output;
   });
   return output;
