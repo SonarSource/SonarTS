@@ -42,17 +42,22 @@ import static java.util.Collections.singletonList;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  TypescriptPluginTest.class,
-  CpdTest.class,
-  TsxTest.class,
-  ProfileTest.class,
-  GlobalTypescriptModuleTest.class,
-  CoverageTest.class,
-  FutureSyntaxTest.class,
   ComplexProjectStructureTest.class,
-  IssuesTest.class,
+  CoverageTest.class,
+  CpdTest.class,
   FileWithBomTest.class,
-  TslintRulesTest.class
+  FutureSyntaxTest.class,
+  GlobalTypescriptModuleTest.class,
+  IssuesTest.class,
+  JavaRulesIntegrationTest.class,
+  MultiConfigTest.class,
+  ProfileTest.class,
+  SonarLintTest.class,
+  TraceResolutionTest.class,
+  TslintExternalReportTest.class,
+  TslintRulesTest.class,
+  TsxTest.class,
+  TypescriptPluginTest.class
 })
 public class Tests {
 
