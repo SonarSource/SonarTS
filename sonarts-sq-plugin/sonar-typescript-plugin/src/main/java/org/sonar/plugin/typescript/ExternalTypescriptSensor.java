@@ -337,7 +337,12 @@ public class ExternalTypescriptSensor implements Sensor {
       if (line.contains("Error: Cannot find module 'typescript'")) {
         tsNotFound = true;
       }
-      LOG.error(line);
+
+      if (line.contains("files analyzed out of")) {
+        LOG.info(line);
+      } else {
+        LOG.error(line);
+      }
     }
 
     @Override
