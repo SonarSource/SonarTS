@@ -263,10 +263,6 @@ public class ExternalTypescriptSensor implements Sensor {
       fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1);
     }
 
-    for (int line : analysisResponse.commentLines) {
-      fileLinesContext.setIntValue(CoreMetrics.COMMENT_LINES_DATA_KEY, line, 1);
-    }
-
     for (int line : analysisResponse.executableLines) {
       fileLinesContext.setIntValue(CoreMetrics.EXECUTABLE_LINES_DATA_KEY, line, 1);
     }
