@@ -25,7 +25,7 @@ src/ag-grid/src/ts/rendering/cellRendererService.ts: 85
 src/ag-grid/src/ts/rendering/renderedCell.ts: 201
 src/ag-grid/src/ts/sortController.ts: 157
 src/ag-grid/src/ts/utils.ts: 292
-src/ag-grid/src/ts/widgets/component.ts: 63,87,138,142
+src/ag-grid/src/ts/widgets/component.ts: 63,138,142
 src/angular/aio/aio-builds-setup/dockerbuild/scripts-js/test/common/github-api.spec.ts: 302
 src/angular/aio/content/examples/upgrade-phonecat-2-hybrid/app/phone-detail/phone-detail.component.ts: 40
 src/angular/aio/content/examples/upgrade-phonecat-2-hybrid/app/phone-list/phone-list.component.ts: 70
@@ -49,13 +49,14 @@ src/angular/packages/animations/browser/src/dsl/animation.ts: 23,23,36,38
 src/angular/packages/animations/browser/src/util.ts: 46
 src/angular/packages/animations/browser/test/dsl/animation_spec.ts: 652,652
 src/angular/packages/animations/browser/test/engine/dom_animation_engine_spec.ts: 507
+src/angular/packages/benchpress/test/reporter/console_reporter_spec.ts: 36
 src/angular/packages/common/src/localization.ts: 95,97
 src/angular/packages/common/src/pipes/async_pipe.ts: 101,132
 src/angular/packages/common/src/pipes/number_pipe.ts: 53
 src/angular/packages/common/test/directives/ng_template_outlet_spec.ts: 64,80
 src/angular/packages/compiler-cli/src/compiler_host.ts: 291
 src/angular/packages/compiler-cli/src/diagnostics/expression_diagnostics.ts: 260,312
-src/angular/packages/compiler-cli/src/diagnostics/typescript_symbols.ts: 65,189,415
+src/angular/packages/compiler-cli/src/diagnostics/typescript_symbols.ts: 65,189,192,195,415,636,647,652,765
 src/angular/packages/compiler-cli/src/extract_i18n.ts: 26
 src/angular/packages/compiler-cli/test/mocks.ts: 63
 src/angular/packages/compiler/src/aot/compiler.ts: 127,128,131,135,136
@@ -112,6 +113,7 @@ src/angular/packages/http/src/body.ts: 28,60,62,84,95
 src/angular/packages/http/src/http.ts: 118,215
 src/angular/packages/language-service/src/utils.ts: 39,63
 src/angular/packages/language-service/test/test_utils.ts: 237,325
+src/angular/packages/platform-browser-dynamic/src/resource_loader/resource_loader_cache.ts: 34
 src/angular/packages/platform-browser/animations/src/animation_renderer.ts: 132
 src/angular/packages/platform-browser/src/browser/browser_adapter.ts: 216
 src/angular/packages/platform-browser/src/browser/tools/common_tools.ts: 63
@@ -122,13 +124,16 @@ src/angular/packages/platform-webworker/src/web_workers/shared/post_message_bus.
 src/angular/packages/router/src/apply_redirects.ts: 453,454
 src/angular/packages/router/src/directives/router_outlet.ts: 108,132
 src/angular/packages/router/src/router_module.ts: 295
+src/angular/packages/router/src/url_tree.ts: 283
 src/angular/packages/router/test/integration.spec.ts: 242,622,623,652,679,913,1739,1745,2075,2585,2586,2772,2945
 src/angular/packages/router/test/spy_ng_module_factory_loader.spec.ts: 18,29
 src/angular/packages/upgrade/src/common/downgrade_component.ts: 87
+src/angular/packages/upgrade/src/common/util.ts: 34
 src/angular/packages/upgrade/src/dynamic/upgrade_adapter.ts: 667,668
 src/angular/packages/upgrade/src/dynamic/upgrade_ng1_adapter.ts: 85,262,346
 src/angular/packages/upgrade/src/static/upgrade_component.ts: 198,199,269
 src/angular/packages/upgrade/static/src/common/downgrade_component.ts: 87
+src/angular/packages/upgrade/static/src/common/util.ts: 34
 src/angular/packages/upgrade/static/src/dynamic/upgrade_adapter.ts: 667,668
 src/angular/packages/upgrade/static/src/dynamic/upgrade_ng1_adapter.ts: 85,262,346
 src/angular/packages/upgrade/static/src/static/upgrade_component.ts: 198,199,269
@@ -170,6 +175,8 @@ src/desktop/app/test/unit/git/diff-test.ts: 97
 src/desktop/app/test/unit/main-process/menu-test.ts: 48,54
 src/desktop/app/test/unit/octicon-test.ts: 32
 src/desktop/tslint-rules/reactNoUnboundDispatcherPropsRule.ts: 61
+src/emission/src/lib/components/artist/shows/small_list.tsx: 40
+src/emission/src/lib/containers/works_for_you.tsx: 167
 src/Joust/ts/components/game/TwoPlayerGame.tsx: 40,58
 src/Joust/ts/Launcher.tsx: 434
 src/Joust/ts/TexturePreloader.ts: 26
@@ -194,6 +201,7 @@ src/rxjs/src/util/isPromise.ts: 2,2
 src/rxjs/src/util/isScheduler.ts: 3
 src/rxjs/src/util/subscribeToResult.ts: 58
 src/searchkit/src/core/AccessorManager.ts: 35
+src/TypeScript/scripts/tslint/noIncrementDecrementRule.ts: 31,50
 src/TypeScript/src/compiler/binder.ts: 236,298,445,975,1148,1229,1232,1235,1554,1588,1666,1982,2199,2227,2360,2536,2542
 src/TypeScript/src/compiler/checker.ts: 249,805,877,887,901,971,1315,1319,1344,1431,1525,1569,1569,1578,2237,2711,2929,2929,3453,3500,3778,3899,3932,3957,4147,4207,4275,4276,6088,6098,6106,6377,6646,6648,6652,6736,6746,6747,6748,7314,7318,7362,7362,7378,7584,8372,10781,10807,10807,10814,10815,10821,10856,11203,11204,11211,11216,11218,12504,12725,12748,13014,13113,13116,13120,13129,13130,13173,13328,13383,13440,14379,14380,14530,14622,14632,14641,14652,14858,14905,14927,14930,15100,15182,15212,15216,15321,15809,15811,15813,15815,15819,15819,16064,16117,16145,16412,16413,16414,16453,16728,16730,16744,16748,16850,17163,17277,17350,17353,17364,17438,17439,17608,17692,17701,17713,18021,18066,18107,19070,19308,19606,19618,19638,19720,19795,19811,19833,19885,20355,20462,20982,20986,21164,21417,21420,21422,21427,21437,21510,21513,21599,21619,22205,22209,22245,22249,22254,22261,22386,22387,22836,22852,23827,23830,23833,23858,23911,23921,24135,24214,24225,24230
 src/TypeScript/src/compiler/core.ts: 135

@@ -62,8 +62,11 @@ export function parseFile(filename: string): { sourceFile: ts.SourceFile; progra
       throw new Error(`Parsing error at position [${pos.line + 1}, ${pos.character}]`);
     }
   }
-
-  return { sourceFile: program.getSourceFile(filename), program };
+  const sourceFile = program.getSourceFile(filename);
+  if (!sourceFile) {
+    throw new Error(`No SourceFile found for file ${filename}`);
+  }
+  return { sourceFile, program };
 }
 
 export function createProgram(configFile: string): ts.Program {

@@ -62,11 +62,14 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   private isOptionalParameter(parameterIndex: number, node: ts.CallExpression) {
-    const declaration = this.program.getTypeChecker().getResolvedSignature(node).declaration;
-    if (isFunctionLikeDeclaration(declaration)) {
-      const { parameters } = declaration;
-      const parameter = parameters[parameterIndex];
-      return parameter && (parameter.initializer || parameter.questionToken);
+    const signature = this.program.getTypeChecker().getResolvedSignature(node);
+    if (signature) {
+      const declaration = signature.declaration;
+      if (declaration && isFunctionLikeDeclaration(declaration)) {
+        const { parameters } = declaration;
+        const parameter = parameters[parameterIndex];
+        return parameter && (parameter.initializer || parameter.questionToken);
+      }
     }
     return false;
   }

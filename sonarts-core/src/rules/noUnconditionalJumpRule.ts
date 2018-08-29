@@ -56,7 +56,13 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private checkJump(node: ts.BreakStatement | ts.ThrowStatement | ts.ReturnStatement) {
-    const keyword = nav.keyword(node);
+    const keyword = nav.findChild(
+      node,
+      ts.SyntaxKind.BreakKeyword,
+      ts.SyntaxKind.ContinueKeyword,
+      ts.SyntaxKind.ThrowKeyword,
+      ts.SyntaxKind.ReturnKeyword,
+    );
     if (node.kind === ts.SyntaxKind.BreakStatement && this.isInsideForIn(node)) return;
     if (node.kind === ts.SyntaxKind.ReturnStatement && this.isInsideForOf(node)) return;
 
@@ -76,7 +82,13 @@ class Visitor extends SonarRuleVisitor {
     super.visitSourceFile(node);
 
     this.loopsAndJumps.forEach((jumps: ts.Node[], loop: ts.IterationStatement) => {
-      const issue = this.addIssue(loop.getFirstToken(), "Refactor this loop; it's executed only once");
+      const keyword = nav.findChild(
+        loop,
+        ts.SyntaxKind.ForKeyword,
+        ts.SyntaxKind.WhileKeyword,
+        ts.SyntaxKind.DoKeyword,
+      );
+      const issue = this.addIssue(keyword, "Refactor this loop; it's executed only once");
       jumps.forEach(jump => issue.addSecondaryLocation(jump, "loop is broken here."));
     });
   }

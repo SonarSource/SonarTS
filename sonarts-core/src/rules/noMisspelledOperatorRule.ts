@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor, IssueLocation } from "../utils/sonarAnalysis";
+import { findChild } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -53,7 +54,12 @@ class Visitor extends SonarRuleVisitor {
       const expression = node.right;
       if (expression.kind === ts.SyntaxKind.PrefixUnaryExpression) {
         const unaryExpression = expression as ts.PrefixUnaryExpression;
-        const unaryOperator = unaryExpression.getFirstToken();
+        const unaryOperator = findChild(
+          unaryExpression,
+          ts.SyntaxKind.MinusToken,
+          ts.SyntaxKind.PlusToken,
+          ts.SyntaxKind.ExclamationToken,
+        );
         if (
           this.isPresentInCompoundAssignments(unaryOperator) &&
           this.areAdjacent(node.operatorToken, unaryOperator) &&

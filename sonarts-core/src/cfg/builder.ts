@@ -117,7 +117,7 @@ class CfgBuilder {
         const throwStatement = statement as ts.ThrowStatement;
         const throwBlock = this.createBlockPredecessorOf(this.end);
         throwBlock.addElement(throwStatement);
-        return this.buildExpression(throwBlock, throwStatement.expression);
+        return throwStatement.expression ? this.buildExpression(throwBlock, throwStatement.expression) : throwBlock;
 
       case SyntaxKind.LabeledStatement:
         return this.buildLabeledStatement(current, statement as ts.LabeledStatement);
@@ -143,8 +143,7 @@ class CfgBuilder {
   }
 
   private createNotLoopBreakable(breakTarget: CfgBlock, label: ts.Identifier | null) {
-    const breakable = new Breakable();
-    breakable.breakTarget = breakTarget;
+    const breakable: Breakable = { breakTarget };
     if (label) {
       breakable.label = label.text;
     }
@@ -152,8 +151,7 @@ class CfgBuilder {
   }
 
   private createLoopBreakable(breakTarget: CfgBlock, continueTarget: CfgBlock, loop: ts.IterationStatement) {
-    const breakable = new Breakable();
-    breakable.breakTarget = breakTarget;
+    const breakable: Breakable = { breakTarget };
     breakable.continueTarget = continueTarget;
     const label = CfgBuilder.getLabel(loop);
     if (label) {
@@ -163,8 +161,8 @@ class CfgBuilder {
   }
 
   private static getLabel(statement: ts.IterationStatement | ts.SwitchStatement): ts.Identifier | null {
-    if (statement.parent!.kind === SyntaxKind.LabeledStatement) {
-      return (statement.parent! as ts.LabeledStatement).label;
+    if (statement.parent.kind === SyntaxKind.LabeledStatement) {
+      return (statement.parent as ts.LabeledStatement).label;
     }
 
     return null;
@@ -781,8 +779,8 @@ class CfgBuilder {
   }
 }
 
-class Breakable {
-  public continueTarget?: CfgBlock;
-  public breakTarget: CfgBlock;
-  public label: string | null;
+interface Breakable {
+  continueTarget?: CfgBlock;
+  breakTarget: CfgBlock;
+  label?: string;
 }

@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 import { is } from "../utils/nodes";
+import { findChild } from "../utils/navigation";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -55,7 +56,8 @@ class Visitor extends SonarRuleVisitor {
     });
 
     if (clauses.length < 2 || (clauses.length === 2 && hasDefault)) {
-      this.addIssue(node.getFirstToken(), Rule.MESSAGE);
+      const switchKeyword = findChild(node, ts.SyntaxKind.SwitchKeyword);
+      this.addIssue(switchKeyword, Rule.MESSAGE);
     }
 
     super.visitSwitchStatement(node);

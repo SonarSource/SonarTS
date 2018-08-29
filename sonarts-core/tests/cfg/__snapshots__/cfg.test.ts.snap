@@ -4478,34 +4478,6 @@ Object {
       "id": 1,
       "label": "START
 a
-a[]
-x = a[]",
-      "physics": false,
-    },
-  ],
-}
-`;
-
-exports[`element access 2`] = `
-Object {
-  "edges": Array [
-    Object {
-      "arrows": "to",
-      "from": 1,
-      "id": 0,
-      "to": 0,
-    },
-  ],
-  "nodes": Array [
-    Object {
-      "id": 0,
-      "label": "END",
-      "physics": false,
-    },
-    Object {
-      "id": 1,
-      "label": "START
-a
 b
 a[b]
 x = a[b]",
@@ -4515,7 +4487,7 @@ x = a[b]",
 }
 `;
 
-exports[`element access 3`] = `
+exports[`element access 2`] = `
 Object {
   "edges": Array [
     Object {

@@ -95,10 +95,12 @@ class Visitor extends SonarRuleVisitor {
       Visitor.bodyIsSimple(accessor.body, setterOrGetter.type) &&
       !this.fieldIsUsed(accessor, matchingFields)
     ) {
+      const name = matchingFields[0].name;
       this.addIssue(
         accessor.name,
-        `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${matchingFields[0]
-          .name!.getText()}'`,
+        `Refactor this ${setterOrGetter.type} so that it actually refers to the property '${
+          name ? name.getText() : ""
+        }'`,
       ).addSecondaryLocation(matchingFields[0], "Property which should be referred.");
     }
   }

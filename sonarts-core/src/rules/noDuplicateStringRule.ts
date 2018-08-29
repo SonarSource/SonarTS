@@ -31,7 +31,9 @@ export class Rule extends tslint.Rules.AbstractRule {
     rspecKey: "RSPEC-1192",
     type: "maintainability",
     typescriptOnly: false,
-    optionsDescription: `Number of times a literal must be duplicated to trigger an issue. Default is ${Rule.DEFAULT_THRESHOLD}.`,
+    optionsDescription: `Number of times a literal must be duplicated to trigger an issue. Default is ${
+      Rule.DEFAULT_THRESHOLD
+    }.`,
     options: { type: "number" },
     optionExamples: [true, [true, 5]],
   };

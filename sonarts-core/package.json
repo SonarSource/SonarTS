@@ -46,7 +46,7 @@
   },
   "peerDependencies": {
     "tslint": "^5.11.0",
-    "typescript": "^2.2"
+    "typescript": "^2.2 || ^3.0"
   },
   "devDependencies": {
     "@types/glob": "5.0.33",
@@ -58,19 +58,19 @@
     "@types/vis": "4.21.0",
     "awesome-typescript-loader": "3.3.0",
     "glob": "7.1.2",
-    "jest": "21.2.1",
+    "jest": "23.5.0",
     "jest-sonar-reporter": "1.3.0",
     "json-stable-stringify": "1.0.1",
     "license-check": "1.1.5",
     "lodash": "4.17.10",
     "minimist": "1.2.0",
-    "prettier": "1.7.4",
+    "prettier": "1.14.2",
     "sonarqube-scanner": "1.3.0",
     "source-map-support": "0.5.0",
-    "ts-jest": "21.2.3",
+    "ts-jest": "23.1.4",
     "ts-node": "3.3.0",
     "tslint": "5.11.0",
-    "typescript": "2.6.1",
+    "typescript": "3.0.1",
     "vis": "4.21.0",
     "webpack": "2.7.0",
     "webpack-dev-server": "2.9.4"

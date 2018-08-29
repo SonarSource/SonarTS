@@ -79,6 +79,10 @@ export class SonarTsServer {
     }
 
     const program = service.getProgram();
+    if (!program) {
+      console.error(`No Program found with configuration ${tsConfig}`);
+      return EMPTY_ANSWER;
+    }
     const sourceFile = program.getSourceFile(file);
     if (!sourceFile) {
       console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
