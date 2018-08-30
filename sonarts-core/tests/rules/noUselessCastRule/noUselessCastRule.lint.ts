@@ -13,9 +13,33 @@ function typeAssertion(p1: number, p2: number | string, p3?: number) {
     p3 as number;
 //  ^^^^^^^^^^^^ {{Remove this unnecessary cast.}}
   }
- 
+
+  42 as number;
+//^^^^^^^^^^^^ {{Remove this unnecessary cast.}}
+
+  'hello' as string;
+//^^^^^^^^^^^^^^^^^ {{Remove this unnecessary cast.}}
+
   // OK
   p2 as number;
+}
+
+function singletonType(x: number) {
+  // OK
+  let a = <"aValue">"aValue";
+  let b = <"aValue" | "bValue">"aValue";
+}
+
+function enums() {
+  const Elevation = {
+    // OK
+    ZERO: 0 as 0,
+    ONE: 1 as 1,
+    TWO: 2 as 2,
+    THREE: 3 as 3,
+    FOUR: 4 as 4,
+  };
+  type Stuff = typeof Elevation[keyof typeof Elevation];
 }
 
 
