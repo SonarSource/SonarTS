@@ -143,6 +143,19 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
+  public void should_work_with_missing_tsconfig() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTSConfig/main.ts");
+
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTSFileLevelIssue.js", testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
+
+    assertThat(sensorContext.allIssues()).hasSize(1);
+    Issue issue = sensorContext.allIssues().iterator().next();
+    assertThat(issue.primaryLocation().textRange()).isNull();
+  }
+
+  @Test
   public void should_use_defaults_if_missing_data() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
@@ -229,9 +242,9 @@ public class ExternalTypescriptSensorTest {
 
     executeSensor(sensorContext, testBundle);
 
-    assertThat(logTester.logs(LoggerLevel.ERROR)).contains("No tsconfig.json file found for [" +
+    assertThat(logTester.logs(LoggerLevel.WARN)).contains("No tsconfig.json file found for [" +
       inputFile.uri() + "] (looking up the directories tree until project base directory [" +
-      sensorContext.fileSystem().baseDir().getAbsolutePath() + "]). This file will not be analyzed.");
+      sensorContext.fileSystem().baseDir().getAbsolutePath() + "]). Using default configuration.");
   }
 
   @Test

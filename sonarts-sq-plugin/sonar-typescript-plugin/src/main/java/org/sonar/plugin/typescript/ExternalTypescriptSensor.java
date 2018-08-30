@@ -64,6 +64,7 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(ExternalTypescriptSensor.class);
   private static final int MIN_NODE_VERSION = 6;
+  private static final String DEFAULT_TSCONFIG = "DEFAULT_TSCONFIG";
 
   private final CheckFactory checkFactory;
   private final ExternalProcessStreamConsumer errorConsumer;
@@ -124,7 +125,7 @@ public class ExternalTypescriptSensor implements Sensor {
       LOG.debug(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
 
       SonarTSCommand command = executableBundle.getSonarTsRunnerCommand();
-      String request = executableBundle.getRequestForRunner(tsconfigPath, inputFilesForThisConfig, typeScriptRules);
+      String request = executableBundle.getRequestForRunner(tsconfigPath, inputFilesForThisConfig, typeScriptRules, projectBaseDir.getAbsolutePath());
       SensorContextUtils.AnalysisResponse[] responses = executeExternalRunner(command, localTypescript, request);
 
       for (SensorContextUtils.AnalysisResponse response : responses) {
@@ -185,8 +186,9 @@ public class ExternalTypescriptSensor implements Sensor {
     for (InputFile inputFile : inputFiles) {
       File tsConfig = findTsConfig(inputFile, projectBaseDir);
       if (tsConfig == null) {
-        String message = "No tsconfig.json file found for [%s] (looking up the directories tree until project base directory [%s]). This file will not be analyzed.";
-        LOG.error(String.format(message, inputFile.uri(), projectBaseDir.getAbsolutePath()));
+        String message = "No tsconfig.json file found for [%s] (looking up the directories tree until project base directory [%s]). Using default configuration.";
+        LOG.warn(String.format(message, inputFile.uri(), projectBaseDir.getAbsolutePath()));
+        inputFileByTsconfig.computeIfAbsent(DEFAULT_TSCONFIG, x -> new ArrayList<>()).add(inputFile);
       } else {
         inputFileByTsconfig.computeIfAbsent(tsConfig.getAbsolutePath(), x -> new ArrayList<>()).add(inputFile);
       }

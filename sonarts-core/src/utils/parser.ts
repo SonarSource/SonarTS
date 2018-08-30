@@ -20,6 +20,7 @@
 import * as ts from "typescript";
 import * as fs from "fs";
 import * as path from "path";
+import { DEFAULT_TSCONFIG } from "../runner/sonartsServer";
 
 /**
  * Use for test purposes only.
@@ -69,15 +70,23 @@ export function parseFile(filename: string): { sourceFile: ts.SourceFile; progra
   return { sourceFile, program };
 }
 
-export function createProgram(configFile: string): ts.Program {
-  const { options, files } = parseTsConfig(configFile);
+export function createProgram(configFile: string, projectRoot: string): ts.Program {
+  const { options, files } = parseTsConfig(configFile, projectRoot);
   const host = ts.createCompilerHost(options, true);
   return ts.createProgram(files, options, host);
 }
 
-export function parseTsConfig(tsConfig: string): { options: ts.CompilerOptions; files: string[] } {
-  const projectDirectory = path.dirname(tsConfig);
-  const config = ts.readConfigFile(tsConfig, ts.sys.readFile);
+export function parseTsConfig(tsConfig: string, projectRoot: string): { options: ts.CompilerOptions; files: string[] } {
+  let projectDirectory = projectRoot;
+  let config: {
+    config?: any;
+    error?: ts.Diagnostic;
+  } = { config: { compilerOptions: {} } };
+  if (tsConfig !== DEFAULT_TSCONFIG) {
+    projectDirectory = path.dirname(tsConfig);
+    config = ts.readConfigFile(tsConfig, ts.sys.readFile);
+  }
+
   if (config.error !== undefined) {
     throw new Error(
       ts.formatDiagnostics([config.error], {

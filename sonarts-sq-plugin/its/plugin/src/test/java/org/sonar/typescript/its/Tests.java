@@ -57,7 +57,8 @@ import static java.util.Collections.singletonList;
   TslintExternalReportTest.class,
   TslintRulesTest.class,
   TsxTest.class,
-  TypescriptPluginTest.class
+  TypescriptPluginTest.class,
+  WithoutTSConfigTest.class
 })
 public class Tests {
 

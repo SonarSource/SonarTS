@@ -18,17 +18,25 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { parseTsConfig } from "../../src/utils/parser";
-import { join } from "path";
+import { join, parse } from "path";
+import { DEFAULT_TSCONFIG } from "../../src/runner/sonartsServer";
 
 describe("#parseTsConfig", () => {
   it("should always set traceResolution to false", () => {
-    let config = parseTsConfig(join(__dirname, "tsconfigWithTraceResolution.json"));
+    let config = parseTsConfig(join(__dirname, "tsconfigWithTraceResolution.json"), __dirname);
     expect(config.options.traceResolution).toBe(false);
 
-    config = parseTsConfig(join(__dirname, "tsconfigWithoutTraceResolution.json"));
+    config = parseTsConfig(join(__dirname, "tsconfigWithoutTraceResolution.json"), __dirname);
     expect(config.options.traceResolution).toBe(false);
 
-    config = parseTsConfig(join(__dirname, "tsconfigWithTraceResolutionFalse.json"));
+    config = parseTsConfig(join(__dirname, "tsconfigWithTraceResolutionFalse.json"), __dirname);
     expect(config.options.traceResolution).toBe(false);
+  });
+
+  it("should use root directory when no tsconfig is found", () => {
+    let { options, files } = parseTsConfig(DEFAULT_TSCONFIG, join(__dirname, "fixtures", "notsconfig"));
+    expect(files).toHaveLength(2);
+    expect(files.map(file => parse(file).base).sort()).toEqual(["core.ts", "main.ts"]);
+    expect(options).toEqual({ configFilePath: undefined, noEmit: true, traceResolution: false });
   });
 });
