@@ -73,6 +73,15 @@ class Visitor extends TypedSonarRuleVisitor {
     const typeToCast = this.program.getTypeChecker().getTypeFromTypeNode(type);
     const compatibleTypes = [actualExpressionType, ...getBaseTypes(actualExpressionType)];
 
+    if (
+      is(expression, ts.SyntaxKind.StringLiteral, ts.SyntaxKind.NumericLiteral) &&
+      is(type, ts.SyntaxKind.LiteralType) &&
+      expression.kind === (type as ts.LiteralTypeNode).literal.kind
+    ) {
+      // allow singleton types: '<"a"> "a";' or '0 as 0;'
+      return;
+    }
+
     if (compatibleTypes.includes(typeToCast)) {
       this.addIssue(assertionExpression, Rule.MESSAGE_CAST);
     }
