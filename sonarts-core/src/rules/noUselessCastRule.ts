@@ -82,7 +82,11 @@ class Visitor extends TypedSonarRuleVisitor {
       return;
     }
 
-    if (compatibleTypes.includes(typeToCast)) {
+    if (
+      (is(expression, ts.SyntaxKind.NumericLiteral) && is(type, ts.SyntaxKind.NumberKeyword)) ||
+      (is(expression, ts.SyntaxKind.StringLiteral) && is(type, ts.SyntaxKind.StringKeyword)) ||
+      compatibleTypes.includes(typeToCast)
+    ) {
       this.addIssue(assertionExpression, Rule.MESSAGE_CAST);
     }
   }

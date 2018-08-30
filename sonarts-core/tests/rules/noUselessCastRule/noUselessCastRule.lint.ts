@@ -13,7 +13,13 @@ function typeAssertion(p1: number, p2: number | string, p3?: number) {
     p3 as number;
 //  ^^^^^^^^^^^^ {{Remove this unnecessary cast.}}
   }
- 
+
+  42 as number;
+//^^^^^^^^^^^^ {{Remove this unnecessary cast.}}
+
+  'hello' as string;
+//^^^^^^^^^^^^^^^^^ {{Remove this unnecessary cast.}}
+
   // OK
   p2 as number;
 }
