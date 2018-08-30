@@ -57,7 +57,8 @@
     "prefer-immediate-return": true,
     "prefer-promise-shorthand": true,
     "use-primitive-type": true,
-    "use-type-alias": true
+    "use-type-alias": true,
+    "prefer-return-await-in-try-block": true
   },
   "rulesDirectory": "./lib/rules"
 }
