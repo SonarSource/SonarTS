@@ -51,23 +51,28 @@ public class TslintRulesTest {
   @Test
   public void S4328_should_consider_peer_dependencies() {
     List<Issue> issueList = getIssues("S4328", "profile-no-implicit-dependencies");
-    assertThat(issueList).extracting("line").doesNotContainAnyElementsOf(ImmutableList.of(1));
+    assertThat(issueList).isEmpty();
   }
 
   @Test
   public void S4328_should_consider_whitelisted_modules() {
-    List<Issue> issueList = getIssues("S4328", "profile-no-implicit-dependencies-whitelist");
-    assertThat(issueList).extracting("line").doesNotContainAnyElementsOf(ImmutableList.of(2));
+    List<Issue> issueList = getIssues("S4328", "profile-no-implicit-dependencies-whitelist", "S4328-whitelist");
+    assertThat(issueList).extracting("line").containsExactlyElementsOf(ImmutableList.of(3));
   }
 
+
   private List<Issue> getIssues(String ruleKey, String profileKey) {
+    return getIssues(ruleKey, profileKey, ruleKey);
+  }
+
+  private List<Issue> getIssues(String ruleKey, String profileKey, String filename) {
     orchestrator.resetData();
     orchestrator.executeBuild(Tests.createScanner("projects/tslint-rules-test-project", PROJECT_KEY).setProfile(profileKey));
 
     SearchRequest request = new SearchRequest();
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:" + ruleKey));
     return newWsClient().issues().search(request).getIssuesList()
-      .stream().filter(issue -> issue.getComponent().endsWith(ruleKey + ".ts"))
+      .stream().filter(issue -> issue.getComponent().endsWith(filename + ".ts"))
       .collect(Collectors.toList());
   }
 

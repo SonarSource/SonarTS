@@ -19,31 +19,19 @@
  */
 package org.sonar.plugin.typescript.rules;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import java.util.Arrays;
-import org.sonar.check.Rule;
-import org.sonar.check.RuleProperty;
+import com.google.gson.Gson;
+import org.junit.Test;
 
-@Rule(key = "S4328")
-public class NoImplicitDependencies extends TypeScriptRule {
+import static org.assertj.core.api.Assertions.assertThat;
 
-  private static final String DEFAULT_WHITELIST = "";
+public class NoImplicitDependenciesTest {
 
-  @RuleProperty(key = "whitelist",
-    description = "Comma separated list of modules to ignore while checking in package.json",
-    defaultValue = DEFAULT_WHITELIST)
-  String whitelist = DEFAULT_WHITELIST;
-
-  @Override
-  public String tsLintKey() {
-    return "no-implicit-dependencies";
+  @Test
+  public void configuration() throws Exception {
+    NoImplicitDependencies noImplicitDependencies = new NoImplicitDependencies();
+    noImplicitDependencies.whitelist = "app,core";
+    String configuration = new Gson().toJson(noImplicitDependencies.configuration());
+    assertThat(configuration).isEqualTo("[\"dev\",[\"app\",\"core\"]]");
   }
 
-  @Override
-  public JsonElement configuration() {
-    JsonArray whitelistModules = new JsonArray();
-    Arrays.stream(whitelist.split(",")).forEach(whitelistModules::add);
-    return ruleConfiguration("dev", whitelistModules);
-  }
 }
