@@ -1,5 +1,10 @@
 # Contributing
 
+## Reaching us
+
+Feel free to open issues in this Github repository if you find **bugs** or anything to improve in SonarTS plugin. Suggesting **feature** is also possible directly in Github, but if you want to discuss and share opinions with other SonarQube users, we strongly invite you to use our dedicated [SonarQube Community Forum](https://community.sonarsource.com/).
+
+
 ## Create New Rule
 
 * Create file for rule implementation in `src/rules`. File name should start with lower case and have suffix `Rule`
@@ -76,7 +81,7 @@ yarn ruling --rule <RuleFileName> --update # it is possible to combine both opti
 
 ## Debugging in Visual Studio Code
 
-:warning: Make sure to open the `sonarts-code` directory, and not the root `SonarTS` one.
+:warning: Make sure to open the `sonarts-core` directory, and not the root `SonarTS` one.
 
 ![image](https://user-images.githubusercontent.com/2317341/34045676-3e0456b0-e1aa-11e7-9278-7e109512de79.png)
 
