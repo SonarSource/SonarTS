@@ -96,6 +96,7 @@ public class LCOVCoverageSensor implements Sensor {
     descriptor
       .onlyOnLanguage(TypeScriptLanguage.KEY)
       .name("SonarTS Coverage")
-      .onlyOnFileType(Type.MAIN);
+      .onlyOnFileType(Type.MAIN)
+      .onlyWhenConfiguration(config -> config.hasKey(TypeScriptPlugin.LCOV_REPORT_PATHS));
   }
 }

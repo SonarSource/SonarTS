@@ -29,6 +29,7 @@ import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.FileMetadata;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
+import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.utils.log.LogTester;
@@ -67,6 +68,19 @@ public class LCOVCoverageSensorTest {
     assertThat(context.conditions("moduleKey:file1.ts", 2)).isEqualTo(4);
 
     assertThat(logTester.logs()).contains("Could not resolve 1 file paths in [" + new File(moduleBaseDir, "lcov.info").getAbsolutePath() + "], first unresolved path: file2.ts");
+  }
+
+  @Test
+  public void should_contain_sensor_descriptor() {
+    DefaultSensorDescriptor descriptor = new DefaultSensorDescriptor();
+
+    lcovCoverageSensor.describe(descriptor);
+    assertThat(descriptor.name()).isEqualTo("SonarTS Coverage");
+    assertThat(descriptor.languages()).containsOnly("ts");
+    assertThat(descriptor.type()).isEqualTo(Type.MAIN);
+    assertThat(descriptor.configurationPredicate().test(new MapSettings().setProperty("sonar.javascript.lcov.reportPaths", "foo").asConfig())).isFalse();
+    assertThat(descriptor.configurationPredicate().test(new MapSettings().setProperty("sonar.typescript.lcov.reportPaths", "foo").asConfig())).isTrue();
+    assertThat(descriptor.configurationPredicate().test(new MapSettings().asConfig())).isFalse();
   }
 
   private void createInputFile() throws IOException {
