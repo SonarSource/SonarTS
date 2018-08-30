@@ -54,6 +54,12 @@ public class TslintRulesTest {
     assertThat(issueList).extracting("line").doesNotContainAnyElementsOf(ImmutableList.of(1));
   }
 
+  @Test
+  public void S4328_should_consider_whitelisted_modules() {
+    List<Issue> issueList = getIssues("S4328", "profile-no-implicit-dependencies-whitelist");
+    assertThat(issueList).extracting("line").doesNotContainAnyElementsOf(ImmutableList.of(2));
+  }
+
   private List<Issue> getIssues(String ruleKey, String profileKey) {
     orchestrator.resetData();
     orchestrator.executeBuild(Tests.createScanner("projects/tslint-rules-test-project", PROJECT_KEY).setProfile(profileKey));

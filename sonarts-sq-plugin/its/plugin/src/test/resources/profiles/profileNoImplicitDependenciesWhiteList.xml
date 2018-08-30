@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile>
+  <name>profile-no-implicit-dependencies-whitelist</name>
+  <language>ts</language>
+  <rules>
+    <rule>
+      <repositoryKey>typescript</repositoryKey>
+      <key>S4328</key>
+      <priority>INFO</priority>
+      <parameters>
+        <parameter>
+          <key>whitelist</key>
+          <value>src,app</value>
+        </parameter>
+      </parameters>
+    </rule>
+  </rules>
+</profile>

@@ -19,11 +19,21 @@
  */
 package org.sonar.plugin.typescript.rules;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import java.util.Arrays;
 import org.sonar.check.Rule;
+import org.sonar.check.RuleProperty;
 
 @Rule(key = "S4328")
 public class NoImplicitDependencies extends TypeScriptRule {
+
+  private static final String DEFAULT_WHITELIST = "";
+
+  @RuleProperty(key = "whitelist",
+    description = " Comma separated list of modules to skip checking their existence in package.json.",
+    defaultValue = DEFAULT_WHITELIST)
+  String whitelist = DEFAULT_WHITELIST;
 
   @Override
   public String tsLintKey() {
@@ -32,6 +42,8 @@ public class NoImplicitDependencies extends TypeScriptRule {
 
   @Override
   public JsonElement configuration() {
-    return ruleConfiguration("dev");
+    JsonArray whitelistModules = new JsonArray();
+    Arrays.stream(whitelist.split(",")).forEach(whitelistModules::add);
+    return ruleConfiguration("dev", whitelistModules);
   }
 }
