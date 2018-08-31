@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "typescript": "2.4.2"
+  },
+  "peerDependencies": {
+    "@angular/core": "5.2.7"
   }
 }
