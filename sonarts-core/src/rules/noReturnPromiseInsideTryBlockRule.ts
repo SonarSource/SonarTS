@@ -27,16 +27,20 @@ const RETURN_LENGTH = "return".length;
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
-    ruleName: "prefer-return-await-in-try-block",
-    description: "...", // todo
-    rationale: tslint.Utils.dedent`....`, // todo
-    optionsDescription: "Alternative promise constructors",
+    ruleName: "no-return-promise-inside-try-block",
+    description: "Add await to handle rejection",
+    rationale: tslint.Utils.dedent`
+      Return promise instead of awaited value inside try block 
+      leads to not catching this error by catch block
+    `,
+    optionsDescription: "Alternative promise constructor names",
+    optionExamples: [[true], [[true, "Bluebird"]], [[true, "Bluebird", "MyCustomPromise"]]],
     options: {
       type: "array",
       items: { type: "string" },
     },
     rspecKey: "...", // todo
-    type: "maintainability", // todo
+    type: "functionality", // todo
     typescriptOnly: true,
   };
 
@@ -88,7 +92,6 @@ class Walker {
             start + RETURN_LENGTH,
             "Possible missing await keyword after return",
             Rule.metadata.ruleName,
-            new tslint.Replacement(start, RETURN_LENGTH, "return await"), // todo make function async?
           ),
         );
       }

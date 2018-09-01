@@ -39,6 +39,7 @@ Some rules are raising issues on unused values ([`no-useless-increment`]), which
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
 * Types without members, 'any' and 'never' should not be used in type intersections ([`no-useless-intersection`])
+* Return of value with type Promise should not go without await when it's in try block ([`no-return-promise-inside-try-block`]) ([`requires type-check`])
 
 ### Code Smell Detection :pig:
 
@@ -146,6 +147,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`prefer-promise-shorthand`]: ./sonarts-core/docs/rules/prefer-promise-shorthand.md
 [`use-primitive-type`]: ./sonarts-core/docs/rules/use-primitive-type.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
+[`no-return-promise-inside-try-block`]: ./sonarts-core/docs/rules/no-return-promise-inside-try-block.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
