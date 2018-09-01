@@ -126,6 +126,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-redundant-boolean`]: ./sonarts-core/docs/rules/no-redundant-boolean.md
 [`no-redundant-jump`]: ./sonarts-core/docs/rules/no-redundant-jump.md
 [`no-redundant-parentheses`]: ./sonarts-core/docs/rules/no-redundant-parentheses.md
+[`no-return-promise-inside-try-block`]: ./sonarts-core/docs/rules/no-return-promise-inside-try-block.md
 [`no-return-type-any`]: ./sonarts-core/docs/rules/no-return-type-any.md
 [`no-same-line-conditional`]: ./sonarts-core/docs/rules/no-same-line-conditional.md
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
@@ -147,7 +148,6 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`prefer-promise-shorthand`]: ./sonarts-core/docs/rules/prefer-promise-shorthand.md
 [`use-primitive-type`]: ./sonarts-core/docs/rules/use-primitive-type.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
-[`no-return-promise-inside-try-block`]: ./sonarts-core/docs/rules/no-return-promise-inside-try-block.md
 
 [`requires type-check`]: https://palantir.github.io/tslint/usage/type-checking/
 
