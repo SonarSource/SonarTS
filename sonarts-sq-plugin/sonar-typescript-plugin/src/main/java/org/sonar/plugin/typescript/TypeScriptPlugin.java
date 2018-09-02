@@ -106,7 +106,7 @@ public class TypeScriptPlugin implements Plugin {
       PropertyDefinition.builder(TSCONFIG_PATH)
           .defaultValue(TSCONFIG_PATH_DEFAULT_VALUE)
           .name("tsconfig.json location")
-          .description("tsconfig.json location")
+          .description("Relative path to a tsconfig JSON file")
           .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
           .subCategory(GENERAL_SUBCATEGORY)
           .multiValues(false)

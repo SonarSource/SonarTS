@@ -46,7 +46,7 @@ public class ConfigPathTest {
       Tests.createScanner("projects/tsconfig-path-project", PROJECT_KEY)
         .setProperty("sonar.typescript.tsconfigPath", "config/tsconfig.json"));
 
-    assertThat(!buildResult.getLogs().contains("No tsconfig.json file found "));
+    assertThat(buildResult.getLogs()).doesNotContain("No tsconfig.json file found");
   }
 
 }

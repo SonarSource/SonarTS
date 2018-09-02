@@ -35,7 +35,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import javax.annotation.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.fs.FileSystem;
@@ -49,6 +48,7 @@ import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.symbol.NewSymbol;
 import org.sonar.api.batch.sensor.symbol.NewSymbolTable;
+import org.sonar.api.internal.google.common.base.Strings;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
@@ -119,16 +119,7 @@ public class ExternalTypescriptSensor implements Sensor {
 
     File projectBaseDir = sensorContext.fileSystem().baseDir();
     Optional<String> tsconfigPathFromVariable = sensorContext.config().get(TypeScriptPlugin.TSCONFIG_PATH);
-    Map<String, List<InputFile>> inputFileByTsconfig;
-    if (tsconfigPathFromVariable.isPresent()){
-      inputFileByTsconfig = new HashMap<>();
-      File tsconfigFile = new File(projectBaseDir+"/"+tsconfigPathFromVariable.get());
-      List<InputFile> inputFileList = StreamSupport.stream(inputFiles.spliterator(), false).collect(Collectors.toList());
-      inputFileByTsconfig.put(tsconfigFile.getAbsolutePath(),inputFileList);
-    } else {
-      inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
-    }
-
+    Map<String, List<InputFile>> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir, tsconfigPathFromVariable.orElse(null));
 
     for (Map.Entry<String, List<InputFile>> e : inputFileByTsconfig.entrySet()) {
       String tsconfigPath = e.getKey();
@@ -191,8 +182,21 @@ public class ExternalTypescriptSensor implements Sensor {
     LOG.debug(String.format("Using Node.js %s", version));
   }
 
-  private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
+  private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir, @Nullable String tsconfigPathFromVariable) {
     Map<String, List<InputFile>> inputFileByTsconfig = new HashMap<>();
+    if (!Strings.isNullOrEmpty(tsconfigPathFromVariable)) {
+      File tsconfigFile = new File(projectBaseDir + File.separator + tsconfigPathFromVariable);
+      if (!tsconfigFile.exists()) {
+        String message = String.format("The tsconfig file [%s] doesn't exist. Review property specified in sonar.typescript.tsconfigPath", tsconfigFile.getAbsoluteFile());
+        LOG.error(message);
+        throw new IllegalArgumentException(message);
+      }
+      ArrayList<InputFile> list = new ArrayList<>();
+      inputFiles.iterator().forEachRemaining(list::add);
+      inputFileByTsconfig.put(tsconfigFile.getAbsolutePath(), list);
+      return inputFileByTsconfig;
+    }
+
     for (InputFile inputFile : inputFiles) {
       File tsConfig = findTsConfig(inputFile, projectBaseDir);
       if (tsConfig == null) {
@@ -213,7 +217,6 @@ public class ExternalTypescriptSensor implements Sensor {
 
   @Nullable
   private static File findTsConfig(InputFile inputFile, File projectBaseDir) {
-
     File currentDirectory = inputFile.file();
     do {
       currentDirectory = currentDirectory.getParentFile();

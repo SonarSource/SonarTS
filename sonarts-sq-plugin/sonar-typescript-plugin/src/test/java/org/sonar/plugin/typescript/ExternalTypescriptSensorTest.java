@@ -36,6 +36,7 @@ import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
+import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
@@ -180,6 +181,36 @@ public class ExternalTypescriptSensorTest {
     executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
+  }
+
+  @Test
+  public void should_find_custom_tsconfig() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    MapSettings settings = new MapSettings();
+    settings.setProperty(TypeScriptPlugin.TSCONFIG_PATH, "customTsconfig/config/tsconfig.json");
+    sensorContext.setSettings(settings);
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext, "customTsconfig/main.ts");
+
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
+
+    assertThat(sensorContext.allIssues()).hasSize(1);
+  }
+
+  @Test
+  public void should_throw_when_tsconfig_not_exist() throws Exception {
+    SensorContextTester sensorContext = createSensorContext();
+    MapSettings settings = new MapSettings();
+    settings.setProperty(TypeScriptPlugin.TSCONFIG_PATH, "customTsconfig/another/tsconfig.json");
+    sensorContext.setSettings(settings);
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext, "customTsconfig/main.ts");
+
+    thrown.expect(IllegalArgumentException.class);
+    String tsconfigPath = BASE_DIR + File.separator + "customTsconfig" + File.separator + "another" + File.separator + "tsconfig.json";
+    String message = String.format("The tsconfig file [%s] doesn't exist. Review property specified in sonar.typescript.tsconfigPath", tsconfigPath);
+    thrown.expectMessage(message);
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
   }
 
   @Test
