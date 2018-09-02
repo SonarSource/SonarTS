@@ -49,6 +49,7 @@ import static java.util.Collections.singletonList;
   FutureSyntaxTest.class,
   GlobalTypescriptModuleTest.class,
   IssuesTest.class,
+  IncrementalAnalysisLogTest.class,
   JavaRulesIntegrationTest.class,
   MultiConfigTest.class,
   ProfileTest.class,

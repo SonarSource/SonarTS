@@ -26,6 +26,7 @@ import getCpdTokens from "./cpd";
 import getSymbolHighlighting from "./symbolHighlighting";
 import { createProgram } from "../utils/parser";
 import getDiagnostics from "./diagnostics";
+import { basename } from "path";
 
 interface Sensor {
   (sourceFile: ts.SourceFile, program: ts.Program): any;
@@ -37,12 +38,14 @@ export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);
   let program = createProgram(input.tsconfig, input.projectRoot);
 
-  let filesNumber: number = input.filepaths.length;
+  const filesNumber: number = input.filepaths.length;
   let currentFile: string;
   let processedFilesCounter = 0;
 
   const logProgress = () => {
-    console.error(`${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${currentFile}`);
+    console.warn(
+      `${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${basename(currentFile)}`,
+    );
     if (processedFilesCounter < filesNumber) {
       setTimeout(logProgress, 10 * 1000);
     }

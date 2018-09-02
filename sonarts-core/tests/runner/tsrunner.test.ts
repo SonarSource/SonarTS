@@ -92,17 +92,31 @@ it("should report syntax errors", () => {
 it("should ignore traceResolution property", () => {
   let loggedOutput = "";
   // monkey-patching stdout to test what has been logged
-  const stdoutWriteStream = process.stdout.write;
-  process.stdout.write = function(chunk: string | Buffer) {
+  jest.spyOn(window.console, "log").mockImplementation(chunk => {
     loggedOutput += chunk.toString();
     return true;
-  };
+  });
   const filepath = path.join(__dirname, "./fixtures/with-trace-resolution-project/bar.lint.ts");
   const tsconfig = path.join(__dirname, "./fixtures/with-trace-resolution-project/tsconfig.json");
   const result = processRequest(inputForRequest(filepath, tsconfig));
+  jest.resetAllMocks();
   expect(loggedOutput).toBe("");
   expect(result[0].issues).toHaveLength(1);
-  process.stdout.write = stdoutWriteStream;
+});
+
+it("should log incremental reports about analysis", () => {
+  let loggedOutput = "";
+  // monkey-patching stderr to test what has been logged
+  jest.spyOn(window.console, "warn").mockImplementation(chunk => {
+    loggedOutput += chunk.toString();
+    return true;
+  });
+  const filepath = path.join(__dirname, "./fixtures/runnerProject/sample.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/runnerProject/tsconfig.json");
+  const result = processRequest(inputForRequest(filepath, tsconfig));
+  jest.resetAllMocks();
+  expect(loggedOutput).toMatch("0 files analyzed out of 1.");
+  expect(result[0].issues).toHaveLength(1);
 });
 
 function inputForRequest(filepath: string, tsconfig: string): string {
