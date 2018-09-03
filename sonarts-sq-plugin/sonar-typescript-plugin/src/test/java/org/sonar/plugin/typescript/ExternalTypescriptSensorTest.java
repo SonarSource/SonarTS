@@ -228,7 +228,7 @@ public class ExternalTypescriptSensorTest {
     TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTSFileLevelIssue.js", testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
-    assertThat(logTester.logs(LoggerLevel.INFO)).contains("No tsconfig.json file found for 1 files (Run in debug mode to see all of them). They will be analyzed with a default configuration.");
+    assertThat(logTester.logs(LoggerLevel.INFO)).contains("No tsconfig.json file found for 1 file(s) (Run in debug mode to see all of them). They will be analyzed with a default configuration.");
 
     assertThat(sensorContext.allIssues()).hasSize(1);
   }

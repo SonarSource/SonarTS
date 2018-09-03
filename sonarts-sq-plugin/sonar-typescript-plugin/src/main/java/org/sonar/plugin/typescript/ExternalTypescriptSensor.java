@@ -182,11 +182,9 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
     Map<String, List<InputFile>> inputFileByTsconfig = new HashMap<>();
-    int filesWithoutTSConfig = 0;
     for (InputFile inputFile : inputFiles) {
       File tsConfig = findTsConfig(inputFile, projectBaseDir);
       if (tsConfig == null) {
-        filesWithoutTSConfig++;
         String message = "No tsconfig.json file found for [%s] (looking up the directories tree until project base directory [%s]). Using default configuration.";
         LOG.debug(String.format(message, inputFile.uri(), projectBaseDir.getAbsolutePath()));
         inputFileByTsconfig.computeIfAbsent(DEFAULT_TSCONFIG, x -> new ArrayList<>()).add(inputFile);
@@ -194,9 +192,10 @@ public class ExternalTypescriptSensor implements Sensor {
         inputFileByTsconfig.computeIfAbsent(tsConfig.getAbsolutePath(), x -> new ArrayList<>()).add(inputFile);
       }
     }
-    if (filesWithoutTSConfig > 0) {
-      String message = "No tsconfig.json file found for %d files (Run in debug mode to see all of them). They will be analyzed with a default configuration.";
-      LOG.info(String.format(message, filesWithoutTSConfig));
+    List<InputFile> filesWithoutTsconfig = inputFileByTsconfig.get(DEFAULT_TSCONFIG);
+    if (filesWithoutTsconfig != null) {
+      String message = "No tsconfig.json file found for %d file(s) (Run in debug mode to see all of them). They will be analyzed with a default configuration.";
+      LOG.info(String.format(message, filesWithoutTsconfig.size()));
     }
     return inputFileByTsconfig;
   }
