@@ -90,6 +90,7 @@ import org.sonar.plugin.typescript.rules.NoInferrableTypes;
 import org.sonar.plugin.typescript.rules.NoInternalModule;
 import org.sonar.plugin.typescript.rules.NoInvalidAwait;
 import org.sonar.plugin.typescript.rules.NoInvalidTemplateStrings;
+import org.sonar.plugin.typescript.rules.NoInvertedBooleanCheck;
 import org.sonar.plugin.typescript.rules.NoMagicNumbers;
 import org.sonar.plugin.typescript.rules.NoMisleadingArrayReverse;
 import org.sonar.plugin.typescript.rules.NoMisspelledOperator;
@@ -279,6 +280,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoInternalModule.class,
       NoInvalidAwait.class,
       NoInvalidTemplateStrings.class,
+      NoInvertedBooleanCheck.class,
       NoMagicNumbers.class,
       NoMisleadingArrayReverse.class,
       NoMisspelledOperator.class,
