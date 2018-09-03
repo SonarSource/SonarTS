@@ -41,19 +41,21 @@ export function processRequest(inputString: string) {
   const filesNumber: number = input.filepaths.length;
   let currentFile: string;
   let processedFilesCounter = 0;
-
+  const currentTime = () => new Date().getTime() / 1000;
   const logProgress = () => {
-    console.warn(
-      `${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${basename(currentFile)}`,
-    );
-    if (processedFilesCounter < filesNumber) {
-      setTimeout(logProgress, 10 * 1000);
+    // log progress after 10s
+    if (Math.round(currentTime() - startTime) > 10) {
+      startTime = currentTime();
+      console.warn(
+        `${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${basename(currentFile)}`,
+      );
     }
   };
 
   currentFile = input.filepaths[0];
-  logProgress();
+  let startTime = currentTime();
   let output = input.filepaths.map((filepath: string) => {
+    logProgress();
     const sourceFile = program.getSourceFile(filepath);
     const output: object = { filepath };
     if (sourceFile) {
