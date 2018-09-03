@@ -128,5 +128,6 @@ function requestBuilder(content: string): string {
         ruleArguments: [],
       },
     ],
+    projectRoot: path.join(__dirname, "fixtures/incremental-compilation-project"),
   });
 }

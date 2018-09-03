@@ -45,7 +45,7 @@ function getRules(rule?: string): tslint.Rules.AbstractRule[] {
 
 function runRules(rules: tslint.Rules.AbstractRule[], tsConfigFile: string) {
   let results = {};
-  const program = createProgram(tsConfigFile);
+  const program = createProgram(tsConfigFile, path.dirname(tsConfigFile));
   const files = lodash.sortBy(getProgramFiles(program));
   files.forEach(file => {
     rules.forEach(Rule => {

@@ -28,6 +28,8 @@ import { parseTsConfig } from "../utils/parser";
 import getDiagnostics from "./diagnostics";
 
 const EMPTY_ANSWER: { issues: any[] } = { issues: [] };
+export const DEFAULT_TSCONFIG = "DEFAULT_TSCONFIG";
+
 export class SonarTsServer {
   readonly fileCache = new FileCache();
   // key is ts file path, value is corresponding tsconfig path
@@ -54,7 +56,7 @@ export class SonarTsServer {
   }
 
   private handleAnalysisRequest(request: AnalysisRequest): any {
-    const { file, rules, content } = request;
+    const { file, rules, content, projectRoot } = request;
 
     this.fileCache.newContent({ file, content });
 
@@ -66,14 +68,14 @@ export class SonarTsServer {
       if (tsConfig) {
         this.tsConfigCache.set(file, tsConfig);
       } else {
-        console.error("No tsconfig.json file found for " + file);
-        return EMPTY_ANSWER;
+        console.warn(`No tsconfig.json file found for ${file}, using default configuration`);
+        tsConfig = DEFAULT_TSCONFIG;
       }
     }
 
     let service = this.servicesPerTsconfig.get(tsConfig);
     if (!service) {
-      const { files, options } = parseTsConfig(tsConfig);
+      const { files, options } = parseTsConfig(tsConfig, projectRoot);
       service = createService(files, options, this.fileCache);
       this.servicesPerTsconfig.set(tsConfig, service);
     }
@@ -121,4 +123,5 @@ interface AnalysisRequest {
   file: string;
   rules: tslint.IOptions[];
   content: string;
+  projectRoot: string;
 }

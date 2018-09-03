@@ -28,7 +28,7 @@ public interface ExecutableBundle {
 
   SonarTSCommand getSonarTSServerCommand(int port);
 
-  String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules);
+  String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules, String projectRoot);
 
   String getNodeExecutable();
 

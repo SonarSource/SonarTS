@@ -24,7 +24,7 @@ import { createProgram } from "../../src/utils/parser";
 it("should run sonarts rules", () => {
   const sampleFile = path.join(__dirname, "./fixtures/runnerProject/identicalExpressionsAnDeadstore.lint.ts");
   const tsconfig = path.join(__dirname, "./fixtures/runnerProject/tsconfig.json");
-  const program = createProgram(tsconfig);
+  const program = createProgram(tsconfig, path.join(__dirname, "./fixtures/runnerProject"));
 
   const issues = getIssues(
     [

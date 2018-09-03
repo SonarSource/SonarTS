@@ -155,7 +155,7 @@ public class ContextualServerTest {
 
   private ContextualAnalysisRequest getContextualAnalysisRequest() throws IOException {
     DefaultInputFile inputFile = createInputFile(SensorContextTester.create(BASE_DIR), "function foo() {}", "foo/file.ts");
-    return new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES);
+    return new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES, BASE_DIR.getAbsolutePath());
   }
 
   private ContextualServer getContextualServer() {

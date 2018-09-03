@@ -98,7 +98,7 @@ class TestBundleFactory implements ExecutableBundleFactory {
     }
 
     @Override
-    public String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules) {
+    public String getRequestForRunner(String tsconfigPath, Iterable<InputFile> inputFiles, TypeScriptRules typeScriptRules, String projectRoot) {
       return "";
     }
   }

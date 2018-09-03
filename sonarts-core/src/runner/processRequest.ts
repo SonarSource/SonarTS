@@ -35,7 +35,7 @@ const sensors: Sensor[] = [getHighlighting, getMetrics, getCpdTokens, getSymbolH
 
 export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);
-  let program = createProgram(input.tsconfig);
+  let program = createProgram(input.tsconfig, input.projectRoot);
 
   let output = input.filepaths.map((filepath: string) => {
     const sourceFile = program.getSourceFile(filepath);

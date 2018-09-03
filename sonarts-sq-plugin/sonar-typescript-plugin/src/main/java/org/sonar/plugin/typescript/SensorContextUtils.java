@@ -278,12 +278,14 @@ public class SensorContextUtils {
     String file;
     String content;
     List<RuleToExecute> rules;
+    String projectRoot;
 
-    ContextualAnalysisRequest(InputFile inputFile, TypeScriptRules typeScriptRules) throws IOException {
+    ContextualAnalysisRequest(InputFile inputFile, TypeScriptRules typeScriptRules, String projectRoot) throws IOException {
       Path path = Paths.get(inputFile.uri());
       this.file = path.toString();
       this.content = inputFile.contents();
       this.rules = SensorContextUtils.convertToRulesToExecute(typeScriptRules);
+      this.projectRoot = projectRoot;
     }
   }
 
