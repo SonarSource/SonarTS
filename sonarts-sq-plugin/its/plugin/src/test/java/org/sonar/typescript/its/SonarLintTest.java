@@ -137,7 +137,6 @@ public class SonarLintTest {
     assertThat(results.failedAnalysisFiles()).isEmpty();
   }
 
-
   private ClientInputFile prepareInputFile(String filename, String content) throws IOException {
     Path filePath = projectDir.toPath().resolve(filename).toAbsolutePath();
     Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));

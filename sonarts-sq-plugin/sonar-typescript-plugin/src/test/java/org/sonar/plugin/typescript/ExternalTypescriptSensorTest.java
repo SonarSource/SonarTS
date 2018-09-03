@@ -207,7 +207,7 @@ public class ExternalTypescriptSensorTest {
 
     thrown.expect(IllegalArgumentException.class);
     String tsconfigPath = BASE_DIR + File.separator + "customTsconfig" + File.separator + "another" + File.separator + "tsconfig.json";
-    String message = String.format("The tsconfig file [%s] doesn't exist. Review property specified in sonar.typescript.tsconfigPath", tsconfigPath);
+    String message = String.format("The tsconfig file [%s] doesn't exist. Check property specified in sonar.typescript.tsconfigPath", tsconfigPath);
     thrown.expectMessage(message);
     TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);

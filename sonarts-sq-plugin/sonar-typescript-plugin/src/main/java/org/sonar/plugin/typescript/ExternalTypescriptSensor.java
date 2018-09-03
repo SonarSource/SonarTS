@@ -48,7 +48,6 @@ import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.symbol.NewSymbol;
 import org.sonar.api.batch.sensor.symbol.NewSymbolTable;
-import org.sonar.api.internal.google.common.base.Strings;
 import org.sonar.api.issue.NoSonarFilter;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
@@ -184,10 +183,10 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir, @Nullable String tsconfigPathFromVariable) {
     Map<String, List<InputFile>> inputFileByTsconfig = new HashMap<>();
-    if (!Strings.isNullOrEmpty(tsconfigPathFromVariable)) {
+    if (tsconfigPathFromVariable != null && !tsconfigPathFromVariable.trim().isEmpty()) {
       File tsconfigFile = new File(projectBaseDir + File.separator + tsconfigPathFromVariable);
       if (!tsconfigFile.exists()) {
-        String message = String.format("The tsconfig file [%s] doesn't exist. Review property specified in sonar.typescript.tsconfigPath", tsconfigFile.getAbsoluteFile());
+        String message = String.format("The tsconfig file [%s] doesn't exist. Check property specified in sonar.typescript.tsconfigPath", tsconfigFile.getAbsoluteFile());
         LOG.error(message);
         throw new IllegalArgumentException(message);
       }
