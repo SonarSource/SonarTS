@@ -34,7 +34,7 @@ describe("#parseTsConfig", () => {
   });
 
   it("should use root directory when no tsconfig is found", () => {
-    let { options, files } = parseTsConfig(DEFAULT_TSCONFIG, join(__dirname, "fixtures", "notsconfig"));
+    let { options, files } = parseTsConfig(DEFAULT_TSCONFIG, join(__dirname, "fixtures", "missingTsconfig"));
     expect(files).toHaveLength(2);
     expect(files.map(file => parse(file).base).sort()).toEqual(["core.ts", "main.ts"]);
     expect(options).toEqual({ configFilePath: undefined, noEmit: true, traceResolution: false });

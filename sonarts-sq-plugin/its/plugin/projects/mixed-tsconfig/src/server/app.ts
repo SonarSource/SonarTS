@@ -1,5 +1,5 @@
 function x(x: number) {
-  if (<number>4 > <number>4) { // S1764
+  if (4 > 4) { // S1764
     console.log("");
   }
 }

@@ -143,19 +143,6 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_work_with_missing_tsconfig() throws Exception {
-    SensorContextTester sensorContext = createSensorContext();
-    DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTSConfig/main.ts");
-
-    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTSFileLevelIssue.js", testInputFile.absolutePath());
-    executeSensor(sensorContext, bundleFactory);
-
-    assertThat(sensorContext.allIssues()).hasSize(1);
-    Issue issue = sensorContext.allIssues().iterator().next();
-    assertThat(issue.primaryLocation().textRange()).isNull();
-  }
-
-  @Test
   public void should_use_defaults_if_missing_data() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
@@ -236,15 +223,14 @@ public class ExternalTypescriptSensorTest {
   @Test
   public void should_log_when_tsconfig_for_file_not_found() throws Exception {
     SensorContextTester sensorContext = createSensorContext();
-    // "file.ts" is in resources directory, where there is no tsconfig.json
-    DefaultInputFile inputFile = createTestInputFile(sensorContext, "file.ts");
-    TestBundleFactory testBundle = TestBundleFactory.nodeScript("/mockSonarTS.js", inputFile.absolutePath());
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext, "missingTSConfig/main.ts");
 
-    executeSensor(sensorContext, testBundle);
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTSFileLevelIssue.js", testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
 
-    assertThat(logTester.logs(LoggerLevel.WARN)).contains("No tsconfig.json file found for [" +
-      inputFile.uri() + "] (looking up the directories tree until project base directory [" +
-      sensorContext.fileSystem().baseDir().getAbsolutePath() + "]). Using default configuration.");
+    assertThat(logTester.logs(LoggerLevel.INFO)).contains("No tsconfig.json file found for 1 files (Run in debug mode to see all of them). They will be analyzed with a default configuration.");
+
+    assertThat(sensorContext.allIssues()).hasSize(1);
   }
 
   @Test

@@ -32,9 +32,9 @@ import org.sonarqube.ws.client.issues.SearchRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.sonar.typescript.its.Tests.newWsClient;
 
-public class WithoutTSConfigTest {
+public class MissingTSConfigTest {
 
-  private static String PROJECT_KEY = "SonarTS-without-tsconfig";
+  private static String PROJECT_KEY = "SonarTS-missing-tsconfig";
   private static String PROJECT_KEY_MIXED_TSCONFIG = "SonarTS-mixed-tsconfig";
 
   @ClassRule
@@ -50,7 +50,7 @@ public class WithoutTSConfigTest {
 
   @Test
   public void should_work_without_tsconfig() {
-    prepare("projects/without-tsconfig", PROJECT_KEY);
+    prepare("projects/missing-tsconfig", PROJECT_KEY);
     SearchRequest request = new SearchRequest();
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S1764"));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
