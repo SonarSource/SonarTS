@@ -20,9 +20,9 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
-export class Rule extends tslint.Rules.TypedRule {
+export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-inverted-boolean-check",
     description: "Boolean checks should not be inverted",
@@ -30,35 +30,32 @@ export class Rule extends tslint.Rules.TypedRule {
     optionsDescription: "",
     options: null,
     rspecKey: "RSPEC-1940",
-    type: "functionality",
+    type: "maintainability",
     typescriptOnly: false,
   };
 
-  public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
+  public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
+    return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
   }
 }
 
-class Visitor extends TypedSonarRuleVisitor {
-  public static invertedOperatorsByKind: Map<ts.SyntaxKind, string> = (function() {
-    const map = new Map<ts.SyntaxKind, string>();
-    map.set(ts.SyntaxKind.EqualsEqualsToken, "!=");
-    map.set(ts.SyntaxKind.ExclamationEqualsToken, "==");
-    map.set(ts.SyntaxKind.EqualsEqualsEqualsToken, "!==");
-    map.set(ts.SyntaxKind.ExclamationEqualsEqualsToken, "===");
-    return map;
-  })();
+class Visitor extends SonarRuleVisitor {
+  private static readonly invertedOperatorsByKind: { [kind: string]: string } = {
+    [ts.SyntaxKind.EqualsEqualsToken]: "!=",
+    [ts.SyntaxKind.ExclamationEqualsToken]: "==",
+    [ts.SyntaxKind.EqualsEqualsEqualsToken]: "!==",
+    [ts.SyntaxKind.ExclamationEqualsEqualsToken]: "===",
+  };
 
   visitPrefixUnaryExpression(node: ts.PrefixUnaryExpression) {
     if (node.operator === ts.SyntaxKind.ExclamationToken) {
       let operand: ts.Expression = node.operand;
-      while (operand.kind === ts.SyntaxKind.ParenthesizedExpression) {
-        operand = (operand as ts.ParenthesizedExpression).expression;
+      while (ts.isParenthesizedExpression(operand)) {
+        operand = operand.expression;
       }
 
-      if (operand.kind === ts.SyntaxKind.BinaryExpression) {
-        const binaryOperator = (operand as ts.BinaryExpression).operatorToken;
-        const invertedOperator = Visitor.invertedOperatorsByKind.get(binaryOperator.kind);
+      if (ts.isBinaryExpression(operand)) {
+        const invertedOperator = Visitor.invertedOperatorsByKind[operand.operatorToken.kind];
         if (invertedOperator) {
           this.addIssue(node, `Use the opposite operator (\"${invertedOperator}\") instead.`);
         }
