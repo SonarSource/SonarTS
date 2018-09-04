@@ -21,6 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
+import { isParenthesizedExpression, isBinaryExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -50,11 +51,11 @@ class Visitor extends SonarRuleVisitor {
   visitPrefixUnaryExpression(node: ts.PrefixUnaryExpression) {
     if (node.operator === ts.SyntaxKind.ExclamationToken) {
       let operand: ts.Expression = node.operand;
-      while (ts.isParenthesizedExpression(operand)) {
+      while (isParenthesizedExpression(operand)) {
         operand = operand.expression;
       }
 
-      if (ts.isBinaryExpression(operand)) {
+      if (isBinaryExpression(operand)) {
         const invertedOperator = Visitor.invertedOperatorsByKind[operand.operatorToken.kind];
         if (invertedOperator) {
           this.addIssue(node, `Use the opposite operator (\"${invertedOperator}\") instead.`);
