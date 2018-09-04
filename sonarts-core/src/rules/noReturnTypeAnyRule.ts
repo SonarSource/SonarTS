@@ -63,7 +63,7 @@ class Visitor extends TypedSonarRuleVisitor {
       if (isReturnStatement(node)) {
         returns.push(node);
       } else if (!isFunctionLikeDeclaration(node)) {
-        node.forEachChild(visitNode);
+        ts.forEachChild(node, visitNode);
       }
     };
     visitNode(body);
