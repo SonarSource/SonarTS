@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 import { functionLikeMainToken } from "../utils/navigation";
+import { is } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -60,8 +61,11 @@ class Visitor extends SonarRuleVisitor {
   }
 
   public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
-    if (node.parameters.length > this.max) {
-      this.addIssue(functionLikeMainToken(node), Rule.message(node.parameters.length, this.max));
+    const parameters = is(node, ts.SyntaxKind.Constructor)
+      ? node.parameters.filter(param => !param.modifiers)
+      : node.parameters;
+    if (parameters.length > this.max) {
+      this.addIssue(functionLikeMainToken(node), Rule.message(parameters.length, this.max));
     }
 
     super.visitFunctionLikeDeclaration(node);
