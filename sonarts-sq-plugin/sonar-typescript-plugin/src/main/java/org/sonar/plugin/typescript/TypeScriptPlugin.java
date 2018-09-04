@@ -25,6 +25,7 @@ import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.utils.Version;
 import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
+import org.sonar.plugin.typescript.externalreport.TSLintRulesDefinition;
 import org.sonar.plugin.typescript.externalreport.TslintReportSensor;
 import org.sonar.plugin.typescript.lcov.LCOVCoverageSensor;
 
@@ -61,9 +62,8 @@ public class TypeScriptPlugin implements Plugin {
       TypeScriptLanguage.class,
       SonarWayProfile.class,
       SonarWayRecommendedProfile.class,
-      new TypeScriptRulesDefinition(externalIssuesSupported),
+      TypeScriptRulesDefinition.class,
       TypeScriptExclusionsFileFilter.class,
-      TslintReportSensor.class,
       new SonarTSCoreBundleFactory(SONARTS_BUNDLE_ZIP),
       PropertyDefinition.builder(FILE_SUFFIXES_KEY)
         .defaultValue(FILE_SUFFIXES_DEFVALUE)
@@ -104,23 +104,24 @@ public class TypeScriptPlugin implements Plugin {
     if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
       context.addExtension(ContextualSensor.class);
       context.addExtension(ContextualServer.class);
-
     } else {
       context.addExtension(ExternalTypescriptSensor.class);
       context.addExtension(LCOVCoverageSensor.class);
+      context.addExtension(TslintReportSensor.class);
+      context.addExtension(new TSLintRulesDefinition(externalIssuesSupported));
+      if (externalIssuesSupported) {
+        context.addExtension(
+          PropertyDefinition.builder(TSLINT_REPORT_PATHS)
+            .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
+            .name("TSLint Report Files")
+            .description("Paths (absolute or relative) to the JSON files with TSLint issues.")
+            .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
+            .subCategory(LINTER_SUBCATEGORY)
+            .category(EXTERNAL_ANALYZER_CATEGORY)
+            .multiValues(true)
+            .build());
+      }
     }
 
-    if (externalIssuesSupported) {
-      context.addExtension(
-        PropertyDefinition.builder(TSLINT_REPORT_PATHS)
-          .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
-          .name("TSLint Report Files")
-          .description("Paths (absolute or relative) to the JSON files with TSLint issues.")
-          .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
-          .subCategory(LINTER_SUBCATEGORY)
-          .category(EXTERNAL_ANALYZER_CATEGORY)
-          .multiValues(true)
-          .build());
-    }
   }
 }
