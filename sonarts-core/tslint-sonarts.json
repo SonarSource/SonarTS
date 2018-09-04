@@ -55,6 +55,7 @@
     "parameters-max-number": true,
     "prefer-default-last": true,
     "prefer-immediate-return": true,
+    "prefer-optional": true,
     "prefer-promise-shorthand": true,
     "use-primitive-type": true,
     "use-type-alias": true

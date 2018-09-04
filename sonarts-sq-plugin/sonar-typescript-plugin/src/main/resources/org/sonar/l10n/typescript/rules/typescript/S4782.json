@@ -1,0 +1,16 @@
+{
+  "title": "Optional property declarations should use '?' syntax",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "1min"
+  },
+  "tags": [
+    "proficiency"
+  ],
+  "defaultSeverity": "Major",
+  "ruleSpecification": "RSPEC-4782",
+  "sqKey": "S4782",
+  "scope": "All"
+}

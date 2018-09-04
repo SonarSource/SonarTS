@@ -84,6 +84,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Functions should not have too many parameters ([`parameters-max-number`])
 * "default" clauses should be last ([`prefer-default-last`])
 * Local variables should not be declared and then immediately returned or thrown ([`prefer-immediate-return`]) ([`requires type-check`])
+* Optional property declarations should use '?' syntax ([`prefer-optional`])
 * Shorthand promises should be used ([`prefer-promise-shorthand`])
 * Wrapper objects should not be used for primitive types ([`use-primitive-type`]) ([`requires type-check`])
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
@@ -143,6 +144,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`parameters-max-number`]: ./sonarts-core/docs/rules/parameters-max-number.md
 [`prefer-default-last`]: ./sonarts-core/docs/rules/prefer-default-last.md
 [`prefer-immediate-return`]: ./sonarts-core/docs/rules/prefer-immediate-return.md
+[`prefer-optional`]: ./sonarts-core/docs/rules/prefer-optional.md
 [`prefer-promise-shorthand`]: ./sonarts-core/docs/rules/prefer-promise-shorthand.md
 [`use-primitive-type`]: ./sonarts-core/docs/rules/use-primitive-type.md
 [`use-type-alias`]: ./sonarts-core/docs/rules/use-type-alias.md
