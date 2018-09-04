@@ -16,6 +16,8 @@ interface Foo {
 //^ {{Consider using '?' syntax to declare this property instead of 'undefined' in its type.}}
   j?: number | undefined;
 //             ^^^^^^^^^ {{Consider removing redundant 'undefined' type}}
+  k: number | null | undefined
+//^ {{Consider using '?' syntax to declare this property instead of 'undefined' in its type.}}
 }
 
 class Bar {

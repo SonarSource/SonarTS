@@ -6,6 +6,7 @@ code.</p>
 interface Person {
   name: string;
   nickname: string | undefined; // Noncompliant
+  pet?: Animal | undefined; // Noncompliant, "undefined" is redundant
   age: number;
 }
 </pre>
@@ -14,6 +15,7 @@ interface Person {
 interface Person {
   name: string;
   nickname?: string;
+  pet?: Animal;
   age: number;
 }
 </pre>
