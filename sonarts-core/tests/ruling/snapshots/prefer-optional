@@ -1,3 +1,4 @@
+src/angular/packages/animations/browser/src/dsl/animation_timeline_instruction.ts: 16
 src/angular/packages/compiler-cli/src/compiler_host.ts: 372
 src/angular/packages/compiler-cli/src/diagnostics/symbols.ts: 69,76,91
 src/angular/packages/compiler-cli/test/diagnostics/mocks.ts: 110,111,113

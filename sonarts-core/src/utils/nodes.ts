@@ -230,6 +230,10 @@ export function isVariableStatement(node: ts.Node): node is ts.VariableStatement
   return is(node, ts.SyntaxKind.VariableStatement);
 }
 
+export function isUnionTypeNode(node: ts.Node): node is ts.UnionTypeNode {
+  return is(node, ts.SyntaxKind.UnionType);
+}
+
 export function isUnionOrIntersectionTypeNode(node: ts.Node): node is ts.UnionOrIntersectionTypeNode {
   return is(node, ts.SyntaxKind.UnionType, ts.SyntaxKind.IntersectionType);
 }
