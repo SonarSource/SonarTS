@@ -22,6 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 import { findChild } from "../utils/navigation";
+import { isIfStatement } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -60,7 +61,7 @@ class Visitor extends SonarRuleVisitor {
   }
 
   private isIfStatementWithoutElse(node: ts.Statement): boolean {
-    return ts.isIfStatement(node) && node.elseStatement == null;
+    return isIfStatement(node) && node.elseStatement == null;
   }
 
   private ifKeyword(node: ts.Statement) {
