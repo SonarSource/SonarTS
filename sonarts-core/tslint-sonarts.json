@@ -9,6 +9,7 @@
     "no-array-delete": true,
     "no-big-function": true,
     "no-case-with-or": true,
+    "no-collapsible-if-statement": true,
     "no-collection-size-mischeck": true,
     "no-commented-code": true,
     "no-dead-store": true,
