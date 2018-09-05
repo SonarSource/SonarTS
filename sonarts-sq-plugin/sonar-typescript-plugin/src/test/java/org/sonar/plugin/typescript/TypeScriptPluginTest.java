@@ -45,16 +45,25 @@ public class TypeScriptPluginTest {
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(15);
+    assertThat(context.getExtensions()).hasSize(16);
   }
 
   @Test
-  public void count_extensions_sonarlint() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(6, 7));
+  public void extensions_sq_71_or_smaller_do_not_have_tslint_report() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 1), SonarQubeSide.SCANNER);
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);
     assertThat(context.getExtensions()).hasSize(14);
+  }
+
+  @Test
+  public void count_extensions_sonarlint() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(7, 2));
+    Plugin.Context context = new Plugin.Context(runtime);
+    Plugin underTest = new TypeScriptPlugin();
+    underTest.define(context);
+    assertThat(context.getExtensions()).hasSize(13);
   }
 
 }

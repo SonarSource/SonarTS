@@ -33,7 +33,7 @@ import { isArrowFunction, isBlock } from "../utils/nodes";
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-gratuitous-expressions",
-    description: 'Conditions should not always evaluate to "true" or to "false" ',
+    description: 'Conditions should not always evaluate to "true" or to "false"',
     rationale: tslint.Utils.dedent`
       If an expression doesn't change the evaluation of the condition,
       then it is either unnecessary, and condition can be removed,

@@ -26,7 +26,7 @@ import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
-    description: "Functions should use 'return' consistently",
+    description: 'Functions should use "return" consistently',
     options: null,
     optionsDescription: "",
     rspecKey: "RSPEC-3801",

@@ -28,7 +28,7 @@ import { SonarRuleVisitor, getIssueLocationAtNode } from "../utils/sonarAnalysis
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-identical-functions",
-    description: "",
+    description: "Functions should not have identical implementations",
     optionsDescription: "",
     options: null,
     rspecKey: "RSPEC-4144",

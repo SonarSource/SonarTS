@@ -19,96 +19,47 @@
  */
 package org.sonar.plugin.typescript.externalreport;
 
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.rule.CheckFactory;
+import org.sonar.api.batch.rule.Severity;
+import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
-import org.sonar.api.server.rule.RulesDefinition.Context;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.TypeScriptRules;
+import org.sonarsource.analyzer.commons.ExternalReportProvider;
 
 import static org.sonar.plugin.typescript.TypeScriptPlugin.TSLINT_REPORT_PATHS;
 
-public class TslintReportSensor extends AbstractReportSensor {
+public class TslintReportSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(TslintReportSensor.class);
+  protected static final Gson gson = new Gson();
+
+  private static final long DEFAULT_REMEDIATION_COST = 5L;
+  private static final Severity DEFAULT_SEVERITY = Severity.MAJOR;
+  private static final String LINER_NAME = "TSLint";
+  private static final String FILE_EXCEPTION_MESSAGE = "No issues information will be saved as the report file can't be read.";
 
   // key - tslint key, value - SQ key
   private final Map<String, String> activatedRules = new HashMap<>();
 
-  private static final Set<String> BUG_TSLINT_RULES = new HashSet<>(Arrays.asList(
-    "await-promise",
-    "ban-comma-operator",
-    "ban",
-    "curly",
-    "forin",
-    "import-blacklist",
-    "label-position",
-    "no-arg",
-    "no-bitwise",
-    "no-conditional-assignment",
-    "no-console",
-    "no-construct",
-    "no-debugger",
-    "no-duplicate-super",
-    "no-duplicate-switch-case",
-    "no-duplicate-variable",
-    "no-dynamic-delete",
-    "no-empty",
-    "no-eval",
-    "no-floating-promises",
-    "no-for-in-array",
-    "no-implicit-dependencies",
-    "no-inferred-empty-object-type",
-    "no-invalid-template-strings",
-    "no-invalid-this",
-    "no-misused-new",
-    "no-null-keyword",
-    "no-object-literal-type-assertion",
-    "no-return-await",
-    "no-shadowed-variable",
-    "no-sparse-arrays",
-    "no-string-literal",
-    "no-string-throw",
-    "no-submodule-imports",
-    "no-switch-case-fall-through",
-    "no-this-assignment",
-    "no-unbound-method",
-    "no-unnecessary-class",
-    "no-unsafe-any",
-    "no-unsafe-finally",
-    "no-unused-expression",
-    "no-unused-variable",
-    "no-use-before-declare",
-    "no-var-keyword",
-    "no-void-expression",
-    "prefer-conditional-expression",
-    "prefer-object-spread",
-    "radix",
-    "restrict-plus-operands",
-    "strict-boolean-expressions",
-    "strict-type-predicates",
-    "switch-default",
-    "triple-equals",
-    "typeof-compare",
-    "use-default-type-parameter",
-    "use-isnan"));
-
-  private static final String REPOSITORY = "tslint";
+  static final String REPOSITORY = "tslint";
 
   public TslintReportSensor(CheckFactory checkFactory) {
     TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
@@ -121,7 +72,31 @@ public class TslintReportSensor extends AbstractReportSensor {
   }
 
   @Override
-  void importReport(File report, SensorContext context) {
+  public void describe(SensorDescriptor sensorDescriptor) {
+    sensorDescriptor
+      .onlyWhenConfiguration(conf -> conf.hasKey(TSLINT_REPORT_PATHS))
+      .name("Import of " + LINER_NAME + " issues");
+  }
+
+  @Override
+  public void execute(SensorContext context) {
+    List<File> reportFiles = ExternalReportProvider.getReportFiles(context, TSLINT_REPORT_PATHS);
+    for (File reportFile : reportFiles) {
+      importReport(reportFile, context);
+    }
+  }
+
+  private static InputFile getInputFile(SensorContext context, String fileName) {
+    FilePredicates predicates = context.fileSystem().predicates();
+    InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName));
+    if (inputFile == null) {
+      LOG.warn("No input file found for {}. No {} issues will be imported on this file.", fileName, LINER_NAME);
+      return null;
+    }
+    return inputFile;
+  }
+
+  private void importReport(File report, SensorContext context) {
     LOG.info("Importing {}", report.getAbsoluteFile());
 
     try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(report), StandardCharsets.UTF_8)) {
@@ -157,7 +132,7 @@ public class TslintReportSensor extends AbstractReportSensor {
     newExternalIssue
       .at(primaryLocation)
       .forRule(RuleKey.of(REPOSITORY, tslintKey))
-      .type(ruleType(tslintKey))
+      .type(TSLintRulesDefinition.ruleType(tslintKey))
       .severity(DEFAULT_SEVERITY)
       .remediationEffortMinutes(DEFAULT_REMEDIATION_COST)
       .save();
@@ -178,25 +153,6 @@ public class TslintReportSensor extends AbstractReportSensor {
 
   private static boolean samePosition(TslintPosition p1, TslintPosition p2) {
     return p1.line == p2.line && p1.character == p2.character;
-  }
-
-  @Override
-  String linterName() {
-    return "TSLint";
-  }
-
-  @Override
-  Set<String> bugRuleKeys() {
-    return BUG_TSLINT_RULES;
-  }
-
-  @Override
-  String reportsPropertyName() {
-    return TSLINT_REPORT_PATHS;
-  }
-
-  public static void createExternalRuleRepository(Context context) {
-    createExternalRuleRepository(context, REPOSITORY, "TSLint", BUG_TSLINT_RULES);
   }
 
   private static class TslintError {

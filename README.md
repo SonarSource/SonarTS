@@ -25,14 +25,14 @@ Some rules are raising issues on unused values ([`no-useless-increment`]), which
 * All branches in a conditional structure should not have exactly the same implementation ([`no-all-duplicated-branches`])
 * Logical OR should not be used in switch cases ([`no-case-with-or`])
 * Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
-* Collections elements should not be overwritten unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
+* Collection elements should not be replaced unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
 * Function parameters, caught exceptions and foreach variables' initial values should not be ignored ([`no-ignored-initial-value`]) ([`requires type-check`])
 * Return values should not be ignored when function calls don't have any side effects ([`no-ignored-return`]) ([`requires type-check`])
 * "in" operator should not be used on array ([`no-in-misuse`])
-* `Array.reverse` should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
+* Array-mutating methods should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
@@ -76,7 +76,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Conditionals should start on new lines ([`no-same-line-conditional`])
 * "switch" statements should have at least 3 "case" clauses ([`no-small-switch`])
 * Statements should be on separate lines ([`no-statements-same-line`])
-* Jump statements should not be used unconditionally ([`no-unconditional-jump`])
+* Loops with at most one iteration should be refactored ([`no-unconditional-jump`])
 * "undefined" should not be passed as the value of optional parameters ([`no-undefined-argument`])
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
@@ -105,7 +105,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-duplicate-in-composite`]: ./sonarts-core/docs/rules/no-duplicate-in-composite.md
 [`no-duplicate-string`]: ./sonarts-core/docs/rules/no-duplicate-string.md
 [`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
-[`no-element-overwrite`]: sonarts-core/docs/rules/no-element-overwrite.md
+[`no-element-overwrite`]: ./sonarts-core/docs/rules/no-element-overwrite.md
 [`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
 [`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
 [`no-extra-semicolon`]: ./sonarts-core/docs/rules/no-extra-semicolon.md

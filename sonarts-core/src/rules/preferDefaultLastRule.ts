@@ -27,7 +27,7 @@ import { findChild } from "../utils/navigation";
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "prefer-default-last",
-    description: "'default' clauses should be last",
+    description: '"default" clauses should be last',
     rationale: tslint.Utils.dedent``,
     optionsDescription: "",
     options: null,
