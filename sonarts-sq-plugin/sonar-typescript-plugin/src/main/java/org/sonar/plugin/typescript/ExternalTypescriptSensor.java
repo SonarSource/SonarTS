@@ -122,7 +122,7 @@ public class ExternalTypescriptSensor implements Sensor {
     for (Map.Entry<String, List<InputFile>> e : inputFileByTsconfig.entrySet()) {
       String tsconfigPath = e.getKey();
       Collection<InputFile> inputFilesForThisConfig = e.getValue();
-      LOG.debug(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
+      LOG.info(String.format("Analyzing %s typescript file(s) with the following configuration file %s", inputFilesForThisConfig.size(), tsconfigPath));
 
       SonarTSCommand command = executableBundle.getSonarTsRunnerCommand();
       String request = executableBundle.getRequestForRunner(tsconfigPath, inputFilesForThisConfig, typeScriptRules, projectBaseDir.getAbsolutePath());
@@ -339,7 +339,12 @@ public class ExternalTypescriptSensor implements Sensor {
       if (line.contains("Error: Cannot find module 'typescript'")) {
         tsNotFound = true;
       }
-      LOG.error(line);
+
+      if (line.contains("files analyzed out of")) {
+        LOG.info(line);
+      } else {
+        LOG.error(line);
+      }
     }
 
     @Override

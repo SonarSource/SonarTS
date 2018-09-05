@@ -90,19 +90,32 @@ it("should report syntax errors", () => {
 });
 
 it("should ignore traceResolution property", () => {
-  let loggedOutput = "";
-  // monkey-patching stdout to test what has been logged
-  const stdoutWriteStream = process.stdout.write;
-  process.stdout.write = function(chunk: string | Buffer) {
-    loggedOutput += chunk.toString();
-    return true;
-  };
+  process.stdout.write = jest.fn();
   const filepath = path.join(__dirname, "./fixtures/with-trace-resolution-project/bar.lint.ts");
   const tsconfig = path.join(__dirname, "./fixtures/with-trace-resolution-project/tsconfig.json");
   const result = processRequest(inputForRequest(filepath, tsconfig));
-  expect(loggedOutput).toBe("");
+
+  expect(process.stdout.write).toHaveBeenCalledTimes(0);
   expect(result[0].issues).toHaveLength(1);
-  process.stdout.write = stdoutWriteStream;
+  jest.resetAllMocks();
+});
+
+it("should log incremental reports about analysis", () => {
+  console.warn = jest.fn();
+  let i = 0;
+  // monkey-patching Date.getTime to avoid waiting 10s
+  jest.spyOn(Date.prototype, "getTime").mockImplementation(() => {
+    i++;
+    return 10 * 1000 * i + 1;
+  });
+  const filepath = path.join(__dirname, "./fixtures/runnerProject/sample.lint.ts");
+  const tsconfig = path.join(__dirname, "./fixtures/runnerProject/tsconfig.json");
+  const result = processRequest(inputForRequest(filepath, tsconfig));
+
+  expect(console.warn).toHaveBeenCalledWith("0 files analyzed out of 1. Current file: " + filepath);
+  expect(console.warn).toHaveBeenCalledTimes(1);
+  expect(result[0].issues).toHaveLength(1);
+  jest.resetAllMocks();
 });
 
 function inputForRequest(filepath: string, tsconfig: string): string {

@@ -37,7 +37,21 @@ export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);
   let program = createProgram(input.tsconfig, input.projectRoot);
 
+  const filesNumber: number = input.filepaths.length;
+  let currentFile: string;
+  let processedFilesCounter = 0;
+  const currentTime = () => new Date().getTime() / 1000;
+  let startTime = currentTime();
+  const logProgress = () => {
+    // log progress after 10s
+    if (currentTime() - startTime > 10) {
+      startTime = currentTime();
+      console.warn(`${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${currentFile}`);
+    }
+  };
   let output = input.filepaths.map((filepath: string) => {
+    currentFile = filepath;
+    logProgress();
     const sourceFile = program.getSourceFile(filepath);
     const output: object = { filepath };
     if (sourceFile) {
@@ -51,6 +65,7 @@ export function processRequest(inputString: string) {
     } else {
       console.error(`Failed to find a source file matching path ${filepath} in program created with ${input.tsconfig}`);
     }
+    processedFilesCounter++;
     return output;
   });
   return output;
