@@ -42,7 +42,6 @@ import org.sonar.api.utils.Version;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.plugin.typescript.TestActiveRules;
-import org.sonar.plugin.typescript.TypeScriptLanguage;
 import org.sonar.plugin.typescript.TypeScriptPlugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -195,7 +194,7 @@ public class TslintReportSensorTest {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     tslintReportSensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of TSLint issues");
-    assertThat(sensorDescriptor.languages()).containsOnly(TypeScriptLanguage.KEY);
+    assertThat(sensorDescriptor.languages()).isEmpty();
   }
 
   private void setTslintReport(String reportFileName) {

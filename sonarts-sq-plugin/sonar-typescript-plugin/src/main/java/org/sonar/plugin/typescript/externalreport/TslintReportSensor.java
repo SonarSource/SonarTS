@@ -41,7 +41,6 @@ import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-import org.sonar.plugin.typescript.TypeScriptLanguage;
 import org.sonar.plugin.typescript.TypeScriptRules;
 import org.sonarsource.analyzer.commons.ExternalReportProvider;
 
@@ -75,7 +74,6 @@ public class TslintReportSensor implements Sensor {
   @Override
   public void describe(SensorDescriptor sensorDescriptor) {
     sensorDescriptor
-      .onlyOnLanguage(TypeScriptLanguage.KEY)
       .onlyWhenConfiguration(conf -> conf.hasKey(TSLINT_REPORT_PATHS))
       .name("Import of " + LINER_NAME + " issues");
   }
@@ -84,30 +82,18 @@ public class TslintReportSensor implements Sensor {
   public void execute(SensorContext context) {
     List<File> reportFiles = ExternalReportProvider.getReportFiles(context, TSLINT_REPORT_PATHS);
     for (File reportFile : reportFiles) {
-      File report = getIOFile(context.fileSystem().baseDir(), reportFile);
-      importReport(report, context);
+      importReport(reportFile, context);
     }
   }
 
   private static InputFile getInputFile(SensorContext context, String fileName) {
     FilePredicates predicates = context.fileSystem().predicates();
-    InputFile inputFile = context.fileSystem().inputFile(predicates.or(predicates.hasRelativePath(fileName), predicates.hasAbsolutePath(fileName)));
+    InputFile inputFile = context.fileSystem().inputFile(predicates.hasPath(fileName));
     if (inputFile == null) {
       LOG.warn("No input file found for {}. No {} issues will be imported on this file.", fileName, LINER_NAME);
       return null;
     }
     return inputFile;
-  }
-
-  /**
-   * Returns a java.io.File for the given path.
-   * If path is not absolute, returns a File with module base directory as parent path.
-   */
-  private static File getIOFile(File baseDir, File file) {
-    if (!file.isAbsolute()) {
-      file = new File(baseDir, file.getPath());
-    }
-    return file;
   }
 
   private void importReport(File report, SensorContext context) {
