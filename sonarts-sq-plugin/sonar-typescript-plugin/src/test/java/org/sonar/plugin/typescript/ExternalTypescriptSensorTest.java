@@ -309,6 +309,8 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
     TestBundleFactory testBundleFactory = TestBundleFactory.nodeScript("/mockIncrementalAnalysisLog.js", testInputFile.absolutePath());
     executeSensor(sensorContext, testBundleFactory);
+    File tsconfigPath = new File(testInputFile.path().getParent().toString(), "tsconfig.json");
+    assertThat(logTester.setLevel(LoggerLevel.INFO).logs()).contains("Analyzing 1 typescript file(s) with the following configuration file " + tsconfigPath.getAbsolutePath());
     assertThat(logTester.setLevel(LoggerLevel.INFO).logs()).contains("0 files analyzed out of 1. Current file: foo.ts");
     assertThat(sensorContext.allIssues()).hasSize(1);
   }

@@ -26,7 +26,6 @@ import getCpdTokens from "./cpd";
 import getSymbolHighlighting from "./symbolHighlighting";
 import { createProgram } from "../utils/parser";
 import getDiagnostics from "./diagnostics";
-import { basename } from "path";
 
 interface Sensor {
   (sourceFile: ts.SourceFile, program: ts.Program): any;
@@ -42,19 +41,16 @@ export function processRequest(inputString: string) {
   let currentFile: string;
   let processedFilesCounter = 0;
   const currentTime = () => new Date().getTime() / 1000;
+  let startTime = currentTime();
   const logProgress = () => {
     // log progress after 10s
-    if (Math.round(currentTime() - startTime) > 10) {
+    if (currentTime() - startTime > 10) {
       startTime = currentTime();
-      console.warn(
-        `${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${basename(currentFile)}`,
-      );
+      console.warn(`${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${currentFile}`);
     }
   };
-
-  currentFile = input.filepaths[0];
-  let startTime = currentTime();
   let output = input.filepaths.map((filepath: string) => {
+    currentFile = filepath;
     logProgress();
     const sourceFile = program.getSourceFile(filepath);
     const output: object = { filepath };
