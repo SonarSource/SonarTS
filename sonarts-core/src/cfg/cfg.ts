@@ -116,6 +116,7 @@ export interface CfgBlock {
   loopingStatement: ts.IterationStatement | undefined;
   branchingElement: ts.Node | undefined;
   successorWithoutJump: CfgBlock | undefined;
+  predecessors?: CfgBlock[];
 
   addElement(element: ts.Node): void;
 

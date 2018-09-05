@@ -21,8 +21,9 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { FunctionVisitor } from "../utils/FunctionVisitor";
-import { isReturnStatement, isLiteralExpression } from "../utils/nodes";
+import { isReturnStatement, isLiteralExpression, is } from "../utils/nodes";
 import { functionLikeMainToken } from "../utils/navigation";
+import areEquivalent from "../utils/areEquivalent";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -36,7 +37,7 @@ export class Rule extends tslint.Rules.AbstractRule {
     typescriptOnly: false,
   };
 
-  public static MESSAGE = "TODO: add message";
+  public static MESSAGE = "Refactor this method to not always return the same value.";
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
@@ -49,16 +50,21 @@ class Visitor extends FunctionVisitor {
       node => (isReturnStatement(node) && node.expression ? node.expression : undefined),
     );
     const first = returnValues[0];
-    if (
-      first &&
-      isLiteralExpression(first) &&
-      returnValues.length > 1 &&
-      returnValues.every(value => !!value && isLiteralExpression(value) && value.getText() === first.getText())
-    ) {
+    if (returnValues.length > 1 && returnValues.every(value => this.areEquivalentLiteral(first, value))) {
       const issue = this.addIssue(functionLikeMainToken(functionNode), Rule.MESSAGE);
       returnValues.forEach(returnValue => {
         issue.addSecondaryLocation(returnValue!);
       });
     }
+  }
+
+  private areEquivalentLiteral(first?: ts.Expression, second?: ts.Expression) {
+    if (!first || !second) {
+      return false;
+    }
+    if (isLiteralExpression(first) || is(first, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword)) {
+      return areEquivalent(first, second);
+    }
+    return false;
   }
 }

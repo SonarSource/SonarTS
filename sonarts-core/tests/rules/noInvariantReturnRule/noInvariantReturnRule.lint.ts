@@ -1,5 +1,5 @@
   function foo(a: number) {
-//^^^^^^^^ {{TODO: add message}}
+//^^^^^^^^ {{Refactor this method to not always return the same value.}}
     if (a == 1) {
         return 42;
     }
@@ -7,7 +7,7 @@
 }
 
   function strings(a: number) {
-//^^^^^^^^ {{TODO: add message}}
+//^^^^^^^^ {{Refactor this method to not always return the same value.}}
     if (a == 1) {
         return "foo";
     }
@@ -80,11 +80,13 @@ function explicitVoidDeclaration(p: boolean): void {
 
 }
 
-function withThrowAndExplicitReturn(cond: boolean) {
+function withThrowAndExplicitReturn(cond: boolean, cond2: boolean) {
     if (cond) {
-        throw "";
+        throw 42;
     }
-
+    if (cond2) {
+        return 42;
+    }
     return 42;
 }
 
@@ -98,10 +100,10 @@ function withThrowAndImplicitReturn(cond: boolean) {
 var arrowWithExpressionBody = (p) => p ? true : false;
 
 var inconsistentArrow = (p) => { if (p) { return "foo"; } return "foo"; };
-//                          ^^  {{TODO: add message}}
+//                          ^^  {{Refactor this method to not always return the same value.}}
 
   function* inconsistentGenerator(p) {
-//^^^^^^^^  {{TODO: add message}}
+//^^^^^^^^  {{Refactor this method to not always return the same value.}}
     let i = 0
     while (i < 10) {
         return "foo";
@@ -111,7 +113,7 @@ var inconsistentArrow = (p) => { if (p) { return "foo"; } return "foo"; };
 
 class A {
     inconsistentMethod(p) {
-  //^^^^^^^^^^^^^^^^^^  {{TODO: add message}}
+  //^^^^^^^^^^^^^^^^^^  {{Refactor this method to not always return the same value.}}
         if (p) {
             return "foo";
         }
@@ -119,7 +121,7 @@ class A {
     }
 
     *inconsistentGenerator(p) {
- //  ^^^^^^^^^^^^^^^^^^^^^  {{TODO: add message}}
+ //  ^^^^^^^^^^^^^^^^^^^^^  {{Refactor this method to not always return the same value.}}
         if (p) {
             return "foo";
         }
@@ -129,7 +131,7 @@ class A {
     private _value: number;
 
     get value(): number {
-  //    ^^^^^  {{TODO: add message}}
+  //    ^^^^^  {{Refactor this method to not always return the same value.}}
         if (this._value) {
             return "a";
         } else {

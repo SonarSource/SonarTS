@@ -24,25 +24,9 @@ import { CfgBlock, ControlFlowGraph } from "../cfg/cfg";
 import { is } from "./nodes";
 
 export abstract class FunctionVisitor extends SonarRuleVisitor {
-  public visitFunctionDeclaration(func: ts.FunctionDeclaration) {
-    if (!func.body) return;
-    this.checkFunctionLikeDeclaration(func, func.body, func.type);
-  }
-
-  public visitMethodDeclaration(meth: ts.MethodDeclaration) {
-    if (!meth.body) return;
-    this.checkFunctionLikeDeclaration(meth, meth.body, meth.type);
-  }
-
-  public visitGetAccessor(accessor: ts.AccessorDeclaration) {
-    if (!accessor.body) return;
-    this.checkFunctionLikeDeclaration(accessor, accessor.body, accessor.type);
-  }
-
-  public visitArrowFunction(func: ts.ArrowFunction) {
-    if (func.body.kind === ts.SyntaxKind.Block) {
-      this.checkFunctionLikeDeclaration(func, func.body as ts.Block, func.type);
-    }
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    if (!node.body) return;
+    this.checkFunctionLikeDeclaration(node, node.body as ts.Block, node.type);
   }
 
   public getAllReturns(statements: ts.NodeArray<ts.Statement>) {
@@ -51,19 +35,28 @@ export abstract class FunctionVisitor extends SonarRuleVisitor {
       const predecessors = cfg.end.predecessors.filter(
         block => block === cfg.start || this.blockHasPredecessors(block),
       );
-      return predecessors.reduce(this.getReturn, []);
+      let returnNodes: ts.Node[] = [];
+      predecessors.forEach(cfgBlock => {
+        const returnNode = this.getReturn(cfgBlock);
+        if (returnNode) {
+          returnNodes.push();
+        }
+      });
+      return returnNodes;
     } else {
       return [];
     }
   }
 
-  private getReturn(nodes: ts.Node[], cfgBlock: CfgBlock) {
+  private getReturn(cfgBlock: CfgBlock) {
     const elements = cfgBlock.getElements();
     const lastElement = elements[elements.length - 1];
-    return lastElement && !is(lastElement, ts.SyntaxKind.ThrowStatement) ? nodes.concat(lastElement) : nodes;
+    if (lastElement && !is(lastElement, ts.SyntaxKind.ThrowStatement)) {
+      return lastElement;
+    }
   }
 
-  private blockHasPredecessors(cfgBlock: any): boolean {
+  private blockHasPredecessors(cfgBlock: CfgBlock): boolean {
     if (cfgBlock.predecessors) {
       return cfgBlock.predecessors.length > 0;
     }
