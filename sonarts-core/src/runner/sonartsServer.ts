@@ -56,7 +56,7 @@ export class SonarTsServer {
   }
 
   private handleAnalysisRequest(request: AnalysisRequest): any {
-    const { file, rules, content, projectRoot } = request;
+    const { file, rules, content, projectRoot, tsconfigPath } = request;
 
     this.fileCache.newContent({ file, content });
 
@@ -64,12 +64,11 @@ export class SonarTsServer {
     if (this.tsConfigCache.has(file)) {
       tsConfig = this.tsConfigCache.get(file)!;
     } else {
-      tsConfig = this.getTsConfig(file);
+      tsConfig = this.getTsConfig(file, tsconfigPath);
       if (tsConfig) {
         this.tsConfigCache.set(file, tsConfig);
       } else {
-        console.warn(`No tsconfig.json file found for ${file}, using default configuration`);
-        tsConfig = DEFAULT_TSCONFIG;
+        return EMPTY_ANSWER;
       }
     }
 
@@ -97,7 +96,17 @@ export class SonarTsServer {
     return getIssues(rules, program, sourceFile);
   }
 
-  private getTsConfig(filePath: string): string | undefined {
+  private getTsConfig(filePath: string, tsconfigPath?: string): string | undefined {
+    if (tsconfigPath) {
+      if (fs.existsSync(tsconfigPath)) {
+        return tsconfigPath;
+      } else {
+        console.error(
+          `The tsconfig file ${tsconfigPath} doesn't exist. Check property specified in sonar.typescript.tsconfigPath`,
+        );
+        return undefined;
+      }
+    }
     let currentDirectory = filePath;
     do {
       currentDirectory = path.dirname(currentDirectory);
@@ -107,8 +116,8 @@ export class SonarTsServer {
         return possibleTsConfig;
       }
     } while (currentDirectory !== path.dirname(currentDirectory));
-
-    return undefined;
+    console.warn(`No tsconfig.json file found for ${filePath}, using default configuration`);
+    return DEFAULT_TSCONFIG;
   }
 }
 
@@ -124,4 +133,5 @@ interface AnalysisRequest {
   rules: tslint.IOptions[];
   content: string;
   projectRoot: string;
+  tsconfigPath?: string;
 }

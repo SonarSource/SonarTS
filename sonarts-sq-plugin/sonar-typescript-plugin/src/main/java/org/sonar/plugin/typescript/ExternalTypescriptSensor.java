@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -116,8 +117,8 @@ public class ExternalTypescriptSensor implements Sensor {
     checkCompatibleNodeVersion(executableBundle.getNodeExecutable());
 
     File projectBaseDir = sensorContext.fileSystem().baseDir();
-
-    Map<String, List<InputFile>> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir);
+    Optional<String> tsconfigPathFromProperty = sensorContext.config().get(TypeScriptPlugin.TSCONFIG_PATH);
+    Map<String, List<InputFile>> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir, tsconfigPathFromProperty.orElse(null));
 
     for (Map.Entry<String, List<InputFile>> e : inputFileByTsconfig.entrySet()) {
       String tsconfigPath = e.getKey();
@@ -180,8 +181,21 @@ public class ExternalTypescriptSensor implements Sensor {
     LOG.debug(String.format("Using Node.js %s", version));
   }
 
-  private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir) {
+  private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir, @Nullable String tsconfigPathFromVariable) {
     Map<String, List<InputFile>> inputFileByTsconfig = new HashMap<>();
+    if (tsconfigPathFromVariable != null) {
+      File tsconfigFile = new File(projectBaseDir, tsconfigPathFromVariable);
+      if (!tsconfigFile.exists()) {
+        String message = String.format("The tsconfig file [%s] doesn't exist. Check property specified in sonar.typescript.tsconfigPath", tsconfigFile.getAbsoluteFile());
+        LOG.error(message);
+      } else {
+        ArrayList<InputFile> list = new ArrayList<>();
+        inputFiles.iterator().forEachRemaining(list::add);
+        inputFileByTsconfig.put(tsconfigFile.getAbsolutePath(), list);
+        return inputFileByTsconfig;
+      }
+    }
+
     for (InputFile inputFile : inputFiles) {
       File tsConfig = findTsConfig(inputFile, projectBaseDir);
       if (tsConfig == null) {

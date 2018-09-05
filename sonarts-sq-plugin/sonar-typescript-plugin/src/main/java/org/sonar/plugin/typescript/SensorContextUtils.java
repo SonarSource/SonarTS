@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 import org.sonar.api.batch.fs.FilePredicate;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
@@ -279,13 +280,20 @@ public class SensorContextUtils {
     String content;
     List<RuleToExecute> rules;
     String projectRoot;
+    @Nullable
+    String tsconfigPath;
 
-    ContextualAnalysisRequest(InputFile inputFile, TypeScriptRules typeScriptRules, String projectRoot) throws IOException {
+    ContextualAnalysisRequest(InputFile inputFile, TypeScriptRules typeScriptRules, String projectRoot, @Nullable String tsconfigPath) throws IOException {
       Path path = Paths.get(inputFile.uri());
       this.file = path.toString();
       this.content = inputFile.contents();
       this.rules = SensorContextUtils.convertToRulesToExecute(typeScriptRules);
       this.projectRoot = projectRoot;
+      if (tsconfigPath != null) {
+        this.tsconfigPath = new File(projectRoot, tsconfigPath).getAbsolutePath();
+      } else {
+        this.tsconfigPath = null;
+      }
     }
   }
 

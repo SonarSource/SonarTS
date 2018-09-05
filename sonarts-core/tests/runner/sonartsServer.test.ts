@@ -36,37 +36,47 @@ afterEach(() => {
 });
 
 it("run analysis on provided content", async () => {
-  let response = await sendRequest(
-    client,
-    `if(x && x) console.log("identical expressions"); if (x == null) {} else if (x == 2) {}`,
-  );
+  let response = await sendRequest(client, {
+    content: `if(x && x) console.log("identical expressions"); if (x == null) {} else if (x == 2) {}`,
+  });
   expect(getRules(response.issues)).toEqual(["no-identical-expressions", "triple-equals"]);
 
-  response = await sendRequest(client, `if(x && x) console.log("identical expressions");`);
+  response = await sendRequest(client, { content: `if(x && x) console.log("identical expressions");` });
   expect(getRules(response.issues)).toEqual(["no-identical-expressions"]);
 });
 
 it("creates type-checker-based issue", async () => {
-  let response = await sendRequest(client, `function foo(x: number) { x as number; }`);
+  let response = await sendRequest(client, { content: `function foo(x: number) { x as number; }` });
   expect(getRules(response.issues)).toEqual(["no-useless-cast"]);
 });
 
 it("creates cross-file type-checker-based issue", async () => {
-  let response = await sendRequest(client, `import { bar } from "./file2"; function foo() { const x = bar();}`);
+  let response = await sendRequest(client, {
+    content: `import { bar } from "./file2"; function foo() { const x = bar();}`,
+  });
   expect(getRules(response.issues)).toEqual(["no-use-of-empty-return-value"]);
 });
 
 it("is able to process partial request", async () => {
-  const response = await sendRequest(client, "console.log('hello');".repeat(10000));
+  const response = await sendRequest(client, { content: "console.log('hello');".repeat(10000) });
   expect(getRules(response.issues)).toEqual([]);
 });
 
 it("reports syntax error", async () => {
-  let response = await sendRequest(client, `function foo() { const x = `);
+  let response = await sendRequest(client, { content: `function foo() { const x = ` });
   expect(response.diagnostics).toEqual([
     { col: 26, line: 1, message: "Expression expected." },
     { col: 27, line: 1, message: "'}' expected." },
   ]);
+});
+
+it("handles custom tsconfig", async () => {
+  let response = await sendRequest(client, {
+    tsconfigPath: path.join(__dirname, "fixtures/custom-tsconfig-project/config/tsconfig.json"),
+    content: `if(x && x) console.log("identical expressions");`,
+    file: path.join(__dirname, "fixtures/custom-tsconfig-project/foo.ts"),
+  });
+  expect(getRules(response.issues)).toEqual(["no-identical-expressions"]);
 });
 
 function getRules(issues: any[]) {
@@ -88,7 +98,7 @@ function getClient(): Promise<net.Socket> {
   });
 }
 
-function sendRequest(client: net.Socket, content: string): Promise<any> {
+function sendRequest(client: net.Socket, request: any): Promise<any> {
   return new Promise(resolve => {
     let dataAggregated = "";
     const listener = (data: any) => {
@@ -102,32 +112,19 @@ function sendRequest(client: net.Socket, content: string): Promise<any> {
       }
     };
     client.on("data", listener);
-    client.write(requestBuilder(content));
+    client.write(requestBuilder(request));
   });
 }
 
-function requestBuilder(content: string): string {
-  return JSON.stringify({
+function requestBuilder(request: any): string {
+  let defaultRequest = {
     file: path.join(__dirname, "fixtures/incremental-compilation-project/file1.ts"),
-    content,
     rules: [
-      {
-        ruleName: "no-identical-expressions",
-        ruleArguments: [],
-      },
-      {
-        ruleName: "triple-equals",
-        ruleArguments: ["allow-null-check"],
-      },
-      {
-        ruleName: "no-useless-cast",
-        ruleArguments: [],
-      },
-      {
-        ruleName: "no-use-of-empty-return-value",
-        ruleArguments: [],
-      },
+      { ruleName: "no-identical-expressions", ruleArguments: [] },
+      { ruleName: "triple-equals", ruleArguments: ["allow-null-check"] },
+      { ruleName: "no-useless-cast", ruleArguments: [] },
+      { ruleName: "no-use-of-empty-return-value", ruleArguments: [] },
     ],
-    projectRoot: path.join(__dirname, "fixtures/incremental-compilation-project"),
-  });
+  };
+  return JSON.stringify(Object.assign(defaultRequest, request));
 }
