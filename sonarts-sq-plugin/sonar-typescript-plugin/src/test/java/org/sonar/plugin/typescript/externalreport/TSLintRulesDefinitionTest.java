@@ -26,6 +26,8 @@ import org.sonar.api.server.rule.RulesDefinition;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TSLintRulesDefinitionTest {
+  private static int NUMBER_TSLINT_RULES = 144;
+
 
   @Test
   public void test_external_repositories() {
@@ -38,7 +40,7 @@ public class TSLintRulesDefinitionTest {
     assertThat(tslintRepository.name()).isEqualTo("TSLint");
     assertThat(tslintRepository.language()).isEqualTo("ts");
     assertThat(tslintRepository.isExternal()).isEqualTo(true);
-    assertThat(tslintRepository.rules().size()).isEqualTo(204);
+    assertThat(tslintRepository.rules().size()).isGreaterThan(NUMBER_TSLINT_RULES);
 
     RulesDefinition.Rule tsLintRule = tslintRepository.rule("adjacent-overload-signatures");
     assertThat(tsLintRule).isNotNull();

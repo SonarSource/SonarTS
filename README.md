@@ -53,6 +53,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
 * Functions should not have too many lines of code ([`no-big-function`])
+* Collapsible "if" statements should be merged ([`no-collapsible-if`])
 * Sections of code should not be "commented out" ([`no-commented-code`])
 * Dead stores should be removed ([`no-dead-store`]) ([`requires type-check`])
 * Union and intersection types should not be defined with duplicated elements ([`no-duplicate-in-composite`])
@@ -99,6 +100,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
 [`no-big-function`]: ./sonarts-core/docs/rules/no-big-function.md
 [`no-case-with-or`]: ./sonarts-core/docs/rules/no-case-with-or.md
+[`no-collapsible-if`]: ./sonarts-core/docs/rules/no-collapsible-if.md
 [`no-collection-size-mischeck`]: ./sonarts-core/docs/rules/no-collection-size-mischeck.md
 [`no-commented-code`]: ./sonarts-core/docs/rules/no-commented-code.md
 [`no-dead-store`]: ./sonarts-core/docs/rules/no-dead-store.md

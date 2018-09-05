@@ -54,6 +54,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-case-with-or.md"
   },
   {
+    "key": "no-collapsible-if",
+    "name": "Collapsible \"if\" statements should be merged",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-collapsible-if.md"
+  },
+  {
     "key": "no-collection-size-mischeck",
     "name": "Collection sizes and array length comparisons should make sense",
     "type": "BUG",
