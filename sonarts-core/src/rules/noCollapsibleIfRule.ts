@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 import { findChild } from "../utils/navigation";
-import { isIfStatement } from "../utils/nodes";
+import { isIfStatement, isBlock } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -47,15 +47,14 @@ export class Rule extends tslint.Rules.AbstractRule {
 class Visitor extends SonarRuleVisitor {
   protected visitIfStatement(node: ts.IfStatement) {
     let then = node.thenStatement;
-    if (then.kind === ts.SyntaxKind.Block) {
-      const thenBlock = then as ts.Block;
-      if (thenBlock.statements.length === 1) {
-        then = thenBlock.statements[0];
-      }
+    if (isBlock(then) && then.statements.length === 1) {
+      then = then.statements[0];
     }
     if (this.isIfStatementWithoutElse(node) && this.isIfStatementWithoutElse(then)) {
-      const issue = this.addIssue(this.ifKeyword(then), Rule.MESSAGE);
-      issue.addSecondaryLocation(this.ifKeyword(node), Rule.SECONDARY_MESSAGE);
+      this.addIssue(this.ifKeyword(then), Rule.MESSAGE).addSecondaryLocation(
+        this.ifKeyword(node),
+        Rule.SECONDARY_MESSAGE,
+      );
     }
     super.visitIfStatement(node);
   }
