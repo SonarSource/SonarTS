@@ -83,7 +83,7 @@
     <commons-io.version>2.5</commons-io.version>
     <guava.version>19.0</guava.version>
     <jsr305.version>3.0.1</jsr305.version>
-    <mockito.version>1.9.0</mockito.version>
+    <mockito.version>2.21.0</mockito.version>
     <sonar-analyzer-commons.version>1.9.0.327</sonar-analyzer-commons.version>
 
     <artifactsToPublish>${project.groupId}:sonar-typescript-plugin:jar</artifactsToPublish>
@@ -157,7 +157,7 @@
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
+        <artifactId>mockito-core</artifactId>
         <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
