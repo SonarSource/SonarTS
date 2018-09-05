@@ -19,29 +19,43 @@
  */
 package org.sonar.plugin.typescript.externalreport;
 
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.sonar.api.batch.fs.FilePredicates;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.rule.CheckFactory;
+import org.sonar.api.batch.rule.Severity;
+import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.batch.sensor.issue.NewExternalIssue;
 import org.sonar.api.batch.sensor.issue.NewIssueLocation;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+import org.sonar.plugin.typescript.TypeScriptLanguage;
 import org.sonar.plugin.typescript.TypeScriptRules;
+import org.sonarsource.analyzer.commons.ExternalReportProvider;
 
 import static org.sonar.plugin.typescript.TypeScriptPlugin.TSLINT_REPORT_PATHS;
 
-public class TslintReportSensor extends AbstractReportSensor {
+public class TslintReportSensor implements Sensor {
 
   private static final Logger LOG = Loggers.get(TslintReportSensor.class);
+  protected static final Gson gson = new Gson();
+
+  private static final long DEFAULT_REMEDIATION_COST = 5L;
+  private static final Severity DEFAULT_SEVERITY = Severity.MAJOR;
+  private static final String LINER_NAME = "TSLint";
+  private static final String FILE_EXCEPTION_MESSAGE = "No issues information will be saved as the report file can't be read.";
 
   // key - tslint key, value - SQ key
   private final Map<String, String> activatedRules = new HashMap<>();
@@ -59,7 +73,44 @@ public class TslintReportSensor extends AbstractReportSensor {
   }
 
   @Override
-  void importReport(File report, SensorContext context) {
+  public void describe(SensorDescriptor sensorDescriptor) {
+    sensorDescriptor
+      .onlyOnLanguage(TypeScriptLanguage.KEY)
+      .onlyWhenConfiguration(conf -> conf.hasKey(TSLINT_REPORT_PATHS))
+      .name("Import of " + LINER_NAME + " issues");
+  }
+
+  @Override
+  public void execute(SensorContext context) {
+    List<File> reportFiles = ExternalReportProvider.getReportFiles(context, TSLINT_REPORT_PATHS);
+    for (File reportFile : reportFiles) {
+      File report = getIOFile(context.fileSystem().baseDir(), reportFile);
+      importReport(report, context);
+    }
+  }
+
+  private static InputFile getInputFile(SensorContext context, String fileName) {
+    FilePredicates predicates = context.fileSystem().predicates();
+    InputFile inputFile = context.fileSystem().inputFile(predicates.or(predicates.hasRelativePath(fileName), predicates.hasAbsolutePath(fileName)));
+    if (inputFile == null) {
+      LOG.warn("No input file found for {}. No {} issues will be imported on this file.", fileName, LINER_NAME);
+      return null;
+    }
+    return inputFile;
+  }
+
+  /**
+   * Returns a java.io.File for the given path.
+   * If path is not absolute, returns a File with module base directory as parent path.
+   */
+  private static File getIOFile(File baseDir, File file) {
+    if (!file.isAbsolute()) {
+      file = new File(baseDir, file.getPath());
+    }
+    return file;
+  }
+
+  private void importReport(File report, SensorContext context) {
     LOG.info("Importing {}", report.getAbsoluteFile());
 
     try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(report), StandardCharsets.UTF_8)) {
@@ -116,16 +167,6 @@ public class TslintReportSensor extends AbstractReportSensor {
 
   private static boolean samePosition(TslintPosition p1, TslintPosition p2) {
     return p1.line == p2.line && p1.character == p2.character;
-  }
-
-  @Override
-  String linterName() {
-    return "TSLint";
-  }
-
-  @Override
-  String reportsPropertyName() {
-    return TSLINT_REPORT_PATHS;
   }
 
   private static class TslintError {

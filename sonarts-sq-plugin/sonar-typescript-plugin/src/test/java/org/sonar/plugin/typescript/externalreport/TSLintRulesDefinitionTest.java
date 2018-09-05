@@ -28,16 +28,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TSLintRulesDefinitionTest {
 
   @Test
-  public void external_repositories_not_supported() {
-    RulesDefinition.Context context = new RulesDefinition.Context();
-    TSLintRulesDefinition rulesDefinition = new TSLintRulesDefinition(false);
-    rulesDefinition.define(context);
-    assertThat(context.repositories()).isEmpty();
-  }
-
-  @Test
   public void test_external_repositories() {
-    TSLintRulesDefinition rulesDefinition = new TSLintRulesDefinition(true);
+    TSLintRulesDefinition rulesDefinition = new TSLintRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
     RulesDefinition.Repository tslintRepository = context.repository("external_tslint");

@@ -108,8 +108,8 @@ public class TypeScriptPlugin implements Plugin {
       context.addExtension(ExternalTypescriptSensor.class);
       context.addExtension(LCOVCoverageSensor.class);
       context.addExtension(TslintReportSensor.class);
-      context.addExtension(new TSLintRulesDefinition(externalIssuesSupported));
       if (externalIssuesSupported) {
+        context.addExtension(TSLintRulesDefinition.class);
         context.addExtension(
           PropertyDefinition.builder(TSLINT_REPORT_PATHS)
             .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)

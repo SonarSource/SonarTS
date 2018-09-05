@@ -40,19 +40,11 @@ public class TSLintRulesDefinition implements RulesDefinition {
 
   private static final Map<String, RuleType> RULE_TYPE_MAP = RULE_LOADERS.stream()
     .flatMap(loader -> loader.ruleKeys().stream().collect(Collectors.toMap(Function.identity(), loader::ruleType)).entrySet().stream())
-    .collect(Collectors.toMap(Map.Entry::getKey,Map.Entry::getValue));
-
-  private final boolean externalIssuesSupported;
-
-  public TSLintRulesDefinition(boolean externalIssuesSupported) {
-    this.externalIssuesSupported = externalIssuesSupported;
-  }
+    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
   @Override
   public void define(Context context) {
-    if (externalIssuesSupported) {
-      RULE_LOADERS.forEach(ruleLoader -> ruleLoader.createExternalRuleRepository(context));
-    }
+    RULE_LOADERS.forEach(ruleLoader -> ruleLoader.createExternalRuleRepository(context));
   }
 
   public static RuleType ruleType(String ruleKey) {
