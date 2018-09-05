@@ -26,7 +26,7 @@ import { isIfStatement } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
-    ruleName: "no-collapsible-if-statement",
+    ruleName: "no-collapsible-if",
     description: 'Collapsible "if" statements should be merged',
     rationale: tslint.Utils.dedent``,
     optionsDescription: "",

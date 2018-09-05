@@ -57,7 +57,7 @@ import org.sonar.plugin.typescript.rules.NoArg;
 import org.sonar.plugin.typescript.rules.NoArrayDelete;
 import org.sonar.plugin.typescript.rules.NoBigFunction;
 import org.sonar.plugin.typescript.rules.NoCaseWithOr;
-import org.sonar.plugin.typescript.rules.NoCollapsibleIfStatement;
+import org.sonar.plugin.typescript.rules.NoCollapsibleIf;
 import org.sonar.plugin.typescript.rules.NoCollectionSizeMischeck;
 import org.sonar.plugin.typescript.rules.NoCommentedCode;
 import org.sonar.plugin.typescript.rules.NoConditionalAssignment;
@@ -249,7 +249,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       NoArrayDelete.class,
       NoBigFunction.class,
       NoCaseWithOr.class,
-      NoCollapsibleIfStatement.class,
+      NoCollapsibleIf.class,
       NoCollectionSizeMischeck.class,
       NoCommentedCode.class,
       NoConditionalAssignment.class,

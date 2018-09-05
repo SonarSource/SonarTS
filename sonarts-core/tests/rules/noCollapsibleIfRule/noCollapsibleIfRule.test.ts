@@ -17,15 +17,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.plugin.typescript.rules;
+import { Rule } from "../../../src/rules/noCollapsibleIfRule";
+import runRule from "../../runRule";
 
-import org.sonar.check.Rule;
-
-@Rule(key = "S1066")
-public class NoCollapsibleIfStatement extends TypeScriptRule {
-
-  @Override
-  public String tsLintKey() {
-    return "no-collapsible-if-statement";
-  }
-}
+it("raises error", () => {
+  runRule(Rule, __filename);
+});

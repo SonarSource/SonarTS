@@ -1,4 +1,4 @@
-# no-collapsible-if-statement
+# no-collapsible-if
 
 Merging collapsible `if` statements increases the code's readability.
 
