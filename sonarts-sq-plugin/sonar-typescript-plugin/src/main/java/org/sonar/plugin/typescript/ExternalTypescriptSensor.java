@@ -117,8 +117,8 @@ public class ExternalTypescriptSensor implements Sensor {
     checkCompatibleNodeVersion(executableBundle.getNodeExecutable());
 
     File projectBaseDir = sensorContext.fileSystem().baseDir();
-    Optional<String> tsconfigPathFromVariable = sensorContext.config().get(TypeScriptPlugin.TSCONFIG_PATH);
-    Map<String, List<InputFile>> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir, tsconfigPathFromVariable.orElse(null));
+    Optional<String> tsconfigPathFromProperty = sensorContext.config().get(TypeScriptPlugin.TSCONFIG_PATH);
+    Map<String, List<InputFile>> inputFileByTsconfig = getInputFileByTsconfig(inputFiles, projectBaseDir, tsconfigPathFromProperty.orElse(null));
 
     for (Map.Entry<String, List<InputFile>> e : inputFileByTsconfig.entrySet()) {
       String tsconfigPath = e.getKey();
@@ -183,17 +183,17 @@ public class ExternalTypescriptSensor implements Sensor {
 
   private static Map<String, List<InputFile>> getInputFileByTsconfig(Iterable<InputFile> inputFiles, File projectBaseDir, @Nullable String tsconfigPathFromVariable) {
     Map<String, List<InputFile>> inputFileByTsconfig = new HashMap<>();
-    if (tsconfigPathFromVariable != null && !tsconfigPathFromVariable.trim().isEmpty()) {
-      File tsconfigFile = new File(projectBaseDir + File.separator + tsconfigPathFromVariable);
+    if (tsconfigPathFromVariable != null) {
+      File tsconfigFile = new File(projectBaseDir, tsconfigPathFromVariable);
       if (!tsconfigFile.exists()) {
         String message = String.format("The tsconfig file [%s] doesn't exist. Check property specified in sonar.typescript.tsconfigPath", tsconfigFile.getAbsoluteFile());
         LOG.error(message);
-        throw new IllegalArgumentException(message);
+      } else {
+        ArrayList<InputFile> list = new ArrayList<>();
+        inputFiles.iterator().forEachRemaining(list::add);
+        inputFileByTsconfig.put(tsconfigFile.getAbsolutePath(), list);
+        return inputFileByTsconfig;
       }
-      ArrayList<InputFile> list = new ArrayList<>();
-      inputFiles.iterator().forEachRemaining(list::add);
-      inputFileByTsconfig.put(tsconfigFile.getAbsolutePath(), list);
-      return inputFileByTsconfig;
     }
 
     for (InputFile inputFile : inputFiles) {

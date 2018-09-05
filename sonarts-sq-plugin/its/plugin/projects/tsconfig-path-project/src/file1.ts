@@ -1,4 +1,4 @@
 function foo(x: any) {
-  if (x && !x)
+  if (4 < 4)
     console.log("file1");
 }

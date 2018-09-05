@@ -19,14 +19,19 @@
  */
 package org.sonar.typescript.its;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import com.google.common.collect.ImmutableList;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.BuildResult;
-
+import java.util.List;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.sonarqube.ws.Issues;
+import org.sonarqube.ws.client.issues.SearchRequest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.sonar.typescript.its.Tests.newWsClient;
 
 public class ConfigPathTest {
 
@@ -45,8 +50,41 @@ public class ConfigPathTest {
     BuildResult buildResult = orchestrator.executeBuild(
       Tests.createScanner("projects/tsconfig-path-project", PROJECT_KEY)
         .setProperty("sonar.typescript.tsconfigPath", "config/tsconfig.json"));
+    SearchRequest request = new SearchRequest();
+    request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S1764"));
+    List<Issues.Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
 
+    assertThat(issuesList).hasSize(1);
     assertThat(buildResult.getLogs()).doesNotContain("No tsconfig.json file found");
+
+  }
+
+  @Test
+  public void withoutTSconfigPathTest() {
+    BuildResult buildResult = orchestrator.executeBuild(
+      Tests.createScanner("projects/tsconfig-path-project", PROJECT_KEY));
+
+    SearchRequest request = new SearchRequest();
+    request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S1764"));
+    List<Issues.Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
+
+    assertThat(issuesList).hasSize(1);
+    assertThat(buildResult.getLogs()).contains("No tsconfig.json file found");
+  }
+
+  @Test
+  public void withWrongTSconfigPathTest() {
+    BuildResult buildResult = orchestrator.executeBuild(
+      Tests.createScanner("projects/tsconfig-path-project", PROJECT_KEY)
+        .setProperty("sonar.typescript.tsconfigPath", "config/tsconfig.other.json"));
+
+    SearchRequest request = new SearchRequest();
+    request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S1764"));
+    List<Issues.Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
+
+    assertThat(issuesList).hasSize(1);
+    assertThat(buildResult.getLogs()).contains("Check property specified in sonar.typescript.tsconfigPath");
+    assertThat(buildResult.getLogs()).contains("No tsconfig.json file found");
   }
 
 }

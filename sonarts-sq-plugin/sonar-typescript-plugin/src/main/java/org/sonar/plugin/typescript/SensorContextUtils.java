@@ -290,7 +290,7 @@ public class SensorContextUtils {
       this.rules = SensorContextUtils.convertToRulesToExecute(typeScriptRules);
       this.projectRoot = projectRoot;
       if (tsconfigPath != null) {
-        this.tsconfigPath = new File(projectRoot + File.separator + path).getAbsolutePath();
+        this.tsconfigPath = new File(projectRoot, tsconfigPath).getAbsolutePath();
       } else {
         this.tsconfigPath = null;
       }

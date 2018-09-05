@@ -44,7 +44,6 @@ public class TypeScriptPlugin implements Plugin {
   public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
 
   public static final String TSCONFIG_PATH = "sonar.typescript.tsconfigPath";
-  public static final String TSCONFIG_PATH_DEFAULT_VALUE = "";
 
   public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.reportPaths";
   public static final String TSLINT_REPORT_PATHS_DEFAULT_VALUE = "";
@@ -104,12 +103,10 @@ public class TypeScriptPlugin implements Plugin {
         .category(TYPESCRIPT_CATEGORY)
         .build(),
       PropertyDefinition.builder(TSCONFIG_PATH)
-          .defaultValue(TSCONFIG_PATH_DEFAULT_VALUE)
           .name("tsconfig.json location")
-          .description("Relative path to a tsconfig JSON file")
+          .description("Relative to a project/module base directory path to a tsconfig JSON file")
           .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
           .subCategory(GENERAL_SUBCATEGORY)
-          .multiValues(false)
           .category(TYPESCRIPT_CATEGORY)
           .build()
       );

@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.CheckForNull;
@@ -133,6 +134,35 @@ public class SonarLintTest {
 
     assertThat(logs).contains("SonarTS Server is started", "Started SonarTS Analysis");
     assertThat(logs).filteredOn(log -> log.startsWith("No tsconfig.json file found for") && log.endsWith("using default configuration")).hasSize(1);
+
+    assertThat(results.failedAnalysisFiles()).isEmpty();
+  }
+
+  @Test
+  public void withTSConfigProperty() throws Exception {
+    ClientInputFile inputFile = prepareInputFile("foo.ts",
+      "function foo() {\n" +
+        "    let x = 4; \n" +
+        "    if (x = 5) {}\n" +
+        "}");
+    ClientInputFile tsConfigFile = prepareInputFile("tsconfig.custom.json",
+      "{}");
+    final List<Issue> issues = new ArrayList<>();
+
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(), Arrays.asList
+      (inputFile, tsConfigFile), ImmutableMap.of(
+      "sonar.typescript.tsconfigPath", "tsconfig.custom.json"
+    ));
+    AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
+
+    assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
+      tuple("typescript:S2589", 3, inputFile.getPath(), "MAJOR"),
+      tuple("typescript:S1854", 3, inputFile.getPath(), "MAJOR"),
+      tuple("typescript:S1854", 2, inputFile.getPath(), "MAJOR"),
+      tuple("typescript:S108", 3, inputFile.getPath(), "MAJOR"));
+
+    assertThat(logs).contains("SonarTS Server is started", "Started SonarTS Analysis");
+    assertThat(logs).filteredOn(log -> log.startsWith("No tsconfig.json file found for") && log.endsWith("using default configuration")).hasSize(0);
 
     assertThat(results.failedAnalysisFiles()).isEmpty();
   }

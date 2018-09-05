@@ -133,6 +133,18 @@ public class ContextualServerTest {
   }
 
   @Test
+  public void should_provide_analysis_results_using_tsconfig_property() throws Exception {
+    ContextualServer contextualServer = getContextualServer();
+    contextualServer.start();
+
+    ContextualAnalysisRequest request = getContextualAnalysisRequest("tsconfig.custom.json");
+    AnalysisResponse analyze = contextualServer.analyze(request);
+    assertThat(request.tsconfigPath).contains("tsconfig.custom.json");
+    assertThat(analyze.issues).hasSize(1);
+    assertThat(analyze.cpdTokens).isEmpty();
+  }
+
+  @Test
   public void consume_stdout_stderr() throws Exception {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
@@ -154,9 +166,13 @@ public class ContextualServerTest {
   }
 
   private ContextualAnalysisRequest getContextualAnalysisRequest() throws IOException {
+    return getContextualAnalysisRequest(null);
+  }
+
+  private ContextualAnalysisRequest getContextualAnalysisRequest(String tsconfigPath) throws IOException {
     DefaultInputFile inputFile = createInputFile(SensorContextTester.create(BASE_DIR), "function foo() {}", "foo/file.ts");
 
-    return new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES, BASE_DIR.getAbsolutePath(), null);
+    return new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES, BASE_DIR.getAbsolutePath(), tsconfigPath);
   }
 
   private ContextualServer getContextualServer() {
