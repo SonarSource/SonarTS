@@ -30,6 +30,7 @@
     "no-in-misuse": true,
     "no-inconsistent-return": false,
     "no-invalid-await": true,
+    "no-invariant-return": true,
     "no-inverted-boolean-check": true,
     "no-misleading-array-reverse": true,
     "no-misspelled-operator": true,

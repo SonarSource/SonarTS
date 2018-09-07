@@ -70,9 +70,7 @@ class Visitor extends SonarRuleVisitor {
     if (this.declaredReturnTypeContainsVoidTypes(returnType)) return;
     const cfg = ControlFlowGraph.fromStatements(Array.from(body.statements));
     if (cfg) {
-      const predecessors = cfg.end.predecessors.filter(
-        block => block === cfg.start || this.blockHasPredecessors(block),
-      );
+      const predecessors = cfg.getEndPredecessors();
       const hasExplicit = predecessors.find(this.lastElementIsExplicitReturn);
       const hasImplicit = predecessors.find(this.lastElementIsNotExplicitReturn);
       if (hasExplicit && hasImplicit) {
@@ -121,12 +119,5 @@ class Visitor extends SonarRuleVisitor {
       return false;
     }
     return lastElement.kind === ts.SyntaxKind.ReturnStatement && !!(lastElement as ts.ReturnStatement).expression;
-  }
-
-  private blockHasPredecessors(cfgBlock: any): boolean {
-    if (cfgBlock.predecessors) {
-      return cfgBlock.predecessors.length > 0;
-    }
-    return false;
   }
 }

@@ -1,0 +1,9 @@
+src/vscode/src/vs/base/parts/tree/browser/treeDefaults.ts: 234
+src/vscode/src/vs/editor/contrib/quickOpen/browser/gotoLine.ts: 116
+src/vscode/src/vs/workbench/browser/quickopen.ts: 328
+src/vscode/src/vs/workbench/parts/explorers/browser/explorerView.ts: 267
+src/vscode/src/vs/workbench/parts/explorers/browser/views/treeExplorerViewer.ts: 119
+src/vscode/src/vs/workbench/parts/files/browser/views/openEditorsViewer.ts: 193
+src/vscode/src/vs/workbench/parts/markers/browser/markersTreeController.ts: 49
+src/vscode/src/vs/workbench/parts/quickopen/browser/gotoLineHandler.ts: 126
+src/vscode/src/vs/workbench/parts/snippets/electron-browser/snippetsService.ts: 103
