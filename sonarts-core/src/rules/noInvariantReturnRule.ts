@@ -57,7 +57,7 @@ class Visitor extends SonarRuleVisitor {
           returnedExpressions.length > 1 &&
           this.allSameLiteral(returnedExpressions)
         ) {
-          const issue = this.addIssue(functionLikeMainToken(node), Rule.MESSAGE);
+          const issue = this.addIssue(functionLikeMainToken(node), Rule.MESSAGE).setCost(returnedExpressions.length);
           returnedExpressions.forEach(returnedExpression => {
             issue.addSecondaryLocation(returnedExpression);
           });

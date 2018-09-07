@@ -1,5 +1,5 @@
   function numbers(a: number) {
-//^^^^^^^^ {{Refactor this method to not always return the same value.}}
+//^^^^^^^^ {{Refactor this method to not always return the same value.}} [[cost:2]]
     if (a == 1) {
         return 42;
     }
@@ -7,7 +7,7 @@
 }
 
   function strings(a: number) {
-//^^^^^^^^ {{Refactor this method to not always return the same value.}}
+//^^^^^^^^ {{Refactor this method to not always return the same value.}} [[cost:2]]
     if (a == 1) {
         return "foo";
     }
@@ -102,4 +102,4 @@ function withThrowAndImplicitReturn(cond: boolean) {
 var arrowWithExpressionBody = p => p ? 1 : 1;
 
 var arrowNok = (p) => { if (p) { return "foo"; } return "foo"; };
-//                 ^^  {{Refactor this method to not always return the same value.}}
+//                 ^^  {{Refactor this method to not always return the same value.}} [[cost:2]]
