@@ -20,10 +20,11 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { FunctionVisitor } from "../utils/FunctionVisitor";
-import { isReturnStatement, isLiteralExpression, is } from "../utils/nodes";
+import { isLiteralExpression, is, isBlock } from "../utils/nodes";
 import { functionLikeMainToken } from "../utils/navigation";
 import areEquivalent from "../utils/areEquivalent";
+import { ControlFlowGraph, CfgBlock } from "../cfg/cfg";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -44,27 +45,50 @@ export class Rule extends tslint.Rules.AbstractRule {
   }
 }
 
-class Visitor extends FunctionVisitor {
-  checkFunctionLikeDeclaration(functionNode: ts.FunctionLikeDeclaration, body: ts.Block) {
-    const returnValues = this.getAllReturns(body.statements).map(
-      node => (isReturnStatement(node) && node.expression ? node.expression : undefined),
-    );
-    const first = returnValues[0];
-    if (returnValues.length > 1 && returnValues.every(value => this.areEquivalentLiteral(first, value))) {
-      const issue = this.addIssue(functionLikeMainToken(functionNode), Rule.MESSAGE);
-      returnValues.forEach(returnValue => {
-        issue.addSecondaryLocation(returnValue!);
-      });
+class Visitor extends SonarRuleVisitor {
+  public visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
+    if (node.body && isBlock(node.body)) {
+      const cfg = ControlFlowGraph.fromStatements(Array.from(node.body.statements));
+      if (cfg) {
+        const returnedExpressions = cfg.getEndPredecessors().map(this.getExplicitReturnExpression);
+
+        if (
+          this.noImplicitReturn(returnedExpressions) &&
+          returnedExpressions.length > 1 &&
+          this.allSameLiteral(returnedExpressions)
+        ) {
+          const issue = this.addIssue(functionLikeMainToken(node), Rule.MESSAGE);
+          returnedExpressions.forEach(returnedExpression => {
+            issue.addSecondaryLocation(returnedExpression);
+          });
+        }
+      }
     }
+
+    super.visitFunctionLikeDeclaration(node);
   }
 
-  private areEquivalentLiteral(first?: ts.Expression, second?: ts.Expression) {
-    if (!first || !second) {
-      return false;
-    }
+  private noImplicitReturn(returnedExpressions: (ts.Expression | undefined)[]): returnedExpressions is ts.Expression[] {
+    return returnedExpressions.every(expr => !!expr);
+  }
+
+  private allSameLiteral(returnedExpressions: ts.Expression[]) {
+    const first = returnedExpressions[0];
     if (isLiteralExpression(first) || is(first, ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword)) {
-      return areEquivalent(first, second);
+      return returnedExpressions.every(expression => areEquivalent(first, expression));
     }
     return false;
+  }
+
+  private getExplicitReturnExpression(cfgBlock: CfgBlock): ts.Expression | undefined {
+    const elements = cfgBlock.getElements();
+    const lastElement = elements[elements.length - 1];
+    if (!lastElement) {
+      return undefined;
+    }
+
+    if (lastElement && lastElement.kind === ts.SyntaxKind.ReturnStatement) {
+      return (lastElement as ts.ReturnStatement).expression;
+    }
   }
 }

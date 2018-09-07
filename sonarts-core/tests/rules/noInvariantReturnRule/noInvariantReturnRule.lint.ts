@@ -1,4 +1,4 @@
-  function foo(a: number) {
+  function numbers(a: number) {
 //^^^^^^^^ {{Refactor this method to not always return the same value.}}
     if (a == 1) {
         return 42;
@@ -14,7 +14,7 @@
     return "foo";
 }
 
-  function strings2(a: number) {
+function identifiers(a: number) {
     const c = "foo";
     if (a == 1) {
         return c;
@@ -29,6 +29,8 @@ function oneReturnValue() {
 
 function withImplicitReturn(p: boolean) {
     if (p) {
+        return 2;
+    } else if (!p) {
         return 2;
     }
 }
@@ -97,46 +99,7 @@ function withThrowAndImplicitReturn(cond: boolean) {
     console.log("bar");
 }
 
-var arrowWithExpressionBody = (p) => p ? true : false;
+var arrowWithExpressionBody = p => p ? 1 : 1;
 
-var inconsistentArrow = (p) => { if (p) { return "foo"; } return "foo"; };
-//                          ^^  {{Refactor this method to not always return the same value.}}
-
-  function* inconsistentGenerator(p) {
-//^^^^^^^^  {{Refactor this method to not always return the same value.}}
-    let i = 0
-    while (i < 10) {
-        return "foo";
-    }
-    return "foo";
-}
-
-class A {
-    inconsistentMethod(p) {
-  //^^^^^^^^^^^^^^^^^^  {{Refactor this method to not always return the same value.}}
-        if (p) {
-            return "foo";
-        }
-        return "foo";
-    }
-
-    *inconsistentGenerator(p) {
- //  ^^^^^^^^^^^^^^^^^^^^^  {{Refactor this method to not always return the same value.}}
-        if (p) {
-            return "foo";
-        }
-        return "foo";
-    }
-
-    private _value: number;
-
-    get value(): number {
-  //    ^^^^^  {{Refactor this method to not always return the same value.}}
-        if (this._value) {
-            return "a";
-        } else {
-            return "a";
-        }
-    }
-
-}
+var arrowNok = (p) => { if (p) { return "foo"; } return "foo"; };
+//                 ^^  {{Refactor this method to not always return the same value.}}

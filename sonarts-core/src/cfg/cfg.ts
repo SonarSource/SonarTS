@@ -50,6 +50,17 @@ export class ControlFlowGraph {
     return this.blocks;
   }
 
+  public getEndPredecessors() {
+    const blockHasPredecessors = (cfgBlock: CfgBlock) => {
+      if (cfgBlock.predecessors) {
+        return cfgBlock.predecessors.length > 0;
+      }
+      return false;
+    };
+
+    return this.end.predecessors.filter(block => block === this.start || blockHasPredecessors(block));
+  }
+
   public findLoopingBlock(loopNode: ts.Node): CfgBlock | undefined {
     return this.blocks.find(block => block.loopingStatement === loopNode);
   }

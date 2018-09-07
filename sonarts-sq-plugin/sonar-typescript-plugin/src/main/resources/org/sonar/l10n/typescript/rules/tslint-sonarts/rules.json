@@ -180,6 +180,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-invalid-await.md"
   },
   {
+    "key": "no-invariant-return",
+    "name": "Function returns should not be invariant",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-invariant-return.md"
+  },
+  {
     "key": "no-inverted-boolean-check",
     "name": "Boolean checks should not be inverted",
     "type": "CODE_SMELL",
