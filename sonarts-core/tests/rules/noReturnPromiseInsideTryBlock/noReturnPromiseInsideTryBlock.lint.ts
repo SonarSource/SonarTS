@@ -56,3 +56,18 @@ const emptyReturnJustCheckNotBroken = () => {
   } catch {
   }
 };
+
+const simpleTestWithReturnWithoutTryCatch = () => {
+  return Promise.resolve();
+};
+
+class Test {
+  method() {
+    try {
+      return Promise.resolve();
+  //  ^^^^^^^^^^^^^^^^^^^^^^^^^ {{Consider using 'await' for the promise(s) inside this 'try' or replace it with 'Promise.catch'.}}
+    } catch (e) {
+
+    }
+  }
+}

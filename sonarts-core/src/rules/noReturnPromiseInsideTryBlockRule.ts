@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { isFunctionDeclaration, isTryStatement } from "../utils/nodes";
+import { isFunctionLikeDeclaration, isTryStatement } from "../utils/nodes";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -64,7 +64,7 @@ function isStatementInTryBlock(node: ts.Node) {
   let currentNode = node;
   while (true) {
     const parent = currentNode.parent;
-    if (isFunctionDeclaration(parent)) {
+    if (isFunctionLikeDeclaration(parent)) {
       return false;
     }
     if (isTryStatement(parent) && parent.tryBlock === currentNode) {

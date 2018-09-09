@@ -1,3 +1,15 @@
 src/angular/packages/core/src/application_ref.ts: 238
 src/angular/tools/@angular/tsc-wrapped/src/main.ts: 116
+src/vscode/src/vs/base/common/worker/simpleWorker.ts: 329
 src/vscode/src/vs/base/parts/tree/browser/treeModel.ts: 845
+src/vscode/src/vs/code/node/cliProcessMain.ts: 107
+src/vscode/src/vs/editor/browser/standalone/simpleServices.ts: 303
+src/vscode/src/vs/editor/common/services/editorSimpleWorker.ts: 505
+src/vscode/src/vs/editor/contrib/links/common/links.ts: 39
+src/vscode/src/vs/platform/commands/common/commandService.ts: 52
+src/vscode/src/vs/platform/extensions/common/ipcRemoteCom.ts: 275
+src/vscode/src/vs/workbench/api/electron-browser/mainThreadStorage.ts: 28
+src/vscode/src/vs/workbench/api/node/extHostCommands.ts: 126
+src/vscode/src/vs/workbench/api/node/extHostExtensionService.ts: 335
+src/vscode/src/vs/workbench/common/actionRegistry.ts: 179
+src/vscode/src/vs/workbench/services/themes/electron-browser/colorThemeData.ts: 232,235

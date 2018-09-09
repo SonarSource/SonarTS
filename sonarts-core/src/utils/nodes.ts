@@ -190,7 +190,7 @@ export function isToken(node: ts.Node) {
 }
 
 export function isTryStatement(node: ts.Node): node is ts.TryStatement {
-  return node.kind === ts.SyntaxKind.TryStatement;
+  return is(node, ts.SyntaxKind.TryStatement);
 }
 
 export function isThrowStatement(node: ts.Node): node is ts.ThrowStatement {
