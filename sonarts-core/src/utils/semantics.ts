@@ -32,13 +32,6 @@ export function isArray(node: ts.Node, typeChecker: ts.TypeChecker): boolean {
   return !!type.symbol && type.symbol.name === "Array";
 }
 
-export function isPromise(node: ts.Node, typeChecker: ts.TypeChecker, customPromises?: string[]): boolean {
-  const type = typeChecker.getTypeAtLocation(node);
-  return (
-    !!type.symbol && (type.symbol.name === "Promise" || !customPromises || customPromises.includes(type.symbol.name))
-  );
-}
-
 export function isNullType(type: ts.Type) {
   return Boolean(type.flags & ts.TypeFlags.Null);
 }

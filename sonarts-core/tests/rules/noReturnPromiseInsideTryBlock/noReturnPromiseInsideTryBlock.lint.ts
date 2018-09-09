@@ -1,5 +1,6 @@
 declare class Bluebird {
   static resolve: () => Bluebird;
+  then() {}
 }
 
 async function definetlyNotPromise() {
@@ -12,7 +13,7 @@ async function definetlyNotPromise() {
 const warn = () => {
   try {
     return (() => Promise.reject(new Error('reason')))(); //should propose await
-//  ^^^^^^ {{Possible missing await keyword after return}}
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Consider using 'await' for the promise(s) inside this 'try' or replace it with 'Promise.catch'.}}
   } catch {
   }
 };
@@ -40,11 +41,10 @@ const awaitExists = async () => {
   } catch {
   }
 };
-
 const customPromise = () => {
   try {
     return Bluebird.resolve();
-//  ^^^^^^ {{Possible missing await keyword after return}}
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Consider using 'await' for the promise(s) inside this 'try' or replace it with 'Promise.catch'.}}
   } catch {
   }
 };

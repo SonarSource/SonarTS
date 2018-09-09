@@ -21,5 +21,5 @@ import { Rule } from "../../../src/rules/noReturnPromiseInsideTryBlockRule";
 import runRule from "../../runRule";
 
 it("raises error", () => {
-  runRule(Rule, __filename, "Bluebird");
+  runRule(Rule, __filename);
 });

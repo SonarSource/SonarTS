@@ -20,81 +20,61 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { isFunctionDeclaration, isReturnStatement, isTryStatement } from "../utils/nodes";
-import { isPromise } from "../utils/semantics";
-
-const RETURN_LENGTH = "return".length;
+import { isFunctionDeclaration, isTryStatement } from "../utils/nodes";
+import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
     ruleName: "no-return-promise-inside-try-block",
     description: "Add await to handle rejection",
     rationale: tslint.Utils.dedent`
-      Return promise instead of awaited value inside try block 
-      leads to not catching this error by catch block
+      An exception (including reject) thrown by a promise 
+      will not be caught be a nesting try block, 
+      due to the asynchronous nature of execution. 
+      Instead, use catch method of Promise or wrap it inside await expression.
     `,
-    optionsDescription: "Alternative promise constructor names",
-    optionExamples: [[true], [[true, "Bluebird"]], [[true, "Bluebird", "MyCustomPromise"]]],
-    options: {
-      type: "array",
-      items: { type: "string" },
-    },
-    rspecKey: "...", // todo
-    type: "functionality", // todo
+    optionsDescription: "",
+    options: null,
+    rspecKey: "4822",
+    type: "functionality",
     typescriptOnly: true,
   };
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    return new Walker(sourceFile, program, this.ruleArguments).startWalk();
+    return new Walker(Rule.metadata.ruleName, program).visit(sourceFile).getIssues();
   }
 }
 
-class Walker {
-  private readonly issues: tslint.RuleFailure[] = [];
+class Walker extends TypedSonarRuleVisitor {
+  private static readonly message =
+    "Consider using 'await' for the promise(s) inside this 'try' " + "or replace it with 'Promise.catch'.";
 
-  constructor(private sourceFile: ts.SourceFile, private program: ts.Program, private customPromises?: string[]) {}
-
-  public startWalk() {
-    this.walk(this.sourceFile, false);
-    return this.issues;
+  visitReturnStatement(node: ts.ReturnStatement) {
+    if (node.expression) {
+      const type = this.program.getTypeChecker().getTypeAtLocation(node.expression);
+      if (hasThenMethod(type) && isStatementInTryBlock(node)) {
+        this.addIssue(node, Walker.message);
+      }
+    }
+    super.visitReturnStatement(node);
   }
+}
 
-  private walk(node: ts.Node, shouldWarnAboutReturn: boolean) {
-    if (isTryStatement(node)) {
-      if (node.catchClause) {
-        this.walk(node.catchClause, shouldWarnAboutReturn);
-      }
-      if (node.finallyBlock) {
-        this.walk(node.finallyBlock, shouldWarnAboutReturn);
-      }
-
-      for (const statement of node.tryBlock.statements) {
-        this.walk(statement, true);
-      }
-      return;
+function isStatementInTryBlock(node: ts.Node) {
+  let currentNode = node;
+  while (true) {
+    const parent = currentNode.parent;
+    if (isFunctionDeclaration(parent)) {
+      return false;
     }
-
-    const shouldChildWarnAboutReturn = shouldWarnAboutReturn && !isFunctionDeclaration(node);
-
-    for (const child of node.getChildren()) {
-      this.walk(child, shouldChildWarnAboutReturn);
+    if (isTryStatement(parent) && parent.tryBlock === currentNode) {
+      return true;
     }
-
-    // not handling () => promise because no try-catch block
-    if (shouldWarnAboutReturn && isReturnStatement(node)) {
-      if (node.expression && isPromise(node.expression, this.program.getTypeChecker(), this.customPromises)) {
-        const start = node.getStart(this.sourceFile);
-
-        this.issues.push(
-          new tslint.RuleFailure(
-            this.sourceFile,
-            start,
-            start + RETURN_LENGTH,
-            "Possible missing await keyword after return",
-            Rule.metadata.ruleName,
-          ),
-        );
-      }
-    }
+    currentNode = parent;
   }
+}
+
+function hasThenMethod(type: ts.Type) {
+  const thenProperty = type.getProperty("then");
+  return Boolean(thenProperty && thenProperty.flags & ts.SymbolFlags.Method);
 }
