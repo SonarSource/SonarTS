@@ -63,8 +63,10 @@ export function processRequest(inputString: string) {
 class ProgressLogger {
   processedFilesCounter: number = 0;
   startTime: number = this.currentTime();
+
   constructor(private filesNumber: number) {}
-  log(currentFile?: string) {
+
+  log(currentFile: string) {
     // log progress after 10s
     if (this.currentTime() - this.startTime > 10) {
       this.startTime = this.currentTime();
