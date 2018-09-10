@@ -37,21 +37,10 @@ export function processRequest(inputString: string) {
   const input = JSON.parse(inputString);
   let program = createProgram(input.tsconfig, input.projectRoot);
 
-  const filesNumber: number = input.filepaths.length;
-  let currentFile: string;
-  let processedFilesCounter = 0;
-  const currentTime = () => new Date().getTime() / 1000;
-  let startTime = currentTime();
-  const logProgress = () => {
-    // log progress after 10s
-    if (currentTime() - startTime > 10) {
-      startTime = currentTime();
-      console.warn(`${processedFilesCounter} files analyzed out of ${filesNumber}. Current file: ${currentFile}`);
-    }
-  };
+  const progressLogger = new ProgressLogger(input.filepaths.length);
+
   let output = input.filepaths.map((filepath: string) => {
-    currentFile = filepath;
-    logProgress();
+    progressLogger.log(filepath);
     const sourceFile = program.getSourceFile(filepath);
     const output: object = { filepath };
     if (sourceFile) {
@@ -65,8 +54,34 @@ export function processRequest(inputString: string) {
     } else {
       console.error(`Failed to find a source file matching path ${filepath} in program created with ${input.tsconfig}`);
     }
-    processedFilesCounter++;
     return output;
   });
+  progressLogger.logLast();
   return output;
+}
+
+class ProgressLogger {
+  processedFilesCounter = 0;
+  startTime: number = this.currentTime();
+
+  constructor(private readonly filesNumber: number) {}
+
+  log(currentFile: string) {
+    // log progress after 10s
+    if (this.currentTime() - this.startTime > 10) {
+      this.startTime = this.currentTime();
+      console.warn(
+        `${this.processedFilesCounter} files analyzed out of ${this.filesNumber}. Current file: ${currentFile}`,
+      );
+    }
+    this.processedFilesCounter++;
+  }
+
+  logLast() {
+    console.warn(`${this.processedFilesCounter} files analyzed out of ${this.filesNumber}`);
+  }
+
+  currentTime() {
+    return new Date().getTime() / 1000;
+  }
 }
