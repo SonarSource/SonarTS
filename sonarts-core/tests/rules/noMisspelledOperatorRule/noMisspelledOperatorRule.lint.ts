@@ -15,3 +15,9 @@ x1 =!x1 // OK
 
 let x2 = 0;
 x2 = - 3; // OK whitespace between = and -
+
+// other unary operators are OK
+let x3 = 0;
+x3 = ++x2;
+x3 = --x2;
+x3 = ~x2;
