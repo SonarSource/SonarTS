@@ -1,7 +1,7 @@
 {
   "title": "Console logging should not be used",
   "type": "VULNERABILITY",
-  "status": "superseded",
+  "status": "ready",
   "remediation": {
     "func": "Constant\/Issue",
     "constantCost": "5min"
@@ -15,10 +15,5 @@
   "defaultSeverity": "Minor",
   "ruleSpecification": "RSPEC-2228",
   "sqKey": "S2228",
-  "scope": "Main",
-  "securityStandards": {
-    "OWASP": [
-      "A3"
-    ]
-  }
+  "scope": "Main"
 }
