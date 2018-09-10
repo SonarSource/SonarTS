@@ -2,15 +2,15 @@
 properly considered.</p>
 <p>For readability purpose, to help a developer to quickly find the default behavior of a <code>switch</code> statement, it is recommended to put the
 <code>default</code> clause at the end of the <code>switch</code> statement. This rule raises an issue if the <code>default</code> clause is not the
-last one of the <code>switch</code>'s cases.</p>
+first or the last one of the <code>switch</code>'s cases.</p>
 <h2>Noncompliant Code Example</h2>
 <pre>
 switch (param) {
-  default: // default clause should be the last one
-    error();
-    break;
   case 0:
     doSomething();
+    break;
+  default: // default clause should be the first or last one
+    error();
     break;
   case 1:
     doSomethingElse();
