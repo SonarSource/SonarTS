@@ -165,7 +165,7 @@ public class ExternalTypescriptSensor implements Sensor {
 
     Pattern versionPattern = Pattern.compile("v?(\\d+)\\.\\d+\\.\\d+");
     Matcher versionMatcher = versionPattern.matcher(version);
-    if (versionMatcher.matches()) {
+    if (versionMatcher.lookingAt()) {
       int major = Integer.parseInt(versionMatcher.group(1));
       if (major < MIN_NODE_VERSION) {
         String message = String.format("Only Node.js v%s or later is supported, got %s. %s", MIN_NODE_VERSION, version, messageSuffix);
