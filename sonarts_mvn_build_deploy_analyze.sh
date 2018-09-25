@@ -29,7 +29,7 @@ configureTravis
 #install sonar-scanner
 pushd ~ > /dev/null
 if [ ! -d "sonar-scanner-3.0.3.778-linux/bin" ]; then
-  wget -O sonar-scanner.zip https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip
+  wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-3.0.3.778-linux.zip
   unzip sonar-scanner.zip
   rm sonar-scanner.zip
 fi
