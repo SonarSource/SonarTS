@@ -18,7 +18,7 @@ How does it work?
 
 ### Bug Detection :bug:
 
-Rules in this category aim to find places in code which has a high chance to be bugs, i.e. don't work as indented. 
+Rules in this category aim to find places in code which has a high chance to be bugs, i.e. don't work as intended. 
 Most of the time this is a result of bad copy-paste ([`no-identical-conditions`]) or improvident API usage ([`no-misleading-array-reverse`]).
 Some rules are raising issues on unused values ([`no-useless-increment`]), which is at best wasted code and at worst a bug.
 
