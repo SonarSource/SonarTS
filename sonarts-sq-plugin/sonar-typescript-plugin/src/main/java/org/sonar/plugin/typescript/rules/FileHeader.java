@@ -28,7 +28,7 @@ public class FileHeader extends TypeScriptRule {
 
   @RuleProperty(
     key = "headerFormat",
-    description = "Expected copyright and license header (without comment symbols). E.g. set 'COPYRIGHT' to match header '/*COPYRIGHT*/'. Regular expressions are supported.",
+    description = "Regular expression used to verify expected copyright and license header (without comment symbols). E.g. set 'COPYRIGHT' to match header '/*COPYRIGHT*/'.",
     defaultValue = "")
   String headerFormat = "";
 
