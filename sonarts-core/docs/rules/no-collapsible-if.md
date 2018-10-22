@@ -14,7 +14,7 @@ if (x != undefined) {
 ## Compliant Solution
 
 ```typescript
-if (x != undefined &amp;&amp; y === 2) {
+if (x != undefined && y === 2) {
   // ...
 }
 ```
