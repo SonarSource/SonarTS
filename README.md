@@ -167,8 +167,8 @@ Node.js (>=6.x).
 * Install `tslint-sonarts`
 
 ```sh
-npm install tslint-sonarts      # install in your project
-npm install tslint-sonarts -g   # or install globally
+npm install tslint-sonarts --save-dev   # install in your project
+npm install tslint-sonarts -g           # or install globally
 ```
 
 * Add `tslint-sonarts` to your `tslint.json` `extends` property:
