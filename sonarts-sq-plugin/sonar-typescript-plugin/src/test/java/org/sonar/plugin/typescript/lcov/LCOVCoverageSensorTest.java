@@ -22,6 +22,7 @@ package org.sonar.plugin.typescript.lcov;
 import com.google.common.base.Charsets;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.LoggerLevel;
 import org.sonar.plugin.typescript.TypeScriptPlugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,10 +49,11 @@ public class LCOVCoverageSensorTest {
 
   @Rule
   public LogTester logTester = new LogTester();
+  private MapSettings settings;
 
   @Before
   public void init() throws IOException {
-    MapSettings settings = new MapSettings();
+    settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.LCOV_REPORT_PATHS, LCOV);
 
     context = SensorContextTester.create(moduleBaseDir);
@@ -81,6 +84,42 @@ public class LCOVCoverageSensorTest {
     assertThat(descriptor.configurationPredicate().test(new MapSettings().setProperty("sonar.javascript.lcov.reportPaths", "foo").asConfig())).isFalse();
     assertThat(descriptor.configurationPredicate().test(new MapSettings().setProperty("sonar.typescript.lcov.reportPaths", "foo").asConfig())).isTrue();
     assertThat(descriptor.configurationPredicate().test(new MapSettings().asConfig())).isFalse();
+  }
+
+  @Test
+  public void should_ignore_and_log_warning_for_invalid_line() {
+      settings.setProperty(TypeScriptPlugin.LCOV_REPORT_PATHS, "reports/wrong_line_report.lcov");
+      lcovCoverageSensor.execute(context);
+
+      assertThat(context.lineHits("moduleKey:file1.ts", 0)).isNull();
+      assertThat(context.lineHits("moduleKey:file1.ts", 2)).isEqualTo(1);
+  
+      assertThat(context.conditions("moduleKey:file1.ts", 102)).isNull();
+      assertThat(context.conditions("moduleKey:file1.ts", 2)).isEqualTo(3);
+      assertThat(context.coveredConditions("moduleKey:file1.ts", 2)).isEqualTo(1);
+
+      assertThat(logTester.logs()).contains("Problem during processing LCOV report: can't save DA data for line 3 of coverage report file (java.lang.IllegalArgumentException: Line with number 0 doesn't belong to file file1.ts).");
+      assertThat(logTester.logs()).contains("Problem during processing LCOV report: can't save BRDA data for line 8 of coverage report file (java.lang.IllegalArgumentException: Line with number 102 doesn't belong to file file1.ts).");
+  }
+
+  @Test
+  public void should_log_warning_when_wrong_data() throws Exception {
+      settings.setProperty(TypeScriptPlugin.LCOV_REPORT_PATHS, "reports/wrong_data_report.lcov");
+      lcovCoverageSensor.execute(context);
+
+      assertThat(context.lineHits("moduleKey:file1.ts", 1)).isNull();
+      assertThat(context.lineHits("moduleKey:file1.ts", 2)).isEqualTo(1);
+
+      assertThat(context.conditions("moduleKey:file1.ts", 2)).isEqualTo(2);
+      assertThat(context.coveredConditions("moduleKey:file1.ts", 2)).isEqualTo(2);
+
+      assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Problem during processing LCOV report: can't save DA data for line 3 of coverage report file (java.lang.NumberFormatException: For input string: \"1.\").");
+      // java.lang.StringIndexOutOfBoundsException may have different error message depending on JDK
+      Pattern errorMessagePattern = Pattern.compile("Problem during processing LCOV report: can't save DA data for line 4 of coverage report file [(java.lang.StringIndexOutOfBoundsException: String index out of range: -1).|(java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 1).]");
+      String stringIndexOutOfBoundLogMessage = logTester.logs(LoggerLevel.DEBUG).get(1);
+      assertThat(stringIndexOutOfBoundLogMessage).containsPattern(errorMessagePattern);
+      assertThat(logTester.logs(LoggerLevel.DEBUG).get(logTester.logs(LoggerLevel.DEBUG).size() - 1)).startsWith("Problem during processing LCOV report: can't save BRDA data for line 6 of coverage report file (java.lang.ArrayIndexOutOfBoundsException: ");
+      assertThat(logTester.logs(LoggerLevel.WARN)).contains("Found 3 inconsistencies in coverage report. Re-run analyse in debug mode to see details.");
   }
 
   private void createInputFile() throws IOException {
