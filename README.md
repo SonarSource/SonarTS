@@ -85,6 +85,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Functions should not have too many parameters ([`parameters-max-number`])
+* Function parameters should be declared with base types ([`prefer-base-type`])
 * "default" clauses should be last ([`prefer-default-last`])
 * Local variables should not be declared and then immediately returned or thrown ([`prefer-immediate-return`]) ([`requires type-check`])
 * Optional property declarations should use '?' syntax ([`prefer-optional`])
@@ -148,6 +149,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-useless-intersection`]: ./sonarts-core/docs/rules/no-useless-intersection.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md
 [`parameters-max-number`]: ./sonarts-core/docs/rules/parameters-max-number.md
+[`prefer-base-type`]: ./sonarts-core/docs/rules/prefer-base-type.md
 [`prefer-default-last`]: ./sonarts-core/docs/rules/prefer-default-last.md
 [`prefer-immediate-return`]: ./sonarts-core/docs/rules/prefer-immediate-return.md
 [`prefer-optional`]: ./sonarts-core/docs/rules/prefer-optional.md
