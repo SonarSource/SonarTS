@@ -79,7 +79,15 @@ function testBaseInteface(param: InterfaceB) {
   param.methodA();
 }
 
+function testManyBaseIntefacesAA(param: InterfaceBB) {
+//                                      ^^^^^^^^^^^ {{Use 'InterfaceAA' here; it is a more general type than 'InterfaceBB'.}}
+  param.methodAA();
+}
 
+function testManyBaseIntefacesA(param: InterfaceBB) {
+//                                     ^^^^^^^^^^^ {{Use 'InterfaceA' here; it is a more general type than 'InterfaceBB'.}}
+  param.methodA();
+}
 
 // type checker does not provide infomation about implemented by class interfaces
 function okClassImplementingInterface(param: ClassB) {

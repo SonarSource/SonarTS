@@ -77,27 +77,19 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   findMostGeneralizedType(type: ts.Type, usedProperties: string[]): ts.Type | undefined {
-    const baseType = this.getBaseType(type);
-    if (baseType) {
-      const propertiesOfBaseType = this.program
-        .getTypeChecker()
-        .getPropertiesOfType(baseType)
-        .map(p => p.name);
-      const canBeGeneralized = usedProperties.every(prop => propertiesOfBaseType.includes(prop));
-
-      if (canBeGeneralized) {
-        const mostGeneralizedType = this.findMostGeneralizedType(baseType, usedProperties);
-        return mostGeneralizedType ? mostGeneralizedType : baseType;
-      }
-    }
-    return undefined;
-  }
-
-  getBaseType(type: ts.Type) {
     if (type.isClassOrInterface()) {
       const baseTypes = this.program.getTypeChecker().getBaseTypes(type);
-      if (baseTypes.length === 1) {
-        return baseTypes[0];
+      for (const baseType of baseTypes) {
+        const propertiesOfBaseType = this.program
+          .getTypeChecker()
+          .getPropertiesOfType(baseType)
+          .map(p => p.name);
+        const canBeGeneralized = usedProperties.every(prop => propertiesOfBaseType.includes(prop));
+
+        if (canBeGeneralized) {
+          const mostGeneralizedType = this.findMostGeneralizedType(baseType, usedProperties);
+          return mostGeneralizedType ? mostGeneralizedType : baseType;
+        }
       }
     }
     return undefined;
@@ -126,17 +118,3 @@ class Visitor extends TypedSonarRuleVisitor {
     return symbolUsedOnlyForProperties ? usedProperties : [];
   }
 }
-
-/*
-
-function testManyBaseIntefacesAA(param: InterfaceBB) {
-//                                    ^^^^^^^^^^^ {{Use 'InterfaceAA' here; it is a more general type than 'InterfaceBB'.}}
-  param.methodAA();
-}
-
-function testManyBaseIntefacesA(param: InterfaceBB) {
-//                                     ^^^^^^^^^^^ {{Use 'InterfaceA' here; it is a more general type than 'InterfaceBB'.}}
-  param.methodA();
-}
-
-*/
