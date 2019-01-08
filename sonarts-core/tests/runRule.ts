@@ -22,6 +22,7 @@ import * as path from "path";
 import * as tslint from "tslint";
 import { parseFile, parseString } from "../src/utils/parser";
 import { SonarIssue } from "../src/utils/sonarAnalysis";
+import { ScriptKind } from "typescript";
 
 const RULE_OPTIONS: tslint.IOptions = {
   disabledIntervals: [],
@@ -105,7 +106,9 @@ function runRuleOnFile(Rule: any, file: string, ruleArguments: any[]) {
     const result = parseFile(file);
     failures = rule.applyWithProgram(result.sourceFile, result.program);
   } else {
-    failures = rule.apply(parseString(source).sourceFile);
+    failures = rule.apply(
+      parseString(source, path.extname(file) === ".ts" ? ScriptKind.TS : ScriptKind.TSX).sourceFile,
+    );
   }
 
   return { errors: mapToLintErrors(failures), secondaryLocations: mapToSecondaryLocations(failures) };
