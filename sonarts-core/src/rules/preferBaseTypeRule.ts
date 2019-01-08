@@ -44,8 +44,8 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 
   static message(type: ts.Type, baseType: ts.Type) {
-    let baseTypeName = baseType.symbol.name;
-    if (baseTypeName == "default") {
+    const baseTypeName = baseType.symbol.name;
+    if (baseTypeName === "default") {
       return `Use the parent type here; it is a more general type than '${type.symbol.name}'.`;
     }
     return `Use '${baseTypeName}' here; it is a more general type than '${type.symbol.name}'.`;
@@ -53,9 +53,9 @@ export class Rule extends tslint.Rules.TypedRule {
 }
 
 class Visitor extends TypedSonarRuleVisitor {
-  private typeChecker: ts.TypeChecker;
+  private readonly typeChecker: ts.TypeChecker;
 
-  constructor(ruleName: string, protected program: ts.Program, private symbolTable: SymbolTable) {
+  constructor(ruleName: string, protected program: ts.Program, private readonly symbolTable: SymbolTable) {
     super(ruleName, program);
     this.typeChecker = this.program.getTypeChecker();
   }
@@ -94,9 +94,9 @@ class Visitor extends TypedSonarRuleVisitor {
   }
 
   getBaseType(type: ts.Type) {
-    if (type.isClass()) {
+    if (type.isClassOrInterface()) {
       const baseTypes = this.program.getTypeChecker().getBaseTypes(type);
-      if (baseTypes.length == 1) {
+      if (baseTypes.length === 1) {
         return baseTypes[0];
       }
     }
@@ -126,3 +126,17 @@ class Visitor extends TypedSonarRuleVisitor {
     return symbolUsedOnlyForProperties ? usedProperties : [];
   }
 }
+
+/*
+
+function testManyBaseIntefacesAA(param: InterfaceBB) {
+//                                    ^^^^^^^^^^^ {{Use 'InterfaceAA' here; it is a more general type than 'InterfaceBB'.}}
+  param.methodAA();
+}
+
+function testManyBaseIntefacesA(param: InterfaceBB) {
+//                                     ^^^^^^^^^^^ {{Use 'InterfaceA' here; it is a more general type than 'InterfaceBB'.}}
+  param.methodA();
+}
+
+*/

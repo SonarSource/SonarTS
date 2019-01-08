@@ -42,7 +42,12 @@ let okWhenArrowFunction = (param: Middle) => {
   param.baseMethod();
 }
 
-import DefaultExport from './dep';
+
+export default class {
+  baseMethod() {}
+}  
+
+import DefaultExport from './preferBaseTypeRule.lint';
 class ImportedClassChild extends DefaultExport { }
 
 function foo8(b: ImportedClassChild) {
@@ -50,19 +55,36 @@ function foo8(b: ImportedClassChild) {
   b.baseMethod();
 }
 
-// rule does not work for interfaces
-interface MyInterface { 
-  interfaceMethod(): void 
+interface InterfaceA { 
+  methodA(): void 
 }
 
-class MyClass implements MyInterface { 
-  interfaceMethod() {  /* ... */ }
-  submerge(depth: number) { /* ... */ }
+interface InterfaceAA { 
+  methodAA(): void 
 }
 
-function okForInterface(param: MyClass) {
-  param.interfaceMethod();
-} 
+class ClassB implements InterfaceA {
+  methodA() {}
+  methodB() {}
+}
+interface InterfaceB extends InterfaceA {
+  methodB(): void
+}
+interface InterfaceBB extends InterfaceA, InterfaceAA {
+  methodB(): void
+}
+
+function testBaseInteface(param: InterfaceB) {
+//                               ^^^^^^^^^^ {{Use 'InterfaceA' here; it is a more general type than 'InterfaceB'.}}
+  param.methodA();
+}
+
+
+
+// type checker does not provide infomation about implemented by class interfaces
+function okClassImplementingInterface(param: ClassB) {
+  param.methodA();
+}
 
 function okWhenParameterWithoutType(paramWithoutType) {
   return paramWithoutType;
