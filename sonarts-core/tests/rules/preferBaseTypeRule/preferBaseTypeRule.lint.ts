@@ -50,8 +50,8 @@ export default class {
 import DefaultExport from './preferBaseTypeRule.lint';
 class ImportedClassChild extends DefaultExport { }
 
-function foo8(b: ImportedClassChild) {
-//               ^^^^^^^^^^^^^^^^^^ {{Use the parent type here; it is a more general type than 'ImportedClassChild'.}}
+function testDefaultExportedClass(b: ImportedClassChild) {
+//                                   ^^^^^^^^^^^^^^^^^^ {{Use the parent type here; it is a more general type than 'ImportedClassChild'.}}
   b.baseMethod();
 }
 
