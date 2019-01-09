@@ -1,5 +1,5 @@
   function isFish(animal: Animal) {
-//^^^^^^^^ {{Change this boolean return type into the type predicate "animal is Fish".}}
+//^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
   return (animal as Fish).swim !== undefined;
 }
 
@@ -7,8 +7,15 @@ function isFish(animal: Animal): animal is Fish {
   return (animal as Fish).swim !== undefined;
 }
 
+// With explicit return type
+  function isFish(animal: Animal) : boolean {
+//^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
+  return (animal as Fish).swim !== undefined;
+}
+
+// With loose inequality
   function isFish(animal: Animal) {
-//^^^^^^^^ {{Change this boolean return type into the type predicate "animal is Fish".}}
+//^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
   return (animal as Fish).swim != undefined;
 }
 
@@ -18,8 +25,12 @@ function isFish(animal: Animal) {
 }
 
   function isFish(animal: Animal) {
-//^^^^^^^^ {{Change this boolean return type into the type predicate "animal is Fish".}}
+//^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
   return !!((animal as Fish).swim);
+}
+
+function isNotFish(animal: Animal) {
+  return !((animal as Fish).swim);
 }
 
 // OK, not a property access
@@ -33,23 +44,50 @@ function isFish(animal: Animal) {
   return !!((animal as Fish).swim);
 }
 
+// OK, more than one argument
+function isFish(animal: Animal, foo: String) {
+  return !!((animal as Fish).swim);
+}
+
+// OK, no type casting
 function isFish(animal: Animal) {
   return !!animal.name;
 }
 
   function isFish(animal: Animal) {
-//^^^^^^^^ {{Change this boolean return type into the type predicate "animal is Fish".}}
+//^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
   return (<Fish>animal).swim !== undefined;
 }
 
-// OK, to avoid FP at line 48
-let typePredicate = (animal: Animal) => !!(animal as Fish).swim;
+// Arrow functions
 
-parsedPatterns.filter(parsedPattern => !!(<ParsedStringPattern>parsedPattern).basenames);
+let typePredicate = (animal: Animal) => !!(animal as Fish).swim;
+                                   //^^ {{Declare this function return type using type predicate "animal is Fish".}}
+let typePredicateOK = (animal: Animal): animal is Fish => !!(animal as Fish).swim;
+
+let animals : Animal[] = [];
+let fishes = animals.filter((animal: Animal) => !!(animal as Fish).swim);
+                                           //^^ {{Declare this function return type using type predicate "animal is Fish".}}
+let fishes = animals.filter((animal: Animal) => !!(<Fish>animal).swim);
+                                           //^^ {{Declare this function return type using type predicate "animal is Fish".}}
+let fishesOK = animals.filter((animal: Animal): animal is Fish => !!(animal as Fish).swim);
+
+
+// Function Expressions
+let isFish = function (animal: Animal) {
+          // ^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
+  return (animal as Fish).swim !== undefined;
+}
+
+let isFishOK = function (animal: Animal) : animal is Fish {
+  return (animal as Fish).swim !== undefined;
+}
+
+// Method declarations
 
 class Farm {
   isFish(animal: Animal) {
-//^^^^^^ {{Change this boolean return type into the type predicate "animal is Fish".}}
+//^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
     return !!((animal as Fish).swim);
   }
 
@@ -58,6 +96,21 @@ class Farm {
   }
 }
 
+// Type predicate on "this"
+class Animal {
+  swim?: Function;
+  
+  isFish(): boolean {
+//^^^^^^ {{Declare this function return type using type predicate "this is Fish".}}
+    return !!(this as Fish).swim;
+  }
+
+  isFishOK() : this is Fish {
+    return !!(this as Fish).swim;
+  }
+}
+
+declare function isFishNoBody(): boolean
 
 interface Animal {
   name: string;
