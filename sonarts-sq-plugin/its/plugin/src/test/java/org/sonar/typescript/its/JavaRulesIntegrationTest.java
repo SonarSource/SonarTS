@@ -99,7 +99,8 @@ public class JavaRulesIntegrationTest {
   private static final Set<String> MISSING_TEST_FILE = new HashSet<>(Arrays.asList(
     "S103", "S104", "S105", "S109", "S113", "S117", "S121", "S878", "S905", "S1105", "S1121", "S1143", "S1438", "S1439", "S1440", "S1441", "S1451", "S1523", "S1524",
     "S1525", "S1874", "S2228", "S2685", "S2688", "S2814", "S2933", "S2966", "S3257", "S3353", "S3402", "S3498", "S3504", "S3512", "S3533", "S3696", "S3786", "S3854",
-    "S3863", "S4023", "S4123", "S4124", "S4137", "S4138", "S4139", "S4140", "S4156", "S4157", "S4204", "S4326", "S4327", "S4328"
+    "S3863", "S4023", "S4123", "S4124", "S4137", "S4138", "S4139", "S4140", "S4156", "S4157", "S4204", "S4326", "S4327", "S4328",
+    /* exclude this rule as its test requires imports/exports */"S3242"
   ));
 
   @ClassRule

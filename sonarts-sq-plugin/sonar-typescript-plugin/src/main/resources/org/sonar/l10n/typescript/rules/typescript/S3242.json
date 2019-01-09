@@ -1,0 +1,16 @@
+{
+  "title": "Function parameters should be declared with base types",
+  "type": "CODE_SMELL",
+  "status": "ready",
+  "remediation": {
+    "func": "Constant\/Issue",
+    "constantCost": "5min"
+  },
+  "tags": [
+    "api-design"
+  ],
+  "defaultSeverity": "Minor",
+  "ruleSpecification": "RSPEC-3242",
+  "sqKey": "S3242",
+  "scope": "All"
+}

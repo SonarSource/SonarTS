@@ -1,0 +1,43 @@
+<p>For maximum reusability, functions should accept parameters with as little specialization as possible. So unless specific features from a child
+class are required by a function, a type higher up the class hierarchy should be used instead.</p>
+<h2>Noncompliant Code Example</h2>
+<pre>
+class Vehicle {
+  go() {  /* ... */ }
+}
+class Submarine extends Vehicle {
+  submerge(depth: number) { /* ... */ }
+}
+
+// ...
+function travel(transport: Submarine) { // Noncompliant; no class-specific features used
+  transport.go();
+}
+
+function exploreDepths(transport: Submarine) { // Compliant; class-specific feature used
+  let depth = 0;
+  // ...
+  transport.submerge(depth);
+}
+</pre>
+<h2>Compliant Solution</h2>
+<pre>
+class Vehicle {
+  go() {  /* ... */ }
+}
+class Submarine extends Vehicle {
+  submerge(depth: number) { /* ... */ }
+}
+
+// ...
+function travel(transport: Vehicle) {
+  transport.go();
+}
+
+function exploreDepths(transport: Submarine) {
+  let depth = 0;
+  // ...
+  transport.submerge(depth);
+}
+</pre>
+
