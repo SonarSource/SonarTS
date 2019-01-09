@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { SymbolTableBuilder } from "../symbols/builder";
-import { is } from "../utils/nodes";
+import { is, isPropertyAccessExpression } from "../utils/nodes";
 import { SymbolTable, UsageFlag } from "../symbols/table";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -46,9 +46,9 @@ export class Rule extends tslint.Rules.TypedRule {
   static message(type: ts.Type, baseType: ts.Type) {
     const baseTypeName = baseType.symbol.name;
     if (baseTypeName === "default") {
-      return `Use the parent type here; it is a more general type than '${type.symbol.name}'.`;
+      return `Consider using the parent type here; no specific properties of '${type.symbol.name}' are used.`;
     }
-    return `Use '${baseTypeName}' here; it is a more general type than '${type.symbol.name}'.`;
+    return `Consider using '${baseTypeName}' here; no specific properties of '${type.symbol.name}' are used.`;
   }
 }
 
@@ -62,7 +62,7 @@ class Visitor extends TypedSonarRuleVisitor {
 
   visitParameterDeclaration(node: ts.ParameterDeclaration) {
     const symbol = this.typeChecker.getSymbolAtLocation(node.name);
-    if (node.type && symbol && !is(node.parent, ts.SyntaxKind.ArrowFunction)) {
+    if (node.type && symbol && !is(node.parent, ts.SyntaxKind.ArrowFunction, ts.SyntaxKind.FunctionExpression)) {
       const usedProperties = this.getUsedProperties(symbol);
       if (usedProperties.length > 0) {
         const type = this.typeChecker.getTypeFromTypeNode(node.type);
@@ -105,8 +105,8 @@ class Visitor extends TypedSonarRuleVisitor {
       }
       const parent = usage.node.parent;
 
-      if (is(parent, ts.SyntaxKind.PropertyAccessExpression)) {
-        const propSymbol = this.typeChecker.getSymbolAtLocation((parent as ts.PropertyAccessExpression).name);
+      if (isPropertyAccessExpression(parent)) {
+        const propSymbol = this.typeChecker.getSymbolAtLocation(parent.name);
         if (propSymbol) {
           usedProperties.push(propSymbol.name);
           return;

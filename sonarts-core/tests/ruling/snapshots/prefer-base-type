@@ -37,7 +37,7 @@ src/angular/packages/upgrade/src/dynamic/upgrade_ng1_adapter.ts: 152,224
 src/angular/packages/upgrade/src/static/upgrade_component.ts: 336
 src/angular/packages/upgrade/static/src/dynamic/upgrade_ng1_adapter.ts: 152,224
 src/angular/packages/upgrade/static/src/static/upgrade_component.ts: 336
-src/angular/packages/upgrade/test/static/integration/upgrade_component_spec.ts: 767,1083,2840
+src/angular/packages/upgrade/test/static/integration/upgrade_component_spec.ts: 1083,2840
 src/angular/tools/tslint/requireInternalWithUnderscoreRule.ts: 32
 src/ant-design/components/affix/index.tsx: 17
 src/desktop/app/src/lib/dispatcher/app-store.ts: 907

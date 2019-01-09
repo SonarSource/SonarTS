@@ -11,18 +11,23 @@ class Child extends Middle {
 }
 
 function testMiddleClass(param: Child) {  
-//                              ^^^^^ {{Use 'Middle' here; it is a more general type than 'Child'.}}
+//                              ^^^^^ {{Consider using 'Middle' here; no specific properties of 'Child' are used.}}
   param.middleMethod();
 }
 
 function testBaseClass(param: Child) {  
-//                            ^^^^^ {{Use 'Base' here; it is a more general type than 'Child'.}}
+//                            ^^^^^ {{Consider using 'Base' here; no specific properties of 'Child' are used.}}
   param.baseMethod();
 }
 
 function testMiddleDeclared(param: Middle) {
-//                                 ^^^^^^ {{Use 'Base' here; it is a more general type than 'Middle'.}}
+//                                 ^^^^^^ {{Consider using 'Base' here; no specific properties of 'Middle' are used.}}
   param.baseMethod();
+}
+
+function okWhenUsedWithoutProperty(param: Middle) {
+  param.baseMethod();
+  return param;
 }
 
 function okWhenMethodOfChildUsed(param: Child) {
@@ -42,6 +47,10 @@ let okWhenArrowFunction = (param: Middle) => {
   param.baseMethod();
 }
 
+let okWhenFunctionExpression = function(param: Middle) {
+  param.baseMethod();
+}
+
 
 export default class {
   baseMethod() {}
@@ -51,7 +60,7 @@ import DefaultExport from './preferBaseTypeRule.lint';
 class ImportedClassChild extends DefaultExport { }
 
 function testDefaultExportedClass(b: ImportedClassChild) {
-//                                   ^^^^^^^^^^^^^^^^^^ {{Use the parent type here; it is a more general type than 'ImportedClassChild'.}}
+//                                   ^^^^^^^^^^^^^^^^^^ {{Consider using the parent type here; no specific properties of 'ImportedClassChild' are used.}}
   b.baseMethod();
 }
 
@@ -75,17 +84,17 @@ interface InterfaceBB extends InterfaceA, InterfaceAA {
 }
 
 function testBaseInteface(param: InterfaceB) {
-//                               ^^^^^^^^^^ {{Use 'InterfaceA' here; it is a more general type than 'InterfaceB'.}}
+//                               ^^^^^^^^^^ {{Consider using 'InterfaceA' here; no specific properties of 'InterfaceB' are used.}}
   param.methodA();
 }
 
 function testManyBaseIntefacesAA(param: InterfaceBB) {
-//                                      ^^^^^^^^^^^ {{Use 'InterfaceAA' here; it is a more general type than 'InterfaceBB'.}}
+//                                      ^^^^^^^^^^^ {{Consider using 'InterfaceAA' here; no specific properties of 'InterfaceBB' are used.}}
   param.methodAA();
 }
 
 function testManyBaseIntefacesA(param: InterfaceBB) {
-//                                     ^^^^^^^^^^^ {{Use 'InterfaceA' here; it is a more general type than 'InterfaceBB'.}}
+//                                     ^^^^^^^^^^^ {{Consider using 'InterfaceA' here; no specific properties of 'InterfaceBB' are used.}}
   param.methodA();
 }
 
@@ -96,4 +105,21 @@ function okClassImplementingInterface(param: ClassB) {
 
 function okWhenParameterWithoutType(paramWithoutType) {
   return paramWithoutType;
+}
+
+function okForNotClassType(param: number[]) {
+  return param.toString();
+}
+
+interface InterfaceX extends InterfaceY {
+  methodX(): void
+}
+
+interface InterfaceY extends InterfaceX {
+  methodX(): void
+  methodY(): void
+}
+
+function okCircularInheritance(param: InterfaceY) {
+  param.methodX();
 }
