@@ -64,7 +64,7 @@ class Visitor extends SonarRuleVisitor {
     if (node.type && is(node.type, ts.SyntaxKind.TypePredicate)) {
       return;
     }
-    const { parameters, body } = node;
+    const { body } = node;
     const returnExpression = this.returnedExpression(body);
     if (!returnExpression) {
       return;
@@ -73,15 +73,16 @@ class Visitor extends SonarRuleVisitor {
     if (this.isInequalityBinaryExpression(returnExpression)) {
       const { left, right } = returnExpression;
       if (this.isUndefined(right)) {
-        this.checkCastedType(node, parameters.length, left);
+        this.checkCastedType(node, left);
       }
     } else if (this.isNegation(returnExpression) && this.isNegation(returnExpression.operand)) {
-      this.checkCastedType(node, parameters.length, returnExpression.operand.operand);
+      this.checkCastedType(node, returnExpression.operand.operand);
     }
   }
 
-  private checkCastedType(node: ts.FunctionLikeDeclaration, nOfParam: number, expression: ts.Expression) {
+  private checkCastedType(node: ts.FunctionLikeDeclaration, expression: ts.Expression) {
     const castedType = this.getCastedTypeFromPropertyAccess(expression);
+    const nOfParam = node.parameters.length;
     if (!castedType || castedType.type.kind === ts.SyntaxKind.AnyKeyword) {
       return;
     }
