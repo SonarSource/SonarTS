@@ -140,6 +140,7 @@ import org.sonar.plugin.typescript.rules.PreferOptional;
 import org.sonar.plugin.typescript.rules.PreferPromiseShorthand;
 import org.sonar.plugin.typescript.rules.PreferReadonly;
 import org.sonar.plugin.typescript.rules.PreferTemplate;
+import org.sonar.plugin.typescript.rules.PreferTypeGuard;
 import org.sonar.plugin.typescript.rules.PreferWhile;
 import org.sonar.plugin.typescript.rules.Quotemark;
 import org.sonar.plugin.typescript.rules.RestrictPlusOperands;
@@ -334,6 +335,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       PreferPromiseShorthand.class,
       PreferReadonly.class,
       PreferTemplate.class,
+      PreferTypeGuard.class,
       PreferWhile.class,
       Quotemark.class,
       RestrictPlusOperands.class,

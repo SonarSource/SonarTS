@@ -366,6 +366,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/prefer-promise-shorthand.md"
   },
   {
+    "key": "prefer-type-guard",
+    "name": "Type guards should be used",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/prefer-type-guard.md"
+  },
+  {
     "key": "use-primitive-type",
     "name": "Wrapper objects should not be used for primitive types",
     "type": "CODE_SMELL",
