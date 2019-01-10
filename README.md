@@ -26,6 +26,7 @@ Some rules are raising issues on unused values ([`no-useless-increment`]), which
 * Logical OR should not be used in switch cases ([`no-case-with-or`])
 * Collection sizes and array length comparisons should make sense ([`no-collection-size-mischeck`]) ([`requires type-check`])
 * Collection elements should not be replaced unconditionally ([`no-element-overwrite`]) ([`requires type-check`])
+* Empty collections should not be accessed or iterated ([`no-empty-array`])
 * Destructuring patterns should not be empty ([`no-empty-destructuring`])
 * Related "if/else if" statements and "cases" in a "switch" should not have the same condition ([`no-identical-conditions`])
 * Identical expressions should not be used on both sides of a binary operator ([`no-identical-expressions`])
@@ -111,6 +112,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-duplicate-string`]: ./sonarts-core/docs/rules/no-duplicate-string.md
 [`no-duplicated-branches`]: ./sonarts-core/docs/rules/no-duplicated-branches.md
 [`no-element-overwrite`]: ./sonarts-core/docs/rules/no-element-overwrite.md
+[`no-empty-array`]: ./sonarts-core/docs/rules/no-empty-array.md
 [`no-empty-destructuring`]: ./sonarts-core/docs/rules/no-empty-destructuring.md
 [`no-empty-nested-blocks`]: ./sonarts-core/docs/rules/no-empty-nested-blocks.md
 [`no-extra-semicolon`]: ./sonarts-core/docs/rules/no-extra-semicolon.md
