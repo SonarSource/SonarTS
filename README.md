@@ -35,6 +35,7 @@ Some rules are raising issues on unused values ([`no-useless-increment`]), which
 * Array-mutating methods should not be used misleadingly ([`no-misleading-array-reverse`]) ([`requires type-check`])
 * Non-existent operators '=+', '=-' and '=!' should not be used ([`no-misspelled-operator`])
 * Variables should not be self-assigned ([`no-self-assignment`]) ([`requires type-check`])
+* Promise rejections should not be caught by 'try' block ([`no-try-promise`])
 * Errors should not be created without being thrown ([`no-unthrown-error`])
 * The output of functions that don't return anything should not be used ([`no-use-of-empty-return-value`]) ([`requires type-check`])
 * Values should not be uselessly incremented ([`no-useless-increment`])
@@ -139,6 +140,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-self-assignment`]: ./sonarts-core/docs/rules/no-self-assignment.md
 [`no-small-switch`]: ./sonarts-core/docs/rules/no-small-switch.md
 [`no-statements-same-line`]: ./sonarts-core/docs/rules/no-statements-same-line.md
+[`no-try-promise`]: ./sonarts-core/docs/rules/no-try-promise.md
 [`no-unconditional-jump`]: ./sonarts-core/docs/rules/no-unconditional-jump.md
 [`no-undefined-argument`]: ./sonarts-core/docs/rules/no-undefined-argument.md
 [`no-unenclosed-multiline-block`]: ./sonarts-core/docs/rules/no-unenclosed-multiline-block.md

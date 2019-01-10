@@ -45,6 +45,7 @@
     "no-self-assignment": true,
     "no-small-switch": true,
     "no-statements-same-line": true,
+    "no-try-promise": true,
     "no-unconditional-jump": true,
     "no-undefined-argument": true,
     "no-unenclosed-multiline-block": true,
