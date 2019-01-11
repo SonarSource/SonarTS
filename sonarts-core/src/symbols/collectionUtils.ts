@@ -134,7 +134,10 @@ function isExported(declaration: ts.Node): boolean {
   return !!varStatement && is(varStatement.getFirstToken(), ts.SyntaxKind.ExportKeyword);
 }
 
-// myArray = [1, 2];
+/**
+ * Detectes expression statements like the following:
+ *  myArray = [1, 2];
+ */
 function isVariableWrite({ expression }: ts.ExpressionStatement, usage: Usage) {
   return (
     isBinaryExpression(expression) &&
@@ -143,9 +146,11 @@ function isVariableWrite({ expression }: ts.ExpressionStatement, usage: Usage) {
     isNewCollectionCreation(expression.right)
   );
 }
-
-// myArray[1] = 42;
-// myArray[1] += 42;
+/**
+ * Detectes expression statements like the following:
+ *  myArray[1] = 42;
+ *  myArray[1] += 42;
+ */
 function isElementWrite({ expression }: ts.ExpressionStatement, usage: Usage) {
   return (
     isBinaryExpression(expression) &&
@@ -154,8 +159,10 @@ function isElementWrite({ expression }: ts.ExpressionStatement, usage: Usage) {
     expression.left.expression === usage.node
   );
 }
-
-// myArray.push(1);
+/**
+ * Detectes expression statements like the following:
+ * myArray.push(1);
+ */
 function isWritingMethodCall(statement: ts.ExpressionStatement, usage: Usage): boolean {
   if (isCallExpression(statement.expression)) {
     const callExpression = statement.expression;
