@@ -89,3 +89,21 @@ function okWithNestedFunc() {
     console.log(e);
   }
 }
+
+function returningPromiseAndThrowing(cond: boolean) {
+  if (cond) {
+    return new Promise((res, rej) => {});
+  } else {
+    throw "error";
+  }
+}
+
+// can be considered as False Positive as `returningPromiseAndThrowing` can throw
+function testFunctionReturningPromiseAndThrowing(cond: boolean) {
+  try {
+//^^^ {{Consider using 'await' for the promise inside this 'try' or replace it with 'Promise.prototype.catch(...)' usage.}}
+    returningPromiseAndThrowing(cond);
+  } catch (e) {
+    console.log(e);
+  }
+}
