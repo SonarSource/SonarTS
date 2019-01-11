@@ -1,6 +1,6 @@
-import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
+import { SymbolTable, Usage, UsageFlag } from "./table";
 import * as ts from "typescript";
-import { firstAncestor, COMPOUND_ASSIGNMENTS } from "./navigation";
+import { firstAncestor, COMPOUND_ASSIGNMENTS } from "../utils/navigation";
 import {
   is,
   isBinaryExpression,
@@ -10,7 +10,7 @@ import {
   isNewExpression,
   isArrayLiteralExpression,
   isAssignment,
-} from "./nodes";
+} from "../utils/nodes";
 
 const writingMethods = new Set([
   "copyWithin",
@@ -34,7 +34,11 @@ const WRITE_ARRAY_PATTERNS: ((statement: ts.ExpressionStatement, usage: Usage) =
   isWritingMethodCall,
 ];
 
-export function arrayUsages(symbols: SymbolTable, program: ts.Program) {
+/**
+ * Returns an array of pair symbol-declaration storing collections.
+ * Parameters, exported/imported and type related symbols are filtered out.
+ */
+export function getCollectionSymbols(symbols: SymbolTable, program: ts.Program) {
   return (
     symbols
       .getSymbols()
@@ -52,7 +56,7 @@ export function arrayUsages(symbols: SymbolTable, program: ts.Program) {
       .filter(symbolAndDeclaration => symbolAndDeclaration.declaration)
       .map(symbolAndDeclaration => symbolAndDeclaration as { declaration: ts.Node; symbol: ts.Symbol })
 
-      // filter out parameters and exported/imported symbols
+      // filter out parameters, exported/imported, type-related symbols
       .filter(
         symbolAndDeclaration =>
           !firstAncestor(
@@ -67,7 +71,7 @@ export function arrayUsages(symbols: SymbolTable, program: ts.Program) {
           ) && !isExported(symbolAndDeclaration.declaration),
       )
 
-      // keep only symbols initialized to empty array literal or not initialized at all
+      // keep only symbols initialized to array literal or not initialized at all
       .filter(symbolAndDeclaration => {
         // prettier-ignore
         const varDeclaration = firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.VariableDeclaration]) as ts.VariableDeclaration;
@@ -96,7 +100,13 @@ export function isReadUsage(usage: Usage): boolean {
   return true;
 }
 
-export function isWriteUsage(usage: Usage): boolean {
+/**
+ * Checks if a symbol usage is potentially modifying the content of the collection.
+ * Assumption: collections are  either initaliazed to an empty literal or not initialized at all
+ */
+export function isPotentiallyWriteUsage(usage: Usage): boolean {
+  // we are not interested to declaration usage since we know it's array is either initaliazed to an empty literal
+  // or not initialized at all
   if (usage.is(UsageFlag.DECLARATION)) {
     return false;
   }
@@ -105,24 +115,18 @@ export function isWriteUsage(usage: Usage): boolean {
   if (isCallExpression(usage.node.parent) || isNewExpression(usage.node.parent)) {
     return true;
   }
-  // assignment
+  // myArray = otherArray
   if (isAssignment(usage.node.parent)) {
     return true;
   }
 
+  // for arrow function: (n) => array.push(n)
   if (isPropertyAccessExpression(usage.node.parent) && isCallExpression(usage.node.parent.parent)) {
     const callExpression = usage.node.parent.parent;
     const propertyAccess = callExpression.expression as ts.PropertyAccessExpression;
     return propertyAccess.expression === usage.node && writingMethods.has(propertyAccess.name.text);
   }
-
-  // prettier-ignore
-  const expressionStatement = firstAncestor(usage.node, [ts.SyntaxKind.ExpressionStatement]) as ts.ExpressionStatement;
-
-  if (expressionStatement) {
-    return WRITE_ARRAY_PATTERNS.some(pattern => pattern(expressionStatement, usage));
-  }
-  return false;
+  return !isReadUsage(usage);
 }
 
 function isExported(declaration: ts.Node): boolean {
@@ -152,7 +156,7 @@ function isElementWrite({ expression }: ts.ExpressionStatement, usage: Usage) {
 }
 
 // myArray.push(1);
-export function isWritingMethodCall(statement: ts.ExpressionStatement, usage: Usage): boolean {
+function isWritingMethodCall(statement: ts.ExpressionStatement, usage: Usage): boolean {
   if (isCallExpression(statement.expression)) {
     const callExpression = statement.expression;
     if (isPropertyAccessExpression(callExpression.expression)) {

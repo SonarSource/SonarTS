@@ -84,10 +84,22 @@ interface Array<T> {
 
 // Module Declaration
 
-export type MyArray = ProblemPattern[];
+export type MyArray = T[];
 
 export namespace MyArray {
   export function is(value: any): value is MyArray {
     return value && Types.isArray(value);
   }
 }
+
+function foo() {
+  let emptyArray = [];
+  const obj = {
+    a: emptyArray // OK
+  }
+  return emptyArray; // OK
+}
+
+let initialArray = [];
+
+initialArray.concat(otherArray); // OK

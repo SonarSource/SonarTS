@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
-import { isReadUsage, arrayUsages } from "../utils/arrayUsagesUtils";
+import { isReadUsage, getCollectionSymbols } from "../symbols/collectionUtils";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -43,7 +43,7 @@ export class Rule extends tslint.Rules.TypedRule {
     // walker is created to only save issues
     const visitor = new SonarRuleVisitor(this.getOptions().ruleName);
 
-    arrayUsages(symbols, program)
+    getCollectionSymbols(symbols, program)
       // filter out symbols with at least one read usage
       .filter(symbolAndDeclaration => !symbols.allUsages(symbolAndDeclaration.symbol).some(usage => isReadUsage(usage)))
       // raise issue

@@ -22,9 +22,15 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { SymbolTableBuilder } from "../symbols/builder";
-import { arrayUsages, isWriteUsage, isReadUsage } from "../utils/arrayUsagesUtils";
+import { getCollectionSymbols, isPotentiallyWriteUsage } from "../symbols/collectionUtils";
 import { firstAncestor } from "../utils/navigation";
-import { isArrayLiteralExpression, isCallExpression, isNewExpression } from "../utils/nodes";
+import {
+  isArrayLiteralExpression,
+  isCallExpression,
+  isNewExpression,
+  is,
+  isPropertyAccessExpression,
+} from "../utils/nodes";
 import { UsageFlag } from "../symbols/table";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -44,7 +50,7 @@ export class Rule extends tslint.Rules.TypedRule {
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const visitor = new Visitor(this.getOptions().ruleName, program);
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    const usages = arrayUsages(symbols, program);
+    const usages = getCollectionSymbols(symbols, program);
     usages
       // filter out array declared as fields
       .filter(symbolAndDeclaration => !ts.isPropertyDeclaration(symbolAndDeclaration.declaration.parent))
@@ -63,7 +69,8 @@ export class Rule extends tslint.Rules.TypedRule {
 
       // filter out symbols with at least one write usage
       .filter(
-        symbolAndDeclaration => !symbols.allUsages(symbolAndDeclaration.symbol).some(usage => isWriteUsage(usage)),
+        symbolAndDeclaration =>
+          !symbols.allUsages(symbolAndDeclaration.symbol).some(usage => isPotentiallyWriteUsage(usage)),
       )
 
       // raise issue
@@ -71,11 +78,25 @@ export class Rule extends tslint.Rules.TypedRule {
         symbols
           .allUsages(symbolAndDeclaration.symbol)
           .filter(usage => !usage.is(UsageFlag.DECLARATION))
+          .filter(
+            usage =>
+              !is(
+                usage.node.parent,
+                ts.SyntaxKind.ReturnStatement,
+                ts.SyntaxKind.PropertyAssignment,
+                ts.SyntaxKind.ShorthandPropertyAssignment,
+              ),
+          )
+          .filter(usage => !Rule.isConcatCall(usage.node))
           .forEach(usage => {
             visitor.addIssue(usage.node, Rule.MESSAGE);
           }),
       );
     return visitor.getIssues();
+  }
+
+  private static isConcatCall(node: ts.Node) {
+    return isPropertyAccessExpression(node.parent) && node.parent.name.text === "concat";
   }
 
   private static isNewEmptyCollectionCreation(node: ts.Node): boolean {

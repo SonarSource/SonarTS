@@ -102,6 +102,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-element-overwrite.md"
   },
   {
+    "key": "no-empty-array",
+    "name": "Empty collections should not be accessed or iterated",
+    "type": "BUG",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-empty-array.md"
+  },
+  {
     "key": "no-empty-destructuring",
     "name": "Destructuring patterns should not be empty",
     "type": "BUG",
