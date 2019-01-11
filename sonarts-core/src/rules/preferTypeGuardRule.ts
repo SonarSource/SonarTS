@@ -30,6 +30,7 @@ import {
   isIdentifier,
   isPropertyAccessExpression,
   isBlock,
+  isCallExpression,
 } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
@@ -54,7 +55,16 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Visitor extends SonarRuleVisitor {
   visitFunctionLikeDeclaration(node: ts.FunctionLikeDeclaration) {
-    if (!is(node, ts.SyntaxKind.Constructor, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor)) {
+    if (
+      !is(
+        node,
+        ts.SyntaxKind.Constructor,
+        ts.SyntaxKind.GetAccessor,
+        ts.SyntaxKind.SetAccessor,
+        ts.SyntaxKind.ArrowFunction,
+        ts.SyntaxKind.FunctionExpression,
+      )
+    ) {
       this.checkFunctionLikeDeclaration(node);
     }
     super.visitFunctionLikeDeclaration(node);
@@ -65,18 +75,20 @@ class Visitor extends SonarRuleVisitor {
       return;
     }
     const { body } = node;
-    const returnExpression = this.returnedExpression(body);
-    if (!returnExpression) {
+    const returnedExpression = this.returnedExpression(body);
+    if (!returnedExpression) {
       return;
     }
 
-    if (this.isInequalityBinaryExpression(returnExpression)) {
-      const { left, right } = returnExpression;
+    if (this.isInequalityBinaryExpression(returnedExpression)) {
+      const { left, right } = returnedExpression;
       if (this.isUndefined(right)) {
         this.checkCastedType(node, left);
       }
-    } else if (this.isNegation(returnExpression) && this.isNegation(returnExpression.operand)) {
-      this.checkCastedType(node, returnExpression.operand.operand);
+    } else if (this.isNegation(returnedExpression) && this.isNegation(returnedExpression.operand)) {
+      this.checkCastedType(node, returnedExpression.operand.operand);
+    } else if (this.isBooleanCall(returnedExpression)) {
+      this.checkCastedType(node, returnedExpression.arguments[0]);
     }
   }
 
@@ -105,6 +117,10 @@ class Visitor extends SonarRuleVisitor {
 
   private isNegation(node: ts.Expression): node is ts.PrefixUnaryExpression {
     return isPrefixUnaryExpression(node) && node.operator === ts.SyntaxKind.ExclamationToken;
+  }
+
+  private isBooleanCall(node: ts.Expression): node is ts.CallExpression {
+    return isCallExpression(node) && node.expression.getText() === "Boolean" && node.arguments.length === 1;
   }
 
   private getCastedTypeFromPropertyAccess(node: ts.Expression) {

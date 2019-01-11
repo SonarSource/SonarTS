@@ -3,6 +3,11 @@
   return (animal as Fish).swim !== undefined;
 }
 
+  function isFish(animal: Animal) {
+//^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
+  return Boolean((animal as Fish).swim);
+}
+
 function isFish(animal: Animal): animal is Fish {
   return (animal as Fish).swim !== undefined;
 }
@@ -59,23 +64,19 @@ function isFish(animal: Animal) {
   return (<Fish>animal).swim !== undefined;
 }
 
-// Arrow functions
+// Arrow functions are ignored
 
 let typePredicate = (animal: Animal) => !!(animal as Fish).swim;
-                                   //^^ {{Declare this function return type using type predicate "animal is Fish".}}
 let typePredicateOK = (animal: Animal): animal is Fish => !!(animal as Fish).swim;
 
 let animals : Animal[] = [];
 let fishes = animals.filter((animal: Animal) => !!(animal as Fish).swim);
-                                           //^^ {{Declare this function return type using type predicate "animal is Fish".}}
 let fishes = animals.filter((animal: Animal) => !!(<Fish>animal).swim);
-                                           //^^ {{Declare this function return type using type predicate "animal is Fish".}}
 let fishesOK = animals.filter((animal: Animal): animal is Fish => !!(animal as Fish).swim);
 
 
-// Function Expressions
+// Function Expressions are ignored
 let isFish = function (animal: Animal) {
-          // ^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
   return (animal as Fish).swim !== undefined;
 }
 
@@ -118,4 +119,25 @@ interface Animal {
 
 interface Fish extends Animal {
   swim: Function;
+}
+
+// Disjoint union types
+type A1 = {
+  common: 1,
+  a1: string
+};
+
+type A2 = {
+  common: 2,
+  a2: number
+};
+
+// FN
+function isA1(param: A1 | A2) {
+  return param.common === 1;
+}
+
+// FN
+function isSomeA1(param: A1 | A2) {
+  return param.common === 1 && param.a1 === "Hello";
 }
