@@ -1,0 +1,3 @@
+src/vscode/src/vs/base/parts/ipc/common/ipc.ts: 138
+src/vscode/src/vs/workbench/api/node/extHostProgress.ts: 39
+src/vscode/src/vs/workbench/common/actionRegistry.ts: 178

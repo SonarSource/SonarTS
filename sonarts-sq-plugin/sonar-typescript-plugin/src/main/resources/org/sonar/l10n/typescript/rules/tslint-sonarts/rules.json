@@ -270,6 +270,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-statements-same-line.md"
   },
   {
+    "key": "no-try-promise",
+    "name": "Promise rejections should not be caught by \u0027try\u0027 block",
+    "type": "BUG",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-try-promise.md"
+  },
+  {
     "key": "no-unconditional-jump",
     "name": "Loops with at most one iteration should be refactored",
     "type": "CODE_SMELL",
