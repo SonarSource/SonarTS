@@ -132,7 +132,6 @@ import org.sonar.plugin.typescript.rules.NoVariableUsageBeforeDeclaration;
 import org.sonar.plugin.typescript.rules.ObjectLiteralShorthand;
 import org.sonar.plugin.typescript.rules.OneLine;
 import org.sonar.plugin.typescript.rules.ParametersMaxNumber;
-import org.sonar.plugin.typescript.rules.PreferBaseType;
 import org.sonar.plugin.typescript.rules.PreferConst;
 import org.sonar.plugin.typescript.rules.PreferDefaultLast;
 import org.sonar.plugin.typescript.rules.PreferForOf;
@@ -328,7 +327,6 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       ObjectLiteralShorthand.class,
       OneLine.class,
       ParametersMaxNumber.class,
-      PreferBaseType.class,
       PreferConst.class,
       PreferDefaultLast.class,
       PreferForOf.class,
