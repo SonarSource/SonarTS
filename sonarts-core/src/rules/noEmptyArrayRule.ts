@@ -50,8 +50,8 @@ export class Rule extends tslint.Rules.TypedRule {
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const visitor = new Visitor(this.getOptions().ruleName, program);
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    const usages = getCollectionSymbols(symbols, program);
-    usages
+    const collectionSymbols = getCollectionSymbols(symbols, program);
+    collectionSymbols
       // filter out array declared as fields
       .filter(symbolAndDeclaration => !ts.isPropertyDeclaration(symbolAndDeclaration.declaration.parent))
 
@@ -67,7 +67,7 @@ export class Rule extends tslint.Rules.TypedRule {
         return true;
       })
 
-      // filter out symbols with at least one write usage
+      // filter out symbols with at least one usage that may modify array content
       .filter(
         symbolAndDeclaration =>
           !symbols.allUsages(symbolAndDeclaration.symbol).some(usage => isPotentiallyWriteUsage(usage)),
@@ -78,6 +78,10 @@ export class Rule extends tslint.Rules.TypedRule {
         symbols
           .allUsages(symbolAndDeclaration.symbol)
           .filter(usage => !usage.is(UsageFlag.DECLARATION))
+          // filter out following usages:
+          // - "return myArray"
+          // - "{ prop: myArray}"
+          // - "{ myArray }"
           .filter(
             usage =>
               !is(
@@ -87,6 +91,7 @@ export class Rule extends tslint.Rules.TypedRule {
                 ts.SyntaxKind.ShorthandPropertyAssignment,
               ),
           )
+          // filter out concat calls
           .filter(usage => !Rule.isConcatCall(usage.node))
           .forEach(usage => {
             visitor.addIssue(usage.node, Rule.MESSAGE);
