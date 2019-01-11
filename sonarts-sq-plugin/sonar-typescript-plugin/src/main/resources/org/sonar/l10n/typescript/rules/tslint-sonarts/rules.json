@@ -342,12 +342,6 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/parameters-max-number.md"
   },
   {
-    "key": "prefer-base-type",
-    "name": "Function parameters should be declared with base types",
-    "type": "CODE_SMELL",
-    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/prefer-base-type.md"
-  },
-  {
     "key": "prefer-default-last",
     "name": "\"default\" clauses should be last",
     "type": "CODE_SMELL",
