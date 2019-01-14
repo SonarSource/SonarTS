@@ -45,7 +45,7 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public static MESSAGE = "Remove this call; the collection can only be empty here.";
+  public static MESSAGE = (arrayName: string) => `Review this usage of ${arrayName} as it can only be empty here.`;
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     const visitor = new Visitor(this.getOptions().ruleName, program);
@@ -75,7 +75,7 @@ export class Rule extends tslint.Rules.TypedRule {
           // - "{ myArray }"
           .filter(usage => !Rule.isAllowedReadUsage(usage))
           .forEach(usage => {
-            visitor.addIssue(usage.node, Rule.MESSAGE);
+            visitor.addIssue(usage.node, Rule.MESSAGE(symbolAndDeclaration.symbol.name));
           }),
       );
     return visitor.getIssues();

@@ -1,13 +1,13 @@
 let array : number[] = [];
   array[2];
-//^^^^^ {{Remove this call; the collection can only be empty here.}}
+//^^^^^ {{Review this usage of array as it can only be empty here.}}
 
 for (let item of array) {
-  //             ^^^^^{{Remove this call; the collection can only be empty here.}}
+  //             ^^^^^{{Review this usage of array as it can only be empty here.}}
 }
 
   array.forEach(item => console.log());
-//^^^^^{{Remove this call; the collection can only be empty here.}}
+//^^^^^{{Review this usage of array as it can only be empty here.}}
 
 let nonEmptyArray = [1, 2, 3];
 nonEmptyArray[2]; // OK
@@ -20,20 +20,20 @@ arrayLatelyInitialized.forEach(item => console.log()); // OK
 
 let arrayConstructor = new Array();
   arrayConstructor.forEach(item => console.log());
-//^^^^^^^^^^^^^^^^{{Remove this call; the collection can only be empty here.}}
+//^^^^^^^^^^^^^^^^{{Review this usage of arrayConstructor as it can only be empty here.}}
 
 let arrayWithoutNew = Array();
   arrayWithoutNew.forEach(item => console.log());
-//^^^^^^^^^^^^^^^{{Remove this call; the collection can only be empty here.}}
+//^^^^^^^^^^^^^^^{{Review this usage of arrayWithoutNew as it can only be empty here.}}
 
 let myMap = new Map();
   myMap.get(1);
-//^^^^^{{Remove this call; the collection can only be empty here.}}
+//^^^^^{{Review this usage of myMap as it can only be empty here.}}
 
 
 let mySet = new Map();
   mySet.has(1);
-//^^^^^{{Remove this call; the collection can only be empty here.}}
+//^^^^^{{Review this usage of mySet as it can only be empty here.}}
 
 export let exportedArray: number[] = [];
 exportedArray[1]; // OK
