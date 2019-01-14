@@ -78,26 +78,24 @@ arrayWrittenInsideArrow2[1]; // OK
 // Interface Declaration
 
 interface Array<T> {
-  equals(array: Array<T>): boolean // OK
+  equals(array: Array<T>): boolean // OK, symbol Array is an interface declaration
 }
 
 
-// Module Declaration
+// Type Alias Declaration
 
-export type MyArray = T[];
+type MyArrayTypeAlias = T[];
 
-export namespace MyArray {
-  export function is(value: any): value is MyArray {
-    return value && Types.isArray(value);
-  }
+function isMyArrayTypeAlias(value: any): value is MyArrayTypeAlias { // OK, symbol MyArrayTypeAlias is a TypeAliasDeclaration
+  return value && Types.isArray(value);
 }
 
-function foo() {
+function allowedReadUsages() {
   let emptyArray = [];
   const obj = {
-    a: emptyArray // OK
+    a: emptyArray // OK, emptyArray is used in a property declaration
   }
-  return emptyArray; // OK
+  return emptyArray; // OK, emptyArray is used in a return statement
 }
 
 let initialArray = [];

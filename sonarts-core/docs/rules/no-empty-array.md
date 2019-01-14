@@ -10,9 +10,9 @@ let strings = [];
 
 if (strings.includes("foo")) {}  // Noncompliant
 
-for (String str of strings) {}  // Noncompliant
+for (str of strings) {}  // Noncompliant
 
-strings.forEach() // Noncompliant
+strings.forEach(str => doSomething(str)); // Noncompliant
 
 ```
 

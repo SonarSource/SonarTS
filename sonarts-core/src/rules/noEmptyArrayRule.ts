@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { SymbolTableBuilder } from "../symbols/builder";
-import { getCollectionSymbols, isPotentiallyWriteUsage } from "../symbols/collectionUtils";
+import { getCollectionSymbols, isPotentiallyWriteUsage, SymbolAndDeclaration } from "./collectionUtils";
 import { firstAncestor } from "../utils/navigation";
 import {
   isArrayLiteralExpression,
@@ -31,7 +31,7 @@ import {
   is,
   isPropertyAccessExpression,
 } from "../utils/nodes";
-import { UsageFlag } from "../symbols/table";
+import { UsageFlag, Usage } from "../symbols/table";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -53,19 +53,10 @@ export class Rule extends tslint.Rules.TypedRule {
     const collectionSymbols = getCollectionSymbols(symbols, program);
     collectionSymbols
       // filter out array declared as fields
-      .filter(symbolAndDeclaration => !ts.isPropertyDeclaration(symbolAndDeclaration.declaration.parent))
+      .filter(symbolAndDeclaration => !is(symbolAndDeclaration.declaration.parent, ts.SyntaxKind.PropertyDeclaration))
 
       // keep only symbols initialized to empty array literal or not initialized at all
-      .filter(symbolAndDeclaration => {
-        // prettier-ignore
-        const varDeclaration = firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.VariableDeclaration]) as ts.VariableDeclaration;
-        if (varDeclaration && varDeclaration.initializer) {
-          const initializer = varDeclaration.initializer;
-
-          return Rule.isNewEmptyCollectionCreation(initializer);
-        }
-        return true;
-      })
+      .filter(Rule.hasEmptyCollectionDeclaration)
 
       // filter out symbols with at least one usage that may modify array content
       .filter(
@@ -82,17 +73,7 @@ export class Rule extends tslint.Rules.TypedRule {
           // - "return myArray"
           // - "{ prop: myArray}"
           // - "{ myArray }"
-          .filter(
-            usage =>
-              !is(
-                usage.node.parent,
-                ts.SyntaxKind.ReturnStatement,
-                ts.SyntaxKind.PropertyAssignment,
-                ts.SyntaxKind.ShorthandPropertyAssignment,
-              ),
-          )
-          // filter out concat calls
-          .filter(usage => !Rule.isConcatCall(usage.node))
+          .filter(usage => !Rule.isAllowedReadUsage(usage))
           .forEach(usage => {
             visitor.addIssue(usage.node, Rule.MESSAGE);
           }),
@@ -100,11 +81,33 @@ export class Rule extends tslint.Rules.TypedRule {
     return visitor.getIssues();
   }
 
+  private static isAllowedReadUsage(usage: Usage) {
+    return (
+      is(
+        usage.node.parent,
+        ts.SyntaxKind.ReturnStatement,
+        ts.SyntaxKind.PropertyAssignment,
+        ts.SyntaxKind.ShorthandPropertyAssignment,
+      ) || Rule.isConcatCall(usage.node)
+    );
+  }
+
   private static isConcatCall(node: ts.Node) {
     return isPropertyAccessExpression(node.parent) && node.parent.name.text === "concat";
   }
 
-  private static isNewEmptyCollectionCreation(node: ts.Node): boolean {
+  private static hasEmptyCollectionDeclaration(symbolAndDeclaration: SymbolAndDeclaration) {
+    // prettier-ignore
+    const varDeclaration = firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.VariableDeclaration]) as ts.VariableDeclaration;
+    if (varDeclaration && varDeclaration.initializer) {
+      const initializer = varDeclaration.initializer;
+
+      return Rule.isEmptyCollection(initializer);
+    }
+    return true;
+  }
+
+  private static isEmptyCollection(node: ts.Node): boolean {
     if (isArrayLiteralExpression(node)) {
       return node.elements.length === 0;
     }

@@ -30,6 +30,7 @@ it("should contain all implemented rules", () => {
     .sort();
   const existingRules = fs
     .readdirSync(rulesPath)
+    .filter(file => file.includes("Rule.ts"))
     .map(file => file.substring(0, file.indexOf("Rule.ts")))
     .sort();
   expect(existingRules).toEqual(configuredRules);

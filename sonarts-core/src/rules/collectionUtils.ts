@@ -1,4 +1,23 @@
-import { SymbolTable, Usage, UsageFlag } from "./table";
+/*
+ * SonarTS
+ * Copyright (C) 2017-2018 SonarSource SA
+ * mailto:info AT sonarsource DOT com
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
 import * as ts from "typescript";
 import { firstAncestor, COMPOUND_ASSIGNMENTS } from "../utils/navigation";
 import {
@@ -33,6 +52,11 @@ const WRITE_ARRAY_PATTERNS: ((statement: ts.ExpressionStatement, usage: Usage) =
   isVariableWrite,
   isWritingMethodCall,
 ];
+
+export type SymbolAndDeclaration = {
+  declaration: ts.Node;
+  symbol: ts.Symbol;
+};
 
 /**
  * Returns an array of pair symbol-declaration storing collections.
