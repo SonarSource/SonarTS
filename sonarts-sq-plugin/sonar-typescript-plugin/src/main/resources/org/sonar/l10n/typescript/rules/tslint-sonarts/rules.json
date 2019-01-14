@@ -1,5 +1,11 @@
 [
   {
+  "key": "arguments-order",
+  "name": "Parameters should be passed in the correct order",
+  "type": "CODE_SMELL",
+  "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/arguments-order.md"
+  },
+  {
     "key": "cognitive-complexity",
     "name": "Cognitive Complexity of functions should not be too high",
     "type": "CODE_SMELL",
