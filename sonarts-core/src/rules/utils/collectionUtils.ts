@@ -17,9 +17,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import { SymbolTable, Usage, UsageFlag } from "../symbols/table";
+
+/**
+ * Module containing utility functions used by noEmptyArrayRule and noUnusedArrayRule
+ */
+import { SymbolTable, Usage, UsageFlag } from "../../symbols/table";
 import * as ts from "typescript";
-import { firstAncestor, COMPOUND_ASSIGNMENTS } from "../utils/navigation";
+import { firstAncestor, COMPOUND_ASSIGNMENTS } from "../../utils/navigation";
 import {
   is,
   isBinaryExpression,
@@ -29,7 +33,7 @@ import {
   isNewExpression,
   isArrayLiteralExpression,
   isAssignment,
-} from "../utils/nodes";
+} from "../../utils/nodes";
 
 const writingMethods = new Set([
   "copyWithin",

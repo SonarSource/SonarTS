@@ -22,7 +22,7 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { SymbolTableBuilder } from "../symbols/builder";
-import { getCollectionSymbols, isPotentiallyWriteUsage, SymbolAndDeclaration } from "./collectionUtils";
+import { getCollectionSymbols, isPotentiallyWriteUsage, SymbolAndDeclaration } from "./utils/collectionUtils";
 import { firstAncestor } from "../utils/navigation";
 import {
   isArrayLiteralExpression,
