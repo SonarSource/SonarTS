@@ -17,6 +17,7 @@
     "no-duplicate-string": true,
     "no-duplicated-branches": true,
     "no-element-overwrite": true,
+    "no-empty-array": true,
     "no-empty-destructuring": true,
     "no-empty-nested-blocks": false,
     "no-extra-semicolon": true,

@@ -17,28 +17,9 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as fs from "fs";
-import * as path from "path";
+import { Rule } from "../../../src/rules/noEmptyArrayRule";
+import runRule from "../../runRule";
 
-it("should contain all implemented rules", () => {
-  const rulesPath = path.join(__dirname, "../../src/rules");
-  const profileFilePath = path.join(__dirname, "../../tslint-sonarts.json");
-  const profile = JSON.parse(fs.readFileSync(profileFilePath, "utf8"));
-  const configuredRules = Object.keys(profile.rules)
-    .map((key, _) => key)
-    .map(camelize)
-    .sort();
-  const existingRules = fs
-    .readdirSync(rulesPath)
-    .filter(file => file.includes("Rule.ts"))
-    .map(file => file.substring(0, file.indexOf("Rule.ts")))
-    .sort();
-  expect(existingRules).toEqual(configuredRules);
+it("raises error", () => {
+  runRule(Rule, __filename);
 });
-
-function camelize(str: string) {
-  return str
-    .split("-")
-    .map((part, index) => (index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
-    .join("");
-}

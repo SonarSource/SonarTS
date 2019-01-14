@@ -43,7 +43,10 @@ export function getRules(rule?: string): tslint.Rules.AbstractRule[] {
   if (rule) {
     return [require(path.join(dir, rule) as any).Rule];
   } else {
-    return lodash.sortBy(fs.readdirSync(dir)).map(file => require(path.join(dir, file) as any).Rule);
+    return lodash
+      .sortBy(fs.readdirSync(dir))
+      .filter(file => file.includes("Rules.ts"))
+      .map(file => require(path.join(dir, file) as any).Rule);
   }
 }
 
