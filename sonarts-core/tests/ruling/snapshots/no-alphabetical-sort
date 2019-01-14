@@ -1,0 +1,6 @@
+src/angular/packages/compiler/src/template_parser/template_parser.ts: 836
+src/angular/packages/upgrade/src/common/downgrade_component_adapter.ts: 237
+src/angular/packages/upgrade/static/src/common/downgrade_component_adapter.ts: 237
+src/vscode/src/vs/editor/common/config/editorOptions.ts: 1408
+src/vscode/src/vs/editor/common/model/textModelWithDecorations.ts: 467
+src/vscode/src/vs/editor/test/common/model/model.line.test.ts: 1110,1932,2203

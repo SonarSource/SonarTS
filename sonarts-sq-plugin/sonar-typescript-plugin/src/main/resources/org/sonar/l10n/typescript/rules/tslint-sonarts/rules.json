@@ -36,6 +36,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-all-duplicated-branches.md"
   },
   {
+    "key": "no-alphabetical-sort",
+    "name": "A compare function should be provided when using \"Array.prototype.sort()\"",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-alphabetical-sort.md"
+  },
+  {
     "key": "no-array-delete",
     "name": "\"delete\" should not be used on arrays",
     "type": "CODE_SMELL",

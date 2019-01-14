@@ -51,6 +51,7 @@ import org.sonar.plugin.typescript.rules.MaxUnionSize;
 import org.sonar.plugin.typescript.rules.MccabeComplexity;
 import org.sonar.plugin.typescript.rules.NoAccessorFieldMismatch;
 import org.sonar.plugin.typescript.rules.NoAllDuplicatedBranches;
+import org.sonar.plugin.typescript.rules.NoAlphabeticalSort;
 import org.sonar.plugin.typescript.rules.NoAngleBracketTypeAssertion;
 import org.sonar.plugin.typescript.rules.NoAny;
 import org.sonar.plugin.typescript.rules.NoArg;
@@ -247,6 +248,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       MccabeComplexity.class,
       NoAccessorFieldMismatch.class,
       NoAllDuplicatedBranches.class,
+      NoAlphabeticalSort.class,
       NoAngleBracketTypeAssertion.class,
       NoAny.class,
       NoArg.class,
