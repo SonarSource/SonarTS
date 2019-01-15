@@ -35,7 +35,8 @@ export class Rule extends tslint.Rules.AbstractRule {
     typescriptOnly: true,
   };
 
-  public static MESSAGE = "Provide default value for this parameter.";
+  public static message = (parameter: string) =>
+    `Provide a default value for '${parameter}' so that the logic of the function is more evident when this parameter is missing.`;
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
@@ -44,38 +45,35 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Visitor extends SonarRuleVisitor {
   visitParameterDeclaration(paramDeclaration: ts.ParameterDeclaration) {
-    if (!paramDeclaration.initializer && Visitor.isOptionalBoolean(paramDeclaration)) {
-      this.addIssue(paramDeclaration, Rule.MESSAGE);
+    if (!paramDeclaration.initializer && isOptionalBoolean(paramDeclaration)) {
+      this.addIssue(paramDeclaration, Rule.message(paramDeclaration.name.getText()));
     }
     super.visitParameterDeclaration(paramDeclaration);
   }
+}
 
-  private static isOptionalBoolean(paramDeclaration: ts.ParameterDeclaration) {
-    return (
-      paramDeclaration.type &&
-      (Visitor.useQuestionToken(paramDeclaration) || Visitor.useUnionType(paramDeclaration.type))
-    );
-  }
+function isOptionalBoolean(paramDeclaration: ts.ParameterDeclaration) {
+  return usesQuestionOptionalSyntax(paramDeclaration) || usesUnionUndefinedOptinalSyntax(paramDeclaration.type);
+}
 
-  /**
-   * Matches "param?: boolean"
-   */
-  private static useQuestionToken({ questionToken, type }: ts.ParameterDeclaration) {
-    return questionToken && is(type, ts.SyntaxKind.BooleanKeyword);
-  }
+/**
+ * Matches "param?: boolean"
+ */
+function usesQuestionOptionalSyntax({ questionToken, type }: ts.ParameterDeclaration) {
+  return questionToken && is(type, ts.SyntaxKind.BooleanKeyword);
+}
 
-  /**
-   * Matches "boolean | undefined"
-   */
-  private static useUnionType(type: ts.TypeNode) {
-    if (!isUnionTypeNode(type)) {
-      return false;
-    }
-    const { types } = type;
-    return (
-      types.length === 2 &&
-      types.some(t => is(t, ts.SyntaxKind.BooleanKeyword)) &&
-      types.some(t => is(t, ts.SyntaxKind.UndefinedKeyword))
-    );
+/**
+ * Matches "boolean | undefined"
+ */
+function usesUnionUndefinedOptinalSyntax(type?: ts.TypeNode) {
+  if (!type || !isUnionTypeNode(type)) {
+    return false;
   }
+  const { types } = type;
+  return (
+    types.length === 2 &&
+    types.some(t => is(t, ts.SyntaxKind.BooleanKeyword)) &&
+    types.some(t => is(t, ts.SyntaxKind.UndefinedKeyword))
+  );
 }
