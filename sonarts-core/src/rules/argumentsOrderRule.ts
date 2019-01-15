@@ -35,7 +35,8 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public static MESSAGE = `Parameters have the same names but not the same order as the arguments.`;
+  public static message = (arg1: string, arg2: string) =>
+    `Parameters '${arg1}' and '${arg2}' have the same names but not the same order as the arguments.`;
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
     return new Visitor(this.getOptions().ruleName, program).visit(sourceFile).getIssues();
@@ -44,25 +45,37 @@ export class Rule extends tslint.Rules.TypedRule {
 
 class Visitor extends TypedSonarRuleVisitor {
   visitCallExpression(node: ts.CallExpression) {
-    const argumentNames = this.getArgumentNames(node);
+    const argumentNames = node.arguments.map(arg => (isIdentifier(arg) ? arg.getText() : undefined));
     const { parameterNames, declaration } = this.getSignature(node);
 
     if (parameterNames) {
-      const hasProblem = argumentNames.some((argumentName, argumentIndex) => {
-        if (!argumentName) {
-          return false;
-        }
-        return this.isArgumentSwapped(argumentName, argumentIndex, argumentNames, parameterNames, node);
-      });
+      let swappedArguments: { arg1: string; arg2: string } | null = null;
 
-      if (hasProblem) {
-        this.raiseIssue(node, declaration);
+      for (let argumentIndex = 0; argumentIndex < argumentNames.length; argumentIndex++) {
+        const argumentName = argumentNames[argumentIndex];
+        if (argumentName) {
+          const swappedPairArgument = this.getSwappedPairArgument(
+            argumentName,
+            argumentIndex,
+            argumentNames,
+            parameterNames,
+            node,
+          );
+          if (swappedPairArgument) {
+            swappedArguments = { arg1: argumentName, arg2: swappedPairArgument };
+            break;
+          }
+        }
+      }
+
+      if (swappedArguments) {
+        this.raiseIssue(node, swappedArguments, declaration);
       }
     }
     super.visitCallExpression(node);
   }
 
-  isArgumentSwapped(
+  getSwappedPairArgument(
     argumentName: string,
     argumentIndex: number,
     argumentNames: (string | undefined)[],
@@ -77,22 +90,31 @@ class Visitor extends TypedSonarRuleVisitor {
         const secondArgumentType = this.getTypeAsString(node.arguments[parameterIndex]);
 
         if (firstArgumentType === secondArgumentType) {
-          return true;
+          return anotherArgument;
         }
       }
     }
 
-    return false;
+    return undefined;
   }
 
   getTypeAsString(expr: ts.Expression) {
-    const typeChecker = this.program.getTypeChecker();
-    return typeChecker.typeToString(typeChecker.getBaseTypeOfLiteralType(typeChecker.getTypeAtLocation(expr)));
+    const { typeToString, getBaseTypeOfLiteralType, getTypeAtLocation } = this.program.getTypeChecker();
+    return typeToString(getBaseTypeOfLiteralType(getTypeAtLocation(expr)));
   }
 
-  raiseIssue(node: ts.CallExpression, declaration?: ts.SignatureDeclaration | ts.JSDocSignature) {
+  raiseIssue(
+    node: ts.CallExpression,
+    swappedArguments: { arg1: string; arg2: string },
+    declaration?: ts.SignatureDeclaration | ts.JSDocSignature,
+  ) {
     const issue = this.addIssueAtLocation(
-      new IssueLocation(node.arguments.pos, node.arguments.end, node.getSourceFile(), Rule.MESSAGE),
+      new IssueLocation(
+        node.arguments.pos,
+        node.arguments.end,
+        node.getSourceFile(),
+        Rule.message(swappedArguments.arg1, swappedArguments.arg2),
+      ),
     );
     if (
       declaration &&
@@ -104,19 +126,6 @@ class Visitor extends TypedSonarRuleVisitor {
         new IssueLocation(textRange.pos, textRange.end, node.getSourceFile(), "Formal parameters"),
       );
     }
-  }
-
-  getArgumentNames(node: ts.CallExpression) {
-    const argumentNames: (string | undefined)[] = [];
-    node.arguments.forEach(arg => {
-      if (isIdentifier(arg)) {
-        argumentNames.push(arg.getText());
-      } else {
-        argumentNames.push(undefined);
-      }
-    });
-
-    return argumentNames;
   }
 
   getSignature(node: ts.CallExpression) {
