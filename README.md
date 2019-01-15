@@ -72,6 +72,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Boolean checks should not be inverted ([`no-inverted-boolean-check`])
 * Multiline string literals should not be used ([`no-multiline-string-literals`])
 * Increment (++) and decrement (--) operators should not be used in a method call or mixed with other operators in an expression ([`no-nested-incdec`])
+* "switch" statements should not be nested ([`no-nested-switch`])
 * Template literals should not be nested ([`no-nested-template-literals`])
 * Boolean literals should not be redundant ([`no-redundant-boolean`])
 * Jump statements should not be redundant ([`no-redundant-jump`])
@@ -132,6 +133,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-misspelled-operator`]: ./sonarts-core/docs/rules/no-misspelled-operator.md
 [`no-multiline-string-literals`]: ./sonarts-core/docs/rules/no-multiline-string-literals.md
 [`no-nested-incdec`]: ./sonarts-core/docs/rules/no-nested-incdec.md
+[`no-nested-switch`]: ./sonarts-core/docs/rules/no-nested-switch.md
 [`no-nested-template-literals`]: ./sonarts-core/docs/rules/no-nested-template-literals.md
 [`no-redundant-boolean`]: ./sonarts-core/docs/rules/no-redundant-boolean.md
 [`no-redundant-jump`]: ./sonarts-core/docs/rules/no-redundant-jump.md

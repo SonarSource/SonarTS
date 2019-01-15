@@ -37,6 +37,7 @@
     "no-misspelled-operator": true,
     "no-multiline-string-literals": true,
     "no-nested-incdec": false,
+    "no-nested-switch": true,
     "no-nested-template-literals": true,
     "no-redundant-boolean": true,
     "no-redundant-jump": true,
