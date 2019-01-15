@@ -31,7 +31,7 @@ export class Rule extends tslint.Rules.TypedRule {
     optionsDescription: "",
     options: null,
     rspecKey: "RSPEC-2871",
-    type: "maintainability",
+    type: "functionality",
     typescriptOnly: false,
   };
 
@@ -44,26 +44,21 @@ export class Rule extends tslint.Rules.TypedRule {
 
 class Visitor extends TypedSonarRuleVisitor {
   visitCallExpression(callExpression: ts.CallExpression) {
-    if (Visitor.isSortWithoutCompare(callExpression)) {
-      const propertyAccess = callExpression.expression as ts.PropertyAccessExpression;
-      const arrayElementType = this.arrayElementType(propertyAccess.expression);
-      if (arrayElementType && is(arrayElementType, ts.SyntaxKind.NumberKeyword)) {
-        this.addIssue(propertyAccess.name, Rule.MESSAGE);
+    if (callExpression.arguments.length === 0 && isPropertyAccessExpression(callExpression.expression)) {
+      const { name, expression } = callExpression.expression;
+      if (name.getText() === "sort") {
+        const arrayElementType = this.arrayElementType(expression);
+        if (arrayElementType && is(arrayElementType, ts.SyntaxKind.NumberKeyword)) {
+          this.addIssue(name, Rule.MESSAGE);
+        }
       }
     }
     super.visitCallExpression(callExpression);
   }
 
-  private static isSortWithoutCompare({ expression: propertyAccess, arguments: args }: ts.CallExpression) {
-    if (isPropertyAccessExpression(propertyAccess)) {
-      return args.length === 0 && propertyAccess.name.getText() === "sort";
-    }
-    return false;
-  }
-
-  private arrayElementType(arrayNode: ts.Expression) {
+  private arrayElementType(expression: ts.Expression) {
     const { typeToTypeNode, getTypeAtLocation } = this.program.getTypeChecker();
-    const typeNode = typeToTypeNode(getTypeAtLocation(arrayNode));
+    const typeNode = typeToTypeNode(getTypeAtLocation(expression));
     if (typeNode && is(typeNode, ts.SyntaxKind.ArrayType)) {
       return (typeNode as ts.ArrayTypeNode).elementType;
     }
