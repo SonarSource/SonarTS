@@ -6,6 +6,7 @@
     "mccabe-complexity": false,
     "no-accessor-field-mismatch": true,
     "no-all-duplicated-branches": true,
+    "no-alphabetical-sort": true,
     "no-array-delete": true,
     "no-big-function": true,
     "no-case-with-or": true,

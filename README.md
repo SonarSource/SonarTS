@@ -53,6 +53,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Union types should not have too many elements ([`max-union-size`])
 * Functions should not be too complex ([`mccabe-complexity`])
 * Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
+* A compare function should be provided when using "Array.prototype.sort()" ([`no-alphabetical-sort`])
 * `delete` should not be used on arrays ([`no-array-delete`]) ([`requires type-check`])
 * Functions should not have too many lines of code ([`no-big-function`])
 * Collapsible "if" statements should be merged ([`no-collapsible-if`])
@@ -101,6 +102,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`mccabe-complexity`]: ./sonarts-core/docs/rules/mccabe-complexity.md
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
 [`no-all-duplicated-branches`]: ./sonarts-core/docs/rules/no-all-duplicated-branches.md
+[`no-alphabetical-sort`]: ./sonarts-core/docs/rules/no-alphabetical-sort.md
 [`no-array-delete`]: ./sonarts-core/docs/rules/no-array-delete.md
 [`no-big-function`]: ./sonarts-core/docs/rules/no-big-function.md
 [`no-case-with-or`]: ./sonarts-core/docs/rules/no-case-with-or.md
