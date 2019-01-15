@@ -37,6 +37,7 @@ import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
 import org.sonar.plugin.typescript.rules.ArgumentsOrder;
 import org.sonar.plugin.typescript.rules.BanCommaOperator;
+import org.sonar.plugin.typescript.rules.BoolParamDefault;
 import org.sonar.plugin.typescript.rules.ClassName;
 import org.sonar.plugin.typescript.rules.CognitiveComplexity;
 import org.sonar.plugin.typescript.rules.ConsecutiveOverloads;
@@ -236,6 +237,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
     return Collections.unmodifiableList(Arrays.asList(
       ArgumentsOrder.class,
       BanCommaOperator.class,
+      BoolParamDefault.class,
       ClassName.class,
       CognitiveComplexity.class,
       ConsecutiveOverloads.class,

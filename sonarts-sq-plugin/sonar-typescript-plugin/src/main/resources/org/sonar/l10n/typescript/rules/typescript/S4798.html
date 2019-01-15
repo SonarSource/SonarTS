@@ -1,0 +1,14 @@
+<p>Having default value for optional boolean parameters makes the logic of function when missing that parameter more evident.</p>
+<h2>Noncompliant Code Example</h2>
+<pre>
+function countPositiveNumbers(arr: number[], countZero?: boolean) {
+  // ...
+}
+</pre>
+<h2>Compliant Solution</h2>
+<pre>
+function countPositiveNumbers(arr: number[], countZero: boolean = false) {
+  // ...
+}
+</pre>
+

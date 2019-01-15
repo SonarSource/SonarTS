@@ -1,9 +1,15 @@
 [
   {
-  "key": "arguments-order",
-  "name": "Parameters should be passed in the correct order",
-  "type": "CODE_SMELL",
-  "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/arguments-order.md"
+    "key": "arguments-order",
+    "name": "Parameters should be passed in the correct order",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/arguments-order.md"
+  },
+  {
+    "key": "bool-param-default",
+    "name": "Optional boolean parameters should have default value",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/bool-param-default.md"
   },
   {
     "key": "cognitive-complexity",
