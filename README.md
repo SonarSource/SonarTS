@@ -52,6 +52,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Optional boolean parameters should have default value ([`bool-param-default`])
 * Cognitive Complexity of functions should not be too high ([`cognitive-complexity`])
 * Method overloads should be grouped together ([`consecutive-overloads`])
+* "switch" statements should not have too many "case" clauses ([`max-switch-cases`])
 * Union types should not have too many elements ([`max-union-size`])
 * Functions should not be too complex ([`mccabe-complexity`])
 * Getters and setters should access the expected fields ([`no-accessor-field-mismatch`]) ([`requires type-check`])
@@ -103,6 +104,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`bool-param-default`]: ./sonarts-core/docs/rules/bool-param-default.md
 [`cognitive-complexity`]: ./sonarts-core/docs/rules/cognitive-complexity.md
 [`consecutive-overloads`]: ./sonarts-core/docs/rules/consecutive-overloads.md
+[`max-switch-cases`]: ./sonarts-core/docs/rules/max-switch-cases.md
 [`max-union-size`]: ./sonarts-core/docs/rules/max-union-size.md
 [`mccabe-complexity`]: ./sonarts-core/docs/rules/mccabe-complexity.md
 [`no-accessor-field-mismatch`]: ./sonarts-core/docs/rules/no-accessor-field-mismatch.md
