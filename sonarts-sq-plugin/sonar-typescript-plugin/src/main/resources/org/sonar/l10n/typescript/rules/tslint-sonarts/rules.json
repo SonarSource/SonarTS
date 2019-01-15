@@ -228,6 +228,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-nested-incdec.md"
   },
   {
+    "key": "no-nested-switch",
+    "name": "\"switch\" statements should not be nested",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-nested-switch.md"
+  },
+  {
     "key": "no-nested-template-literals",
     "name": "Template literals should not be nested",
     "type": "CODE_SMELL",
