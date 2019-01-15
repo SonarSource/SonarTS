@@ -44,14 +44,17 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Visitor extends SonarRuleVisitor {
   visitParameterDeclaration(paramDeclaration: ts.ParameterDeclaration) {
-    if (paramDeclaration.type && !paramDeclaration.initializer && Visitor.isOptionalBoolean(paramDeclaration)) {
+    if (!paramDeclaration.initializer && Visitor.isOptionalBoolean(paramDeclaration)) {
       this.addIssue(paramDeclaration, Rule.MESSAGE);
     }
     super.visitParameterDeclaration(paramDeclaration);
   }
 
   private static isOptionalBoolean(paramDeclaration: ts.ParameterDeclaration) {
-    return Visitor.useQuestionToken(paramDeclaration) || Visitor.useUnionType(paramDeclaration.type!);
+    return (
+      paramDeclaration.type &&
+      (Visitor.useQuestionToken(paramDeclaration) || Visitor.useUnionType(paramDeclaration.type))
+    );
   }
 
   /**
