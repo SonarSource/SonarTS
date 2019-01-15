@@ -1,5 +1,6 @@
 {
   "rules": {
+    "arguments-order": true,
     "cognitive-complexity": true,
     "consecutive-overloads": true,
     "max-union-size": true,

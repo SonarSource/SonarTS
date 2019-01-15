@@ -35,6 +35,7 @@ import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
+import org.sonar.plugin.typescript.rules.ArgumentsOrder;
 import org.sonar.plugin.typescript.rules.BanCommaOperator;
 import org.sonar.plugin.typescript.rules.ClassName;
 import org.sonar.plugin.typescript.rules.CognitiveComplexity;
@@ -233,6 +234,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
 
   public static List<Class<? extends TypeScriptRule>> getRuleClasses() {
     return Collections.unmodifiableList(Arrays.asList(
+      ArgumentsOrder.class,
       BanCommaOperator.class,
       ClassName.class,
       CognitiveComplexity.class,

@@ -48,6 +48,7 @@ Code Smells issues, or Maintainability issues, are raised for places of code whi
 These rules also help to keep the high code quality and readability ([`no-commented-code`], [`no-identical-functions`], [`use-primitive-type`]).
 And finally some rules report issues on different suspicious code patters ([`no-dead-store`], [`no-gratuitous-expressions`]).
 
+* Parameters should be passed in the correct order ([`arguments-order`])
 * Cognitive Complexity of functions should not be too high ([`cognitive-complexity`])
 * Method overloads should be grouped together ([`consecutive-overloads`])
 * Union types should not have too many elements ([`max-union-size`])
@@ -97,6 +98,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Wrapper objects should not be used for primitive types ([`use-primitive-type`]) ([`requires type-check`])
 * Type aliases should be used ([`use-type-alias`]) ([`requires type-check`])
 
+[`arguments-order`]: ./sonarts-core/docs/rules/arguments-order.md
 [`cognitive-complexity`]: ./sonarts-core/docs/rules/cognitive-complexity.md
 [`consecutive-overloads`]: ./sonarts-core/docs/rules/consecutive-overloads.md
 [`max-union-size`]: ./sonarts-core/docs/rules/max-union-size.md
