@@ -32,7 +32,7 @@ export class Rule extends tslint.Rules.AbstractRule {
     optionsDescription: "",
     options: null,
     rspecKey: "RSPEC-1821",
-    type: "functionality",
+    type: "maintainability",
     typescriptOnly: false,
   };
 
