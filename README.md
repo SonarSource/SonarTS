@@ -90,6 +90,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 * Multiline blocks should be enclosed in curly braces ([`no-unenclosed-multiline-block`])
 * Array contents should be used ([`no-unused-array`]) ([`requires type-check`])
 * Redundant casts and not-null assertions should be avoided ([`no-useless-cast`]) ([`requires type-check`])
+* "catch" clauses should do more than rethrow ([`no-useless-catch`])
 * Variables should be declared before they are used ([`no-variable-usage-before-declaration`]) ([`requires type-check`])
 * Functions should not have too many parameters ([`parameters-max-number`])
 * "default" clauses should be last ([`prefer-default-last`])
@@ -159,6 +160,7 @@ And finally some rules report issues on different suspicious code patters ([`no-
 [`no-unused-array`]: ./sonarts-core/docs/rules/no-unused-array.md
 [`no-use-of-empty-return-value`]: ./sonarts-core/docs/rules/no-use-of-empty-return-value.md
 [`no-useless-cast`]: ./sonarts-core/docs/rules/no-useless-cast.md
+[`no-useless-catch`]: ./sonarts-core/docs/rules/no-useless-catch.md
 [`no-useless-increment`]: ./sonarts-core/docs/rules/no-useless-increment.md
 [`no-useless-intersection`]: ./sonarts-core/docs/rules/no-useless-intersection.md
 [`no-variable-usage-before-declaration`]: ./sonarts-core/docs/rules/no-variable-usage-before-declaration.md

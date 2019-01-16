@@ -354,6 +354,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-useless-cast.md"
   },
   {
+    "key": "no-useless-catch",
+    "name": "\"catch\" clauses should do more than rethrow",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-useless-catch.md"
+  },
+  {
     "key": "no-useless-increment",
     "name": "Values should not be uselessly incremented",
     "type": "BUG",
