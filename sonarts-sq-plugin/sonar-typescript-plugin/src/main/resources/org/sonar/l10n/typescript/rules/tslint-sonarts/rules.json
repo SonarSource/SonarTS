@@ -24,6 +24,12 @@
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/consecutive-overloads.md"
   },
   {
+    "key": "max-switch-cases",
+    "name": "\"switch\" statements should not have too many \"case\" clauses",
+    "type": "CODE_SMELL",
+    "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/max-switch-cases.md"
+  },
+  {
     "key": "max-union-size",
     "name": "Union types should not have too many elements",
     "type": "CODE_SMELL",

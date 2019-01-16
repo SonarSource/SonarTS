@@ -18,8 +18,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import { Rule } from "../../../src/rules/maxSwitchCasesRule";
-import runRule from "../../runRule";
+import runRule, { runRuleWithLintFile } from "../../runRule";
 
 it("raises error", () => {
   runRule(Rule, __filename);
+});
+
+it("raises errors when set to 3", () => {
+  runRuleWithLintFile(Rule, "maxSwitchCasesRule", "maxSwitchCasesRule3Elements", 3);
 });
