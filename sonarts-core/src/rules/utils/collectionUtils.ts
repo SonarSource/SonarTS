@@ -32,7 +32,6 @@ import {
   isPropertyAccessExpression,
   isNewExpression,
   isArrayLiteralExpression,
-  isAssignment,
 } from "../../utils/nodes";
 
 const writingMethods = new Set([
@@ -51,10 +50,58 @@ const writingMethods = new Set([
   "add",
 ]);
 
+// Methods that mutate the collection but can't add elements
+const nonAdditiveMutatorMethods = [
+  // array methods
+  "copyWithin",
+  "pop",
+  "reverse",
+  "shift",
+  "sort",
+  // map, set methods
+  "delete",
+  "clear",
+];
+const accessorMethods = [
+  // array methods
+  "concat",
+  "includes",
+  "indexOf",
+  "join",
+  "lastIndexOf",
+  "slice",
+  "toSource",
+  "toString",
+  "toLocaleString",
+  // map, set methods
+  "get",
+  "has",
+];
+const iterationMethods = [
+  "entries",
+  "every",
+  "filter",
+  "find",
+  "findIndex",
+  "forEach",
+  "keys",
+  "map",
+  "reduce",
+  "reduceRight",
+  "some",
+  "values",
+];
+
 const WRITE_ARRAY_PATTERNS: ((statement: ts.ExpressionStatement, usage: Usage) => boolean)[] = [
   isElementWrite,
   isVariableWrite,
   isWritingMethodCall,
+];
+
+const READ_PATTERNS: ((usage: Usage) => boolean)[] = [
+  isStrictlyReadingMethodCall,
+  isForIterationPattern,
+  isElementRead,
 ];
 
 export type SymbolAndDeclaration = {
@@ -127,34 +174,45 @@ export function isReadUsage(usage: Usage): boolean {
   }
   return true;
 }
-
 /**
  * Checks if a symbol usage is potentially modifying the content of the collection.
  * Assumption: collections are  either initaliazed to an empty literal or not initialized at all
  */
-export function isPotentiallyWriteUsage(usage: Usage): boolean {
+export function isPotentiallyWriteUsage(usage: Usage) {
   // we are not interested to declaration usage since we know it's array is either initaliazed to an empty literal
   // or not initialized at all
   if (usage.is(UsageFlag.DECLARATION)) {
     return false;
   }
+  return !READ_PATTERNS.some(pattern => pattern(usage));
+}
 
-  // fillArray(myArray) or new fillArray(myArray);
-  if (isCallExpression(usage.node.parent) || isNewExpression(usage.node.parent)) {
-    return true;
-  }
-  // myArray = otherArray
-  if (isAssignment(usage.node.parent)) {
-    return true;
-  }
-
-  // for arrow function: (n) => array.push(n)
+function isStrictlyReadingMethodCall(usage: Usage) {
+  const strictlyReadingMethods = new Set([...nonAdditiveMutatorMethods, ...accessorMethods, ...iterationMethods]);
   if (isPropertyAccessExpression(usage.node.parent) && isCallExpression(usage.node.parent.parent)) {
-    const callExpression = usage.node.parent.parent;
-    const propertyAccess = callExpression.expression as ts.PropertyAccessExpression;
-    return propertyAccess.expression === usage.node && writingMethods.has(propertyAccess.name.text);
+    const propertyAccess = usage.node.parent;
+    return strictlyReadingMethods.has(propertyAccess.name.text);
   }
-  return !isReadUsage(usage);
+  return false;
+}
+
+function isForIterationPattern(usage: Usage) {
+  const forInOrOfStatement = firstAncestor(usage.node, [
+    ts.SyntaxKind.ForOfStatement,
+    ts.SyntaxKind.ForInStatement,
+  ]) as ts.ForInOrOfStatement;
+  return forInOrOfStatement && forInOrOfStatement.expression === usage.node;
+}
+
+function isElementRead(usage: Usage) {
+  const {
+    node: { parent: expression },
+  } = usage;
+  return (
+    isElementAccessExpression(expression) &&
+    ts.isExpressionStatement(expression.parent) &&
+    !isElementWrite(expression.parent, usage)
+  );
 }
 
 function isExported(declaration: ts.Node): boolean {

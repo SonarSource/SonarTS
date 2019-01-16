@@ -6,6 +6,10 @@ for (let item of array) {
   //             ^^^^^{{Review this usage of array as it can only be empty here.}}
 }
 
+for (let item in array) {
+  //             ^^^^^{{Review this usage of array as it can only be empty here.}}
+}
+
   array.forEach(item => console.log());
 //^^^^^{{Review this usage of array as it can only be empty here.}}
 
@@ -90,8 +94,9 @@ function isMyArrayTypeAlias(value: any): value is MyArrayTypeAlias { // OK, symb
   return value && Types.isArray(value);
 }
 
-function allowedReadUsages() {
-  let emptyArray = [];
+function allowedReadUsages(otherArray: number[]) {
+  let emptyArray: number[] = [];
+  let v = otherArray || emptyArray; // OK used in OR expression
   const obj = {
     a: emptyArray // OK, emptyArray is used in a property declaration
   }
@@ -100,4 +105,31 @@ function allowedReadUsages() {
 
 let initialArray = [];
 
-initialArray.concat(otherArray); // OK
+  initialArray.concat(otherArray);
+//^^^^^^^^^^^^{{Review this usage of initialArray as it can only be empty here.}}
+
+
+const potentiallyNonEmptyArray1 : number [] = [];
+const potentiallyNonEmptyArray2: number[] = [];
+(true ? potentiallyNonEmptyArray1 : potentiallyNonEmptyArray2).push(1);
+
+potentiallyNonEmptyArray1[0]; // OK
+potentiallyNonEmptyArray2[0]; // OK
+
+const reassignedArray: number[] = [];
+const aliasArray = reassignedArray;
+aliasArray.push(1);
+
+aliasArray[0]; // OK
+reassignedArray[0]; // OK
+
+const iterableArray = [];
+  iterableArray[Symbol.iterator];
+//^^^^^^^^^^^^^{{Review this usage of iterableArray as it can only be empty here.}}
+
+const externalInitializedArray: number[] = init();
+externalInitializedArray[0]; // OK
+
+const notInitializedArray: number[];
+  notInitializedArray[0];
+//^^^^^^^^^^^^^^^^^^^{{Review this usage of notInitializedArray as it can only be empty here.}}

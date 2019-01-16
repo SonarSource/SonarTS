@@ -24,14 +24,8 @@ import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { getCollectionSymbols, isPotentiallyWriteUsage, SymbolAndDeclaration } from "./utils/collectionUtils";
 import { firstAncestor } from "../utils/navigation";
-import {
-  isArrayLiteralExpression,
-  isCallExpression,
-  isNewExpression,
-  is,
-  isPropertyAccessExpression,
-} from "../utils/nodes";
-import { UsageFlag, Usage } from "../symbols/table";
+import { isArrayLiteralExpression, isCallExpression, isNewExpression, is } from "../utils/nodes";
+import { UsageFlag } from "../symbols/table";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -69,31 +63,11 @@ export class Rule extends tslint.Rules.TypedRule {
         symbols
           .allUsages(symbolAndDeclaration.symbol)
           .filter(usage => !usage.is(UsageFlag.DECLARATION))
-          // filter out following usages:
-          // - "return myArray"
-          // - "{ prop: myArray}"
-          // - "{ myArray }"
-          .filter(usage => !Rule.isAllowedReadUsage(usage))
           .forEach(usage => {
             visitor.addIssue(usage.node, Rule.MESSAGE(symbolAndDeclaration.symbol.name));
           }),
       );
     return visitor.getIssues();
-  }
-
-  private static isAllowedReadUsage(usage: Usage) {
-    return (
-      is(
-        usage.node.parent,
-        ts.SyntaxKind.ReturnStatement,
-        ts.SyntaxKind.PropertyAssignment,
-        ts.SyntaxKind.ShorthandPropertyAssignment,
-      ) || Rule.isConcatCall(usage.node)
-    );
-  }
-
-  private static isConcatCall(node: ts.Node) {
-    return isPropertyAccessExpression(node.parent) && node.parent.name.text === "concat";
   }
 
   private static hasEmptyCollectionDeclaration(symbolAndDeclaration: SymbolAndDeclaration) {
@@ -107,7 +81,7 @@ export class Rule extends tslint.Rules.TypedRule {
     return true;
   }
 
-  private static isEmptyCollection(node: ts.Node): boolean {
+  private static isEmptyCollection(node: ts.Expression): boolean {
     if (isArrayLiteralExpression(node)) {
       return node.elements.length === 0;
     }
