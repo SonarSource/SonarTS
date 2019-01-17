@@ -20,16 +20,17 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
+import { SonarRuleVisitor } from "../utils/sonarAnalysis";
 import { SymbolTableBuilder } from "../symbols/builder";
-import { getCollectionSymbols, isPotentiallyWriteUsage, SymbolAndDeclaration } from "./utils/collectionUtils";
-import { firstAncestor } from "../utils/navigation";
+import { getCollectionSymbols, SymbolAndDeclaration } from "./utils/collectionUtils";
+import { firstAncestor, ancestorsChain } from "../utils/navigation";
 import {
   isArrayLiteralExpression,
   isCallExpression,
   isNewExpression,
-  is,
   isPropertyAccessExpression,
+  isElementAccessExpression,
+  isAssignment,
 } from "../utils/nodes";
 import { UsageFlag, Usage } from "../symbols/table";
 
@@ -45,83 +46,133 @@ export class Rule extends tslint.Rules.TypedRule {
     typescriptOnly: false,
   };
 
-  public static MESSAGE = (arrayName: string) => `Review this usage of ${arrayName} as it can only be empty here.`;
+  public static MESSAGE = (arrayName: string) => `Review this usage of '${arrayName}' as it can only be empty here.`;
 
   public applyWithProgram(sourceFile: ts.SourceFile, program: ts.Program): tslint.RuleFailure[] {
-    const visitor = new Visitor(this.getOptions().ruleName, program);
+    // walker is created to only save issues
+    const visitor = new SonarRuleVisitor(this.getOptions().ruleName);
     const symbols = SymbolTableBuilder.build(sourceFile, program);
-    const collectionSymbols = getCollectionSymbols(symbols, program);
-    collectionSymbols
-      // filter out array declared as fields
-      .filter(symbolAndDeclaration => !is(symbolAndDeclaration.declaration.parent, ts.SyntaxKind.PropertyDeclaration))
-
+    getCollectionSymbols(symbols, program)
       // keep only symbols initialized to empty array literal or not initialized at all
-      .filter(Rule.hasEmptyCollectionDeclaration)
-
-      // filter out symbols with at least one usage that may modify array content
-      .filter(
-        symbolAndDeclaration =>
-          !symbols.allUsages(symbolAndDeclaration.symbol).some(usage => isPotentiallyWriteUsage(usage)),
+      .filter(isInitializedToEmpty)
+      .map(symbolAndDeclaration =>
+        symbols.allUsages(symbolAndDeclaration.symbol).filter(usage => !usage.is(UsageFlag.DECLARATION)),
       )
-
+      // filter out symbols with at least one usage that may make array non-empty
+      .filter(usages => usages.every(usage => readCollectionPatterns.some(pattern => pattern(usage))))
       // raise issue
-      .forEach(symbolAndDeclaration =>
-        symbols
-          .allUsages(symbolAndDeclaration.symbol)
-          .filter(usage => !usage.is(UsageFlag.DECLARATION))
-          // filter out following usages:
-          // - "return myArray"
-          // - "{ prop: myArray}"
-          // - "{ myArray }"
-          .filter(usage => !Rule.isAllowedReadUsage(usage))
-          .forEach(usage => {
-            visitor.addIssue(usage.node, Rule.MESSAGE(symbolAndDeclaration.symbol.name));
-          }),
+      .forEach(usages =>
+        usages.forEach(usage => {
+          visitor.addIssue(usage.node, Rule.MESSAGE(usage.symbol.name));
+        }),
       );
     return visitor.getIssues();
   }
-
-  private static isAllowedReadUsage(usage: Usage) {
-    return (
-      is(
-        usage.node.parent,
-        ts.SyntaxKind.ReturnStatement,
-        ts.SyntaxKind.PropertyAssignment,
-        ts.SyntaxKind.ShorthandPropertyAssignment,
-      ) || Rule.isConcatCall(usage.node)
-    );
-  }
-
-  private static isConcatCall(node: ts.Node) {
-    return isPropertyAccessExpression(node.parent) && node.parent.name.text === "concat";
-  }
-
-  private static hasEmptyCollectionDeclaration(symbolAndDeclaration: SymbolAndDeclaration) {
-    // prettier-ignore
-    const varDeclaration = firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.VariableDeclaration]) as ts.VariableDeclaration;
-    if (varDeclaration && varDeclaration.initializer) {
-      const initializer = varDeclaration.initializer;
-
-      return Rule.isEmptyCollection(initializer);
-    }
-    return true;
-  }
-
-  private static isEmptyCollection(node: ts.Node): boolean {
-    if (isArrayLiteralExpression(node)) {
-      return node.elements.length === 0;
-    }
-
-    if (isCallExpression(node)) {
-      return node.arguments.length === 0;
-    }
-
-    if (isNewExpression(node)) {
-      return !node.arguments || node.arguments.length === 0;
-    }
-
-    return false;
-  }
 }
 
-class Visitor extends TypedSonarRuleVisitor {}
+const readCollectionPatterns: ((usage: Usage) => boolean)[] = [
+  isStrictlyReadingMethodCall,
+  isForIterationPattern,
+  isElementRead,
+];
+
+// Methods that mutate the collection but can't add elements
+const nonAdditiveMutatorMethods = [
+  // array methods
+  "copyWithin",
+  "pop",
+  "reverse",
+  "shift",
+  "sort",
+  // map, set methods
+  "delete",
+  "clear",
+];
+const accessorMethods = [
+  // array methods
+  "concat",
+  "includes",
+  "indexOf",
+  "join",
+  "lastIndexOf",
+  "slice",
+  "toSource",
+  "toString",
+  "toLocaleString",
+  // map, set methods
+  "get",
+  "has",
+];
+const iterationMethods = [
+  "entries",
+  "every",
+  "filter",
+  "find",
+  "findIndex",
+  "forEach",
+  "keys",
+  "map",
+  "reduce",
+  "reduceRight",
+  "some",
+  "values",
+];
+
+function isInitializedToEmpty(symbolAndDeclaration: SymbolAndDeclaration) {
+  // prettier-ignore
+  const varDeclaration = firstAncestor(symbolAndDeclaration.declaration, [ts.SyntaxKind.VariableDeclaration]) as ts.VariableDeclaration;
+  if (varDeclaration && varDeclaration.initializer) {
+    const initializer = varDeclaration.initializer;
+
+    return isEmptyCollection(initializer);
+  }
+  return true;
+}
+
+function isEmptyCollection(node: ts.Expression): boolean {
+  if (isArrayLiteralExpression(node)) {
+    return node.elements.length === 0;
+  }
+
+  if (isCallExpression(node)) {
+    return node.arguments.length === 0;
+  }
+
+  if (isNewExpression(node)) {
+    return !node.arguments || node.arguments.length === 0;
+  }
+
+  return false;
+}
+
+function isStrictlyReadingMethodCall(usage: Usage) {
+  const strictlyReadingMethods = new Set([...nonAdditiveMutatorMethods, ...accessorMethods, ...iterationMethods]);
+  const { parent } = usage.node;
+  if (isPropertyAccessExpression(parent) && isCallExpression(parent.parent)) {
+    return strictlyReadingMethods.has(parent.name.text);
+  }
+  return false;
+}
+
+function isForIterationPattern(usage: Usage) {
+  const forInOrOfStatement = firstAncestor(usage.node, [
+    ts.SyntaxKind.ForOfStatement,
+    ts.SyntaxKind.ForInStatement,
+  ]) as ts.ForInOrOfStatement;
+  return forInOrOfStatement && forInOrOfStatement.expression === usage.node;
+}
+
+// To detect: x = foo(a[1]);
+function isElementRead(usage: Usage) {
+  return isElementAccessExpression(usage.node.parent) && !isElementWrite(usage.node.parent);
+}
+
+function isElementWrite(elementAccess: ts.ElementAccessExpression) {
+  const ancestors = ancestorsChain(elementAccess);
+  const assignmentParent = ancestors.find(isAssignment) as ts.BinaryExpression;
+  if (assignmentParent) {
+    return [elementAccess, ...ancestors].includes(assignmentParent.left);
+  }
+
+  return false;
+}

@@ -153,3 +153,10 @@ function ok13(buffer) {
 
 export const EXPORTED_ARRAY: any[] = [];
 import { IMPORTED_ARRAY } from "./dep";
+
+export class Foo {
+  myArray: string[] = [];
+  fn() {
+    this.myArray.push(""); // OK for properties
+  }
+}

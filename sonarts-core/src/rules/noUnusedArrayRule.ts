@@ -22,7 +22,10 @@ import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SymbolTableBuilder } from "../symbols/builder";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
-import { isReadUsage, getCollectionSymbols } from "./utils/collectionUtils";
+import { getCollectionSymbols, isElementWrite, isNewCollectionCreation } from "./utils/collectionUtils";
+import { Usage, UsageFlag } from "../symbols/table";
+import { firstAncestor } from "../utils/navigation";
+import { isBinaryExpression, is, isCallExpression, isPropertyAccessExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -51,4 +54,69 @@ export class Rule extends tslint.Rules.TypedRule {
 
     return visitor.getIssues();
   }
+}
+
+const writeArrayPatterns: ((statement: ts.ExpressionStatement, usage: Usage) => boolean)[] = [
+  isElementWrite,
+  isVariableWrite,
+  isWritingMethodCall,
+];
+
+const writingMethods = new Set([
+  "copyWithin",
+  "fill",
+  "pop",
+  "push",
+  "reverse",
+  "shift",
+  "sort",
+  "splice",
+  "unshift",
+  "clear",
+  "delete",
+  "set",
+  "add",
+]);
+
+function isReadUsage(usage: Usage): boolean {
+  if (usage.is(UsageFlag.DECLARATION)) {
+    return false;
+  }
+
+  // prettier-ignore
+  const expressionStatement = firstAncestor(usage.node, [ts.SyntaxKind.ExpressionStatement]) as ts.ExpressionStatement;
+
+  if (expressionStatement) {
+    return !writeArrayPatterns.some(pattern => pattern(expressionStatement, usage));
+  }
+  return true;
+}
+
+/**
+ * Detectes expression statements like the following:
+ *  myArray = [1, 2];
+ */
+function isVariableWrite({ expression }: ts.ExpressionStatement, usage: Usage) {
+  return (
+    isBinaryExpression(expression) &&
+    is(expression.operatorToken, ts.SyntaxKind.EqualsToken) &&
+    expression.left === usage.node &&
+    isNewCollectionCreation(expression.right)
+  );
+}
+
+/**
+ * Detectes expression statements like the following:
+ * myArray.push(1);
+ */
+function isWritingMethodCall(statement: ts.ExpressionStatement, usage: Usage): boolean {
+  if (isCallExpression(statement.expression)) {
+    const callExpression = statement.expression;
+    if (isPropertyAccessExpression(callExpression.expression)) {
+      const propertyAccess = callExpression.expression;
+      return propertyAccess.expression === usage.node && writingMethods.has(propertyAccess.name.text);
+    }
+  }
+
+  return false;
 }
