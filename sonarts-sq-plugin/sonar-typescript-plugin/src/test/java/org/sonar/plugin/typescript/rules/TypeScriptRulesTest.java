@@ -81,7 +81,7 @@ public class TypeScriptRulesTest {
     }
   }
 
-  private String keyToClassName(String tsLintKey) {
+  private static String keyToClassName(String tsLintKey) {
     StringBuilder sb = new StringBuilder();
     boolean upper = true;
     for (char c : tsLintKey.toCharArray()) {

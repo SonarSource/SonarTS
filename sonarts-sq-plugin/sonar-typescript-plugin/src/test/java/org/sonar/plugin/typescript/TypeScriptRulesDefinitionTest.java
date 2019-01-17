@@ -49,7 +49,7 @@ public class TypeScriptRulesDefinitionTest {
     assertAllRuleParametersHaveDescription(repository);
   }
 
-  private void assertRuleProperties(Repository repository) {
+  private static void assertRuleProperties(Repository repository) {
     Rule rule = repository.rule("S3923");
     assertThat(rule).isNotNull();
     assertThat(rule.name()).isEqualTo("All branches in a conditional structure should not have exactly the same implementation");
@@ -57,7 +57,7 @@ public class TypeScriptRulesDefinitionTest {
     assertThat(rule.type()).isEqualTo(RuleType.BUG);
   }
 
-  private void assertAllRuleParametersHaveDescription(Repository repository) {
+  private static void assertAllRuleParametersHaveDescription(Repository repository) {
     for (Rule rule : repository.rules()) {
       for (Param param : rule.params()) {
         assertThat(param.description()).as("description for " + param.key()).isNotEmpty();

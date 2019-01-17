@@ -373,11 +373,11 @@ public class ExternalTypescriptSensorTest {
     return new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, CHECK_FACTORY, errorConsumer);
   }
 
-  private DefaultInputFile createTestInputFile(SensorContextTester sensorContext) {
+  private static DefaultInputFile createTestInputFile(SensorContextTester sensorContext) {
     return createInputFile(sensorContext, FILE_CONTENT, "foo/file.ts");
   }
 
-  private DefaultInputFile createTestInputFile(SensorContextTester sensorContext, String relativePath) {
+  private static DefaultInputFile createTestInputFile(SensorContextTester sensorContext, String relativePath) {
     return createInputFile(sensorContext, FILE_CONTENT, relativePath);
   }
 

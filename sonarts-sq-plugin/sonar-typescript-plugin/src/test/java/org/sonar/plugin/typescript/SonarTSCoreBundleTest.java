@@ -73,11 +73,11 @@ public class SonarTSCoreBundleTest {
     assertThat(ruleCommandContent).contains("no-dead-store");
   }
 
-  private MapSettings getSettings() {
+  private static MapSettings getSettings() {
     return new MapSettings(new PropertyDefinitions(PropertyDefinition.builder(TypeScriptPlugin.NODE_EXECUTABLE).defaultValue("node").build()));
   }
 
-  private TypeScriptRules getTypeScriptRules() {
+  private static TypeScriptRules getTypeScriptRules() {
     ActiveRules activeRules = new TestActiveRules("S1854"); // no-dead-store
     return new TypeScriptRules(new CheckFactory(activeRules));
   }

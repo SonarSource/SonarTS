@@ -202,7 +202,7 @@ public class TslintReportSensorTest {
     context.setSettings(settings);
   }
 
-  private SonarRuntime getRuntime(int major, int minor) {
+  private static SonarRuntime getRuntime(int major, int minor) {
     return SonarRuntimeImpl.forSonarQube(Version.create(major, minor), SonarQubeSide.SERVER);
   }
 }

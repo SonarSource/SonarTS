@@ -85,11 +85,11 @@ public class TypeScriptExclusionsFileFilterTest {
     assertThat(filter.accept(javascriptInputFile("node_modules/some_lib.js"))).isTrue();
   }
 
-  private DefaultInputFile inputFile(String file) {
+  private static DefaultInputFile inputFile(String file) {
     return new TestInputFileBuilder("test","test_node_modules/" + file).setLanguage("ts").build();
   }
 
-  private DefaultInputFile javascriptInputFile(String file) {
+  private static DefaultInputFile javascriptInputFile(String file) {
     return new TestInputFileBuilder("test","test_node_modules/" + file).setLanguage("js").build();
   }
 

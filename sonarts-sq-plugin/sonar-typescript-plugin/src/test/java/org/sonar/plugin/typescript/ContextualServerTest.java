@@ -165,11 +165,11 @@ public class ContextualServerTest {
     }
   }
 
-  private ContextualAnalysisRequest getContextualAnalysisRequest() throws IOException {
+  private static ContextualAnalysisRequest getContextualAnalysisRequest() throws IOException {
     return getContextualAnalysisRequest(null);
   }
 
-  private ContextualAnalysisRequest getContextualAnalysisRequest(String tsconfigPath) throws IOException {
+  private static ContextualAnalysisRequest getContextualAnalysisRequest(String tsconfigPath) throws IOException {
     DefaultInputFile inputFile = createInputFile(SensorContextTester.create(BASE_DIR), "function foo() {}", "foo/file.ts");
 
     return new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES, BASE_DIR.getAbsolutePath(), tsconfigPath);
@@ -179,15 +179,15 @@ public class ContextualServerTest {
     return new ContextualServer(defaultConfiguration(), mockTSServer(), temp, CONNECTION_TIMEOUT);
   }
 
-  private TestBundleFactory mockTSServer() {
+  private static TestBundleFactory mockTSServer() {
     return TestBundleFactory.nodeScript("/mockSonarTSServer.js");
   }
 
-  private TestBundleFactory mockFailingTSServer() {
+  private static TestBundleFactory mockFailingTSServer() {
     return TestBundleFactory.nodeScript("/mockFailingSonarTSServer.js");
   }
 
-  private Configuration defaultConfiguration() {
+  private static Configuration defaultConfiguration() {
     MapSettings mapSettings = new MapSettings();
     mapSettings.setProperty("sonar.typescript.internal.typescriptLocation", "not used in tests");
     return mapSettings.asConfig();
