@@ -87,10 +87,7 @@ function isReadUsage(usage: Usage): boolean {
   const expressionStatement = firstAncestor(usage.node, [ts.SyntaxKind.ExpressionStatement]) as ts.ExpressionStatement;
 
   if (expressionStatement) {
-    return !writeArrayPatterns.some(pattern => {
-      console.log(pattern(expressionStatement, usage));
-      return pattern(expressionStatement, usage);
-    });
+    return !writeArrayPatterns.some(pattern => pattern(expressionStatement, usage));
   }
   return true;
 }
