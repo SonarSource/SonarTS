@@ -55,18 +55,16 @@ export class Rule extends tslint.Rules.TypedRule {
     getCollectionSymbols(symbols, program)
       // keep only symbols initialized to empty array literal or not initialized at all
       .filter(isInitializedToEmpty)
-
+      .map(symbolAndDeclaration =>
+        symbols.allUsages(symbolAndDeclaration.symbol).filter(usage => !usage.is(UsageFlag.DECLARATION)),
+      )
       // filter out symbols with at least one usage that may make array non-empty
-      .filter(symbolAndDeclaration => symbols.allUsages(symbolAndDeclaration.symbol).every(usage => isReadUsage(usage)))
-
+      .filter(usages => usages.every(usage => readCollectionPatterns.some(pattern => pattern(usage))))
       // raise issue
-      .forEach(symbolAndDeclaration =>
-        symbols
-          .allUsages(symbolAndDeclaration.symbol)
-          .filter(usage => !usage.is(UsageFlag.DECLARATION))
-          .forEach(usage => {
-            visitor.addIssue(usage.node, Rule.MESSAGE(symbolAndDeclaration.symbol.name));
-          }),
+      .forEach(usages =>
+        usages.forEach(usage => {
+          visitor.addIssue(usage.node, Rule.MESSAGE(usage.symbol.name));
+        }),
       );
     return visitor.getIssues();
   }
@@ -119,18 +117,6 @@ const iterationMethods = [
   "some",
   "values",
 ];
-
-/**
- * Checks if a symbol usage is strictly read usage (thus can not make array non-empty)
- */
-function isReadUsage(usage: Usage) {
-  // we are not interested in a declaration usage since we know this array is either initaliazed to an empty literal
-  // or not initialized at all
-  if (usage.is(UsageFlag.DECLARATION)) {
-    return true;
-  }
-  return readCollectionPatterns.some(pattern => pattern(usage));
-}
 
 function isInitializedToEmpty(symbolAndDeclaration: SymbolAndDeclaration) {
   // prettier-ignore

@@ -2,14 +2,14 @@ const array : number[] = [];
 
 export function testElementAccessRead() {
   console.log(array[2]);
-//            ^^^^^ {{Review this usage of 'array' as it can only be empty here.}}
+  //          ^^^^^ {{Review this usage of 'array' as it can only be empty here.}}
 }
 
 function testLoopRead() {
   for (const _ of array) {
     //            ^^^^^{{Review this usage of 'array' as it can only be empty here.}}
   }
-
+  
   for (const _ in array) {
     //            ^^^^^{{Review this usage of 'array' as it can only be empty here.}}
   }
@@ -18,7 +18,14 @@ function testLoopRead() {
 function testIterationMethodsRead() {
   array.forEach(item => console.log());
 //^^^^^{{Review this usage of 'array' as it can only be empty here.}}
+  array[Symbol.iterator]();
+//^^^^^{{Review this usage of 'array' as it can only be empty here.}}
+}
 
+function testAccessorMethodsRead(otherArray: number[]) {
+  const initialArray: number[] = [];
+  return initialArray.concat(otherArray);
+       //^^^^^^^^^^^^{{Review this usage of 'initialArray' as it can only be empty here.}}
 }
 
 function okForNotEmptyInit() {
@@ -119,58 +126,72 @@ function isMyArrayTypeAlias(value: MyArrayTypeAlias | number): value is MyArrayT
   return !!(value as any).length;
 }
 
-function allowedReadUsages(otherArray: number[]) {
-  let emptyArray: number[] = [];
-  let v = otherArray || emptyArray; // OK used in OR expression
-  const obj = {
+function arrayUsedInORExpression(otherArray: number[]) {
+  const emptyArray: number[] = [];
+  console.log(otherArray || emptyArray); // OK used in OR expression
+}
+
+function arrayUsedInPropertyDeclaration() {
+  const emptyArray: number[] = [];
+  return {
     a: emptyArray // OK, emptyArray is used in a property declaration
-  }
+  };
+}
+
+function arrayUsedInReturnStatement() {
+  const emptyArray: number[] = [];
   return emptyArray; // OK, emptyArray is used in a return statement
 }
 
-let initialArray = [];
 
-  initialArray.concat(otherArray);
-//^^^^^^^^^^^^{{Review this usage of initialArray as it can only be empty here.}}
+function writeWithTernaryOperator(flag: boolean) {
+  const potentiallyNonEmptyArray1 : number [] = [];
+  const potentiallyNonEmptyArray2: number[] = [];
+  (flag ? potentiallyNonEmptyArray1 : potentiallyNonEmptyArray2).push(1);
+  
+  foo(potentiallyNonEmptyArray1[0]); // OK
+  foo(potentiallyNonEmptyArray2[0]); // OK
+}
 
+function writeOnAliasVariable() {
+  const reassignedArray: number[] = [];
+  const aliasArray = reassignedArray;
+  aliasArray.push(1);
+  
+  foo(aliasArray[0]); // OK
+  foo(reassignedArray[0]); // OK
+}
 
-const potentiallyNonEmptyArray1 : number [] = [];
-const potentiallyNonEmptyArray2: number[] = [];
-(true ? potentiallyNonEmptyArray1 : potentiallyNonEmptyArray2).push(1);
+function arrayInitializedByFunctionCall(init: () => number[]) {
+  const externalInitializedArray: number[] = init();
+  foo(externalInitializedArray[0]); // OK
+}
 
-potentiallyNonEmptyArray1[0]; // OK
-potentiallyNonEmptyArray2[0]; // OK
+function arrayNotInitialized() {
+  let notInitializedArray!: number[];
+  foo(notInitializedArray[0]);
+    //^^^^^^^^^^^^^^^^^^^{{Review this usage of 'notInitializedArray' as it can only be empty here.}}
+}
 
-const reassignedArray: number[] = [];
-const aliasArray = reassignedArray;
-aliasArray.push(1);
-
-aliasArray[0]; // OK
-reassignedArray[0]; // OK
-
-const iterableArray = [];
-  iterableArray[Symbol.iterator];
-//^^^^^^^^^^^^^{{Review this usage of iterableArray as it can only be empty here.}}
-
-const externalInitializedArray: number[] = init();
-externalInitializedArray[0]; // OK
-
-const notInitializedArray: number[];
-  notInitializedArray[0];
-//^^^^^^^^^^^^^^^^^^^{{Review this usage of notInitializedArray as it can only be empty here.}}
-
-const compoundAssignmentEmptyArray: number[] = [];
+function compoundAssignmentEmptyArray() {
+  const compoundAssignmentEmptyArray: number[] = [];
   compoundAssignmentEmptyArray[1] += 42;
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^{{Review this usage of compoundAssignmentEmptyArray as it can only be empty here.}}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^{{Review this usage of 'compoundAssignmentEmptyArray' as it can only be empty here.}}
+}
 
+function assignmentEmptyArray() {
+  const assignmentEmptyArray: number[] = [];
+  assignmentEmptyArray[1] = 42; // ok
+}
 
-const assignmentEmptyArray: number[] = [];
-assignmentEmptyArray[1] = 42; // ok
+function destructuringAssignmentEmptyArray() {
+  const destructuringAssignmentEmptyArray: number[] = [];
+  [ , destructuringAssignmentEmptyArray[1]] = [42, 42]; // ok
+  foo(destructuringAssignmentEmptyArray[1]);
+}
 
-const destructuringAssignmentEmptyArray: number[] = [];
-[ , destructuringAssignmentEmptyArray[1]] = [42, 42]; // ok
-foo(destructuringAssignmentEmptyArray[1]);
-
-const elementAccessWithoutAssignment: number[] = [];
-foo(elementAccessWithoutAssignment[1])
-//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^{{Review this usage of elementAccessWithoutAssignment as it can only be empty here.}}
+function elementAccessWithoutAssignment() {
+  const elementAccessWithoutAssignment: number[] = [];
+  foo(elementAccessWithoutAssignment[1]);
+  //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^{{Review this usage of 'elementAccessWithoutAssignment' as it can only be empty here.}}
+}

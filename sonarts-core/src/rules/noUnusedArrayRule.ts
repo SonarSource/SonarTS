@@ -56,7 +56,7 @@ export class Rule extends tslint.Rules.TypedRule {
   }
 }
 
-const wrireArrayPatterns: ((statement: ts.ExpressionStatement, usage: Usage) => boolean)[] = [
+const writeArrayPatterns: ((statement: ts.ExpressionStatement, usage: Usage) => boolean)[] = [
   isElementWrite,
   isVariableWrite,
   isWritingMethodCall,
@@ -87,7 +87,7 @@ function isReadUsage(usage: Usage): boolean {
   const expressionStatement = firstAncestor(usage.node, [ts.SyntaxKind.ExpressionStatement]) as ts.ExpressionStatement;
 
   if (expressionStatement) {
-    return !wrireArrayPatterns.some(pattern => {
+    return !writeArrayPatterns.some(pattern => {
       console.log(pattern(expressionStatement, usage));
       return pattern(expressionStatement, usage);
     });
