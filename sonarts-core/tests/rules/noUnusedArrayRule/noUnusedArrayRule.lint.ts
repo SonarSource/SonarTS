@@ -92,64 +92,10 @@ function ok4() {
     x.forEach(element => console.log(element));
 }
 
-function ok5() {
-    let x = [1, 2];
-    for (let i in x) {
-        console.log(i);
+export class Foo {
+    myArray: string [] = [];
+    fn() {
+      this.myArray.push(""); // OK for properties
     }
-}
-
-function ok6() {
-    let x = [1, 2];
-    x = x.concat(3, 4);
-}
-
-function ok7() {
-    let x = [1, 2];
-    x.concat(3, 4);
-}
-
-function ok8() {
-    let x = [1, 2];
-    function foo() {return x;}
-    let y = foo();
-    y.push(1);
-    return x;
-}
-
-function ok9() {
-    let x = [1, 2];
-    x = EXPORTED_ARRAY;
-    x.push(1);
-}
-
-function ok10() {
-    let {x} = {x: EXPORTED_ARRAY};
-    x.push(1);
-}
-
-function ok11() {
-    const foo = [ [1, 2],  [3, 4]];
-    for (const bar of foo) {
-        bar.push(42);
-    }
-
-    return foo;
-}
-
-function ok12() {
-    const foo = [ [1, 2],  [3, 4]];
-    let bar: number[];
-    for (bar of foo) {
-        bar.push(42);
-    }
-    return foo;
-}
-
-function ok13(buffer) {
-    let array = new Uint16Array(buffer);
-    array[1] = 43;
-}
-
-export const EXPORTED_ARRAY: any[] = [];
-import { IMPORTED_ARRAY } from "./dep";
+  }
+  
