@@ -55,11 +55,10 @@ class Visitor extends SonarRuleVisitor {
 }
 
 function onlyRethrows(statement: ts.Statement, variableDeclaration?: ts.VariableDeclaration) {
-  if (!isThrowStatement(statement)) {
-    return false;
-  }
-  if (!variableDeclaration || !statement.expression) {
-    return false;
-  }
-  return variableDeclaration && areEquivalent(variableDeclaration.name, statement.expression);
+  return (
+    variableDeclaration &&
+    isThrowStatement(statement) &&
+    statement.expression &&
+    areEquivalent(variableDeclaration.name, statement.expression)
+  );
 }
