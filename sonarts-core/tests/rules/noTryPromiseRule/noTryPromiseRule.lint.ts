@@ -107,3 +107,33 @@ function testFunctionReturningPromiseAndThrowing(cond: boolean) {
     console.log(e);
   }
 }
+
+function uselessTry() {
+  try {
+//^^^ {{Consider removing this 'try' statement as promise rejection is already captured by '.catch()' method.}}
+    returningPromise().catch();
+//  ^^^^^^^^^^^^^^^^^^ < {{Caught promise}}
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function uselessTryThenCatch() {
+  try {
+//^^^ {{Consider removing this 'try' statement as promise rejection is already captured by '.catch()' method.}}
+    returningPromise().then().catch();
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^ < {{Caught promise}}
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function onlyOnePromiseWhenChainedPromise() {
+  try {
+//^^^ {{Consider using 'await' for the promise inside this 'try' or replace it with 'Promise.prototype.catch(...)' usage.}}
+    returningPromise().then(() => {});
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ < {{Promise}}
+  } catch (e) {
+    console.log(e);
+  }
+}
