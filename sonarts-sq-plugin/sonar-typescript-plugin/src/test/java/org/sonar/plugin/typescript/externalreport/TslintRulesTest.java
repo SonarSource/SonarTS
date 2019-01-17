@@ -41,6 +41,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -245,10 +246,14 @@ public class TslintRulesTest {
 
     JavaAnnotatedRules(Path sourcePath) throws IOException {
       ruleTsLintKeys = new HashSet<>();
-      for (Path path : Files.walk(sourcePath)
-        .filter(Files::isRegularFile)
-        .filter(path -> path.toString().endsWith(".java"))
-        .collect(Collectors.toList())) {
+      List<Path> pathWithJavaExtension;
+      try (Stream<Path> paths = Files.walk(sourcePath)) {
+        pathWithJavaExtension = paths
+          .filter(Files::isRegularFile)
+          .filter(path -> path.toString().endsWith(".java"))
+          .collect(Collectors.toList());
+      }
+      for (Path path : pathWithJavaExtension) {
         String content = new String(Files.readAllBytes(path), UTF_8);
         Matcher matcher = TS_LINT_KEY.matcher(content);
         if (matcher.find() && RULE_ANNOTATION.matcher(content).find()) {
@@ -256,7 +261,6 @@ public class TslintRulesTest {
         }
       }
     }
-
   }
 
   static class ReadMeRules {
@@ -336,10 +340,14 @@ public class TslintRulesTest {
 
     SonarTsRules(Path sourcePath) throws IOException {
       ruleByTsLintKey = new LinkedHashMap<>();
-      for (Path path : Files.walk(sourcePath.toRealPath())
-        .filter(Files::isRegularFile)
-        .filter(path -> path.toString().endsWith(".ts"))
-        .collect(Collectors.toList())) {
+      List<Path> pathsWithTSExtension;
+      try (Stream<Path> paths = Files.walk(sourcePath.toRealPath())) {
+        pathsWithTSExtension = paths
+          .filter(Files::isRegularFile)
+          .filter(path -> path.toString().endsWith(".ts"))
+          .collect(Collectors.toList());
+      }
+      for (Path path : pathsWithTSExtension) {
         String content = new String(Files.readAllBytes(path), UTF_8);
         Rule rule = new Rule()
           .withKey(extractValue(RULE_NAME, content))

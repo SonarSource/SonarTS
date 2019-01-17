@@ -114,10 +114,9 @@ public class TslintReportSensorTest {
       "]";
 
     File reportFile = tmpDir.newFile();
-    FileWriter writer = new FileWriter(reportFile);
-    writer.write(String.format(report, inputFile.absolutePath()));
-    writer.close();
-
+    try (FileWriter writer = new FileWriter(reportFile)) {
+      writer.write(String.format(report, inputFile.absolutePath()));
+    }
     setTslintReport(reportFile.getAbsolutePath());
     tslintReportSensor.execute(context);
 
