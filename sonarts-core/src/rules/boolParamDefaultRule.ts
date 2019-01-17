@@ -21,7 +21,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
 import { SonarRuleVisitor } from "../utils/sonarAnalysis";
-import { is, isUnionTypeNode } from "../utils/nodes";
+import { is, isUnionTypeNode, isInterfaceDeclaration } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.AbstractRule {
   public static metadata: SonarRuleMetaData = {
@@ -45,7 +45,11 @@ export class Rule extends tslint.Rules.AbstractRule {
 
 class Visitor extends SonarRuleVisitor {
   visitParameterDeclaration(paramDeclaration: ts.ParameterDeclaration) {
-    if (!paramDeclaration.initializer && isOptionalBoolean(paramDeclaration)) {
+    if (
+      !paramDeclaration.initializer &&
+      isOptionalBoolean(paramDeclaration) &&
+      !isInterfaceMethodParameter(paramDeclaration)
+    ) {
       this.addIssue(paramDeclaration, Rule.message(paramDeclaration.name.getText()));
     }
     super.visitParameterDeclaration(paramDeclaration);
@@ -53,7 +57,7 @@ class Visitor extends SonarRuleVisitor {
 }
 
 function isOptionalBoolean(paramDeclaration: ts.ParameterDeclaration) {
-  return usesQuestionOptionalSyntax(paramDeclaration) || usesUnionUndefinedOptinalSyntax(paramDeclaration.type);
+  return usesQuestionOptionalSyntax(paramDeclaration) || usesUnionUndefinedOptionalSyntax(paramDeclaration.type);
 }
 
 /**
@@ -66,7 +70,7 @@ function usesQuestionOptionalSyntax({ questionToken, type }: ts.ParameterDeclara
 /**
  * Matches "boolean | undefined"
  */
-function usesUnionUndefinedOptinalSyntax(type?: ts.TypeNode) {
+function usesUnionUndefinedOptionalSyntax(type?: ts.TypeNode) {
   if (!type || !isUnionTypeNode(type)) {
     return false;
   }
@@ -76,4 +80,8 @@ function usesUnionUndefinedOptinalSyntax(type?: ts.TypeNode) {
     types.some(t => is(t, ts.SyntaxKind.BooleanKeyword)) &&
     types.some(t => is(t, ts.SyntaxKind.UndefinedKeyword))
   );
+}
+
+function isInterfaceMethodParameter(paramDeclaration: ts.ParameterDeclaration) {
+  return isInterfaceDeclaration(paramDeclaration.parent.parent);
 }

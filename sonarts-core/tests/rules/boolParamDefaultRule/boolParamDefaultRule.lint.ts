@@ -12,3 +12,12 @@ function f5(flag: boolean | string) { } // OK
 function f6(flag: boolean & string) { } // OK
 
 function f7(flag?: string) { } // OK
+
+interface MyInterface {
+  interfaceMethod(p?: boolean): void // OK
+}
+
+class MyClass {
+  classMethod(p?: boolean): void {}
+//            ^^^^^^^^^^^ {{Provide a default value for 'p' so that the logic of the function is more evident when this parameter is missing.}} 
+}
