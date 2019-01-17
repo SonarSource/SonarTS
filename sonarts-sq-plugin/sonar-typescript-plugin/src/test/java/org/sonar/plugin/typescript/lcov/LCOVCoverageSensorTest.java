@@ -63,7 +63,7 @@ public class LCOVCoverageSensorTest {
   }
 
   @Test
-  public void save_coverage() throws Exception {
+  public void save_coverage() {
     lcovCoverageSensor.execute(context);
 
     assertThat(context.lineHits("moduleKey:file1.ts", 1)).isEqualTo(2);

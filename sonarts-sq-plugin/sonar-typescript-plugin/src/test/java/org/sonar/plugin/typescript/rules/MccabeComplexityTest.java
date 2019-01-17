@@ -27,14 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MccabeComplexityTest {
 
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     MccabeComplexity cyclomaticComplexity = new MccabeComplexity();
     String configuration = new Gson().toJson(cyclomaticComplexity.configuration());
     assertThat(configuration).isEqualTo("[10]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     MccabeComplexity cyclomaticComplexity = new MccabeComplexity();
     cyclomaticComplexity.threshold = 5;
     String configuration = new Gson().toJson(cyclomaticComplexity.configuration());

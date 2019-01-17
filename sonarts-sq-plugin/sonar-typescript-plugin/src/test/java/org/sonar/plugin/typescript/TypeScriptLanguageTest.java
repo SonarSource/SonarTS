@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TypeScriptLanguageTest {
 
   @Test
-  public void should_have_correct_file_extensions() throws Exception {
+  public void should_have_correct_file_extensions() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.FILE_SUFFIXES_KEY, TypeScriptPlugin.FILE_SUFFIXES_DEFVALUE);
     TypeScriptLanguage typeScriptLanguage = new TypeScriptLanguage(settings.asConfig());

@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class NoThisAssignmentTest {
 
   @Test
-  public void test_configuration() throws Exception {
+  public void test_configuration() {
     NoThisAssignment noThisAssignment = new NoThisAssignment();
     String configuration = new Gson().toJson(noThisAssignment.configuration());
     assertThat(configuration).isEqualTo("[{\"allow-destructuring\":true}]");

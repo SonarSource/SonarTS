@@ -27,14 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class QuotemarkTest {
 
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     Quotemark quotemark = new Quotemark();
     String configuration = new Gson().toJson(quotemark.configuration());
     assertThat(configuration).isEqualTo("[\"single\",\"jsx-double\",\"avoid-escape\"]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     Quotemark quotemark = new Quotemark();
     quotemark.singleQuotes = false;
     String configuration = new Gson().toJson(quotemark.configuration());

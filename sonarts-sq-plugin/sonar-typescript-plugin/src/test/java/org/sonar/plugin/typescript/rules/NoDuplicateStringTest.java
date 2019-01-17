@@ -27,14 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class NoDuplicateStringTest {
 
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     NoDuplicateString noDuplicateString = new NoDuplicateString();
     String configuration = new Gson().toJson(noDuplicateString.configuration());
     assertThat(configuration).isEqualTo("[3]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     NoDuplicateString noDuplicateString = new NoDuplicateString();
     noDuplicateString.threshold = 10;
     String configuration = new Gson().toJson(noDuplicateString.configuration());

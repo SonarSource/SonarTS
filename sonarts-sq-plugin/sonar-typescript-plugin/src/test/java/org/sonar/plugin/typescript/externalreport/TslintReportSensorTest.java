@@ -67,13 +67,13 @@ public class TslintReportSensorTest {
   private DefaultInputFile inputFile = createInputFile(context, CONTENT, "myFile.ts");
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     context.setRuntime(getRuntime(7, 2));
     context.fileSystem().add(inputFile);
   }
 
   @Test
-  public void should_add_issues_from_report() throws Exception {
+  public void should_add_issues_from_report() {
     setTslintReport("tslint-report.json");
     tslintReportSensor.execute(context);
 
@@ -124,7 +124,7 @@ public class TslintReportSensorTest {
   }
 
   @Test
-  public void should_skip_duplicates() throws Exception {
+  public void should_skip_duplicates() {
     // when in SQ TS profile there is an activated rule matching to an external issue,
     // that external issue is ignored
     setTslintReport("tslint-report.json");
@@ -139,7 +139,7 @@ public class TslintReportSensorTest {
   }
 
   @Test
-  public void should_ignore_report_on_older_sonarqube() throws Exception {
+  public void should_ignore_report_on_older_sonarqube() {
     context.setRuntime(getRuntime(7, 1));
     setTslintReport("tslint-report.json");
     tslintReportSensor.execute(context);
@@ -149,7 +149,7 @@ public class TslintReportSensorTest {
   }
 
   @Test
-  public void should_do_nothing_when_no_report() throws Exception {
+  public void should_do_nothing_when_no_report() {
     setTslintReport("");
     tslintReportSensor.execute(context);
 
@@ -157,7 +157,7 @@ public class TslintReportSensorTest {
   }
 
   @Test
-  public void should_log_when_not_existing_report_file() throws Exception {
+  public void should_log_when_not_existing_report_file() {
     setTslintReport("not-exist.json");
     tslintReportSensor.execute(context);
 
@@ -166,7 +166,7 @@ public class TslintReportSensorTest {
   }
 
   @Test
-  public void should_log_when_not_found_input_file() throws Exception {
+  public void should_log_when_not_found_input_file() {
     setTslintReport("invalid-ts-file.json");
     tslintReportSensor.execute(context);
 
@@ -175,21 +175,21 @@ public class TslintReportSensorTest {
   }
 
   @Test
-  public void should_accept_absolute_path_to_report() throws Exception {
+  public void should_accept_absolute_path_to_report() {
     setTslintReport(new File(BASE_DIR, "tslint-report.json").getAbsolutePath());
     tslintReportSensor.execute(context);
     assertThat(context.allExternalIssues()).hasSize(2);
   }
 
   @Test
-  public void should_accept_several_reports() throws Exception {
+  public void should_accept_several_reports() {
     setTslintReport("tslint-report.json, invalid-ts-file.json");
     tslintReportSensor.execute(context);
     assertThat(context.allExternalIssues()).hasSize(3);
   }
 
   @Test
-  public void test_descriptor() throws Exception {
+  public void test_descriptor() {
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     tslintReportSensor.describe(sensorDescriptor);
     assertThat(sensorDescriptor.name()).isEqualTo("Import of TSLint issues");

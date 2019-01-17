@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class NoUnusedExpressionTest {
 
   @Test
-  public void configuration() throws Exception {
+  public void configuration() {
     NoUnusedExpression noUnusedExpression = new NoUnusedExpression();
     String configuration = new Gson().toJson(noUnusedExpression.configuration());
     assertThat(configuration).isEqualTo("[\"allow-fast-null-checks\",\"allow-new\",\"allow-tagged-template\"]");

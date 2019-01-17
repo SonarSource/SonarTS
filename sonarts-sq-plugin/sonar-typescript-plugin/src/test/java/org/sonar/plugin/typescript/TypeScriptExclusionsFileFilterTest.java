@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TypeScriptExclusionsFileFilterTest {
 
   @Test
-  public void should_exclude_node_modules() throws Exception {
+  public void should_exclude_node_modules() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE);
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
@@ -41,7 +41,7 @@ public class TypeScriptExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_include_node_modules_when_property_is_overridden() throws Exception {
+  public void should_include_node_modules_when_property_is_overridden() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, "");
 
@@ -53,7 +53,7 @@ public class TypeScriptExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_exclude_using_custom_path_regex() throws Exception {
+  public void should_exclude_using_custom_path_regex() {
     MapSettings settings = new MapSettings();
     settings.setProperty(
       TypeScriptPlugin.TS_EXCLUSIONS_KEY, TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE + "," + "**/libs/**");
@@ -66,7 +66,7 @@ public class TypeScriptExclusionsFileFilterTest {
   }
 
   @Test
-  public void should_ignore_empty_path_regex() throws Exception {
+  public void should_ignore_empty_path_regex() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, "," + TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE + ",");
 
@@ -77,7 +77,7 @@ public class TypeScriptExclusionsFileFilterTest {
   }
   
   @Test
-  public void should_accept_not_typescript_files() throws Exception {
+  public void should_accept_not_typescript_files() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, "," + TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE + ",");
 

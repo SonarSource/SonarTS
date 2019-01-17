@@ -26,14 +26,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class NoBigFunctionTest {
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     NoBigFunction rule = new NoBigFunction();
     String configuration = new Gson().toJson(rule.configuration());
     assertThat(configuration).isEqualTo("[200]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     NoBigFunction rule = new NoBigFunction();
     rule.max = 10;
     String configuration = new Gson().toJson(rule.configuration());

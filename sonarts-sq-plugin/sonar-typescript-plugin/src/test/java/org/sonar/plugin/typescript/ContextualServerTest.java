@@ -61,12 +61,12 @@ public class ContextualServerTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     externalProcessStreamConsumer.stop();
   }
 
   @Test
-  public void should_start_and_stop() throws Exception {
+  public void should_start_and_stop() {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     assertThat(contextualServer.isAlive()).isTrue();
@@ -101,7 +101,7 @@ public class ContextualServerTest {
   }
 
   @Test
-  public void should_not_start_or_stop_twice() throws Exception {
+  public void should_not_start_or_stop_twice() {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     contextualServer.start();
@@ -145,7 +145,7 @@ public class ContextualServerTest {
   }
 
   @Test
-  public void consume_stdout_stderr() throws Exception {
+  public void consume_stdout_stderr() {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     await().until(() ->

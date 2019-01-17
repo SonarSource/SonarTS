@@ -56,7 +56,7 @@ public class SonarTSCoreBundleTest {
   }
 
   @Test
-  public void should_create_command() throws Exception {
+  public void should_create_command() {
     ExecutableBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings().asConfig());
     File projectBaseDir = new File("/myProject");
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
@@ -83,7 +83,7 @@ public class SonarTSCoreBundleTest {
   }
 
   @Test
-  public void should_fail_when_bad_zip() throws Exception {
+  public void should_fail_when_bad_zip() {
     expectedException.expect(IllegalStateException.class);
     expectedException.expectMessage("Failed to deploy SonarTS bundle (with classpath '/badZip.zip')");
     new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings().asConfig());
@@ -101,7 +101,7 @@ public class SonarTSCoreBundleTest {
   }
 
   @Test
-  public void should_use_default_node_if_custom_doesnt_exists() throws Exception {
+  public void should_use_default_node_if_custom_doesnt_exists() {
     MapSettings settings = getSettings();
     settings.setProperty("sonar.typescript.node", "/path/that/doesnt/exists/node");
     SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings.asConfig());

@@ -27,14 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MaxLineLengthTest {
 
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     MaxLineLength maxLineLength = new MaxLineLength();
     String configuration = new Gson().toJson(maxLineLength.configuration());
     assertThat(configuration).isEqualTo("[180]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     MaxLineLength maxLineLength = new MaxLineLength();
     maxLineLength.maximumLineLength = 120;
     String configuration = new Gson().toJson(maxLineLength.configuration());

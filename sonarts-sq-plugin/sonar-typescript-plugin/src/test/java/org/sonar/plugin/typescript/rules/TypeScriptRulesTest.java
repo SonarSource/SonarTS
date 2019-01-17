@@ -60,13 +60,13 @@ public class TypeScriptRulesTest {
   }
 
   @Test
-  public void no_duplicated_classes() throws Exception {
+  public void no_duplicated_classes() {
     List<Class<? extends TypeScriptRule>> ruleClasses = TypeScriptRules.getRuleClasses();
     assertThat((long) ruleClasses.size()).isEqualTo(ruleClasses.stream().distinct().count());
   }
 
   @Test
-  public void rule_instances_should_be_created_for_configurable_rules() throws Exception {
+  public void rule_instances_should_be_created_for_configurable_rules() {
     TypeScriptRules rules = new TypeScriptRules(mockCheckFactory());
     TypeScriptRule rule = Iterables.getOnlyElement(Iterables.filter(rules, TypeScriptRule::isEnabled));
     assertThat(rule.tsLintKey()).isEqualTo("test-rule");
@@ -74,7 +74,7 @@ public class TypeScriptRulesTest {
   }
 
   @Test
-  public void tslint_key_should_match_class_name() throws Exception {
+  public void tslint_key_should_match_class_name() {
     TypeScriptRules rules = new TypeScriptRules(mockCheckFactory());
     for (TypeScriptRule rule : rules) {
       assertThat(keyToClassName(rule.tsLintKey())).isEqualTo(rule.getClass().getSimpleName());
@@ -96,21 +96,21 @@ public class TypeScriptRulesTest {
   }
 
   @Test
-  public void no_active_rules_no_rule_enabled() throws Exception {
+  public void no_active_rules_no_rule_enabled() {
     TypeScriptRules rules = new TypeScriptRules(new CheckFactory(new TestActiveRules()));
     assertThat(rules).hasSize(TypeScriptRules.getRuleClasses().size());
     assertThat(rules).allMatch(rule -> !rule.isEnabled());
   }
 
   @Test
-  public void key_mapping_should_exist_when_enabled() throws Exception {
+  public void key_mapping_should_exist_when_enabled() {
     String noUnconditionalJumpKey = "S1751";
     TypeScriptRules rules = new TypeScriptRules(new CheckFactory(new TestActiveRules(noUnconditionalJumpKey)));
     assertThat(rules.ruleKeyFromTsLintKey(new NoUnconditionalJump().tsLintKey()).rule()).isEqualTo(noUnconditionalJumpKey);
   }
 
   @Test
-  public void key_mapping_should_not_exist_when_disabled() throws Exception {
+  public void key_mapping_should_not_exist_when_disabled() {
     TypeScriptRules rules = new TypeScriptRules(new CheckFactory(new TestActiveRules()));
     for (TypeScriptRule rule : rules) {
       assertThatThrownBy(() -> rules.ruleKeyFromTsLintKey(rule.tsLintKey()))

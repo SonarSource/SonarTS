@@ -27,14 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MaxFileLineCountTest {
 
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     MaxFileLineCount maxFileLineCount = new MaxFileLineCount();
     String configuration = new Gson().toJson(maxFileLineCount.configuration());
     assertThat(configuration).isEqualTo("[1000]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     MaxFileLineCount maxFileLineCount = new MaxFileLineCount();
     maxFileLineCount.maximum = 50;
     String configuration = new Gson().toJson(maxFileLineCount.configuration());

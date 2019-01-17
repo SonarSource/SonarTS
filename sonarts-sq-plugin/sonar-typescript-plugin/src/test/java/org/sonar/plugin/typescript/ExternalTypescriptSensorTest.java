@@ -75,7 +75,7 @@ public class ExternalTypescriptSensorTest {
   public final LogTester logTester = new LogTester();
 
   @Test
-  public void should_have_description() throws Exception {
+  public void should_have_description() {
     ExternalTypescriptSensor sensor = createSensor();
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     sensor.describe(sensorDescriptor);
@@ -85,7 +85,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_run_processes_and_save_data() throws Exception {
+  public void should_run_processes_and_save_data() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -131,7 +131,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_create_file_level_issues() throws Exception {
+  public void should_create_file_level_issues() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -144,7 +144,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_use_defaults_if_missing_data() throws Exception {
+  public void should_use_defaults_if_missing_data() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -157,7 +157,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_when_empty_sonarts_out() throws Exception {
+  public void should_log_when_empty_sonarts_out() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -173,7 +173,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_find_tsconfig_in_directory_above() throws Exception {
+  public void should_find_tsconfig_in_directory_above() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "foo/bar/file.ts");
 
@@ -184,7 +184,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_find_custom_tsconfig() throws Exception {
+  public void should_find_custom_tsconfig() {
     SensorContextTester sensorContext = createSensorContext();
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TSCONFIG_PATH, "customTsconfig/config/tsconfig.json");
@@ -198,7 +198,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_when_tsconfig_not_exist() throws Exception {
+  public void should_log_when_tsconfig_not_exist() {
     SensorContextTester sensorContext = createSensorContext();
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TSCONFIG_PATH, "customTsconfig/another/tsconfig.json");
@@ -213,7 +213,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_fail_when_failed_external_process() throws Exception {
+  public void should_fail_when_failed_external_process() {
     TestBundleFactory testBundle = new TestBundleFactory().command("non_existent_command", "arg1");
 
     thrown.expect(IllegalStateException.class);
@@ -225,7 +225,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void should_log_and_fail_with_old_node() throws Exception {
+  public void should_log_and_fail_with_old_node() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -238,7 +238,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void should_log_and_fail_with_invalid_node_version() throws Exception {
+  public void should_log_and_fail_with_invalid_node_version() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -251,7 +251,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_when_tsconfig_for_file_not_found() throws Exception {
+  public void should_log_when_tsconfig_for_file_not_found() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "missingTSConfig/main.ts");
 
@@ -264,7 +264,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_do_nothing_when_response_with_not_existing_file() throws Exception {
+  public void should_do_nothing_when_response_with_not_existing_file() {
     new File(BASE_DIR, "not_exists.ts").getAbsolutePath();
     TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", "some/path/file.ts");
     SensorContextTester sensorContext = createSensorContext();
@@ -274,7 +274,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_debug_if_no_local_typescript_found() throws Exception {
+  public void should_log_debug_if_no_local_typescript_found() {
     SensorContextTester sensorContext = SensorContextTester.create(new File(BASE_DIR, "dirWithoutTypeScript"));
     sensorContext.fileSystem().setWorkDir(tmpDir.getRoot().toPath());
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
@@ -288,7 +288,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_error_if_no_typescript_found() throws Exception {
+  public void should_log_error_if_no_typescript_found() {
     SensorContextTester sensorContext = SensorContextTester.create(new File(BASE_DIR, "dirWithoutTypeScript"));
     sensorContext.fileSystem().setWorkDir(tmpDir.getRoot().toPath());
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
@@ -303,7 +303,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_relog_error() throws Exception {
+  public void should_relog_error() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
@@ -314,7 +314,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test(timeout = 2000)
-  public void should_not_deadlock_with_large_stdErr() throws Exception {
+  public void should_not_deadlock_with_large_stdErr() {
     TestBundleFactory testBundle = TestBundleFactory.nodeScript("/rulesDeadlock.js");
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
@@ -324,7 +324,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_syntax_errors() throws Exception {
+  public void should_log_syntax_errors() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
     TestBundleFactory testBundleFactory = TestBundleFactory.nodeScript("/mockDiagnostics.js", testInputFile.absolutePath());
@@ -334,7 +334,7 @@ public class ExternalTypescriptSensorTest {
   }
 
   @Test
-  public void should_log_incrementally_during_analysis() throws Exception {
+  public void should_log_incrementally_during_analysis() {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
     TestBundleFactory testBundleFactory = TestBundleFactory.nodeScript("/mockIncrementalAnalysisLog.js", testInputFile.absolutePath());

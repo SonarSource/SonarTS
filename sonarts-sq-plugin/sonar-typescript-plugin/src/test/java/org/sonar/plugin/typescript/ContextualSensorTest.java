@@ -117,7 +117,7 @@ public class ContextualSensorTest {
   }
 
   @Test
-  public void should_have_description() throws Exception {
+  public void should_have_description() {
     ContextualSensor sensor = new ContextualSensor(CHECK_FACTORY,  mock(ContextualServer.class));
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     sensor.describe(sensorDescriptor);

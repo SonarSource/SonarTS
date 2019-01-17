@@ -21,7 +21,6 @@ package org.sonar.plugin.typescript;
 
 import com.google.common.base.Charsets;
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -75,7 +74,7 @@ public class SensorContextUtilsTest {
     assertThat(logs).isEmpty();
   }
 
-  private InputFile createInputFile(String fileName) throws IOException {
+  private InputFile createInputFile(String fileName) {
     DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", fileName)
       .setModuleBaseDir(moduleBaseDir.toPath())
       .setLanguage("ts")
