@@ -135,3 +135,12 @@ function onlyOnePromiseWhenChainedPromise() {
     console.log(e);
   }
 }
+
+async function okWithAwaitAndPromise() {
+  try {
+    await returningPromise(); // this can throw
+    returningPromise();
+  } catch (e) {
+    console.log(e);
+  }
+}
