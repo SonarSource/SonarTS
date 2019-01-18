@@ -23,14 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import areEquivalent from "../utils/areEquivalent";
 import { isArray, ARRAY_MUTATING_CALLS } from "../utils/semantics";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
-import {
-  is,
-  isCallExpression,
-  isPropertyAccessExpression,
-  isIdentifier,
-  isArrayLiteralExpression,
-  isSpreadElement,
-} from "../utils/nodes";
+import { is, isCallExpression, isPropertyAccessExpression, isIdentifier } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -68,7 +61,6 @@ class Visitor extends TypedSonarRuleVisitor {
   private isSelfAssignment(expression: ts.BinaryExpression): boolean {
     return (
       areEquivalent(expression.left, expression.right) ||
-      this.isArrayWithSpreadExpressionOnly(expression.right, expression.left) ||
       this.isArrayReverseAssignment(expression.left, expression.right)
     );
   }
@@ -84,17 +76,6 @@ class Visitor extends TypedSonarRuleVisitor {
       declarations &&
       declarations.some(declaration => is(declaration, ts.SyntaxKind.GetAccessor, ts.SyntaxKind.SetAccessor))
     );
-  }
-
-  private isArrayWithSpreadExpressionOnly(expression: ts.Expression, variable: ts.Node): boolean {
-    if (isArrayLiteralExpression(expression)) {
-      const { elements } = expression;
-      if (elements.length === 1 && isSpreadElement(elements[0])) {
-        return areEquivalent((elements[0] as ts.SpreadElement).expression, variable);
-      }
-    }
-
-    return false;
   }
 
   private isArrayReverseAssignment(left: ts.Expression, right: ts.Expression): boolean {

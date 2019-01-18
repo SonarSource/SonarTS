@@ -43,15 +43,12 @@ notArray = notArray.reverse();
 notArray = notArray.sort();
 
 let n:number[] = [];
-   n = [...n];
-// ^^^^^^^^^^   {{Remove or correct this useless self-assignment.}}
+n = [...n]; // OK, reassigning value of an array by performing a copy (via spread operator) has the effect to change its reference.
 
 class Foo2 {
   n: number[];
   public do() {
-      this.n = [...this.n];
-//    ^^^^^^^^^^^^^^^^^^^^    {{Remove or correct this useless self-assignment.}}
-     
+      this.n = [...this.n]; // OK
   }
 }
 
