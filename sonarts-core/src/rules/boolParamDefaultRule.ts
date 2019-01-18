@@ -36,7 +36,8 @@ export class Rule extends tslint.Rules.AbstractRule {
   };
 
   public static message = (parameter: string) =>
-    `Provide a default value for '${parameter}' so that the logic of the function is more evident when this parameter is missing.`;
+    `Provide a default value for '${parameter}' so that the logic of the function is more evident when this parameter is missing. \
+Consider defining another function if providing default value is not possible.`;
 
   public apply(sourceFile: ts.SourceFile): tslint.RuleFailure[] {
     return new Visitor(this.getOptions().ruleName).visit(sourceFile).getIssues();
