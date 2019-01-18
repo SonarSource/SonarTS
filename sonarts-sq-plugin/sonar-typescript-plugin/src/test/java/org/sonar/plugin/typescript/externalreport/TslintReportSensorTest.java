@@ -20,7 +20,9 @@
 package org.sonar.plugin.typescript.externalreport;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import org.junit.Before;
@@ -115,7 +117,7 @@ public class TslintReportSensorTest {
       "]";
 
     File reportFile = tmpDir.newFile();
-    try (FileWriter writer = new FileWriter(reportFile)) {
+    try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(reportFile), StandardCharsets.UTF_8)) {
       writer.write(String.format(report, inputFile.absolutePath()));
     }
     setTslintReport(reportFile.getAbsolutePath());

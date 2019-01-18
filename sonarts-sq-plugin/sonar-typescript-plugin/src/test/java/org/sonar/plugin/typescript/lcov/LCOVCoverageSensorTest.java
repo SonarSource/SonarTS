@@ -92,12 +92,12 @@ public class LCOVCoverageSensorTest {
       settings.setProperty(TypeScriptPlugin.LCOV_REPORT_PATHS, "reports/wrong_line_report.lcov");
       lcovCoverageSensor.execute(context);
 
-      assertThat(context.lineHits("moduleKey:file1.ts", 0)).isNull();
-      assertThat(context.lineHits("moduleKey:file1.ts", 2)).isEqualTo(1);
+      assertThat(context.lineHits(FILE_TO_ANALYZE, 0)).isNull();
+      assertThat(context.lineHits(FILE_TO_ANALYZE, 2)).isEqualTo(1);
   
-      assertThat(context.conditions("moduleKey:file1.ts", 102)).isNull();
-      assertThat(context.conditions("moduleKey:file1.ts", 2)).isEqualTo(3);
-      assertThat(context.coveredConditions("moduleKey:file1.ts", 2)).isEqualTo(1);
+      assertThat(context.conditions(FILE_TO_ANALYZE, 102)).isNull();
+      assertThat(context.conditions(FILE_TO_ANALYZE, 2)).isEqualTo(3);
+      assertThat(context.coveredConditions(FILE_TO_ANALYZE, 2)).isEqualTo(1);
 
       assertThat(logTester.logs()).contains("Problem during processing LCOV report: can't save DA data for line 3 of coverage report file (java.lang.IllegalArgumentException: Line with number 0 doesn't belong to file file1.ts).");
       assertThat(logTester.logs()).contains("Problem during processing LCOV report: can't save BRDA data for line 8 of coverage report file (java.lang.IllegalArgumentException: Line with number 102 doesn't belong to file file1.ts).");
@@ -108,11 +108,11 @@ public class LCOVCoverageSensorTest {
       settings.setProperty(TypeScriptPlugin.LCOV_REPORT_PATHS, "reports/wrong_data_report.lcov");
       lcovCoverageSensor.execute(context);
 
-      assertThat(context.lineHits("moduleKey:file1.ts", 1)).isNull();
-      assertThat(context.lineHits("moduleKey:file1.ts", 2)).isEqualTo(1);
+      assertThat(context.lineHits(FILE_TO_ANALYZE, 1)).isNull();
+      assertThat(context.lineHits(FILE_TO_ANALYZE, 2)).isEqualTo(1);
 
-      assertThat(context.conditions("moduleKey:file1.ts", 2)).isEqualTo(2);
-      assertThat(context.coveredConditions("moduleKey:file1.ts", 2)).isEqualTo(2);
+      assertThat(context.conditions(FILE_TO_ANALYZE, 2)).isEqualTo(2);
+      assertThat(context.coveredConditions(FILE_TO_ANALYZE, 2)).isEqualTo(2);
 
       assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Problem during processing LCOV report: can't save DA data for line 3 of coverage report file (java.lang.NumberFormatException: For input string: \"1.\").");
       // java.lang.StringIndexOutOfBoundsException may have different error message depending on JDK
