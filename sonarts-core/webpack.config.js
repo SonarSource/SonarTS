@@ -21,6 +21,7 @@ module.exports = {
   node: {
     fs: "empty", // temporary fix for webpack support of source maps see : https://github.com/webpack-contrib/css-loader/issues/447
     module: "empty", // temporary fix for webpack support of source maps see : https://github.com/josephsavona/valuable/issues/9
+    net: "empty",
   },
   devServer: {
     contentBase: path.join(__dirname, "src/tools/cfgViewer"),

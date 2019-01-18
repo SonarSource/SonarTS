@@ -72,8 +72,9 @@
     "tslint": "5.11.0",
     "typescript": "3.0.1",
     "vis": "4.21.0",
-    "webpack": "2.7.0",
-    "webpack-dev-server": "3.1.11"
+    "webpack": "4.28.4",
+    "webpack-cli": "3.2.1",
+    "webpack-dev-server": "3.1.14"
   },
   "license-check-config": {
     "src": [
