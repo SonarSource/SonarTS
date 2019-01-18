@@ -99,8 +99,11 @@ public class LCOVCoverageSensorTest {
       assertThat(context.conditions(FILE_TO_ANALYZE, 2)).isEqualTo(3);
       assertThat(context.coveredConditions(FILE_TO_ANALYZE, 2)).isEqualTo(1);
 
-      assertThat(logTester.logs()).contains("Problem during processing LCOV report: can't save DA data for line 3 of coverage report file (java.lang.IllegalArgumentException: Line with number 0 doesn't belong to file file1.ts).");
-      assertThat(logTester.logs()).contains("Problem during processing LCOV report: can't save BRDA data for line 8 of coverage report file (java.lang.IllegalArgumentException: Line with number 102 doesn't belong to file file1.ts).");
+      assertThat(logTester.logs()).contains("Problem during processing LCOV report: can't save DA data for line 3 of coverage report file (java.lang.IllegalArgumentException: " +
+        "Line with number 0 doesn't belong to file file1.ts).");
+      assertThat(logTester.logs())
+        .contains("Problem during processing LCOV report: can't save BRDA data for line 8 of coverage report file (java.lang.IllegalArgumentException: " +
+          "Line with number 102 doesn't belong to file file1.ts).");
   }
 
   @Test
@@ -114,12 +117,15 @@ public class LCOVCoverageSensorTest {
       assertThat(context.conditions(FILE_TO_ANALYZE, 2)).isEqualTo(2);
       assertThat(context.coveredConditions(FILE_TO_ANALYZE, 2)).isEqualTo(2);
 
-      assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Problem during processing LCOV report: can't save DA data for line 3 of coverage report file (java.lang.NumberFormatException: For input string: \"1.\").");
+      assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("Problem during processing LCOV report: " +
+        "can't save DA data for line 3 of coverage report file (java.lang.NumberFormatException: For input string: \"1.\").");
       // java.lang.StringIndexOutOfBoundsException may have different error message depending on JDK
-      Pattern errorMessagePattern = Pattern.compile("Problem during processing LCOV report: can't save DA data for line 4 of coverage report file [(java.lang.StringIndexOutOfBoundsException: String index out of range: -1).|(java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 1).]");
+      Pattern errorMessagePattern = Pattern.compile("Problem during processing LCOV report: can't save DA data for line 4 of coverage report file " +
+        "[(java.lang.StringIndexOutOfBoundsException: String index out of range: -1).|(java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 1).]");
       String stringIndexOutOfBoundLogMessage = logTester.logs(LoggerLevel.DEBUG).get(1);
       assertThat(stringIndexOutOfBoundLogMessage).containsPattern(errorMessagePattern);
-      assertThat(logTester.logs(LoggerLevel.DEBUG).get(logTester.logs(LoggerLevel.DEBUG).size() - 1)).startsWith("Problem during processing LCOV report: can't save BRDA data for line 6 of coverage report file (java.lang.ArrayIndexOutOfBoundsException: ");
+      assertThat(logTester.logs(LoggerLevel.DEBUG).get(logTester.logs(LoggerLevel.DEBUG).size() - 1))
+        .startsWith("Problem during processing LCOV report: can't save BRDA data for line 6 of coverage report file (java.lang.ArrayIndexOutOfBoundsException: ");
       assertThat(logTester.logs(LoggerLevel.WARN)).contains("Found 3 inconsistencies in coverage report. Re-run analyse in debug mode to see details.");
   }
 

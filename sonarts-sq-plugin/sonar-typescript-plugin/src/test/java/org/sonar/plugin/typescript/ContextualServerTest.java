@@ -114,7 +114,8 @@ public class ContextualServerTest {
 
   @Test
   public void should_fail_when_not_started() {
-    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), new TestBundleFactory().command(TestBundleFactory.getNodeExecutable(), "--version"), temp, CONNECTION_TIMEOUT);
+    ContextualServer contextualServer =
+      new ContextualServer(defaultConfiguration(), new TestBundleFactory().command(TestBundleFactory.getNodeExecutable(), "--version"), temp, CONNECTION_TIMEOUT);
     contextualServer.start();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsOnlyOnce("Failed to start SonarTS Server");
     assertThat(contextualServer.isAlive()).isFalse();

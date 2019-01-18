@@ -259,7 +259,8 @@ public class ExternalTypescriptSensorTest {
     TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTSFileLevelIssue.js", testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
-    assertThat(logTester.logs(LoggerLevel.INFO)).contains("No tsconfig.json file found for 1 file(s) (Run in debug mode to see all of them). They will be analyzed with a default configuration.");
+    assertThat(logTester.logs(LoggerLevel.INFO))
+      .contains("No tsconfig.json file found for 1 file(s) (Run in debug mode to see all of them). They will be analyzed with a default configuration.");
 
     assertThat(sensorContext.allIssues()).hasSize(1);
   }
@@ -299,7 +300,8 @@ public class ExternalTypescriptSensorTest {
 
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("Global one referenced in 'NODE_PATH' will be used");
-    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Failed to find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
+    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs())
+      .contains("Failed to find 'typescript' module. Please check, NODE_PATH contains location of global 'typescript' or install locally in your project");
     assertThat(sensorContext.allIssues()).hasSize(0);
   }
 
