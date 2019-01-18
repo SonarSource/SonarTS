@@ -1,6 +1,6 @@
 {
   "title": "A compare function should be provided when using \"Array.prototype.sort()\"",
-  "type": "CODE_SMELL",
+  "type": "BUG",
   "status": "ready",
   "remediation": {
     "func": "Constant\/Issue",
