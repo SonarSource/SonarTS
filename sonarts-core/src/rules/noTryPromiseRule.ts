@@ -23,7 +23,7 @@ import { SonarRuleMetaData } from "../sonarRule";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 import { TreeVisitor } from "../utils/visitor";
 import { findChild } from "../utils/navigation";
-import { is } from "../utils/nodes";
+import { is, isPropertyAccessExpression, isCallExpression } from "../utils/nodes";
 
 export class Rule extends tslint.Rules.TypedRule {
   public static metadata: SonarRuleMetaData = {
@@ -45,36 +45,64 @@ export class Rule extends tslint.Rules.TypedRule {
 class Visitor extends TypedSonarRuleVisitor {
   visitTryStatement(node: ts.TryStatement) {
     if (node.catchClause) {
+      // without '.catch()'
       const openPromises: ts.Expression[] = [];
+      // with '.catch()'
+      const capturedPromises: ts.Expression[] = [];
       let hasPotentiallyThrowingCalls = false;
 
       FunctionCallVisitor.getCallExpressions(node.tryBlock).forEach(callExpr => {
         const typeChecker = this.program.getTypeChecker();
         const type = typeChecker.getTypeAtLocation(callExpr);
-        if (hasThenMethod(type)) {
-          if (!is(callExpr.parent, ts.SyntaxKind.AwaitExpression)) {
-            openPromises.push(callExpr);
-          }
-        } else {
+        if (!hasThenMethod(type)) {
           hasPotentiallyThrowingCalls = true;
+          return;
         }
+        if (is(callExpr.parent, ts.SyntaxKind.AwaitExpression) || isThened(callExpr) || isCatch(callExpr)) {
+          return;
+        }
+
+        (isCaught(callExpr) ? capturedPromises : openPromises).push(callExpr);
       });
 
-      if (openPromises.length > 0 && !hasPotentiallyThrowingCalls) {
-        this.reportIssue(node, openPromises);
+      if (!hasPotentiallyThrowingCalls) {
+        this.checkForWrongCatch(node, openPromises);
+        this.checkForUselessCatch(node, openPromises, capturedPromises);
       }
     }
 
     super.visitChildren(node);
   }
 
-  reportIssue(tryStmt: ts.TryStatement, openPromises: ts.Expression[]) {
-    const ending = openPromises.length > 1 ? "s" : "";
-    const message = `Consider using 'await' for the promise${ending} inside this 'try' or replace it with 'Promise.prototype.catch(...)' usage${ending}.`;
-    const issue = this.addIssue(findChild(tryStmt, ts.SyntaxKind.TryKeyword), message);
-    openPromises.forEach(openPromise => issue.addSecondaryLocation(openPromise, "Promise"));
+  checkForWrongCatch(tryStmt: ts.TryStatement, openPromises: ts.Expression[]) {
+    if (openPromises.length > 0) {
+      const ending = openPromises.length > 1 ? "s" : "";
+      const message = `Consider using 'await' for the promise${ending} inside this 'try' or replace it with 'Promise.prototype.catch(...)' usage${ending}.`;
+      const issue = this.addIssue(findChild(tryStmt, ts.SyntaxKind.TryKeyword), message);
+      openPromises.forEach(openPromise => issue.addSecondaryLocation(openPromise, "Promise"));
+    }
+  }
+
+  checkForUselessCatch(tryStmt: ts.TryStatement, openPromises: ts.Expression[], capturedPromises: ts.Expression[]) {
+    if (openPromises.length === 0 && capturedPromises.length > 0) {
+      const ending = capturedPromises.length > 1 ? "s" : "";
+      const message = `Consider removing this 'try' statement as promise${ending} rejection is already captured by '.catch()' method.`;
+      const issue = this.addIssue(findChild(tryStmt, ts.SyntaxKind.TryKeyword), message);
+      capturedPromises.forEach(capturedPromise => issue.addSecondaryLocation(capturedPromise, "Caught promise"));
+    }
   }
 }
+
+const isThened = (callExpr: ts.Expression) =>
+  isPropertyAccessExpression(callExpr.parent) && callExpr.parent.name.getText() === "then";
+
+const isCaught = (callExpr: ts.Expression) =>
+  isPropertyAccessExpression(callExpr.parent) && callExpr.parent.name.getText() === "catch";
+
+const isCatch = (callExpr: ts.Expression) =>
+  isCallExpression(callExpr) &&
+  isPropertyAccessExpression(callExpr.expression) &&
+  callExpr.expression.name.getText() === "catch";
 
 class FunctionCallVisitor extends TreeVisitor {
   private readonly callExpressions: ts.Expression[] = [];
