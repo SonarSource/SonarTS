@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 var arrayOfNumbers = [80, 3, 9, 34, 23, 5, 1];
   arrayOfNumbers.sort();
                //^^^^ {{Provide a compare function to avoid sorting elements alphabetically.}}

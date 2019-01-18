@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 let x1 = 0;
 
 x1 =- 3;

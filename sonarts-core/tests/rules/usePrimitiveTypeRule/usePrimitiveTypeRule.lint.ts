@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 class MyObject {}
 
 function primitiveWrappers(y: any) {

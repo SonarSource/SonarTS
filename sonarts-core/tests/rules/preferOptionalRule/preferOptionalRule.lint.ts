@@ -1,8 +1,10 @@
+export function toCreateModule() {}
+
 const comp = "b";
 interface Foo {
   a: number | undefined;
 //^ {{Consider using '?' syntax to declare this property instead of 'undefined' in its type.}}
-// [3:14-3:23] <
+// [5:14-5:23] <
   [comp]: number | undefined;
 //^^^^^^ {{Consider using '?' syntax to declare this property instead of 'undefined' in its type.}}
   c: number | string;

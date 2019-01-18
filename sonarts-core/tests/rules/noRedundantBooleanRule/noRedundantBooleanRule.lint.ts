@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function redundantBoolean(
   booleanMethod: () => boolean,
   doSomething: (x: any) => any,

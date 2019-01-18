@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function foo(x?: any): any {}
 
 function var_returned() {
@@ -157,7 +159,7 @@ function homonymous_is_used() {
       return this.doSomethingElse(1);
     },
   };
-  // [151:14-159:3] {{Immediately return this expression instead of assigning it to the temporary variable "bar".}}
+  // [153:14-161:3] {{Immediately return this expression instead of assigning it to the temporary variable "bar".}}
   return bar;
 }
 
@@ -173,5 +175,3 @@ function inside_switch(x: any) {
       return z;
   }
 }
-
-export default 1;

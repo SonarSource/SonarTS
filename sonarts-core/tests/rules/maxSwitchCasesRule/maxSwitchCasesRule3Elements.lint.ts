@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
   switch (i) {
 //^^^^^^{{Reduce the number of non-empty switch cases from 4 to at most 3.}}
   case 1:

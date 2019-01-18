@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function alwaysTrueIf(x: number[], y: {}) {
   if (x) return 1;
   //  ^ FN: This condition always evaluates to "true".

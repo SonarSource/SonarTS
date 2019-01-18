@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function small(p: number) {
   if (p > 0) {
     return 42;

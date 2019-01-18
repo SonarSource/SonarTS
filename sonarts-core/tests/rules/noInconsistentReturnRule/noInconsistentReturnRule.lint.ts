@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 export function inconsistent(p: boolean) {
 //     ^^^^^^^^  {{Refactor this function to use "return" consistently}}
     if (p) {

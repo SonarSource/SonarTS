@@ -1,4 +1,4 @@
-
+export function toCreateModule() {}
 let a, b;
 
 if (a) {

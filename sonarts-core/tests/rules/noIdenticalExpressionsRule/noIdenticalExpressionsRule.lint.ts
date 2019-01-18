@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function issueWhenIdenticalOperands() {
 
   a == b && a == b

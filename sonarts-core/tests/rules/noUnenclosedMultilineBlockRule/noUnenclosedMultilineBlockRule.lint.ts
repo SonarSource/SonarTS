@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 if (condition) {
   action1();
   action2();

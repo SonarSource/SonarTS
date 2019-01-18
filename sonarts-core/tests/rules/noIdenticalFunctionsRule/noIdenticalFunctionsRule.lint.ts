@@ -148,3 +148,5 @@ let ids = (function* idsGen() {
     yield i++;
   }
 })();
+
+export function toCreateModule() {}

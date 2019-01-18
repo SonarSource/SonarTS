@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function nok() {
     let x = [1, 2];
 //      ^ {{Either use this collection's contents or remove the collection.}}

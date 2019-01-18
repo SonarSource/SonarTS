@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 const array : number[] = [];
 
 export function testElementAccessRead() {

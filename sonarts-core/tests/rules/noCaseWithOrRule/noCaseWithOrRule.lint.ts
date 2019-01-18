@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function bar() {}
 function baz() {}
 

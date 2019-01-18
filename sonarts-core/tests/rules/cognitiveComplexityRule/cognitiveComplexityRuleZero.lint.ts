@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function zero_complexity(){
 }
 

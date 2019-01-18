@@ -65,3 +65,5 @@ function okNestedTemplateLiterals() {
   let nestedMessage = `${count} ${color}`;
   let message = `I have ${color ? nestedMessage : count} apples`;
 }
+
+export function toCreateModule() {}

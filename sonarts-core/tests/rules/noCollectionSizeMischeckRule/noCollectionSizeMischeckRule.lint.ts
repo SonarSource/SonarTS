@@ -1,7 +1,9 @@
-let arr = [];
-let arrConst = new Array();
-let mySet = new Set();
-let myMap = new Map();
+export function toCreateModule() {}
+
+const arr = [];
+const arrConst = new Array();
+const mySet = new Set();
+const myMap = new Map();
 
 
 if (mySet.size < 0) { }

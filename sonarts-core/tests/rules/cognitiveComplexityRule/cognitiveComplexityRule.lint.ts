@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function is_ok(condition: boolean) {
   if (condition) {  }
   if (condition) {  }

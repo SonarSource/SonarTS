@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function redundantJump(x: number) {
   if (x == 1) {
     console.log("x == 1");

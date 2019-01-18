@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 while(foo()) {
   bar();
   if (baz()) {

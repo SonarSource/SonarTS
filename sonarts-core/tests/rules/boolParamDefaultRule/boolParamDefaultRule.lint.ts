@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function f1(flag?: boolean) {}
 //          ^^^^^^^^^^^^^^{{Provide a default value for 'flag' so that the logic of the function is more evident when this parameter is missing. Consider defining another function if providing default value is not possible.}}
 function f2(flag: boolean = false) {} // OK

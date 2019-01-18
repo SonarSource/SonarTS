@@ -1,4 +1,4 @@
-
+export function toCreateModule() {}
 function test(cond: boolean): void {
   let fruits = [];
   fruits[1] = "banana";

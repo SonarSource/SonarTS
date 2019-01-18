@@ -42,3 +42,5 @@ interface C {
 type Alias = number | number[] | undefined;
 function one(x: number | number[] | undefined) {}
 function two(x: number | number[] | undefined) {}
+
+export function toCreateModule() {}

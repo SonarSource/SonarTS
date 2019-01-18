@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 var x = "";
 
 if (x.length) {
