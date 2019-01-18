@@ -19,6 +19,7 @@
  */
 package org.sonar.plugin.typescript;
 
+import org.sonar.api.SonarRuntime;
 import org.sonar.api.server.rule.RulesDefinition;
 
 
@@ -27,12 +28,18 @@ public class TypeScriptRulesDefinition implements RulesDefinition {
   public static final String REPOSITORY_KEY = "typescript";
   public static final String RULE_REPOSITORY_NAME = "SonarAnalyzer";
 
+  private final SonarRuntime sonarRuntime;
+
+  public TypeScriptRulesDefinition(SonarRuntime sonarRuntime) {
+    this.sonarRuntime = sonarRuntime;
+  }
+
   @Override
   public void define(Context context) {
     NewRepository repository = context
       .createRepository(REPOSITORY_KEY, TypeScriptLanguage.KEY)
       .setName(RULE_REPOSITORY_NAME);
-    TypeScriptRules.addToRepository(repository);
+    TypeScriptRules.addToRepository(repository, this.sonarRuntime);
     repository.done();
   }
 
