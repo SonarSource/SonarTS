@@ -76,6 +76,11 @@ public class LCOVCoverageSensor implements Sensor {
           "Could not resolve %d file paths in %s, first unresolved path: %s",
           unresolvedPaths.size(), lcovReportFiles, unresolvedPaths.get(0)));
     }
+
+    int inconsistenciesNumber = parser.inconsistenciesNumber();
+    if (inconsistenciesNumber > 0) {
+      LOG.warn("Found {} inconsistencies in coverage report. Re-run analyse in debug mode to see details.", inconsistenciesNumber);
+    }
   }
 
   /**
