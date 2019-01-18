@@ -149,3 +149,18 @@ function secondary() {
   fruits[1] = "apple";
 //^^^^^^ {{Verify this is the index that was intended; "1" was already set on line 147.}}
 }
+
+function keyIsSameNamedSymbol() {
+  const map = new Map();
+  const a = {b:{c:1}, d: {c:2}, c: 3};
+  map.set(a.b.c, 1);
+  map.set(a.d.c, 3);
+  console.log(map);
+  map.set(a.c, 1);
+  map.set(a.d.c, 3);
+  console.log(map);
+  map.set(a.d.c, 1);
+  map.set(a.d.c, 3);
+//^^^ {{Verify this is the index that was intended; "a.d.c" was already set on line 162.}}
+  return map;
+}
