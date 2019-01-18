@@ -26,14 +26,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CognitiveComplexityTest {
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     CognitiveComplexity rule = new CognitiveComplexity();
     String configuration = new Gson().toJson(rule.configuration());
     assertThat(configuration).isEqualTo("[15]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     CognitiveComplexity rule = new CognitiveComplexity();
     rule.threshold = 10;
     String configuration = new Gson().toJson(rule.configuration());

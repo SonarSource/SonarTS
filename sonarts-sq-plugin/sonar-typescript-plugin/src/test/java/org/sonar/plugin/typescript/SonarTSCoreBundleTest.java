@@ -42,22 +42,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SonarTSCoreBundleTest {
 
+  private static final String BUNDLE_RELATIVE_PATH = "/testBundle.zip";
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
 
-  private File DEPLOY_DESTINATION;
+  private File deployDestination;
 
   @Before
   public void setUp() throws Exception {
-    DEPLOY_DESTINATION = temporaryFolder.newFolder("deployDestination");
+    deployDestination = temporaryFolder.newFolder("deployDestination");
   }
 
   @Test
-  public void should_create_command() throws Exception {
-    ExecutableBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings().asConfig());
+  public void should_create_command() {
+    ExecutableBundle bundle = new SonarTSCoreBundleFactory(BUNDLE_RELATIVE_PATH).createAndDeploy(deployDestination, getSettings().asConfig());
     File projectBaseDir = new File("/myProject");
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
@@ -66,27 +67,27 @@ public class SonarTSCoreBundleTest {
     SonarTSCommand ruleCommand = bundle.getSonarTsRunnerCommand();
     String ruleCommandContent = bundle.getRequestForRunner(tsconfig.getAbsolutePath(), Lists.newArrayList(file1, file2), getTypeScriptRules(), projectBaseDir.getAbsolutePath());
     assertThat(ruleCommand.commandLine())
-      .isEqualTo("node --max-old-space-size=2048 " + new File(DEPLOY_DESTINATION, "sonarts-bundle/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
+      .isEqualTo("node --max-old-space-size=2048 " + new File(deployDestination, "sonarts-bundle/node_modules/tslint-sonarts/bin/tsrunner").getAbsolutePath());
     assertThat(ruleCommandContent).contains("file1.ts");
     assertThat(ruleCommandContent).contains("file2.ts");
     assertThat(ruleCommandContent).contains("tsconfig.json");
     assertThat(ruleCommandContent).contains("no-dead-store");
   }
 
-  private MapSettings getSettings() {
+  private static MapSettings getSettings() {
     return new MapSettings(new PropertyDefinitions(PropertyDefinition.builder(TypeScriptPlugin.NODE_EXECUTABLE).defaultValue("node").build()));
   }
 
-  private TypeScriptRules getTypeScriptRules() {
+  private static TypeScriptRules getTypeScriptRules() {
     ActiveRules activeRules = new TestActiveRules("S1854"); // no-dead-store
     return new TypeScriptRules(new CheckFactory(activeRules));
   }
 
   @Test
-  public void should_fail_when_bad_zip() throws Exception {
+  public void should_fail_when_bad_zip() {
     expectedException.expect(IllegalStateException.class);
     expectedException.expectMessage("Failed to deploy SonarTS bundle (with classpath '/badZip.zip')");
-    new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(DEPLOY_DESTINATION, getSettings().asConfig());
+    new SonarTSCoreBundleFactory("/badZip.zip").createAndDeploy(deployDestination, getSettings().asConfig());
   }
 
   @Test
@@ -94,17 +95,17 @@ public class SonarTSCoreBundleTest {
     MapSettings settings = getSettings();
     File customNode = temporaryFolder.newFile("custom-node.exe");
     settings.setProperty("sonar.typescript.node", customNode.getAbsolutePath());
-    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings.asConfig());
+    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory(BUNDLE_RELATIVE_PATH).createAndDeploy(deployDestination, settings.asConfig());
     SonarTSCommand command = bundle.getSonarTsRunnerCommand();
     String commandLine = command.commandLine();
     assertThat(commandLine).startsWith(customNode.getAbsolutePath());
   }
 
   @Test
-  public void should_use_default_node_if_custom_doesnt_exists() throws Exception {
+  public void should_use_default_node_if_custom_doesnt_exists() {
     MapSettings settings = getSettings();
     settings.setProperty("sonar.typescript.node", "/path/that/doesnt/exists/node");
-    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory("/testBundle.zip").createAndDeploy(DEPLOY_DESTINATION, settings.asConfig());
+    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory(BUNDLE_RELATIVE_PATH).createAndDeploy(deployDestination, settings.asConfig());
     SonarTSCommand command = bundle.getSonarTsRunnerCommand();
     String commandLine = command.commandLine();
     assertThat(commandLine).startsWith("node");

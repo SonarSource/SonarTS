@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class NoImplicitDependenciesTest {
 
   @Test
-  public void configuration() throws Exception {
+  public void configuration() {
     NoImplicitDependencies noImplicitDependencies = new NoImplicitDependencies();
     noImplicitDependencies.whitelist = "app,core";
     String configuration = new Gson().toJson(noImplicitDependencies.configuration());

@@ -22,6 +22,7 @@ package org.sonar.plugin.typescript;
 import com.google.common.base.Stopwatch;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,7 +48,7 @@ public class ContextualServerTest {
 
   private static final int CONNECTION_TIMEOUT = 1_000;
 
-  @org.junit.Rule
+  @Rule
   public JUnitTempFolder temp = new JUnitTempFolder();
 
   @Rule
@@ -61,12 +62,12 @@ public class ContextualServerTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     externalProcessStreamConsumer.stop();
   }
 
   @Test
-  public void should_start_and_stop() throws Exception {
+  public void should_start_and_stop() {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     assertThat(contextualServer.isAlive()).isTrue();
@@ -101,7 +102,7 @@ public class ContextualServerTest {
   }
 
   @Test
-  public void should_not_start_or_stop_twice() throws Exception {
+  public void should_not_start_or_stop_twice() {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     contextualServer.start();
@@ -114,7 +115,8 @@ public class ContextualServerTest {
 
   @Test
   public void should_fail_when_not_started() {
-    ContextualServer contextualServer = new ContextualServer(defaultConfiguration(), new TestBundleFactory().command(TestBundleFactory.getNodeExecutable(), "--version"), temp, CONNECTION_TIMEOUT);
+    ContextualServer contextualServer =
+      new ContextualServer(defaultConfiguration(), new TestBundleFactory().command(TestBundleFactory.getNodeExecutable(), "--version"), temp, CONNECTION_TIMEOUT);
     contextualServer.start();
     assertThat(logTester.logs(LoggerLevel.ERROR)).containsOnlyOnce("Failed to start SonarTS Server");
     assertThat(contextualServer.isAlive()).isFalse();
@@ -145,7 +147,7 @@ public class ContextualServerTest {
   }
 
   @Test
-  public void consume_stdout_stderr() throws Exception {
+  public void consume_stdout_stderr() {
     ContextualServer contextualServer = getContextualServer();
     contextualServer.start();
     await().until(() ->
@@ -165,11 +167,11 @@ public class ContextualServerTest {
     }
   }
 
-  private ContextualAnalysisRequest getContextualAnalysisRequest() throws IOException {
+  private static ContextualAnalysisRequest getContextualAnalysisRequest() throws IOException {
     return getContextualAnalysisRequest(null);
   }
 
-  private ContextualAnalysisRequest getContextualAnalysisRequest(String tsconfigPath) throws IOException {
+  private static ContextualAnalysisRequest getContextualAnalysisRequest(@Nullable String tsconfigPath) throws IOException {
     DefaultInputFile inputFile = createInputFile(SensorContextTester.create(BASE_DIR), "function foo() {}", "foo/file.ts");
 
     return new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES, BASE_DIR.getAbsolutePath(), tsconfigPath);
@@ -179,15 +181,15 @@ public class ContextualServerTest {
     return new ContextualServer(defaultConfiguration(), mockTSServer(), temp, CONNECTION_TIMEOUT);
   }
 
-  private TestBundleFactory mockTSServer() {
+  private static TestBundleFactory mockTSServer() {
     return TestBundleFactory.nodeScript("/mockSonarTSServer.js");
   }
 
-  private TestBundleFactory mockFailingTSServer() {
+  private static TestBundleFactory mockFailingTSServer() {
     return TestBundleFactory.nodeScript("/mockFailingSonarTSServer.js");
   }
 
-  private Configuration defaultConfiguration() {
+  private static Configuration defaultConfiguration() {
     MapSettings mapSettings = new MapSettings();
     mapSettings.setProperty("sonar.typescript.internal.typescriptLocation", "not used in tests");
     return mapSettings.asConfig();

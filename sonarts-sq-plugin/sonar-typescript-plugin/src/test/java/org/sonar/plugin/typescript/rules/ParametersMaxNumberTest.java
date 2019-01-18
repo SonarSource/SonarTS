@@ -27,14 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ParametersMaxNumberTest {
 
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     ParametersMaxNumber rule = new ParametersMaxNumber();
     String configuration = new Gson().toJson(rule.configuration());
     assertThat(configuration).isEqualTo("[7]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     ParametersMaxNumber rule = new ParametersMaxNumber();
     rule.max = 10;
     String configuration = new Gson().toJson(rule.configuration());

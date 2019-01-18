@@ -47,7 +47,9 @@ public class TSLintRulesDefinitionTest {
     assertThat(tsLintRule.name()).isEqualTo("Enforces function overloads to be consecutive.");
     assertThat(tsLintRule.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(tsLintRule.severity()).isEqualTo("MAJOR");
-    assertThat(tsLintRule.htmlDescription()).isEqualTo("See description of TSLint rule <code>adjacent-overload-signatures</code> at the <a href=\"https://palantir.github.io/tslint/rules/adjacent-overload-signatures\">TSLint website</a>.");
+    String adjacentOverloadSignaturesDoc = "https://palantir.github.io/tslint/rules/adjacent-overload-signatures";
+    assertThat(tsLintRule.htmlDescription())
+      .isEqualTo("See description of TSLint rule <code>adjacent-overload-signatures</code> at the <a href=\"" + adjacentOverloadSignaturesDoc +  "\">TSLint website</a>.");
     assertThat(tsLintRule.tags()).isEmpty();
     assertThat(tsLintRule.debtRemediationFunction().baseEffort()).isEqualTo("5min");
 
@@ -56,7 +58,9 @@ public class TSLintRulesDefinitionTest {
     assertThat(sonartsRule.name()).isEqualTo("Cognitive Complexity of functions should not be too high");
     assertThat(sonartsRule.type()).isEqualTo(RuleType.CODE_SMELL);
     assertThat(sonartsRule.severity()).isEqualTo("MAJOR");
-    assertThat(sonartsRule.htmlDescription()).isEqualTo("See description of tslint-sonarts rule <code>cognitive-complexity</code> at the <a href=\"https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/cognitive-complexity.md\">tslint-sonarts website</a>.");
+    String cognitiveComplexityDoc = "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/cognitive-complexity.md";
+    assertThat(sonartsRule.htmlDescription())
+      .isEqualTo("See description of tslint-sonarts rule <code>cognitive-complexity</code> at the <a href=\"" + cognitiveComplexityDoc + "\">tslint-sonarts website</a>.");
     assertThat(sonartsRule.tags()).isEmpty();
     assertThat(sonartsRule.debtRemediationFunction().baseEffort()).isEqualTo("5min");
   }

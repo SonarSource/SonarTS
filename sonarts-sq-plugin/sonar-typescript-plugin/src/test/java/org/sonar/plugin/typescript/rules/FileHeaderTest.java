@@ -27,14 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FileHeaderTest {
 
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     FileHeader fileHeader = new FileHeader();
     String configuration = new Gson().toJson(fileHeader.configuration());
     assertThat(configuration).isEqualTo("[\"\"]");
   }
 
   @Test
-  public void custom_configuration() throws Exception {
+  public void custom_configuration() {
     FileHeader fileHeader = new FileHeader();
     fileHeader.headerFormat = "SonarQube, open source software quality management tool.";
     String configuration = new Gson().toJson(fileHeader.configuration());

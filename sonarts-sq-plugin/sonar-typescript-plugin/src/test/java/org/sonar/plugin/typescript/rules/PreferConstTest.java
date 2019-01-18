@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PreferConstTest {
 
   @Test
-  public void test_configuration() throws Exception {
+  public void test_configuration() {
     PreferConst preferConst = new PreferConst();
     String configuration = new Gson().toJson(preferConst.configuration());
     assertThat(configuration).isEqualTo("[{\"destructuring\":\"all\"}]");

@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class NoDuplicateVariableTest {
 
   @Test
-  public void default_configuration() throws Exception {
+  public void default_configuration() {
     NoDuplicateVariable noDuplicateVariable = new NoDuplicateVariable();
     String configuration = new Gson().toJson(noDuplicateVariable.configuration());
     assertThat(configuration).isEqualTo("[\"check-parameters\"]");

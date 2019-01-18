@@ -49,7 +49,8 @@ import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 
 public class ContextualSensorTest {
 
-  @org.junit.Rule
+  private static final String RELATIVE_PATH = "foo/file.ts";
+  @Rule
   public JUnitTempFolder temp = new JUnitTempFolder();
 
   @Rule
@@ -58,7 +59,7 @@ public class ContextualSensorTest {
   @Test
   public void should_save_issues() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
-    DefaultInputFile inputFile = createInputFile(sensorContext, "function foo(){}", "foo/file.ts");
+    DefaultInputFile inputFile = createInputFile(sensorContext, "function foo(){}", RELATIVE_PATH);
 
     ContextualServer contextualServer = mock(ContextualServer.class);
     AnalysisResponse mockedResponse = new AnalysisResponse();
@@ -83,7 +84,7 @@ public class ContextualSensorTest {
   public void should_not_execute_if_not_file_uri() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
 
-    DefaultInputFile testInputFile = new TestInputFileBuilder("moduleKey", "foo/file.ts")
+    DefaultInputFile testInputFile = new TestInputFileBuilder("moduleKey", RELATIVE_PATH)
       .setLanguage(TypeScriptLanguage.KEY)
       .setContents("function foo() { return `hello`; }\n")
       .setCharset(StandardCharsets.UTF_8)
@@ -117,7 +118,7 @@ public class ContextualSensorTest {
   }
 
   @Test
-  public void should_have_description() throws Exception {
+  public void should_have_description() {
     ContextualSensor sensor = new ContextualSensor(CHECK_FACTORY,  mock(ContextualServer.class));
     DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
     sensor.describe(sensorDescriptor);
@@ -129,7 +130,7 @@ public class ContextualSensorTest {
   @Test
   public void should_handle_diagnostics() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
-    createInputFile(sensorContext, "function foo(){}", "foo/file.ts");
+    createInputFile(sensorContext, "function foo(){}", RELATIVE_PATH);
 
     ContextualServer contextualServer = mock(ContextualServer.class);
     AnalysisResponse mockedResponse = new AnalysisResponse();

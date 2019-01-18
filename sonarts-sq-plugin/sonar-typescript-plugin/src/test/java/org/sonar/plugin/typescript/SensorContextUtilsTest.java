@@ -19,9 +19,8 @@
  */
 package org.sonar.plugin.typescript;
 
-import com.google.common.base.Charsets;
 import java.io.File;
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
-import org.sonar.api.batch.fs.internal.DefaultInputFile;
 import org.sonar.api.batch.fs.internal.TestInputFileBuilder;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
@@ -75,14 +73,13 @@ public class SensorContextUtilsTest {
     assertThat(logs).isEmpty();
   }
 
-  private InputFile createInputFile(String fileName) throws IOException {
-    DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", fileName)
+  private InputFile createInputFile(String fileName) {
+    return new TestInputFileBuilder("moduleKey", fileName)
       .setModuleBaseDir(moduleBaseDir.toPath())
       .setLanguage("ts")
       .setType(Type.MAIN)
-      .setContents(Files.contentOf(new File(moduleBaseDir, fileName), Charsets.UTF_8))
+      .setContents(Files.contentOf(new File(moduleBaseDir, fileName), StandardCharsets.UTF_8))
       .build();
-    return inputFile;
   }
 
 }

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,6 +42,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -198,7 +200,7 @@ public class TslintRulesTest {
   private static Map<String, Rule> loadJson(String classPath) throws IOException {
     Type ruleListType = new TypeToken<List<Rule>>() {}.getType();
     try (InputStream in = TslintRulesTest.class.getResourceAsStream(classPath)) {
-      List<Rule> rules = new Gson().fromJson(new InputStreamReader(in), ruleListType);
+      List<Rule> rules = new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), ruleListType);
       return rules.stream().collect(Collectors.toMap(rule -> rule.key, Function.identity()));
     }
   }
@@ -245,10 +247,14 @@ public class TslintRulesTest {
 
     JavaAnnotatedRules(Path sourcePath) throws IOException {
       ruleTsLintKeys = new HashSet<>();
-      for (Path path : Files.walk(sourcePath)
-        .filter(Files::isRegularFile)
-        .filter(path -> path.toString().endsWith(".java"))
-        .collect(Collectors.toList())) {
+      List<Path> pathWithJavaExtension;
+      try (Stream<Path> paths = Files.walk(sourcePath)) {
+        pathWithJavaExtension = paths
+          .filter(Files::isRegularFile)
+          .filter(path -> path.toString().endsWith(".java"))
+          .collect(Collectors.toList());
+      }
+      for (Path path : pathWithJavaExtension) {
         String content = new String(Files.readAllBytes(path), UTF_8);
         Matcher matcher = TS_LINT_KEY.matcher(content);
         if (matcher.find() && RULE_ANNOTATION.matcher(content).find()) {
@@ -256,13 +262,12 @@ public class TslintRulesTest {
         }
       }
     }
-
   }
 
   static class ReadMeRules {
 
-    private final Pattern RULE_PATTERN = Pattern.compile("^###.*|\\* (?<name>.*)\\(\\[`(?<key>[^` ]+)`]\\)", Pattern.MULTILINE);
-    private final Pattern URL_PATTERN = Pattern.compile("^\\[`(?<key>[^` ]+)`]: \\./(?<url>sonarts-core/[^ ]+\\.md) *$", Pattern.MULTILINE);
+    private static final Pattern RULE_PATTERN = Pattern.compile("^###.*|\\* (?<name>.*)\\(\\[`(?<key>[^` ]+)`]\\)", Pattern.MULTILINE);
+    private static final Pattern URL_PATTERN = Pattern.compile("^\\[`(?<key>[^` ]+)`]: \\./(?<url>sonarts-core/[^ ]+\\.md) *$", Pattern.MULTILINE);
 
     final Path readmePath;
     final Map<String, Rule> ruleByTsLintKey;
@@ -336,10 +341,14 @@ public class TslintRulesTest {
 
     SonarTsRules(Path sourcePath) throws IOException {
       ruleByTsLintKey = new LinkedHashMap<>();
-      for (Path path : Files.walk(sourcePath.toRealPath())
-        .filter(Files::isRegularFile)
-        .filter(path -> path.toString().endsWith(".ts"))
-        .collect(Collectors.toList())) {
+      List<Path> pathsWithTSExtension;
+      try (Stream<Path> paths = Files.walk(sourcePath.toRealPath())) {
+        pathsWithTSExtension = paths
+          .filter(Files::isRegularFile)
+          .filter(path -> path.toString().endsWith(".ts"))
+          .collect(Collectors.toList());
+      }
+      for (Path path : pathsWithTSExtension) {
         String content = new String(Files.readAllBytes(path), UTF_8);
         Rule rule = new Rule()
           .withKey(extractValue(RULE_NAME, content))

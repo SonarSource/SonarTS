@@ -28,56 +28,59 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TypeScriptExclusionsFileFilterTest {
 
+  private static final String SRC_FILE_RELATIVE_PATH = "some_app.ts";
+  private static final String LIB_FILE_RELATIVE_PATH = "node_modules/some_lib.ts";
+
   @Test
-  public void should_exclude_node_modules() throws Exception {
+  public void should_exclude_node_modules() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE);
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
-    assertThat(filter.accept(inputFile("some_app.ts"))).isTrue();
-    assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isFalse();
+    assertThat(filter.accept(inputFile(SRC_FILE_RELATIVE_PATH))).isTrue();
+    assertThat(filter.accept(inputFile(LIB_FILE_RELATIVE_PATH))).isFalse();
     assertThat(filter.accept(inputFile("node_modules/my_lib_folder/my_lib.ts"))).isFalse();
     assertThat(filter.accept(inputFile("sub_module/node_modules/submodule_lib.ts"))).isFalse();
     assertThat(filter.accept(inputFile("sub_module2/bower_components/bower_lib/lib.ts"))).isFalse();
   }
 
   @Test
-  public void should_include_node_modules_when_property_is_overridden() throws Exception {
+  public void should_include_node_modules_when_property_is_overridden() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, "");
 
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
 
-    assertThat(filter.accept(inputFile("some_app.ts"))).isTrue();
-    assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isTrue();
+    assertThat(filter.accept(inputFile(SRC_FILE_RELATIVE_PATH))).isTrue();
+    assertThat(filter.accept(inputFile(LIB_FILE_RELATIVE_PATH))).isTrue();
     assertThat(filter.accept(inputFile("sub_module2/bower_components/some_lib.ts"))).isTrue();
   }
 
   @Test
-  public void should_exclude_using_custom_path_regex() throws Exception {
+  public void should_exclude_using_custom_path_regex() {
     MapSettings settings = new MapSettings();
     settings.setProperty(
       TypeScriptPlugin.TS_EXCLUSIONS_KEY, TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE + "," + "**/libs/**");
 
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
 
-    assertThat(filter.accept(inputFile("some_app.ts"))).isTrue();
-    assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isFalse();
+    assertThat(filter.accept(inputFile(SRC_FILE_RELATIVE_PATH))).isTrue();
+    assertThat(filter.accept(inputFile(LIB_FILE_RELATIVE_PATH))).isFalse();
     assertThat(filter.accept(inputFile("libs/some_lib.ts"))).isFalse();
   }
 
   @Test
-  public void should_ignore_empty_path_regex() throws Exception {
+  public void should_ignore_empty_path_regex() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, "," + TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE + ",");
 
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
 
-    assertThat(filter.accept(inputFile("some_app.ts"))).isTrue();
-    assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isFalse();
+    assertThat(filter.accept(inputFile(SRC_FILE_RELATIVE_PATH))).isTrue();
+    assertThat(filter.accept(inputFile(LIB_FILE_RELATIVE_PATH))).isFalse();
   }
   
   @Test
-  public void should_accept_not_typescript_files() throws Exception {
+  public void should_accept_not_typescript_files() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, "," + TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE + ",");
 
@@ -85,11 +88,11 @@ public class TypeScriptExclusionsFileFilterTest {
     assertThat(filter.accept(javascriptInputFile("node_modules/some_lib.js"))).isTrue();
   }
 
-  private DefaultInputFile inputFile(String file) {
+  private static DefaultInputFile inputFile(String file) {
     return new TestInputFileBuilder("test","test_node_modules/" + file).setLanguage("ts").build();
   }
 
-  private DefaultInputFile javascriptInputFile(String file) {
+  private static DefaultInputFile javascriptInputFile(String file) {
     return new TestInputFileBuilder("test","test_node_modules/" + file).setLanguage("js").build();
   }
 
