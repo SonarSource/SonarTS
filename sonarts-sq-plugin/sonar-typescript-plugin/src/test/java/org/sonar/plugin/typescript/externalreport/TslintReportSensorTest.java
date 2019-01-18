@@ -51,7 +51,7 @@ import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 
 public class TslintReportSensorTest {
 
-  private static final String TSLINT_REPORT = "tslint-report.json";
+  private static final String TSLINT_REPORT_FILE_NAME = "tslint-report.json";
   @Rule
   public TemporaryFolder tmpDir = new TemporaryFolder();
 
@@ -77,7 +77,7 @@ public class TslintReportSensorTest {
 
   @Test
   public void should_add_issues_from_report() {
-    setTslintReport(TSLINT_REPORT);
+    setTslintReport(TSLINT_REPORT_FILE_NAME);
     tslintReportSensor.execute(context);
 
     Collection<ExternalIssue> externalIssues = context.allExternalIssues();
@@ -130,7 +130,7 @@ public class TslintReportSensorTest {
   public void should_skip_duplicates() {
     // when in SQ TS profile there is an activated rule matching to an external issue,
     // that external issue is ignored
-    setTslintReport(TSLINT_REPORT);
+    setTslintReport(TSLINT_REPORT_FILE_NAME);
     new TslintReportSensor(CHECK_FACTORY_WITH_TSLINT_RULE).execute(context);
 
     Collection<ExternalIssue> externalIssues = context.allExternalIssues();
@@ -144,7 +144,7 @@ public class TslintReportSensorTest {
   @Test
   public void should_ignore_report_on_older_sonarqube() {
     context.setRuntime(getRuntime(7, 1));
-    setTslintReport(TSLINT_REPORT);
+    setTslintReport(TSLINT_REPORT_FILE_NAME);
     tslintReportSensor.execute(context);
 
     assertThat(context.allExternalIssues()).isEmpty();
@@ -179,7 +179,7 @@ public class TslintReportSensorTest {
 
   @Test
   public void should_accept_absolute_path_to_report() {
-    setTslintReport(new File(BASE_DIR, TSLINT_REPORT).getAbsolutePath());
+    setTslintReport(new File(BASE_DIR, TSLINT_REPORT_FILE_NAME).getAbsolutePath());
     tslintReportSensor.execute(context);
     assertThat(context.allExternalIssues()).hasSize(2);
   }

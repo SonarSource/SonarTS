@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SonarTSCoreBundleTest {
 
-  private static final String TEST_BUNDLE_ZIP = "/testBundle.zip";
+  private static final String BUNDLE_RELATIVE_PATH = "/testBundle.zip";
   @Rule
   public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -58,7 +58,7 @@ public class SonarTSCoreBundleTest {
 
   @Test
   public void should_create_command() {
-    ExecutableBundle bundle = new SonarTSCoreBundleFactory(TEST_BUNDLE_ZIP).createAndDeploy(deployDestination, getSettings().asConfig());
+    ExecutableBundle bundle = new SonarTSCoreBundleFactory(BUNDLE_RELATIVE_PATH).createAndDeploy(deployDestination, getSettings().asConfig());
     File projectBaseDir = new File("/myProject");
     File tsconfig = new File(projectBaseDir, "tsconfig.json");
     DefaultInputFile file1 = new TestInputFileBuilder("moduleKey", "file1.ts").build();
@@ -95,7 +95,7 @@ public class SonarTSCoreBundleTest {
     MapSettings settings = getSettings();
     File customNode = temporaryFolder.newFile("custom-node.exe");
     settings.setProperty("sonar.typescript.node", customNode.getAbsolutePath());
-    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory(TEST_BUNDLE_ZIP).createAndDeploy(deployDestination, settings.asConfig());
+    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory(BUNDLE_RELATIVE_PATH).createAndDeploy(deployDestination, settings.asConfig());
     SonarTSCommand command = bundle.getSonarTsRunnerCommand();
     String commandLine = command.commandLine();
     assertThat(commandLine).startsWith(customNode.getAbsolutePath());
@@ -105,7 +105,7 @@ public class SonarTSCoreBundleTest {
   public void should_use_default_node_if_custom_doesnt_exists() {
     MapSettings settings = getSettings();
     settings.setProperty("sonar.typescript.node", "/path/that/doesnt/exists/node");
-    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory(TEST_BUNDLE_ZIP).createAndDeploy(deployDestination, settings.asConfig());
+    SonarTSCoreBundle bundle = new SonarTSCoreBundleFactory(BUNDLE_RELATIVE_PATH).createAndDeploy(deployDestination, settings.asConfig());
     SonarTSCommand command = bundle.getSonarTsRunnerCommand();
     String commandLine = command.commandLine();
     assertThat(commandLine).startsWith("node");

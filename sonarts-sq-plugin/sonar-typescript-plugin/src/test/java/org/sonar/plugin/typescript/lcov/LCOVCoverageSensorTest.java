@@ -40,7 +40,7 @@ import org.sonar.plugin.typescript.TypeScriptPlugin;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LCOVCoverageSensorTest {
-  private static final String LCOV = "lcov.info";
+  private static final String LCOV_REPORT_FILE = "lcov.info";
   private static final String BASE_DIR = String.join(File.separator, "src", "test", "resources", "coverage");
   private static final String FILE_TO_ANALYZE = "moduleKey:file1.ts";
 
@@ -55,7 +55,7 @@ public class LCOVCoverageSensorTest {
   @Before
   public void init() throws IOException {
     settings = new MapSettings();
-    settings.setProperty(TypeScriptPlugin.LCOV_REPORT_PATHS, LCOV);
+    settings.setProperty(TypeScriptPlugin.LCOV_REPORT_PATHS, LCOV_REPORT_FILE);
 
     context = SensorContextTester.create(moduleBaseDir);
     context.setSettings(settings);
@@ -71,7 +71,8 @@ public class LCOVCoverageSensorTest {
     assertThat(context.coveredConditions(FILE_TO_ANALYZE, 2)).isEqualTo(2);
     assertThat(context.conditions(FILE_TO_ANALYZE, 2)).isEqualTo(4);
 
-    assertThat(logTester.logs()).contains("Could not resolve 1 file paths in [" + new File(moduleBaseDir, LCOV).getAbsolutePath() + "], first unresolved path: file2.ts");
+    assertThat(logTester.logs())
+      .contains("Could not resolve 1 file paths in [" + new File(moduleBaseDir, LCOV_REPORT_FILE).getAbsolutePath() + "], first unresolved path: file2.ts");
   }
 
   @Test
