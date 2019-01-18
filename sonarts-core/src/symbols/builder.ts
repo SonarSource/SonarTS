@@ -122,6 +122,7 @@ export class SymbolTableBuilder extends TreeVisitor {
 
   protected visitPostfixUnaryExpression(node: ts.PostfixUnaryExpression) {
     this.registerUsageIfMissing(node.operand, UsageFlag.READ | UsageFlag.WRITE);
+    super.visitPostfixUnaryExpression(node);
   }
 
   protected visitModuleDeclaration(node: ts.ModuleDeclaration) {
