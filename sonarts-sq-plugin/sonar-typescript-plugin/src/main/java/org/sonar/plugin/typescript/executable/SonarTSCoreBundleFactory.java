@@ -21,7 +21,6 @@ package org.sonar.plugin.typescript.executable;
 
 import java.io.File;
 import java.io.InputStream;
-import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.utils.log.Logger;
@@ -30,7 +29,6 @@ import org.sonarsource.api.sonarlint.SonarLintSide;
 
 import static org.sonarsource.api.sonarlint.SonarLintSide.MULTIPLE_ANALYSES;
 
-@BatchSide
 @ScannerSide
 @SonarLintSide(lifespan = MULTIPLE_ANALYSES)
 public class SonarTSCoreBundleFactory implements ExecutableBundleFactory {

@@ -64,7 +64,7 @@ public class TypeScriptPlugin implements Plugin {
       TypeScriptLanguage.class,
       SonarWayProfile.class,
       SonarWayRecommendedProfile.class,
-      TypeScriptRulesDefinition.class,
+      new TypeScriptRulesDefinition(context.getRuntime()),
       TypeScriptExclusionsFileFilter.class,
       new SonarTSCoreBundleFactory(SONARTS_BUNDLE_ZIP),
       PropertyDefinition.builder(FILE_SUFFIXES_KEY)
