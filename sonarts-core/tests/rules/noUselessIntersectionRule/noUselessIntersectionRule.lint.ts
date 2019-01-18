@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function withNull(x: number & null) {}
 //                            ^^^^ {{Remove this type without members or change this type intersection.}}
 
@@ -9,7 +11,7 @@ function withVoid(x: string & void) {}
 
 function triple(x: null & string & undefined) {}
 //                 ^^^^ {{Remove this type without members or change this type intersection.}}
-//        [10:35-10:44] {{Remove this type without members or change this type intersection.}}
+//        [12:35-12:44] {{Remove this type without members or change this type intersection.}}
 
 function declarations() {
   let x: string & null;

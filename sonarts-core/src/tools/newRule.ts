@@ -137,7 +137,7 @@ function run() {
 
     copyWithReplace(unitTestTemplatePath, path.join(testPath, `${ruleClassName}.test.ts`), ruleMetadata);
 
-    fs.writeFileSync(path.join(testPath, `${ruleClassName}.lint.ts`), "\n");
+    fs.writeFileSync(path.join(testPath, `${ruleClassName}.lint.ts`), `export const ruleKey = "${rspecId}";\n`);
   }
 
   /** Creates rule java source from template */

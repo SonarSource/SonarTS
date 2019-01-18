@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 import * as something from "somewhere";
 
 function noStatementsSameLine(a: number, b: number) {

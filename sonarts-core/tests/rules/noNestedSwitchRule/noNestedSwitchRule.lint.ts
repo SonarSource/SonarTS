@@ -1,4 +1,4 @@
-export function foo(){}
+export function toCreateModule() {}
 
 let x = 42, y = 42, z = 42, a = 1, b = 2, c = 3, d = 4, e = 5;
 

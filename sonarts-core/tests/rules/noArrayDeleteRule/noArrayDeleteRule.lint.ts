@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 let arr = ['a', 'b', 'c', 'd'];
 let i = 1;
 let a;

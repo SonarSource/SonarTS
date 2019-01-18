@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function fooDefault(x: number) {
   switch (x) {
     case 1:

@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
   function isFish(animal: Animal) {
 //^^^^^^^^ {{Declare this function return type using type predicate "animal is Fish".}}
   return (animal as Fish).swim !== undefined;

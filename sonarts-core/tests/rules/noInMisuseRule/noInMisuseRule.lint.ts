@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 let arr = ["a", "b", "c"];
 
   "1" in arr;

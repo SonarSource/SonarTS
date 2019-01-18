@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 let x, y, a, i;
 
 x = 1;

@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
   function numbers(a: number) {
 //^^^^^^^^ {{Refactor this method to not always return the same value.}} [[cost:2]]
     if (a == 1) {

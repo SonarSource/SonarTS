@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 var x = foo();
 if (!x) {}
 if (x == 1) {}

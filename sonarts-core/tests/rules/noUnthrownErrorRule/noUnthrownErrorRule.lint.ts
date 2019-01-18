@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 // OK
 foo(new Error());
 foo(TypeError);

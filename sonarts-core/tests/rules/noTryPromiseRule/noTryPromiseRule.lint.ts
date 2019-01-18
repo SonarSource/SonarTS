@@ -1,6 +1,4 @@
-export function someFunc() {
-
-}
+export function toCreateModule() {}
 
 function returningPromise() {
   return Promise.reject();
@@ -10,7 +8,7 @@ function singlePromise() {
   try {
 //^^^ {{Consider using 'await' for the promise inside this 'try' or replace it with 'Promise.prototype.catch(...)' usage.}}
     returningPromise();
-// [12:4-12:22] < {{Promise}}
+//  ^^^^^^^^^^^^^^^^^^ < {{Promise}}
   } catch (e) {
     console.log(e);
   }
@@ -21,11 +19,11 @@ function conditionalPromise(cond: boolean) {
 //^^^ {{Consider using 'await' for the promises inside this 'try' or replace it with 'Promise.prototype.catch(...)' usages.}}
     if (cond) {
       returningPromise();
-  // [23:6-23:24] < {{Promise}}
+  //  ^^^^^^^^^^^^^^^^^^ < {{Promise}}
     } else {
       let x = 42;
       returningPromise();
-  // [27:6-27:24] < {{Promise}}
+  //  ^^^^^^^^^^^^^^^^^^ < {{Promise}}
     }
   } catch (e) {
     console.log(e);
@@ -76,7 +74,7 @@ function newPromise() {
   try {
 //^^^ {{Consider using 'await' for the promise inside this 'try' or replace it with 'Promise.prototype.catch(...)' usage.}}
     new Promise((res, rej) => {});
-// [78:4-78:33] < {{Promise}}
+//  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ < {{Promise}}
   } catch (e) {
     console.log(e);
   }

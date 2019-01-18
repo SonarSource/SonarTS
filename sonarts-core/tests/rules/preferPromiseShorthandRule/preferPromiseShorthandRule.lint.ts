@@ -1,3 +1,4 @@
+export function toCreateModule() {}
 
 let fulfilledPromise = new Promise(resolve => resolve(calc(42)));
 //                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ {{Replace this trivial promise with "Promise.resolve(calc(42))".}}

@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function typeAssertion(p1: number, p2: number | string, p3?: number) {
   p1 as number;
 //^^^^^^^^^^^^ {{Remove this unnecessary cast.}}

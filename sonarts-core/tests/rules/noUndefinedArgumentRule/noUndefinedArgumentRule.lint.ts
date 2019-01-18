@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 export function foo(p1: number | undefined, p2?: number, p3 = 42) {
 }
 

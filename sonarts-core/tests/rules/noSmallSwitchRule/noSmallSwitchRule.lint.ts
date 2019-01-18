@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 import {} from "somewhere";
 
   switch (a) {

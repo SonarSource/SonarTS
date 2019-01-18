@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
   function funcDecl(p1: number) {
 //^^^^^^^^ {{This function has 1 parameters, which is greater than the 0 authorized.}}
 

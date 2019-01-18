@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 let foo, condition, x, z, doSomething, doSomethingElse, boolVar, arr;
 
 function main() {

@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 let something, doSomething;
 
 if (something) {}

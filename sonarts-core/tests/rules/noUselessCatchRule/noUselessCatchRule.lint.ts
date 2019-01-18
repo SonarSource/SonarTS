@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 try {} catch(e) {}
 
 try {} catch (e) {

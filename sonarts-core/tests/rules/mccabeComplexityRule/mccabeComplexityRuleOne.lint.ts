@@ -1,3 +1,4 @@
+export function toCreateModule() {}
 
   function complexFunction() { // +1
 //^^^^^^^^ {{The Cyclomatic Complexity of this function is 12 which is greater than 1 authorized.}} [[cost:11]]
@@ -28,7 +29,7 @@ function nestingFunction() {
 
   function nestedFunction() { // +1
 //^^^^^^^^  {{The Cyclomatic Complexity of this function is 2 which is greater than 1 authorized.}} [[cost:1]]
-// [29:2-29:10] < {{+1}}
+// [30:2-30:10] < {{+1}}
 
     return 1 && 2; 
 //           ^^ < {{+1}}

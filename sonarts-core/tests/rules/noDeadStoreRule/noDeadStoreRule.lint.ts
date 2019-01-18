@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function doSomething(x?:any) {}
 
 function simple() {

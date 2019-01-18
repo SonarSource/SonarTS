@@ -1,3 +1,4 @@
+export function toCreateModule() {}
 
   function complexFunction() { // +1
 //^^^^^^^^ {{The Cyclomatic Complexity of this function is 12 which is greater than 10 authorized.}} [[cost:2]]

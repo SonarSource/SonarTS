@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function nokFn(a: A | B | C | D | E | F) {}
 //                ^^^^^^^^^^^^^^^^^^^^^ {{Refactor this union type to have less than 5 elements.}}
 

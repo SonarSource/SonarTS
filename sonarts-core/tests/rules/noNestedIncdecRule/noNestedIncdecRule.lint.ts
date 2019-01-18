@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 import {} from "mymodule";
 
 function bar(foo: number[], i: number) {

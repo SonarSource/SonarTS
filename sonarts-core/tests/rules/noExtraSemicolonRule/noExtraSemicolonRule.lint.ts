@@ -1,3 +1,4 @@
+export function toCreateModule() {}
 
 function basic() {
    ;

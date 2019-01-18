@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 // good
 
 interface i1 {

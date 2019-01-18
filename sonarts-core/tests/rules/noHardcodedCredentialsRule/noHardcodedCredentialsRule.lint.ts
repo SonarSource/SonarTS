@@ -1,4 +1,4 @@
-
+export function toCreateModule() {}
 
 function foo() {
   const password = "asdasd";

@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 import * as ts from "typescript";
 import { NotExisting } from "invalid";
 

@@ -1,3 +1,4 @@
+export function toCreateModule() {}
 class OK {
   private x: string;
   private _y = "hello";

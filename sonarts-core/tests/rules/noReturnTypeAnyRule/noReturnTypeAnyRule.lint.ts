@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 // OK, doesn't have `any`
 function foo() {
   return 1;

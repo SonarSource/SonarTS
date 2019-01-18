@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 interface Person {
   age: number;
   name: string;
@@ -9,12 +11,12 @@ interface Loggable<T> {
 
 type nokUDuplicate = number | number | string;
 //                            ^^^^^^ {{Remove this duplicated type or replace with another one.}}
-// [10:21-10:27] < {{Original}}
+// [12:21-12:27] < {{Original}}
 
 type nokUDuplicate2 = number | number | number | string;
 //                             ^^^^^^ {{Remove this duplicated type or replace with another one.}}
-// [14:22-14:28] < {{Original}}
-// [14:40-14:46] < {{Another duplicate}}
+// [16:22-16:28] < {{Original}}
+// [16:40-16:46] < {{Another duplicate}}
 
 type nokUFunctionType = ((a: boolean) => boolean) | ((a: boolean) => boolean)
 //                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^ {{Remove this duplicated type or replace with another one.}}
@@ -33,12 +35,12 @@ type nokUUnion = (number | string) | (number | string)
 
 type nokIDuplicate = Person & Person & Loggable<Person>;
 //                            ^^^^^^ {{Remove this duplicated type or replace with another one.}}
-// [34:21-34:27] < {{Original}}
+// [36:21-36:27] < {{Original}}
 
 type nokIDuplicate2 = number & number & number & string;
 //                             ^^^^^^ {{Remove this duplicated type or replace with another one.}}
-// [38:22-38:28] < {{Original}}
-// [38:40-38:46] < {{Another duplicate}}
+// [40:22-40:28] < {{Original}}
+// [40:40-40:46] < {{Another duplicate}}
 
 type nokIFunctionType = ((a: boolean) => boolean) & ((a: boolean) => boolean)
 //                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^ {{Remove this duplicated type or replace with another one.}}

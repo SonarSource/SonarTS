@@ -1,3 +1,5 @@
+export function toCreateModule() {}
+
 function parameterNok(p: number) {
 //                    ^  {{Introduce a new variable or use its initial value before reassigning "p".}}
   p = 42;
