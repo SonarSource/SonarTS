@@ -92,3 +92,9 @@ class A {
     return this.propertyDeclaration;
   }
 }
+
+const someObject = {
+  a: 1
+};
+const someProp = "a";
+someObject[someProp]++;

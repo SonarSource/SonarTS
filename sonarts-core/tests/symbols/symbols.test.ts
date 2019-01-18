@@ -91,6 +91,9 @@ it("reads", () => {
   expect(symbols.getUsage(getNode(sourceFile, "a", 78)).flags).toBe(UsageFlag.READ);
   expect(symbols.getUsage(getNode(sourceFile, "b", 78)).flags).toBe(UsageFlag.READ);
   expect(symbols.getUsage(getNode(sourceFile, "c", 75)).flags).toBe(UsageFlag.READ);
+
+  // PostfixUnaryExpression: Identifier children should be added to symble table
+  expect(symbols.getUsage(getNode(sourceFile, "someProp", 100)).flags).toBe(UsageFlag.READ);
 });
 
 it("read-writes", () => {

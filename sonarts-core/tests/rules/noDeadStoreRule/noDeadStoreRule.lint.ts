@@ -132,4 +132,11 @@ function destructuring(x: any) {
   doSomething(rest);
 }
 
+function symbolUsedInIncrementOperator() {
+  const obj = { x: 0 };
+  const prop = "x"; // OK
+  obj[prop]++;
+  return obj;
+}
+
 export default 1;
