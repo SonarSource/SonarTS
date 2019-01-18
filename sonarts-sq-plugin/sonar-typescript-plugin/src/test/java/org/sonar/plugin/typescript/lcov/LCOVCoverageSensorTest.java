@@ -19,9 +19,9 @@
  */
 package org.sonar.plugin.typescript.lcov;
 
-import com.google.common.base.Charsets;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 import org.junit.Before;
 import org.junit.Rule;
@@ -94,7 +94,7 @@ public class LCOVCoverageSensorTest {
 
       assertThat(context.lineHits(FILE_TO_ANALYZE, 0)).isNull();
       assertThat(context.lineHits(FILE_TO_ANALYZE, 2)).isEqualTo(1);
-  
+
       assertThat(context.conditions(FILE_TO_ANALYZE, 102)).isNull();
       assertThat(context.conditions(FILE_TO_ANALYZE, 2)).isEqualTo(3);
       assertThat(context.coveredConditions(FILE_TO_ANALYZE, 2)).isEqualTo(1);
@@ -136,7 +136,7 @@ public class LCOVCoverageSensorTest {
       .setType(Type.MAIN)
       .build();
 
-    inputFile.setMetadata(new FileMetadata().readMetadata(inputFile.inputStream(), Charsets.UTF_8, inputFile.absolutePath()));
+    inputFile.setMetadata(new FileMetadata().readMetadata(inputFile.inputStream(), StandardCharsets.UTF_8, inputFile.absolutePath()));
     context.fileSystem().add(inputFile);
   }
 

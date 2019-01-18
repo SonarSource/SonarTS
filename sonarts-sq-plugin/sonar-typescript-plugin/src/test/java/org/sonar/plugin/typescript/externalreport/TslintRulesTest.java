@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -199,7 +200,7 @@ public class TslintRulesTest {
   private static Map<String, Rule> loadJson(String classPath) throws IOException {
     Type ruleListType = new TypeToken<List<Rule>>() {}.getType();
     try (InputStream in = TslintRulesTest.class.getResourceAsStream(classPath)) {
-      List<Rule> rules = new Gson().fromJson(new InputStreamReader(in), ruleListType);
+      List<Rule> rules = new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), ruleListType);
       return rules.stream().collect(Collectors.toMap(rule -> rule.key, Function.identity()));
     }
   }

@@ -422,13 +422,13 @@ public class ExternalTypescriptSensorTest {
       super.readErrors(errorReader, streamConsumer);
       running = false;
     }
-  }
 
-  private static void sleep(int millis) {
-    try {
-      Thread.sleep(millis);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
+    private static void sleep(int millis) {
+      try {
+        Thread.sleep(millis);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
     }
   }
 }

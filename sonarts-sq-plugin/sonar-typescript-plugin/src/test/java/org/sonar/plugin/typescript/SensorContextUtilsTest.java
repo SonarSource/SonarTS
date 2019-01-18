@@ -19,8 +19,8 @@
  */
 package org.sonar.plugin.typescript;
 
-import com.google.common.base.Charsets;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -75,13 +75,12 @@ public class SensorContextUtilsTest {
   }
 
   private InputFile createInputFile(String fileName) {
-    DefaultInputFile inputFile = new TestInputFileBuilder("moduleKey", fileName)
+    return new TestInputFileBuilder("moduleKey", fileName)
       .setModuleBaseDir(moduleBaseDir.toPath())
       .setLanguage("ts")
       .setType(Type.MAIN)
-      .setContents(Files.contentOf(new File(moduleBaseDir, fileName), Charsets.UTF_8))
+      .setContents(Files.contentOf(new File(moduleBaseDir, fileName), StandardCharsets.UTF_8))
       .build();
-    return inputFile;
   }
 
 }

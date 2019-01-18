@@ -50,7 +50,7 @@ import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 public class ContextualSensorTest {
 
   private static final String INPUT_FILE = "foo/file.ts";
-  @org.junit.Rule
+  @Rule
   public JUnitTempFolder temp = new JUnitTempFolder();
 
   @Rule

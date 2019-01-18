@@ -22,6 +22,7 @@ package org.sonar.plugin.typescript;
 import com.google.common.base.Stopwatch;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,7 +48,7 @@ public class ContextualServerTest {
 
   private static final int CONNECTION_TIMEOUT = 1_000;
 
-  @org.junit.Rule
+  @Rule
   public JUnitTempFolder temp = new JUnitTempFolder();
 
   @Rule
@@ -170,7 +171,7 @@ public class ContextualServerTest {
     return getContextualAnalysisRequest(null);
   }
 
-  private static ContextualAnalysisRequest getContextualAnalysisRequest(String tsconfigPath) throws IOException {
+  private static ContextualAnalysisRequest getContextualAnalysisRequest(@Nullable String tsconfigPath) throws IOException {
     DefaultInputFile inputFile = createInputFile(SensorContextTester.create(BASE_DIR), "function foo() {}", "foo/file.ts");
 
     return new ContextualAnalysisRequest(inputFile, TYPE_SCRIPT_RULES, BASE_DIR.getAbsolutePath(), tsconfigPath);
