@@ -180,9 +180,7 @@ class Visitor extends TypedSonarRuleVisitor {
       return node.text;
     }
     const symbol = this.program.getTypeChecker().getSymbolAtLocation(node);
-    if (symbol) {
-      return isIdentifier(node) ? symbol.name : node.getText();
-    }
+    return symbol && node.getText();
   }
 }
 
