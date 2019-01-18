@@ -36,6 +36,10 @@ const typeScriptRulesPath = path.join(
   rootFolder,
   "sonarts-sq-plugin/sonar-typescript-plugin/src/main/java/org/sonar/plugin/typescript/TypeScriptRules.java",
 );
+const tslintExtensionMetaPath = path.join(
+  rootFolder,
+  "sonarts-sq-plugin/sonar-typescript-plugin/src/main/resources/org/sonar/l10n/typescript/rules/tslint-sonarts/rules.json",
+);
 
 try {
   run();
@@ -100,6 +104,9 @@ function run() {
 
   // Add java rule class to TypeScriptRules.java
   updateTypeScriptRules();
+
+  // Add new rule description required to import its issues as external
+  updateTsLintExtensionMeta();
 
   // Done!
 
@@ -243,17 +250,41 @@ function run() {
     fs.writeFileSync(typeScriptRulesPath, [...head1, ...imports, ...head2, ...rules, ...tail].join("\n"));
   }
 
-  function retriveRuleKey(ruleTitle: string) {
+  function updateTsLintExtensionMeta() {
+    type Meta = { key: string; name: string; type: string; url: string };
+    const fileContent = fs.readFileSync(tslintExtensionMetaPath, "utf8");
+
+    const content: Meta[] = JSON.parse(fileContent);
+    content.push({
+      key: ruleNameDash,
+      name: ruleTitle,
+      type: ruleType,
+      url: `https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/${ruleNameDash}.md`,
+    });
+
+    content.sort((a: Meta, b: Meta) => {
+      if (a.key < b.key) {
+        return -1;
+      } else if (a.key > b.key) {
+        return 1;
+      }
+      return 0;
+    });
+
+    fs.writeFileSync(tslintExtensionMetaPath, JSON.stringify(content, null, 2) + "\n");
+  }
+
+  function retrieveRuleKey(ruleTitle: string) {
     const match = ruleTitle.match(/\(\[\`([\w-]+)\`\]\)/);
     if (!match) {
-      throw new Error("Can not retrive rule key from title: " + ruleTitle);
+      throw new Error("Can not retrieve rule key from title: " + ruleTitle);
     }
     return match[1];
   }
 
   function compareRuleTitles(title1: string, title2: string) {
-    const key1 = retriveRuleKey(title1);
-    const key2 = retriveRuleKey(title2);
+    const key1 = retrieveRuleKey(title1);
+    const key2 = retrieveRuleKey(title2);
 
     if (key1 < key2) {
       return -1;
@@ -348,9 +379,9 @@ function run() {
   }
 
   function parseTypeScriptRules() {
-    const readme = fs.readFileSync(typeScriptRulesPath, "utf8");
+    const fileContent = fs.readFileSync(typeScriptRulesPath, "utf8");
 
-    const lines = readme.split("\n");
+    const lines = fileContent.split("\n");
 
     const head1: string[] = [];
     const imports: string[] = [];

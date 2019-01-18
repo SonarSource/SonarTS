@@ -181,13 +181,13 @@
   },
   {
     "key": "no-ignored-initial-value",
-    "name": "Function parameters, caught exceptions and foreach variables\u0027 initial values should not be ignored",
+    "name": "Function parameters, caught exceptions and foreach variables' initial values should not be ignored",
     "type": "BUG",
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-ignored-initial-value.md"
   },
   {
     "key": "no-ignored-return",
-    "name": "Return values should not be ignored when function calls don\u0027t have any side effects",
+    "name": "Return values should not be ignored when function calls don't have any side effects",
     "type": "BUG",
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-ignored-return.md"
   },
@@ -229,7 +229,7 @@
   },
   {
     "key": "no-misspelled-operator",
-    "name": "Non-existent operators \u0027\u003d+\u0027, \u0027\u003d-\u0027 and \u0027\u003d!\u0027 should not be used",
+    "name": "Non-existent operators '=+', '=-' and '=!' should not be used",
     "type": "BUG",
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-misspelled-operator.md"
   },
@@ -307,7 +307,7 @@
   },
   {
     "key": "no-try-promise",
-    "name": "Promise rejections should not be caught by \u0027try\u0027 block",
+    "name": "Promise rejections should not be caught by 'try' block",
     "type": "BUG",
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-try-promise.md"
   },
@@ -343,7 +343,7 @@
   },
   {
     "key": "no-use-of-empty-return-value",
-    "name": "The output of functions that don\u0027t return anything should not be used",
+    "name": "The output of functions that don't return anything should not be used",
     "type": "BUG",
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-use-of-empty-return-value.md"
   },
@@ -367,7 +367,7 @@
   },
   {
     "key": "no-useless-intersection",
-    "name": "Types without members, \u0027any\u0027 and \u0027never\u0027 should not be used in type intersections",
+    "name": "Types without members, 'any' and 'never' should not be used in type intersections",
     "type": "BUG",
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/no-useless-intersection.md"
   },
@@ -397,7 +397,7 @@
   },
   {
     "key": "prefer-optional",
-    "name": "Optional property declarations should use \u0027?\u0027 syntax",
+    "name": "Optional property declarations should use '?' syntax",
     "type": "CODE_SMELL",
     "url": "https://github.com/SonarSource/SonarTS/blob/master/sonarts-core/docs/rules/prefer-optional.md"
   },
