@@ -1,6 +1,6 @@
 # bool-param-default
 
-Having default value for optional boolean parameters makes the logic of function when missing that parameter more evident. When providing a default value is not possible, it points at poor design of the function. In this case developer should better define a new function implementing a logic of a missing parameter.
+Having default value for optional boolean parameters makes the logic of function when missing that parameter more evident. When providing a default value is not possible, it is better to split the function into two with a clear responsibility separation.
 
 ## Noncompliant Code Example
 
