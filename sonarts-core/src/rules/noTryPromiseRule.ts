@@ -51,18 +51,16 @@ class Visitor extends TypedSonarRuleVisitor {
       const capturedPromises: ts.Expression[] = [];
       let hasPotentiallyThrowingCalls = false;
 
-      FunctionCallVisitor.getCallExpressions(node.tryBlock).forEach(callExpr => {
-        const typeChecker = this.program.getTypeChecker();
-        const type = typeChecker.getTypeAtLocation(callExpr);
-        if (!hasThenMethod(type)) {
+      CallLikeExpressionsVisitor.getCallExpressions(node.tryBlock).forEach(callLikeExpr => {
+        if (is(callLikeExpr, ts.SyntaxKind.AwaitExpression) || !this.hasThenMethod(callLikeExpr)) {
           hasPotentiallyThrowingCalls = true;
           return;
         }
-        if (is(callExpr.parent, ts.SyntaxKind.AwaitExpression) || isThened(callExpr) || isCatch(callExpr)) {
+        if (is(callLikeExpr.parent, ts.SyntaxKind.AwaitExpression) || isThened(callLikeExpr) || isCatch(callLikeExpr)) {
           return;
         }
 
-        (isCaught(callExpr) ? capturedPromises : openPromises).push(callExpr);
+        (isCaught(callLikeExpr) ? capturedPromises : openPromises).push(callLikeExpr);
       });
 
       if (!hasPotentiallyThrowingCalls) {
@@ -91,6 +89,13 @@ class Visitor extends TypedSonarRuleVisitor {
       capturedPromises.forEach(capturedPromise => issue.addSecondaryLocation(capturedPromise, "Caught promise"));
     }
   }
+
+  hasThenMethod(node: ts.Expression) {
+    const { getTypeAtLocation } = this.program.getTypeChecker();
+    const type = getTypeAtLocation(node);
+    const thenProperty = type.getProperty("then");
+    return Boolean(thenProperty && thenProperty.flags & ts.SymbolFlags.Method);
+  }
 }
 
 const isThened = (callExpr: ts.Expression) =>
@@ -104,32 +109,32 @@ const isCatch = (callExpr: ts.Expression) =>
   isPropertyAccessExpression(callExpr.expression) &&
   callExpr.expression.name.getText() === "catch";
 
-class FunctionCallVisitor extends TreeVisitor {
-  private readonly callExpressions: ts.Expression[] = [];
+class CallLikeExpressionsVisitor extends TreeVisitor {
+  private readonly callLikeExpressions: (ts.CallExpression | ts.NewExpression | ts.AwaitExpression)[] = [];
 
   static getCallExpressions(node: ts.Node) {
-    const callVisitor = new FunctionCallVisitor();
+    const callVisitor = new CallLikeExpressionsVisitor();
     callVisitor.visit(node);
 
-    return callVisitor.callExpressions;
+    return callVisitor.callLikeExpressions;
   }
 
   visitCallExpression(node: ts.CallExpression) {
-    this.callExpressions.push(node);
-    super.visitChildren(node);
+    this.callLikeExpressions.push(node);
+    super.visitCallExpression(node);
   }
 
   visitNewExpression(node: ts.NewExpression) {
-    this.callExpressions.push(node);
-    this.visitChildren(node);
+    this.callLikeExpressions.push(node);
+    super.visitNewExpression(node);
+  }
+
+  visitAwaitExpression(node: ts.AwaitExpression) {
+    this.callLikeExpressions.push(node);
+    super.visitAwaitExpression(node);
   }
 
   visitFunctionLikeDeclaration(_: ts.FunctionLikeDeclaration) {
     // do nothing
   }
-}
-
-function hasThenMethod(type: ts.Type) {
-  const thenProperty = type.getProperty("then");
-  return Boolean(thenProperty && thenProperty.flags & ts.SymbolFlags.Method);
 }
