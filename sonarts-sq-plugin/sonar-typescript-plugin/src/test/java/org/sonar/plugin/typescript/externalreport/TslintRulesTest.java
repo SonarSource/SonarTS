@@ -265,8 +265,8 @@ public class TslintRulesTest {
 
   static class ReadMeRules {
 
-    private final Pattern RULE_PATTERN = Pattern.compile("^###.*|\\* (?<name>.*)\\(\\[`(?<key>[^` ]+)`]\\)", Pattern.MULTILINE);
-    private final Pattern URL_PATTERN = Pattern.compile("^\\[`(?<key>[^` ]+)`]: \\./(?<url>sonarts-core/[^ ]+\\.md) *$", Pattern.MULTILINE);
+    private static final Pattern RULE_PATTERN = Pattern.compile("^###.*|\\* (?<name>.*)\\(\\[`(?<key>[^` ]+)`]\\)", Pattern.MULTILINE);
+    private static final Pattern URL_PATTERN = Pattern.compile("^\\[`(?<key>[^` ]+)`]: \\./(?<url>sonarts-core/[^ ]+\\.md) *$", Pattern.MULTILINE);
 
     final Path readmePath;
     final Map<String, Rule> ruleByTsLintKey;
