@@ -49,6 +49,7 @@ import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 
 public class ContextualSensorTest {
 
+  private static final String INPUT_FILE = "foo/file.ts";
   @org.junit.Rule
   public JUnitTempFolder temp = new JUnitTempFolder();
 
@@ -58,7 +59,7 @@ public class ContextualSensorTest {
   @Test
   public void should_save_issues() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
-    DefaultInputFile inputFile = createInputFile(sensorContext, "function foo(){}", "foo/file.ts");
+    DefaultInputFile inputFile = createInputFile(sensorContext, "function foo(){}", INPUT_FILE);
 
     ContextualServer contextualServer = mock(ContextualServer.class);
     AnalysisResponse mockedResponse = new AnalysisResponse();
@@ -83,7 +84,7 @@ public class ContextualSensorTest {
   public void should_not_execute_if_not_file_uri() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
 
-    DefaultInputFile testInputFile = new TestInputFileBuilder("moduleKey", "foo/file.ts")
+    DefaultInputFile testInputFile = new TestInputFileBuilder("moduleKey", INPUT_FILE)
       .setLanguage(TypeScriptLanguage.KEY)
       .setContents("function foo() { return `hello`; }\n")
       .setCharset(StandardCharsets.UTF_8)
@@ -129,7 +130,7 @@ public class ContextualSensorTest {
   @Test
   public void should_handle_diagnostics() throws Exception {
     SensorContextTester sensorContext = SensorContextTester.create(BASE_DIR);
-    createInputFile(sensorContext, "function foo(){}", "foo/file.ts");
+    createInputFile(sensorContext, "function foo(){}", INPUT_FILE);
 
     ContextualServer contextualServer = mock(ContextualServer.class);
     AnalysisResponse mockedResponse = new AnalysisResponse();

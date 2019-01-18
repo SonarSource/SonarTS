@@ -28,13 +28,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TypeScriptExclusionsFileFilterTest {
 
+  private static final String SOME_APP = "some_app.ts";
+  private static final String NODE_MODULES_LIB = "node_modules/some_lib.ts";
+
   @Test
   public void should_exclude_node_modules() {
     MapSettings settings = new MapSettings();
     settings.setProperty(TypeScriptPlugin.TS_EXCLUSIONS_KEY, TypeScriptPlugin.TS_EXCLUSIONS_DEFAULT_VALUE);
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
-    assertThat(filter.accept(inputFile("some_app.ts"))).isTrue();
-    assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isFalse();
+    assertThat(filter.accept(inputFile(SOME_APP))).isTrue();
+    assertThat(filter.accept(inputFile(NODE_MODULES_LIB))).isFalse();
     assertThat(filter.accept(inputFile("node_modules/my_lib_folder/my_lib.ts"))).isFalse();
     assertThat(filter.accept(inputFile("sub_module/node_modules/submodule_lib.ts"))).isFalse();
     assertThat(filter.accept(inputFile("sub_module2/bower_components/bower_lib/lib.ts"))).isFalse();
@@ -47,8 +50,8 @@ public class TypeScriptExclusionsFileFilterTest {
 
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
 
-    assertThat(filter.accept(inputFile("some_app.ts"))).isTrue();
-    assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isTrue();
+    assertThat(filter.accept(inputFile(SOME_APP))).isTrue();
+    assertThat(filter.accept(inputFile(NODE_MODULES_LIB))).isTrue();
     assertThat(filter.accept(inputFile("sub_module2/bower_components/some_lib.ts"))).isTrue();
   }
 
@@ -60,8 +63,8 @@ public class TypeScriptExclusionsFileFilterTest {
 
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
 
-    assertThat(filter.accept(inputFile("some_app.ts"))).isTrue();
-    assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isFalse();
+    assertThat(filter.accept(inputFile(SOME_APP))).isTrue();
+    assertThat(filter.accept(inputFile(NODE_MODULES_LIB))).isFalse();
     assertThat(filter.accept(inputFile("libs/some_lib.ts"))).isFalse();
   }
 
@@ -72,8 +75,8 @@ public class TypeScriptExclusionsFileFilterTest {
 
     TypeScriptExclusionsFileFilter filter = new TypeScriptExclusionsFileFilter(settings.asConfig());
 
-    assertThat(filter.accept(inputFile("some_app.ts"))).isTrue();
-    assertThat(filter.accept(inputFile("node_modules/some_lib.ts"))).isFalse();
+    assertThat(filter.accept(inputFile(SOME_APP))).isTrue();
+    assertThat(filter.accept(inputFile(NODE_MODULES_LIB))).isFalse();
   }
   
   @Test

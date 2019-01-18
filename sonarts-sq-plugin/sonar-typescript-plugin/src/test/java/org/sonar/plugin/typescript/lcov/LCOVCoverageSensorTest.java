@@ -42,6 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LCOVCoverageSensorTest {
   private static final String LCOV = "lcov.info";
   private static final String BASE_DIR = String.join(File.separator, "src", "test", "resources", "coverage");
+  private static final String FILE_TO_ANALYZE = "moduleKey:file1.ts";
 
   private LCOVCoverageSensor lcovCoverageSensor = new LCOVCoverageSensor();
   private SensorContextTester context;
@@ -66,11 +67,11 @@ public class LCOVCoverageSensorTest {
   public void save_coverage() {
     lcovCoverageSensor.execute(context);
 
-    assertThat(context.lineHits("moduleKey:file1.ts", 1)).isEqualTo(2);
-    assertThat(context.coveredConditions("moduleKey:file1.ts", 2)).isEqualTo(2);
-    assertThat(context.conditions("moduleKey:file1.ts", 2)).isEqualTo(4);
+    assertThat(context.lineHits(FILE_TO_ANALYZE, 1)).isEqualTo(2);
+    assertThat(context.coveredConditions(FILE_TO_ANALYZE, 2)).isEqualTo(2);
+    assertThat(context.conditions(FILE_TO_ANALYZE, 2)).isEqualTo(4);
 
-    assertThat(logTester.logs()).contains("Could not resolve 1 file paths in [" + new File(moduleBaseDir, "lcov.info").getAbsolutePath() + "], first unresolved path: file2.ts");
+    assertThat(logTester.logs()).contains("Could not resolve 1 file paths in [" + new File(moduleBaseDir, LCOV).getAbsolutePath() + "], first unresolved path: file2.ts");
   }
 
   @Test

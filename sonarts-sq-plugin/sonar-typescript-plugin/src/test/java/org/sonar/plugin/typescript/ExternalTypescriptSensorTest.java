@@ -60,6 +60,7 @@ import static org.sonar.plugin.typescript.TestUtils.createInputFile;
 
 public class ExternalTypescriptSensorTest {
 
+  private static final String MOCK_SONAR_TS = "/mockSonarTS.js";
   private FileLinesContext fileLinesContext;
   private NoSonarFilter noSonarFilter;
 
@@ -89,7 +90,7 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
-    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", testInputFile.absolutePath());
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
@@ -177,7 +178,7 @@ public class ExternalTypescriptSensorTest {
     SensorContextTester sensorContext = createSensorContext();
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "foo/bar/file.ts");
 
-    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", testInputFile.absolutePath());
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
@@ -191,7 +192,7 @@ public class ExternalTypescriptSensorTest {
     sensorContext.setSettings(settings);
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "customTsconfig/main.ts");
 
-    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", testInputFile.absolutePath());
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(1);
@@ -204,7 +205,7 @@ public class ExternalTypescriptSensorTest {
     settings.setProperty(TypeScriptPlugin.TSCONFIG_PATH, "customTsconfig/another/tsconfig.json");
     sensorContext.setSettings(settings);
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "customTsconfig/main.ts");
-    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", testInputFile.absolutePath());
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
     String tsconfigPath = BASE_DIR + File.separator + "customTsconfig" + File.separator + "another" + File.separator + "tsconfig.json";
@@ -230,7 +231,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
     TestBundleFactory testBundle = TestBundleFactory
-      .nodeScript("/mockSonarTS.js", testInputFile.absolutePath())
+      .nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath())
       .setCustomNodeExecutable(TestBundleFactory.getNodeExecutable() + " " + TestBundleFactory.resourceScript("/oldNodeVersion.js"));
 
     createTestInputFile(sensorContext);
@@ -243,7 +244,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
 
     TestBundleFactory testBundle = TestBundleFactory
-      .nodeScript("/mockSonarTS.js", testInputFile.absolutePath())
+      .nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath())
       .setCustomNodeExecutable(TestBundleFactory.getNodeExecutable() + " " + TestBundleFactory.resourceScript("/invalidNodeVersion.js"));
 
     createTestInputFile(sensorContext);
@@ -266,7 +267,7 @@ public class ExternalTypescriptSensorTest {
   @Test
   public void should_do_nothing_when_response_with_not_existing_file() {
     new File(BASE_DIR, "not_exists.ts").getAbsolutePath();
-    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript("/mockSonarTS.js", "some/path/file.ts");
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, "some/path/file.ts");
     SensorContextTester sensorContext = createSensorContext();
     createTestInputFile(sensorContext);
     executeSensor(sensorContext, bundleFactory);
@@ -279,7 +280,7 @@ public class ExternalTypescriptSensorTest {
     sensorContext.fileSystem().setWorkDir(tmpDir.getRoot().toPath());
     DefaultInputFile testInputFile = createTestInputFile(sensorContext, "dirWithoutTypeScript/file.ts");
 
-    TestBundleFactory testBundle = TestBundleFactory.nodeScript("/mockSonarTS.js", testInputFile.absolutePath());
+    TestBundleFactory testBundle = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
     executeSensor(sensorContext, testBundle);
 
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
