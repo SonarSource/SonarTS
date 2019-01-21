@@ -20,7 +20,7 @@
 import * as tslint from "tslint";
 import * as ts from "typescript";
 import { SonarRuleMetaData } from "../sonarRule";
-import { is } from "../utils/nodes";
+import { is, isParenthesizedExpression, isPropertyAccessExpression } from "../utils/nodes";
 import { TypedSonarRuleVisitor } from "../utils/sonarAnalysis";
 
 export class Rule extends tslint.Rules.TypedRule {
@@ -85,10 +85,35 @@ class Visitor extends TypedSonarRuleVisitor {
     if (
       (is(expression, ts.SyntaxKind.NumericLiteral) && is(type, ts.SyntaxKind.NumberKeyword)) ||
       (is(expression, ts.SyntaxKind.StringLiteral) && is(type, ts.SyntaxKind.StringKeyword)) ||
+      this.isUselessPropertyAccessCasting(assertionExpression, actualExpressionType) ||
       compatibleTypes.includes(typeToCast)
     ) {
       this.addIssue(assertionExpression, Rule.MESSAGE_CAST);
     }
+  }
+
+  // checks pattern like (myObject as A).foo
+  isUselessPropertyAccessCasting({ parent }: ts.AssertionExpression, type: ts.Type) {
+    if (isParenthesizedExpression(parent) && isPropertyAccessExpression(parent.parent) && type.isUnion()) {
+      const propertyAccess = parent.parent;
+      const propertySignatures = type.types
+        .map(type => type.getProperty(propertyAccess.name.getText()))
+        .map(symbol => this.getTypeAsString(symbol));
+      return propertySignatures.every(signature => !!signature) && new Set(propertySignatures).size === 1;
+    }
+    return false;
+  }
+
+  getTypeAsString(symbol: ts.Symbol | undefined) {
+    if (!symbol) {
+      return undefined;
+    }
+    const declarations = symbol.getDeclarations();
+    if (declarations && declarations.length === 1) {
+      const { typeToString, getTypeOfSymbolAtLocation } = this.program.getTypeChecker();
+      return typeToString(getTypeOfSymbolAtLocation(symbol, declarations[0]));
+    }
+    return undefined;
   }
 }
 

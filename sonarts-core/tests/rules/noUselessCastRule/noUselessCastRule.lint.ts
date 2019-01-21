@@ -100,3 +100,23 @@ function parentType(p1: SubClass, p2: SubInterface, p3: ImplementationClass, p4:
   p3 as SuperInterface; // OK, FN
   p5 as SubClass; // OK
 }
+
+interface A {
+  withSameType: string;
+  withDifferentType: number;
+  onlyInA: string;
+}
+
+interface B {
+  withSameType: string;
+  withDifferentType: string;
+}
+
+function propertyAccessOnUnionType(param: A | B) {
+  const a = (param as A).withSameType;
+           //^^^^^^^^^^ {{Remove this unnecessary cast.}}
+  const b = (param as A).withDifferentType; // OK
+  const c = (param as A).onlyInA; // OK
+  const e = (param as UnknownType).someProp; // OK
+  return {a, b, c, e};
+}
