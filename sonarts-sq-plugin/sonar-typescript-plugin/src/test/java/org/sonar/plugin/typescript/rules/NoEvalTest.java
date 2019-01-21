@@ -19,30 +19,15 @@
  */
 package org.sonar.plugin.typescript.rules;
 
-import com.google.gson.Gson;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CognitiveComplexityTest {
-  @Test
-  public void default_configuration() {
-    CognitiveComplexity rule = new CognitiveComplexity();
-    String configuration = new Gson().toJson(rule.configuration());
-    assertThat(configuration).isEqualTo("[15]");
-  }
+public class NoEvalTest {
 
   @Test
-  public void custom_configuration() {
-    CognitiveComplexity rule = new CognitiveComplexity();
-    rule.threshold = 10;
-    String configuration = new Gson().toJson(rule.configuration());
-    assertThat(configuration).isEqualTo("[10]");
-  }
-
-  @Test
-  public void should_not_force_message() {
-    assertThat(new CognitiveComplexity().messageToForce()).isEmpty();
+  public void should_force_message() {
+    assertThat(new NoEval().messageToForce()).get().isEqualTo("Make sure that this dynamic injection or execution of code is safe.");
   }
 
 }

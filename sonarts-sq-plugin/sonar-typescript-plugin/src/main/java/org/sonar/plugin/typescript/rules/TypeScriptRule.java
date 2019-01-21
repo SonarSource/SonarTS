@@ -21,6 +21,7 @@ package org.sonar.plugin.typescript.rules;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import java.util.Optional;
 
 public abstract class TypeScriptRule {
 
@@ -28,6 +29,10 @@ public abstract class TypeScriptRule {
 
   public JsonElement configuration() {
     return ruleConfiguration();
+  }
+
+  public Optional<String> messageToForce() {
+    return Optional.empty();
   }
 
   public void enable() {

@@ -23,6 +23,7 @@ import com.google.common.collect.Sets;
 import java.io.BufferedReader;
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
@@ -93,7 +94,7 @@ public class ExternalTypescriptSensorTest {
     TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
-    assertThat(sensorContext.allIssues()).hasSize(1);
+    assertThat(sensorContext.allIssues()).hasSize(2);
     Issue issue = sensorContext.allIssues().iterator().next();
     assertThat(issue.flows()).hasSize(1);
     assertThat(issue.gap()).isEqualTo(42);
@@ -129,6 +130,22 @@ public class ExternalTypescriptSensorTest {
     assertThat(usages.iterator().next().start().lineOffset()).isEqualTo(6);
 
     assertThat(logTester.logs()).contains(String.format("Setting 'NODE_PATH' to %s%sfoo%snode_modules", BASE_DIR.getAbsoluteFile(), File.separator, File.separator));
+  }
+
+  @Test
+  public void should_replace_message_when_forced_message_provided() {
+    SensorContextTester sensorContext = createSensorContext();
+    DefaultInputFile testInputFile = createTestInputFile(sensorContext);
+
+    TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
+    executeSensor(sensorContext, bundleFactory);
+
+    assertThat(sensorContext.allIssues()).hasSize(2);
+    Iterator<Issue> issueIterator = sensorContext.allIssues().iterator();
+    Issue first = issueIterator.next();
+    Issue second = issueIterator.next();
+    assertThat(first.primaryLocation().message()).isEqualTo("some message");
+    assertThat(second.primaryLocation().message()).isEqualTo("Make sure that this dynamic injection or execution of code is safe.");
   }
 
   @Test
@@ -181,7 +198,7 @@ public class ExternalTypescriptSensorTest {
     TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
-    assertThat(sensorContext.allIssues()).hasSize(1);
+    assertThat(sensorContext.allIssues()).hasSize(2);
   }
 
   @Test
@@ -195,7 +212,7 @@ public class ExternalTypescriptSensorTest {
     TestBundleFactory bundleFactory = TestBundleFactory.nodeScript(MOCK_SONAR_TS, testInputFile.absolutePath());
     executeSensor(sensorContext, bundleFactory);
 
-    assertThat(sensorContext.allIssues()).hasSize(1);
+    assertThat(sensorContext.allIssues()).hasSize(2);
   }
 
   @Test
@@ -286,7 +303,7 @@ public class ExternalTypescriptSensorTest {
 
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("No TypeScript compiler found in your project");
     assertThat(logTester.setLevel(LoggerLevel.DEBUG).logs()).contains("Global one referenced in 'NODE_PATH' will be used");
-    assertThat(sensorContext.allIssues()).hasSize(1);
+    assertThat(sensorContext.allIssues()).hasSize(2);
   }
 
   @Test

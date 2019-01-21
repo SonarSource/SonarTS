@@ -179,6 +179,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
 
   private final List<TypeScriptRule> allRules;
   private final Map<String, RuleKey> tsLintKeyToRuleKey;
+  private final Map<String, TypeScriptRule> tsLintKeyToRuleObject;
 
   public static void addToRepository(NewRepository repository, SonarRuntime runtime) {
     RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, DEFAULT_PROFILE_PATH, runtime);
@@ -189,8 +190,10 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
     Checks<TypeScriptRule> checks = checkFactory.<TypeScriptRule>create(TypeScriptRulesDefinition.REPOSITORY_KEY).addAnnotatedChecks((Iterable) getRuleClasses());
     Collection<TypeScriptRule> enabledRules = checks.all();
     tsLintKeyToRuleKey = new HashMap<>();
+    tsLintKeyToRuleObject = new HashMap<>();
     for (TypeScriptRule typeScriptRule : enabledRules) {
       tsLintKeyToRuleKey.put(typeScriptRule.tsLintKey(), checks.ruleKey(typeScriptRule));
+      tsLintKeyToRuleObject.put(typeScriptRule.tsLintKey(), typeScriptRule);
       typeScriptRule.enable();
     }
     allRules = buildAllRules(enabledRules);
@@ -223,6 +226,12 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
     RuleKey ruleKey = tsLintKeyToRuleKey.get(tsLintKey);
     checkNotNull(ruleKey, "Unknown tslint rule or rule not enabled %s", tsLintKey);
     return ruleKey;
+  }
+
+  public String message(String tsLintKey, String nativeMessage) {
+    TypeScriptRule rule = tsLintKeyToRuleObject.get(tsLintKey);
+    checkNotNull(rule, "Unknown tslint rule or rule not enabled %s", tsLintKey);
+    return rule.messageToForce().orElse(nativeMessage);
   }
 
   private static void checkNotNull(@Nullable Object obj, String msg, String... args) {
@@ -363,5 +372,4 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
       VariableName.class
     ));
   }
-
 }

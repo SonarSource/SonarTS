@@ -104,7 +104,7 @@ public class SensorContextUtils {
     NewIssue newIssue = sensorContext.newIssue().forRule(ruleKey);
     NewIssueLocation location = newIssue.newLocation();
     location.on(inputFile);
-    location.message(issue.failure);
+    location.message(typeScriptRules.message(issue.ruleName, issue.failure));
 
     // semicolon rule
     if (ruleKey.rule().equals("S1438")) {
