@@ -1,14 +1,12 @@
 module.exports = {
-  collectCoverageFrom: ["src/**/*.ts"],
   globals: {
     "ts-jest": {
-      skipBabel: false,
+      tsConfig: "<rootDir>/tests/tsconfig.json",
     },
   },
+  collectCoverageFrom: ["src/**/*.ts"],
   moduleFileExtensions: ["js", "ts"],
   testResultsProcessor: "jest-sonar-reporter",
-  transform: {
-    "^.+\\.ts$": "ts-jest",
-  },
   testMatch: ["<rootDir>/tests/**/*.test.ts"],
+  preset: "ts-jest",
 };

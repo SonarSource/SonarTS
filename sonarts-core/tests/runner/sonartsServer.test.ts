@@ -93,7 +93,7 @@ function getClient(): Promise<net.Socket> {
         });
       })
       .listen(0, "localhost", () => {
-        sonartsServer.start(server.address().port);
+        sonartsServer.start((server.address() as net.AddressInfo).port);
       });
   });
 }
