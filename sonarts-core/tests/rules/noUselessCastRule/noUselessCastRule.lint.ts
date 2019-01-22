@@ -105,18 +105,31 @@ interface A {
   withSameType: string;
   withDifferentType: number;
   onlyInA: string;
+  moreComplexType: Array<string>;
 }
 
 interface B {
   withSameType: string;
   withDifferentType: string;
+  moreComplexType: Array<string>;
 }
 
-function propertyAccessOnUnionType(param: A | B) {
+interface ParametricA<T> {
+  prop: Array<T>;
+}
+
+interface ParametricB<T> {
+  prop: Array<T>
+}
+
+function propertyAccessOnUnionType(param: A | B, paramWithParametricType: ParametricA<string> | ParametricB<number>) {
   const a = (param as A).withSameType;
            //^^^^^^^^^^ {{Remove this unnecessary cast.}}
   const b = (param as A).withDifferentType; // OK
   const c = (param as A).onlyInA; // OK
+  const d = (param as A).moreComplexType;
+           //^^^^^^^^^^ {{Remove this unnecessary cast.}}
   const e = (param as UnknownType).someProp; // OK
-  return {a, b, c, e};
+  const f = (paramWithParametricType as ParametricA<string>).prop; // OK
+  return {a, b, c, d, e, f};
 }

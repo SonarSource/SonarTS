@@ -98,20 +98,20 @@ class Visitor extends TypedSonarRuleVisitor {
       const propertyAccess = parent.parent;
       const propertySignatures = type.types
         .map(type => type.getProperty(propertyAccess.name.getText()))
-        .map(symbol => this.getTypeAsString(symbol));
+        .map(symbol => this.getType(symbol));
       return propertySignatures.every(signature => !!signature) && new Set(propertySignatures).size === 1;
     }
     return false;
   }
 
-  getTypeAsString(symbol: ts.Symbol | undefined) {
+  getType(symbol: ts.Symbol | undefined) {
     if (!symbol) {
       return undefined;
     }
     const declarations = symbol.getDeclarations();
     if (declarations && declarations.length === 1) {
-      const { typeToString, getTypeOfSymbolAtLocation } = this.program.getTypeChecker();
-      return typeToString(getTypeOfSymbolAtLocation(symbol, declarations[0]));
+      const { getTypeOfSymbolAtLocation } = this.program.getTypeChecker();
+      return getTypeOfSymbolAtLocation(symbol, declarations[0]);
     }
     return undefined;
   }
