@@ -96,10 +96,10 @@ class Visitor extends TypedSonarRuleVisitor {
   isUselessPropertyAccessCasting({ parent }: ts.AssertionExpression, type: ts.Type) {
     if (isParenthesizedExpression(parent) && isPropertyAccessExpression(parent.parent) && type.isUnion()) {
       const propertyAccess = parent.parent;
-      const propertySignatures = type.types
+      const propertyTypes = type.types
         .map(type => type.getProperty(propertyAccess.name.getText()))
         .map(symbol => this.getType(symbol));
-      return propertySignatures.every(signature => !!signature) && new Set(propertySignatures).size === 1;
+      return propertyTypes.every(signature => !!signature) && new Set(propertyTypes).size === 1;
     }
     return false;
   }
