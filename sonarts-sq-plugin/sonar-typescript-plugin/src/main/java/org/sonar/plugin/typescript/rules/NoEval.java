@@ -19,6 +19,7 @@
  */
 package org.sonar.plugin.typescript.rules;
 
+import java.util.Optional;
 import org.sonar.check.Rule;
 
 @Rule(key = "S1523")
@@ -26,5 +27,10 @@ public class NoEval extends TypeScriptRule {
   @Override
   public String tsLintKey() {
     return "no-eval";
+  }
+
+  @Override
+  public Optional<String> messageToForce() {
+    return Optional.of("Make sure that this dynamic injection or execution of code is safe.");
   }
 }

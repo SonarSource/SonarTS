@@ -16,6 +16,14 @@ var result = [
           { startLine: 1, startCol: 1, endLine: 1, endCol: 2, message: 'secondary location message' }
         ],
         cost: 42
+      },
+      {
+        failure: "some message which should be replaced",
+        startPosition: { line: 1, character: 5 },
+        endPosition: { line: 1, character: 6 },
+        name: testFile,
+        ruleName: "no-eval",
+        secondaryLocations: []
       }
     ],
 
