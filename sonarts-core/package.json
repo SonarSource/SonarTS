@@ -41,6 +41,9 @@
   "engines": {
     "node": ">=6"
   },
+  "resolutions": {
+    "**/tough-cookie": "~2.4.0"
+  },
   "dependencies": {
     "immutable": "4.0.0-rc.12"
   },
@@ -59,7 +62,7 @@
     "awesome-typescript-loader": "5.2.1",
     "glob": "7.1.3",
     "jest": "23.6.0",
-    "jest-sonar-reporter": "2.0.0",
+    "jest-sonar-reporter": "1.3.0",
     "json-stable-stringify": "1.0.1",
     "license-check": "1.1.5",
     "lodash": "4.17.11",
