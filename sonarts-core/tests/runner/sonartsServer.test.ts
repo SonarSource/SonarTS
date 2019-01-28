@@ -20,6 +20,7 @@
 import { SonarTsServer } from "../../src/runner/sonartsServer";
 import * as net from "net";
 import * as path from "path";
+import { writeFileSync, unlinkSync } from "fs";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
@@ -77,6 +78,36 @@ it("handles custom tsconfig", async () => {
     file: path.join(__dirname, "fixtures/custom-tsconfig-project/foo.ts"),
   });
   expect(getRules(response.issues)).toEqual(["no-identical-expressions"]);
+});
+
+it("analyzes newly created files", async () => {
+  const content = `if(x && x) console.log("identical expressions");`;
+  const projectDir = path.join(__dirname, "fixtures/runnerProject");
+  const newlyCreatedFile = path.join(projectDir, "newlyCreatedFile.ts");
+
+  // first request, create a service and populate a cache containing (tsConfigPath => service)
+
+  await sendRequest(client, {
+    content,
+    file: path.join(projectDir, "sample.lint.ts"),
+  });
+
+  // add a file on the same project and request an analysis on it => cache is updated
+
+  writeFileSync(newlyCreatedFile, content, "utf8");
+  let response = await sendRequest(client, {
+    content,
+    file: newlyCreatedFile,
+  });
+  expect(getRules(response.issues)).toEqual(["no-identical-expressions"]);
+  unlinkSync(newlyCreatedFile);
+
+  // verify that if a file doesn't exist, analysis result is empty
+  response = await sendRequest(client, {
+    content,
+    file: path.join(projectDir, "notExistingFile.ts"),
+  });
+  expect(getRules(response.issues)).toEqual([]);
 });
 
 function getRules(issues: any[]) {

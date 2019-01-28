@@ -60,31 +60,23 @@ export class SonarTsServer {
 
     this.fileCache.newContent({ file, content });
 
-    let tsConfig;
-    if (this.tsConfigCache.has(file)) {
-      tsConfig = this.tsConfigCache.get(file)!;
-    } else {
+    let tsConfig = this.tsConfigCache.get(file);
+    if (!tsConfig) {
       tsConfig = this.getTsConfig(file, tsconfigPath);
-      if (tsConfig) {
-        this.tsConfigCache.set(file, tsConfig);
-      } else {
+      if (!tsConfig) {
         return EMPTY_ANSWER;
       }
+      this.tsConfigCache.set(file, tsConfig);
     }
 
-    let service = this.servicesPerTsconfig.get(tsConfig);
-    if (!service) {
-      const { files, options } = parseTsConfig(tsConfig, projectRoot);
-      service = createService(files, options, this.fileCache);
-      this.servicesPerTsconfig.set(tsConfig, service);
-    }
+    const service = this.servicesPerTsconfig.get(tsConfig) || this.createNewService(tsConfig, projectRoot);
 
     const program = service.getProgram();
     if (!program) {
       console.error(`No Program found with configuration ${tsConfig}`);
       return EMPTY_ANSWER;
     }
-    const sourceFile = program.getSourceFile(file);
+    const sourceFile = program.getSourceFile(file) || this.updateServiceAndGetSourceFile(tsConfig, projectRoot, file);
     if (!sourceFile) {
       console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
       return EMPTY_ANSWER;
@@ -94,6 +86,19 @@ export class SonarTsServer {
       return { diagnostics };
     }
     return getIssues(rules, program, sourceFile);
+  }
+
+  private createNewService(tsConfig: string, projectRoot: string) {
+    const { files, options } = parseTsConfig(tsConfig, projectRoot);
+    const service = createService(files, options, this.fileCache);
+    this.servicesPerTsconfig.set(tsConfig, service);
+    return service;
+  }
+
+  private updateServiceAndGetSourceFile(tsConfig: string, projectRoot: string, file: string) {
+    const service = this.createNewService(tsConfig, projectRoot);
+    const program = service.getProgram();
+    return program ? program.getSourceFile(file) : undefined;
   }
 
   private getTsConfig(filePath: string, tsconfigPath?: string): string | undefined {
