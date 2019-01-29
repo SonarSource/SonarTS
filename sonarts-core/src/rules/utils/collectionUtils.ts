@@ -77,16 +77,13 @@ export function getCollectionSymbols(symbols: SymbolTable, program: ts.Program) 
       // filter out parameters, exported/imported, type-related symbols
       .filter(
         symbolAndDeclaration =>
-          !firstAncestor(
-            symbolAndDeclaration.declaration,
-            [
-              ts.SyntaxKind.Parameter,
-              ts.SyntaxKind.ImportDeclaration,
-              ts.SyntaxKind.InterfaceDeclaration,
-              ts.SyntaxKind.TypeAliasDeclaration,
-              ts.SyntaxKind.ModuleDeclaration,
-            ],
-          ) && !isExported(symbolAndDeclaration.declaration),
+          !firstAncestor(symbolAndDeclaration.declaration, [
+            ts.SyntaxKind.Parameter,
+            ts.SyntaxKind.ImportDeclaration,
+            ts.SyntaxKind.InterfaceDeclaration,
+            ts.SyntaxKind.TypeAliasDeclaration,
+            ts.SyntaxKind.ModuleDeclaration,
+          ]) && !isExported(symbolAndDeclaration.declaration),
       )
 
       // keep only symbols initialized to array literal or not initialized at all

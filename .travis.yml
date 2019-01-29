@@ -1,6 +1,7 @@
 language: node_js
 
 node_js:
+  - "11"
   - "8"
   - "6"
 
@@ -9,6 +10,10 @@ jdk:
 
 git:
   submodules: false
+
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
 
 script: ./sonarts-core/travis.sh && ./sonarts-sq-plugin/travis.sh && ./sonarts_mvn_build_deploy_analyze.sh
 

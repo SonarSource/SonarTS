@@ -41,38 +41,41 @@
   "engines": {
     "node": ">=6"
   },
+  "resolutions": {
+    "**/tough-cookie": "~2.4.0"
+  },
   "dependencies": {
-    "immutable": "^3.8.2"
+    "immutable": "4.0.0-rc.12"
   },
   "peerDependencies": {
     "tslint": "^5.11.0",
     "typescript": "^2.2 || ^3.0"
   },
   "devDependencies": {
-    "@types/glob": "5.0.33",
-    "@types/jest": "21.1.6",
+    "@types/glob": "7.1.1",
+    "@types/jest": "23.3.13",
     "@types/json-stable-stringify": "1.0.32",
-    "@types/lodash": "4.14.85",
+    "@types/lodash": "4.14.120",
     "@types/minimist": "1.2.0",
-    "@types/node": "8.0.53",
-    "@types/vis": "4.21.0",
-    "awesome-typescript-loader": "3.3.0",
-    "glob": "7.1.2",
-    "jest": "23.5.0",
+    "@types/node": "10.12.18",
+    "@types/vis": "4.21.9",
+    "awesome-typescript-loader": "5.2.1",
+    "glob": "7.1.3",
+    "jest": "23.6.0",
     "jest-sonar-reporter": "1.3.0",
     "json-stable-stringify": "1.0.1",
     "license-check": "1.1.5",
-    "lodash": "4.17.10",
+    "lodash": "4.17.11",
     "minimist": "1.2.0",
-    "prettier": "1.14.2",
-    "sonarqube-scanner": "1.3.0",
-    "source-map-support": "0.5.0",
-    "ts-jest": "23.1.4",
-    "ts-node": "3.3.0",
-    "tslint": "5.11.0",
+    "prettier": "1.16.1",
+    "sonarqube-scanner": "2.1.2",
+    "source-map-support": "0.5.10",
+    "ts-jest": "23.10.5",
+    "ts-node": "8.0.1",
+    "tslint": "5.12.1",
     "typescript": "3.0.1",
     "vis": "4.21.0",
-    "webpack": "4.28.4",
+    "webpack": "4.29.0",
     "webpack-cli": "3.2.1",
     "webpack-dev-server": "3.1.14"
   },
