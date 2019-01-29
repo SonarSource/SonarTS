@@ -86,24 +86,25 @@ it("analyzes newly created files", async () => {
   const newlyCreatedFile = path.join(projectDir, "newlyCreatedFile.ts");
 
   // first request, create a service and populate a cache containing (tsConfigPath => service)
-
   await sendRequest(client, {
     content,
     file: path.join(projectDir, "sample.lint.ts"),
   });
 
   // add a file on the same project and request an analysis on it => cache is updated
-
   writeFileSync(newlyCreatedFile, content, "utf8");
-  let response = await sendRequest(client, {
-    content,
-    file: newlyCreatedFile,
-  });
-  expect(getRules(response.issues)).toEqual(["no-identical-expressions"]);
-  unlinkSync(newlyCreatedFile);
+  try {
+    let response = await sendRequest(client, {
+      content,
+      file: newlyCreatedFile,
+    });
+    expect(getRules(response.issues)).toEqual(["no-identical-expressions"]);
+  } finally {
+    unlinkSync(newlyCreatedFile);
+  }
 
-  // verify that if a file doesn't exist, analysis result is empty
-  response = await sendRequest(client, {
+  // verify that if a file doesn't (and didn't) exist, analysis result is empty
+  let response = await sendRequest(client, {
     content,
     file: path.join(projectDir, "notExistingFile.ts"),
   });
