@@ -60,35 +60,17 @@ export class SonarTsServer {
 
     this.fileCache.newContent({ file, content });
 
-    let tsConfig;
-    if (this.tsConfigCache.has(file)) {
-      tsConfig = this.tsConfigCache.get(file)!;
-    } else {
-      tsConfig = this.getTsConfig(file, tsconfigPath);
-      if (tsConfig) {
-        this.tsConfigCache.set(file, tsConfig);
-      } else {
-        return EMPTY_ANSWER;
-      }
-    }
-
-    let service = this.servicesPerTsconfig.get(tsConfig);
-    if (!service) {
-      const { files, options } = parseTsConfig(tsConfig, projectRoot);
-      service = createService(files, options, this.fileCache);
-      this.servicesPerTsconfig.set(tsConfig, service);
-    }
-
-    const program = service.getProgram();
-    if (!program) {
-      console.error(`No Program found with configuration ${tsConfig}`);
+    let tsConfig = this.retrieveTsConfig(file, tsconfigPath);
+    if (!tsConfig) {
       return EMPTY_ANSWER;
     }
-    const sourceFile = program.getSourceFile(file);
-    if (!sourceFile) {
-      console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
+
+    const programAndSourceFile = this.retrieveProgramAndSourceFile(file, tsConfig, projectRoot);
+    if (!programAndSourceFile) {
       return EMPTY_ANSWER;
     }
+    const { program, sourceFile } = programAndSourceFile;
+
     const diagnostics = getDiagnostics(sourceFile, program);
     if (diagnostics.length > 0) {
       return { diagnostics };
@@ -96,14 +78,63 @@ export class SonarTsServer {
     return getIssues(rules, program, sourceFile);
   }
 
+  private retrieveTsConfig(file: string, tsconfigPath?: string) {
+    if (!this.tsConfigCache.has(file)) {
+      const tsConfig = this.getTsConfig(file, tsconfigPath);
+      if (!tsConfig) {
+        console.error(
+          `The tsconfig file ${tsconfigPath} doesn't exist. Check property specified in sonar.typescript.tsconfigPath`,
+        );
+        return;
+      }
+      this.tsConfigCache.set(file, tsConfig);
+    }
+
+    return this.tsConfigCache.get(file);
+  }
+
+  private retrieveProgramAndSourceFile(file: string, tsConfig: string, projectRoot: string) {
+    const registeredService = this.servicesPerTsconfig.get(tsConfig);
+    if (registeredService) {
+      const program = registeredService.getProgram();
+      const sourceFile = program && program.getSourceFile(file);
+      if (sourceFile) {
+        return { sourceFile, program: program! };
+      }
+    }
+
+    // no registered service
+    // or no file in that service (for newly created file)
+
+    const newService = this.createNewService(tsConfig, projectRoot);
+    const program = newService.getProgram();
+
+    if (!program) {
+      console.error(`No Program found with configuration ${tsConfig}`);
+      return;
+    }
+
+    const sourceFile = program.getSourceFile(file);
+
+    if (!sourceFile) {
+      console.error(`No SourceFile found for file ${file} with configuration ${tsConfig}`);
+      return;
+    }
+    return { sourceFile, program };
+  }
+
+  private createNewService(tsConfig: string, projectRoot: string) {
+    const { files, options } = parseTsConfig(tsConfig, projectRoot);
+    const service = createService(files, options, this.fileCache);
+    this.servicesPerTsconfig.set(tsConfig, service);
+    return service;
+  }
+
   private getTsConfig(filePath: string, tsconfigPath?: string): string | undefined {
     if (tsconfigPath) {
       if (fs.existsSync(tsconfigPath)) {
         return tsconfigPath;
       } else {
-        console.error(
-          `The tsconfig file ${tsconfigPath} doesn't exist. Check property specified in sonar.typescript.tsconfigPath`,
-        );
         return undefined;
       }
     }
