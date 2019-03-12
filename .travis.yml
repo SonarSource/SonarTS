@@ -1,7 +1,7 @@
 language: node_js
 
 node_js:
-  - "11"
+  - "11.10.1" # fixed version because there is a bug with node v11.11
   - "8"
   - "6"
 
@@ -19,9 +19,9 @@ script: ./sonarts-core/travis.sh && ./sonarts-sq-plugin/travis.sh && ./sonarts_m
 
 cache: # yarn
   directories:
-    - '$HOME/.m2/repository'    
-    - '$HOME/sonar-scanner-3.0.3.778-linux'
-    - '$HOME/maven'
+    - "$HOME/.m2/repository"
+    - "$HOME/sonar-scanner-3.0.3.778-linux"
+    - "$HOME/maven"
   before_cache:
     - rm -rf $HOME/.m2/repository/org/sonarsource/typescript
     - find $HOME/.m2 -name resolver-status.properties -exec rm {} \;
