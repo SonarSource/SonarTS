@@ -23,7 +23,6 @@ import com.google.common.collect.ImmutableList;
 import com.sonar.orchestrator.Orchestrator;
 import java.util.Collections;
 import java.util.List;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sonarqube.ws.Issues.Issue;
@@ -34,18 +33,14 @@ import static org.sonar.typescript.its.Tests.newWsClient;
 
 public class MissingTSConfigTest {
 
-  private static String PROJECT_KEY = "SonarTS-missing-tsconfig";
-  private static String PROJECT_KEY_MIXED_TSCONFIG = "SonarTS-mixed-tsconfig";
+  private static final String PROJECT_KEY = "SonarTS-missing-tsconfig";
+  private static final String PROJECT_KEY_MIXED_TSCONFIG = "SonarTS-mixed-tsconfig";
 
   @ClassRule
-  public static Orchestrator orchestrator = Tests.ORCHESTRATOR;
+  public static final Orchestrator orchestrator = Tests.ORCHESTRATOR;
 
   public static void prepare(String location, String projectKey) {
-    orchestrator.resetData();
-
-    orchestrator.executeBuild(
-      Tests.createScanner(location, projectKey)
-        .setProfile("test-profile"));
+    orchestrator.executeBuild(Tests.createScanner(location, projectKey, "test-profile"));
   }
 
   @Test
