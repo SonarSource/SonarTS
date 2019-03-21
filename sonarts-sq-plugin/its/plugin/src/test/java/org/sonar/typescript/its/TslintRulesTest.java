@@ -37,7 +37,7 @@ public class TslintRulesTest {
   private static final String PROJECT_KEY = "SonarTS-tslint-rules-test";
 
   @ClassRule
-  public static Orchestrator orchestrator = Tests.ORCHESTRATOR;
+  public static final Orchestrator orchestrator = Tests.ORCHESTRATOR;
 
   @Test
   public void S1441_should_avoid_escape_in_quote_rule() {
@@ -61,16 +61,16 @@ public class TslintRulesTest {
   }
 
 
-  private List<Issue> getIssues(String ruleKey, String profileKey) {
+  private static List<Issue> getIssues(String ruleKey, String profileKey) {
     return getIssues(ruleKey, profileKey, ruleKey);
   }
 
-  private List<Issue> getIssues(String ruleKey, String profileKey, String filename) {
-    orchestrator.resetData();
-    orchestrator.executeBuild(Tests.createScanner("projects/tslint-rules-test-project", PROJECT_KEY).setProfile(profileKey));
+  private static List<Issue> getIssues(String ruleKey, String profileKey, String filename) {
+    String projectKey = PROJECT_KEY + "_" + profileKey;
+    orchestrator.executeBuild(Tests.createScanner("projects/tslint-rules-test-project", projectKey, profileKey));
 
     SearchRequest request = new SearchRequest();
-    request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:" + ruleKey));
+    request.setComponentKeys(Collections.singletonList(projectKey)).setRules(ImmutableList.of("typescript:" + ruleKey));
     return newWsClient().issues().search(request).getIssuesList()
       .stream().filter(issue -> issue.getComponent().endsWith(filename + ".ts"))
       .collect(Collectors.toList());

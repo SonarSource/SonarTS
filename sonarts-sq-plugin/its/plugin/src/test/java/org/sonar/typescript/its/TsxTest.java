@@ -34,18 +34,14 @@ import static org.sonar.typescript.its.Tests.newWsClient;
 
 public class TsxTest {
 
-  private static String PROJECT_KEY = "SonarTS-tsx-test";
+  private static final String PROJECT_KEY = "SonarTS-tsx-test";
 
   @ClassRule
-  public static Orchestrator orchestrator = Tests.ORCHESTRATOR;
+  public static final Orchestrator orchestrator = Tests.ORCHESTRATOR;
 
   @BeforeClass
   public static void prepare() {
-    orchestrator.resetData();
-
-    orchestrator.executeBuild(
-      Tests.createScanner("projects/tsx-test-project", PROJECT_KEY)
-        .setProfile("test-profile"));
+    orchestrator.executeBuild(Tests.createScanner("projects/tsx-test-project", PROJECT_KEY, "test-profile"));
   }
 
   @Test

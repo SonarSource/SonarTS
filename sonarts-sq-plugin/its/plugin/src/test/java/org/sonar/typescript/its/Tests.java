@@ -22,9 +22,11 @@ package org.sonar.typescript.its;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.build.SonarScanner;
+import com.sonar.orchestrator.container.Server;
 import com.sonar.orchestrator.locator.FileLocation;
 import java.io.File;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -70,7 +72,7 @@ public class Tests {
 
   static {
     OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv()
-      .setSonarVersion(System.getProperty("sonar.runtimeVersion", "7.2-RC1"))
+      .setSonarVersion(System.getProperty("sonar.runtimeVersion", "LATEST_RELEASE"))
       .addPlugin(PLUGIN_LOCATION);
 
     File profilesDir = new File("src/test/resources/profiles/");
@@ -118,13 +120,19 @@ public class Tests {
   }
 
   public static SonarScanner createScanner(String location, String projectKey) {
-    return createScanner(location, projectKey, location);
+    return createScanner(location, projectKey, null);
   }
 
-  public static SonarScanner createScanner(String location, String projectKey, String nodeProjectLocation) {
+  public static SonarScanner createScanner(String location, String projectKey, @Nullable String profile) {
+    return createScannerWithLocation(location, projectKey, profile, location);
+  }
+
+  public static SonarScanner createScannerWithLocation(String location, String projectKey, @Nullable String profile, String nodeProjectLocation) {
     File projectDir = FileLocation.of(location).getFile();
     File nodeProjectDir = FileLocation.of(nodeProjectLocation).getFile();
-
+    if (profile != null) {
+      provisionProjectWithProfile(projectKey, projectKey, profile);
+    }
     Tests.runNPMInstall(nodeProjectDir);
 
     return SonarScanner.create()
@@ -136,4 +144,9 @@ public class Tests {
       .setSourceDirs("src");
   }
 
+  private static void provisionProjectWithProfile(String projectKey, String projectName, String profileName) {
+    Server server = ORCHESTRATOR.getServer();
+    server.provisionProject(projectKey, projectName);
+    server.associateProjectToQualityProfile(projectKey, "ts", profileName);
+  }
 }
