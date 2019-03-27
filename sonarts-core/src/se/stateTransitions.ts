@@ -23,11 +23,12 @@ import {
   simpleSymbolicValue,
   undefinedSymbolicValue,
   objectLiteralSymbolicValue,
+  booleanLiteralSymbolicValue,
 } from "./symbolicValues";
 import { ProgramState } from "./programStates";
 import { SymbolTable } from "../symbols/table";
 import { collectLeftHandIdentifiers } from "../utils/navigation";
-import { truthyConstraint, falsyConstraint } from "./constraints";
+import { truthyConstraint, falsyConstraint, isFalsy, isTruthy } from "./constraints";
 import * as nodes from "../utils/nodes";
 
 export function applyExecutors(
@@ -68,12 +69,20 @@ export function applyExecutors(
     return objectLiteralExpression();
   }
 
+  if (nodes.isBooleanLiteral(programPoint)) {
+    return booleanLiteral(programPoint);
+  }
+
   if (nodes.isPropertyAccessExpression(programPoint)) {
     return propertyAccessExpression();
   }
 
   if (nodes.isPostfixUnaryExpression(programPoint)) {
     return postfixUnaryExpression(programPoint);
+  }
+
+  if (nodes.isPrefixUnaryExpression(programPoint)) {
+    return prefixUnaryExpression(programPoint);
   }
 
   return state.pushSV(simpleSymbolicValue());
@@ -87,7 +96,13 @@ export function applyExecutors(
   function numeralLiteral(literal: ts.NumericLiteral) {
     const c = Number(literal.text) ? truthyConstraint() : falsyConstraint();
     return state.pushSV(numericLiteralSymbolicValue(literal.text))
-      .constrain(c);
+      .constrain(c)!;
+  }
+
+  function booleanLiteral(literal: ts.BooleanLiteral) {
+    const c = literal.kind === ts.SyntaxKind.FalseKeyword ? falsyConstraint() : truthyConstraint();
+    return state.pushSV(booleanLiteralSymbolicValue())
+      .constrain(c)!;
   }
 
   function binaryExpression(expression: ts.BinaryExpression) {
@@ -155,6 +170,21 @@ export function applyExecutors(
 
   function propertyAccessExpression() {
     return state.popSV()[1].pushSV(simpleSymbolicValue());
+  }
+
+  function prefixUnaryExpression(unary: ts.PrefixUnaryExpression) {
+    if (unary.operator !== ts.SyntaxKind.ExclamationToken) {
+      return state;
+    }
+    let [sv, nextState] = state.popSV();
+    const nsv = booleanLiteralSymbolicValue();
+    nextState = nextState.pushSV(nsv);
+    if (isFalsy(state.getConstraints(sv!))) {
+      nextState = nextState.constrain(truthyConstraint())!;
+    } else if (isTruthy(state.getConstraints(sv!))) {
+      nextState = nextState.constrain(falsyConstraint())!;
+    }
+    return nextState;
   }
 
   function postfixUnaryExpression(unary: ts.PostfixUnaryExpression) {

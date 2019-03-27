@@ -22,6 +22,7 @@ export enum SymbolicValueType {
   NumericLiteral,
   Undefined,
   ObjectLiteral,
+  BooleanLiteral,
 }
 
 export interface SymbolicValue {
@@ -45,6 +46,10 @@ export interface ObjectLiteralSymbolicValue extends SymbolicValue {
   readonly type: SymbolicValueType.ObjectLiteral;
 }
 
+export interface BooleanLiteralSymbolicValue extends SymbolicValue {
+  readonly type: SymbolicValueType.BooleanLiteral;
+}
+
 export function numericLiteralSymbolicValue(value: string): NumericLiteralSymbolicValue {
   return { type: SymbolicValueType.NumericLiteral, value };
 }
@@ -59,6 +64,10 @@ export function undefinedSymbolicValue(): UndefinedSymbolicValue {
 
 export function objectLiteralSymbolicValue(): ObjectLiteralSymbolicValue {
   return { type: SymbolicValueType.ObjectLiteral };
+}
+
+export function booleanLiteralSymbolicValue(): BooleanLiteralSymbolicValue {
+  return { type: SymbolicValueType.BooleanLiteral };
 }
 
 export function isEqualSymbolicValues(a: SymbolicValue, b: SymbolicValue) {

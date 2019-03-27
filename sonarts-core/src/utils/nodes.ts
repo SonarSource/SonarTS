@@ -58,6 +58,10 @@ export function isBlock(node: ts.Node): node is ts.Block {
   return is(node, ts.SyntaxKind.Block);
 }
 
+export function isBooleanLiteral(node: ts.Node): node is ts.BooleanLiteral {
+  return is(node, ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.TrueKeyword);
+}
+
 export function isBreakStatement(node: ts.Node): node is ts.BreakStatement {
   return is(node, ts.SyntaxKind.BreakStatement);
 }
