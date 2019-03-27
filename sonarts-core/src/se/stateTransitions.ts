@@ -27,6 +27,7 @@ import {
 import { ProgramState } from "./programStates";
 import { SymbolTable } from "../symbols/table";
 import { collectLeftHandIdentifiers } from "../utils/navigation";
+import { truthyConstraint, falsyConstraint } from "./constraints";
 import * as nodes from "../utils/nodes";
 
 export function applyExecutors(
@@ -84,7 +85,9 @@ export function applyExecutors(
   }
 
   function numeralLiteral(literal: ts.NumericLiteral) {
-    return state.pushSV(numericLiteralSymbolicValue(literal.text));
+    const c = Number(literal.text) ? truthyConstraint() : falsyConstraint();
+    return state.pushSV(numericLiteralSymbolicValue(literal.text))
+      .constrain(c);
   }
 
   function binaryExpression(expression: ts.BinaryExpression) {
