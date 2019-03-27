@@ -94,12 +94,6 @@ export class ProgramState {
   }
 
   getConstraints(sv: SymbolicValue) {
-    if (isUndefinedSymbolcValue(sv) || (isNumericLiteralSymbolicValue(sv) && sv.value === "0")) {
-      return [falsyConstraint()];
-    }
-    if (isNumericLiteralSymbolicValue(sv) && sv.value !== "0") {
-      return [truthyConstraint()];
-    }
     return this.constraints.get(sv) || [];
   }
 
