@@ -6,7 +6,7 @@ use cases: `Promise.resolve(value)` and `Promise.reject(error)`.
 ## Noncompliant Code Example
 
 ```typescript
-let fulfilledPromise = new Promise(resolve =&gt; resolve(42));
+let fulfilledPromise = new Promise(resolve => resolve(42));
 let rejectedPromise = new Promise(function(resolve, reject) {
   reject('fail');
 });
