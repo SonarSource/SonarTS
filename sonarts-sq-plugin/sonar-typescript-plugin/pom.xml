@@ -141,12 +141,9 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.4</version>
                 <configuration>
                     <workingDirectory>sonarts-bundle</workingDirectory>
                     <installDirectory>target</installDirectory>
-                    <nodeVersion>v8.9.4</nodeVersion>
-                    <npmVersion>5.6.0</npmVersion>
                 </configuration>
                 <executions>
                     <execution>
