@@ -333,7 +333,7 @@ public class ExternalTypescriptSensorTest {
     assertThat(sensorContext.allIssues()).hasSize(1);
   }
 
-  @Test(timeout = 2000)
+  @Test(timeout = 5000)
   public void should_not_deadlock_with_large_stdErr() {
     TestBundleFactory testBundle = TestBundleFactory.nodeScript("/rulesDeadlock.js");
     SensorContextTester sensorContext = createSensorContext();

@@ -10,7 +10,8 @@
 # - ARTIFACTORY_DEPLOY_PASSWORD: password to deploy to $ARTIFACTORY_DEPLOY_REPO
 
 # deploy and analyze only on one axes of node versions
-if [ "${TRAVIS_NODE_VERSION}" != "8" ]; then
+if [[ ${ANALYZE} == "false" ]]; then
+  echo "Analysis was not requested on this axis"
   exit 0
 fi
 
