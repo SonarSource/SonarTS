@@ -58,15 +58,19 @@ pipeline {
             runIts("plugin", "LATEST_RELEASE[6.7]", JDK_VERSION)
           }
         }
-        stage('ruling-SQ[LATEST_RELEASE]') {
+        stage('ruling') {
           agent {
             label 'multicpu'
           }
           steps {
             // install yarn
-            sh "curl -o- -L https://yarnpkg.com/install.sh | bash"
-            sh 'git submodule update --init --recursive'
-            runIts("ruling", "LATEST_RELEASE", JDK_VERSION)
+            nodejs(configId: 'npm-artifactory', nodeJSInstallationName: 'NodeJS latest') {
+              sh "npm install -g yarn"
+              sh "git submodule update --init --recursive"
+              dir("sonarts-core") {
+                sh "yarn && yarn ruling"
+              }
+            }
           }
         }
         stage('ci-win') {
