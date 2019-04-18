@@ -76,7 +76,7 @@ pipeline {
           steps {
             configureRuntimes(JDK_VERSION) {
               sh "npm install -g yarn"
-              sh "./build.sh"
+              sh "SONARSOURCE_QA=false ./build.sh"
             }
           }
         }
