@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.sonarsource.parent</groupId>
     <artifactId>parent</artifactId>
-    <version>51</version>
+    <version>52</version>
   </parent>
 
   <groupId>org.sonarsource.typescript</groupId>
@@ -87,6 +87,10 @@
     <sonar-analyzer-commons.version>1.9.0.327</sonar-analyzer-commons.version>
 
     <artifactsToPublish>${project.groupId}:sonar-typescript-plugin:jar</artifactsToPublish>
+
+    <maven.compiler.release>8</maven.compiler.release>
+    <!-- FIXME fix javadoc warnings and remove this -->
+    <doclint>none</doclint>
   </properties>
 
   <dependencyManagement>
@@ -195,14 +199,6 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
-          <configuration>
-            <release>8</release>
-          </configuration>
-        </plugin>
         <plugin>
           <groupId>com.github.eirslett</groupId>
           <artifactId>frontend-maven-plugin</artifactId>
