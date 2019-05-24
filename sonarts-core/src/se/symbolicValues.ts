@@ -31,7 +31,7 @@ export interface SymbolicValue {
 
 export interface NumericLiteralSymbolicValue extends SymbolicValue {
   readonly type: SymbolicValueType.NumericLiteral;
-  readonly value: string;
+  readonly value: number;
 }
 
 export interface UnknownSymbolicValue extends SymbolicValue {
@@ -50,7 +50,7 @@ export interface BooleanLiteralSymbolicValue extends SymbolicValue {
   readonly type: SymbolicValueType.BooleanLiteral;
 }
 
-export function numericLiteralSymbolicValue(value: string): NumericLiteralSymbolicValue {
+export function numericLiteralSymbolicValue(value: number): NumericLiteralSymbolicValue {
   return { type: SymbolicValueType.NumericLiteral, value };
 }
 

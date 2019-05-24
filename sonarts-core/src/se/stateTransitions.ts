@@ -94,8 +94,9 @@ export function applyExecutors(
   }
 
   function numeralLiteral(literal: ts.NumericLiteral) {
-    const c = Number(literal.text) ? truthyConstraint() : falsyConstraint();
-    return state.pushSV(numericLiteralSymbolicValue(literal.text))
+    const n = Number(literal.text);
+    const c = n ? truthyConstraint() : falsyConstraint();
+    return state.pushSV(numericLiteralSymbolicValue(n))
       .constrain(c)!;
   }
 

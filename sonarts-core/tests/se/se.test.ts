@@ -28,7 +28,7 @@ describe("Variable Declaration", () => {
 
   it("creates literal symbolic value", () => {
     const values = inspectSV(`let x = 0; _inspect(x);`);
-    expect(values["x"]).toEqual([numericLiteralSymbolicValue("0")]);
+    expect(values["x"]).toEqual([numericLiteralSymbolicValue(0)]);
   });
 
   it("initializes with undefined", () => {
@@ -50,7 +50,7 @@ describe("Assignment", () => {
 
   it("assigns literal symbolic value", () => {
     const values = inspectSV(`let x = foo(); x = 0; _inspect(x);`);
-    expect(values["x"]).toEqual([numericLiteralSymbolicValue("0")]);
+    expect(values["x"]).toEqual([numericLiteralSymbolicValue(0)]);
   });
 
   it("assigns unknown symbolic value", () => {
@@ -60,7 +60,7 @@ describe("Assignment", () => {
 
   it("chains assignments", () => {
     const values = inspectSV(`let x; let y; x = y = 0; _inspect(x);`);
-    expect(values["x"]).toEqual([numericLiteralSymbolicValue("0")]);
+    expect(values["x"]).toEqual([numericLiteralSymbolicValue(0)]);
   });
 
   it("assigns unknown to all destructuring identifiers", () => {
@@ -80,8 +80,8 @@ describe("Increments Decrements", () => {
 describe("Conditions", () => {
   it("tracks symbolic values across branches", () => {
     const values = inspectSV(`let x = 0; if (cond) { x = 1; } _inspect(x);`);
-    expect(values["x"]).toContainEqual(numericLiteralSymbolicValue("1"));
-    expect(values["x"]).toContainEqual(numericLiteralSymbolicValue("0"));
+    expect(values["x"]).toContainEqual(numericLiteralSymbolicValue(1));
+    expect(values["x"]).toContainEqual(numericLiteralSymbolicValue(0));
     expect(values["x"]).toHaveLength(2);
   });
 });
