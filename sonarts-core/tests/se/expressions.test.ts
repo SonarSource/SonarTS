@@ -26,7 +26,7 @@ import {
 } from "../../src/se/symbolicValues";
 
 it("assignment", () => {
-  check(`let a; _inspect(a = 0);`, numericLiteralSymbolicValue("0"), true);
+  check(`let a; _inspect(a = 0);`, numericLiteralSymbolicValue(0), true);
 });
 
 it("function call", () => {

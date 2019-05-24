@@ -44,6 +44,28 @@ describe("If", () => {
   });
 });
 
+describe("Literals", () => {
+  it("constrains numeric 0 literals to FALSY", () => {
+    checkConstraints(`let x = 0; _inspect(x)`, falsyConstraint());
+  });
+
+  it("constrains numeric 0.0 literals to FALSY", () => {
+    checkConstraints(`let x = 0.0; _inspect(x)`, falsyConstraint());
+  });
+
+  it("constrains numeric literals to TRUTHY if non-zero", () => {
+    checkConstraints(`let x = 1; _inspect(x)`, truthyConstraint());
+  });
+
+  it("constrains boolean true literals to TRUTHY", () => {
+    checkConstraints(`let x = true; _inspect(x)`, truthyConstraint());
+  });
+
+  it("constrains boolean false literals to FALSY", () => {
+    checkConstraints(`let x = false; _inspect(x)`, falsyConstraint());
+  });
+});
+
 describe("Conditional expression", () => {
   it("constrains condition to TRUTHY", () => {
     checkConstraints(`let x = foo(); x ? _inspect(x) : _`, truthyConstraint());
@@ -55,6 +77,16 @@ describe("Conditional expression", () => {
 
   it("merges constraints after the block", () => {
     checkConstraints(`let x = foo(); x ? _ : _; _inspect(x)`, [truthyConstraint(), falsyConstraint()]);
+  });
+});
+
+describe("Operators", () => {
+  it("inverts FALSY constraint with when an ! is used", () => {
+    checkConstraints(`let x = !false; _inspect(x)`, truthyConstraint());
+  });
+
+  it("inverts TRUTHY constraint with when an ! is used", () => {
+    checkConstraints(`let x = !true; _inspect(x)`, falsyConstraint());
   });
 });
 
