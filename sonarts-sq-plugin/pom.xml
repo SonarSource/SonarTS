@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.sonarsource.parent</groupId>
     <artifactId>parent</artifactId>
-    <version>49</version>
+    <version>52</version>
   </parent>
 
   <groupId>org.sonarsource.typescript</groupId>
@@ -77,7 +77,7 @@
     <slf4j.version>1.7.21</slf4j.version>
     <sonar.version>7.3</sonar.version>
     <sonar.min.version>6.7</sonar.min.version>
-    <sonar-orchestrator.version>3.21.0.1721</sonar-orchestrator.version>
+    <sonar-orchestrator.version>3.24.0.1993</sonar-orchestrator.version>
     <sonarlint.version>3.1.0.1376</sonarlint.version>
     <gson.version>2.6.2</gson.version>
     <commons-io.version>2.5</commons-io.version>
@@ -87,6 +87,10 @@
     <sonar-analyzer-commons.version>1.9.0.327</sonar-analyzer-commons.version>
 
     <artifactsToPublish>${project.groupId}:sonar-typescript-plugin:jar</artifactsToPublish>
+
+    <maven.compiler.release>8</maven.compiler.release>
+    <!-- FIXME fix javadoc warnings and remove this -->
+    <doclint>none</doclint>
   </properties>
 
   <dependencyManagement>
@@ -161,12 +165,12 @@
         <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>3.0.0</version>
-            <scope>test</scope>
-        </dependency>
+      <dependency>
+        <groupId>org.awaitility</groupId>
+        <artifactId>awaitility</artifactId>
+        <version>3.0.0</version>
+        <scope>test</scope>
+      </dependency>
 
       <!-- Provided dependencies -->
       <dependency>
@@ -192,9 +196,31 @@
     </dependencies>
   </dependencyManagement>
 
-   <profiles>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>1.7.5</version>
+          <configuration>
+            <nodeVersion>v10.15.3</nodeVersion>
+            <npmVersion>6.9.0</npmVersion>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
     <profile>
       <id>its</id>
+      <activation>
+        <property>
+          <name>env.SONARSOURCE_QA</name>
+          <value>true</value>
+        </property>
+      </activation>
       <modules>
         <module>its</module>
       </modules>

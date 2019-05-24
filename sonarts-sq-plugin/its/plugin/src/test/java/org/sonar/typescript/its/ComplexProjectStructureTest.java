@@ -20,9 +20,9 @@
 package org.sonar.typescript.its;
 
 import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.build.SonarScanner;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sonarqube.ws.Issues.Issue;
@@ -36,24 +36,18 @@ public class ComplexProjectStructureTest {
   private static final String PROJECT_KEY = "complex-structure-test-project";
 
   @ClassRule
-  public static Orchestrator orchestrator = Tests.ORCHESTRATOR;
-
-  @Before
-  public void clean() {
-    orchestrator.resetData();
-  }
+  public static final Orchestrator orchestrator = Tests.ORCHESTRATOR;
 
   @Test
   public void test() {
     String projectLocation = "projects/" + PROJECT_KEY;
-    orchestrator.executeBuild(
-      Tests.createScanner(projectLocation, PROJECT_KEY, projectLocation + "/module1/nestedDir")
-        .setSourceDirs("")
-        // to test that addition to this variable is performed correctly
-        .setEnvironmentVariable("NODE_PATH", "foobar")
-        .setProperty("sonar.modules", "module1")
-        .setProperty("module1.sonar.sources", "nestedDir/src")
-        .setProfile("test-profile"));
+    SonarScanner scanner = Tests.createScannerWithLocation(projectLocation, PROJECT_KEY, "test-profile", projectLocation + "/module1/nestedDir")
+      .setSourceDirs("")
+      // to test that addition to this variable is performed correctly
+      .setEnvironmentVariable("NODE_PATH", "foobar")
+      .setProperty("sonar.modules", "module1")
+      .setProperty("module1.sonar.sources", "nestedDir/src");
+    orchestrator.executeBuild(scanner);
 
     SearchRequest request = new SearchRequest();
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY));
@@ -63,7 +57,7 @@ public class ComplexProjectStructureTest {
     assertThat(getProjectMeasureAsDouble("ncloc")).isEqualTo(3);
   }
 
-  private Double getProjectMeasureAsDouble(String metric) {
+  private static Double getProjectMeasureAsDouble(String metric) {
     return Tests.getProjectMeasureAsDouble(metric, PROJECT_KEY);
   }
 }

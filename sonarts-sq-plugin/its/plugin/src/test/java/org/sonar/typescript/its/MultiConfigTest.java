@@ -22,7 +22,6 @@ package org.sonar.typescript.its;
 import com.sonar.orchestrator.Orchestrator;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.sonarqube.ws.Issues.Issue;
@@ -36,18 +35,11 @@ public class MultiConfigTest {
   private static final String PROJECT_KEY = "multi-tsconfig-test-project";
 
   @ClassRule
-  public static Orchestrator orchestrator = Tests.ORCHESTRATOR;
-
-  @Before
-  public void clean() {
-    orchestrator.resetData();
-  }
+  public static final Orchestrator orchestrator = Tests.ORCHESTRATOR;
 
   @Test
   public void test() {
-    orchestrator.executeBuild(
-      Tests.createScanner("projects/" + PROJECT_KEY, PROJECT_KEY)
-        .setProfile("test-profile"));
+    orchestrator.executeBuild(Tests.createScanner("projects/" + PROJECT_KEY, PROJECT_KEY, "test-profile"));
 
     SearchRequest request = new SearchRequest();
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY));
