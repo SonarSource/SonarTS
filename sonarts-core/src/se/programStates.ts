@@ -21,8 +21,6 @@ import * as ts from "typescript";
 import {
   SymbolicValue,
   isEqualSymbolicValues,
-  isUndefinedSymbolcValue,
-  isNumericLiteralSymbolicValue,
   simpleSymbolicValue,
 } from "./symbolicValues";
 import { inspect } from "util";
