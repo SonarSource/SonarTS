@@ -96,14 +96,12 @@ export function applyExecutors(
   function numeralLiteral(literal: ts.NumericLiteral) {
     const n = Number(literal.text);
     const c = n ? truthyConstraint() : falsyConstraint();
-    return state.pushSV(numericLiteralSymbolicValue(n))
-      .constrain(c)!;
+    return state.pushSV(numericLiteralSymbolicValue(n)).constrain(c)!;
   }
 
   function booleanLiteral(literal: ts.BooleanLiteral) {
     const c = literal.kind === ts.SyntaxKind.FalseKeyword ? falsyConstraint() : truthyConstraint();
-    return state.pushSV(booleanLiteralSymbolicValue())
-      .constrain(c)!;
+    return state.pushSV(booleanLiteralSymbolicValue()).constrain(c)!;
   }
 
   function binaryExpression(expression: ts.BinaryExpression) {

@@ -18,11 +18,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import * as ts from "typescript";
-import {
-  SymbolicValue,
-  isEqualSymbolicValues,
-  simpleSymbolicValue,
-} from "./symbolicValues";
+import { SymbolicValue, isEqualSymbolicValues, simpleSymbolicValue } from "./symbolicValues";
 import { inspect } from "util";
 import { Constraint, truthyConstraint, falsyConstraint, isEqualConstraints, constrain } from "./constraints";
 import { Map } from "immutable";
