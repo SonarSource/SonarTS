@@ -3,13 +3,13 @@ language: java
 matrix:
   include:
     - node_js: "11.10.1" # fixed version because there is a bug with node v11.11
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: ANALYZE=false
     - node_js: "8"
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: ANALYZE=true
     - node_js: "6"
-      jdk: oraclejdk11
+      jdk: openjdk11
       env: ANALYZE=false
 
 git:
