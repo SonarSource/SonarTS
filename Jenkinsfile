@@ -50,12 +50,12 @@ pipeline {
             runIts("plugin", "LATEST_RELEASE", JDK_VERSION)
           }
         }
-        stage('plugin-SQ[LATEST_RELEASE_6.7]') {
+        stage('plugin-SQ[LATEST_RELEASE_7.9]') {
           agent {
             label 'linux'
           }
           steps {
-            runIts("plugin", "LATEST_RELEASE[6.7]", JDK_VERSION)
+            runIts("plugin", "LATEST_RELEASE[7.9]", JDK_VERSION)
           }
         }
         stage('ruling') {
