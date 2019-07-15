@@ -202,7 +202,50 @@ npm install tslint-sonarts -g           # or install globally
 ```
 tslint --project ./tsconfig.json 'src/**/*.{ts,tsx}'
 ```
-_[We also have a plugin for ESLint](https://github.com/SonarSource/eslint-plugin-sonarjs)_
+
+## Use in ESLint
+
+It is possible to use TSLint plugin inside ESLint. To do that follow these steps:
+* Install packages `tslint`, `eslint`, `tslint-sonarts` (our plugin), `@typescript-eslint/parser` (parser of TypeScript for ESLint) and `@typescript-eslint/eslint-plugin-tslint` (runner of TSLint rules inside ESLint).
+* Create ESLint configuration file
+  * set `parser` to `@typescript-eslint/parser`
+  * inside `parserOptions` declare location of `tsconfig.json` file
+  * in `rules` declare special rule key `@typescript-eslint/tslint/config` with `tslint.json` location (see example below)
+  * add `@typescript-eslint/tslint` to `plugins` list
+
+Example of ESLint configuration file `.eslintrc.js`:  
+```
+module.exports = {
+  env: {
+    browser: true,
+    es6: true
+  },
+  extends: "eslint:recommended",
+  globals: {
+    Atomics: "readonly",
+    SharedArrayBuffer: "readonly"
+  },
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: "tsconfig.json",
+    ecmaVersion: 2018,
+    sourceType: "module"
+  },
+  rules: {
+    "@typescript-eslint/tslint/config": [
+      1,
+      {
+        lintFile: "./tslint.json"
+      }
+    ]
+  },
+  plugins: ["@typescript-eslint/tslint"]
+};
+``` 
+* Create TSLint configuration file as usual
+* [Run ESLint](https://eslint.org/docs/user-guide/command-line-interface). Note that all TSLint issues will appear under the same rule key `@typescript-eslint/tslint/config`, actual rule key will be appended to the issue message.
+
+_[We also have a plugin for ESLint `eslint-plugin-sonarjs`](https://github.com/SonarSource/eslint-plugin-sonarjs)_
 
 ## Use in SonarQube
 
