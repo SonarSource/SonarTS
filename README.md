@@ -207,6 +207,10 @@ tslint --project ./tsconfig.json 'src/**/*.{ts,tsx}'
 
 It is possible to use TSLint plugin inside ESLint. To do that follow these steps:
 * Install packages `tslint`, `eslint`, `tslint-sonarts` (our plugin), `@typescript-eslint/parser` (parser of TypeScript for ESLint) and `@typescript-eslint/eslint-plugin-tslint` (runner of TSLint rules inside ESLint).
+```
+npm install tslint eslint tslint-sonarts @typescript-eslint/parser @typescript-eslint/eslint-plugin-tslint --save-dev
+
+```
 * Create ESLint configuration file
   * set `parser` to `@typescript-eslint/parser`
   * inside `parserOptions` declare location of `tsconfig.json` file
