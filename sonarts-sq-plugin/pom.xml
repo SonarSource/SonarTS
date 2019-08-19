@@ -212,19 +212,4 @@
     </pluginManagement>
   </build>
 
-  <profiles>
-    <profile>
-      <id>its</id>
-      <activation>
-        <property>
-          <name>env.SONARSOURCE_QA</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <modules>
-        <module>its</module>
-      </modules>
-    </profile>
-  </profiles>
-
 </project>

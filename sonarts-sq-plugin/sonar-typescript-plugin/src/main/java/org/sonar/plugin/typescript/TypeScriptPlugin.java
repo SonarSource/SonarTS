@@ -20,118 +20,11 @@
 package org.sonar.plugin.typescript;
 
 import org.sonar.api.Plugin;
-import org.sonar.api.SonarProduct;
-import org.sonar.api.config.PropertyDefinition;
-import org.sonar.api.resources.Qualifiers;
-import org.sonar.api.utils.Version;
-import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
-import org.sonar.plugin.typescript.externalreport.TSLintRulesDefinition;
-import org.sonar.plugin.typescript.externalreport.TslintReportSensor;
-import org.sonar.plugin.typescript.lcov.LCOVCoverageSensor;
 
 public class TypeScriptPlugin implements Plugin {
-  /* absolute location inside jar */
-  private static final String SONARTS_BUNDLE_ZIP = "/sonarts-bundle.zip";
-  private static final String TESTS_AND_COVERAGE_SUBCATEGORY = "Tests and Coverage";
-  private static final String TYPESCRIPT_CATEGORY = "TypeScript";
-  private static final String GENERAL_SUBCATEGORY = "General";
-  private static final String EXTERNAL_ANALYZER_CATEGORY = "External Analyzers";
-  private static final String LINTER_SUBCATEGORY = "JavaScript/TypeScript";
-
-  static final String FILE_SUFFIXES_KEY = "sonar.typescript.file.suffixes";
-  public static final String FILE_SUFFIXES_DEFVALUE = ".ts,.tsx";
-
-  public static final String LCOV_REPORT_PATHS = "sonar.typescript.lcov.reportPaths";
-  public static final String LCOV_REPORT_PATHS_DEFAULT_VALUE = "";
-
-  public static final String TSCONFIG_PATH = "sonar.typescript.tsconfigPath";
-
-  public static final String TSLINT_REPORT_PATHS = "sonar.typescript.tslint.reportPaths";
-  public static final String TSLINT_REPORT_PATHS_DEFAULT_VALUE = "";
-
-  public static final String NODE_EXECUTABLE = "sonar.typescript.node";
-  public static final String NODE_EXECUTABLE_DEFAULT = "node";
-
-  public static final String TS_EXCLUSIONS_KEY = "sonar.typescript.exclusions";
-  public static final String TS_EXCLUSIONS_DEFAULT_VALUE = "**/node_modules/**,**/bower_components/**";
 
   @Override
   public void define(Context context) {
-    boolean externalIssuesSupported = context.getSonarQubeVersion().isGreaterThanOrEqual(Version.create(7, 2));
-
-    context.addExtensions(
-      ExternalProcessStreamConsumer.class,
-      TypeScriptLanguage.class,
-      SonarWayProfile.class,
-      SonarWayRecommendedProfile.class,
-      new TypeScriptRulesDefinition(context.getRuntime()),
-      TypeScriptExclusionsFileFilter.class,
-      new SonarTSCoreBundleFactory(SONARTS_BUNDLE_ZIP),
-      PropertyDefinition.builder(FILE_SUFFIXES_KEY)
-        .defaultValue(FILE_SUFFIXES_DEFVALUE)
-        .name("File Suffixes")
-        .description("Comma-separated list of suffixes for files to analyze.")
-        .subCategory(GENERAL_SUBCATEGORY)
-        .category(TYPESCRIPT_CATEGORY)
-        .onQualifiers(Qualifiers.PROJECT)
-        .multiValues(true)
-        .build(),
-      PropertyDefinition.builder(LCOV_REPORT_PATHS)
-        .defaultValue(LCOV_REPORT_PATHS_DEFAULT_VALUE)
-        .name("LCOV Files")
-        .description("Paths (absolute or relative) to the files with LCOV data.")
-        .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
-        .subCategory(TESTS_AND_COVERAGE_SUBCATEGORY)
-        .category(TYPESCRIPT_CATEGORY)
-        .multiValues(true)
-        .build(),
-      PropertyDefinition.builder(NODE_EXECUTABLE)
-        .defaultValue(NODE_EXECUTABLE_DEFAULT)
-        .name("Node.js executable")
-        .description("Node.js executable used to run the analysis.")
-        .subCategory(GENERAL_SUBCATEGORY)
-        .category(TYPESCRIPT_CATEGORY)
-        .hidden()
-        .build(),
-      PropertyDefinition.builder(TS_EXCLUSIONS_KEY)
-        .defaultValue(TS_EXCLUSIONS_DEFAULT_VALUE)
-        .name("TypeScript Exclusions")
-        .description("List of file path patterns to be excluded from analysis of TypeScript files.")
-        .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
-        .subCategory(GENERAL_SUBCATEGORY)
-        .multiValues(true)
-        .category(TYPESCRIPT_CATEGORY)
-        .build(),
-      PropertyDefinition.builder(TSCONFIG_PATH)
-          .name("tsconfig.json location")
-          .description("Relative to a project/module base directory path to a tsconfig JSON file")
-          .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
-          .subCategory(GENERAL_SUBCATEGORY)
-          .category(TYPESCRIPT_CATEGORY)
-          .build()
-      );
-
-    if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
-      context.addExtension(ContextualSensor.class);
-      context.addExtension(ContextualServer.class);
-    } else {
-      context.addExtension(ExternalTypescriptSensor.class);
-      context.addExtension(LCOVCoverageSensor.class);
-      context.addExtension(TslintReportSensor.class);
-      if (externalIssuesSupported) {
-        context.addExtension(TSLintRulesDefinition.class);
-        context.addExtension(
-          PropertyDefinition.builder(TSLINT_REPORT_PATHS)
-            .defaultValue(TSLINT_REPORT_PATHS_DEFAULT_VALUE)
-            .name("TSLint Report Files")
-            .description("Paths (absolute or relative) to the JSON files with TSLint issues.")
-            .onQualifiers(Qualifiers.MODULE, Qualifiers.PROJECT)
-            .subCategory(LINTER_SUBCATEGORY)
-            .category(EXTERNAL_ANALYZER_CATEGORY)
-            .multiValues(true)
-            .build());
-      }
-    }
-
+    // This plugin doesn't define any extension, TypeScript analysis is migrated to SonarJS
   }
 }
