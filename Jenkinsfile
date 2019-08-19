@@ -25,65 +25,8 @@ pipeline {
       }
     }
     stage('QA') {
-      parallel {
-        stage('plugin-SQ[DOGFOOD]') {
-          agent {
-            label 'linux'
-          }
-          steps {
-            runIts("plugin", "DOGFOOD", JDK_VERSION)
-          }
-        }
-        stage('plugin-SQ[LATEST_RELEASE]') {
-          agent {
-            label 'linux'
-          }
-          steps {
-            runIts("plugin", "LATEST_RELEASE", JDK_VERSION)
-          }
-        }
-        stage('plugin-SQ[LATEST_RELEASE]-win') {
-          agent {
-            label 'windows'
-          }
-          steps {
-            runIts("plugin", "LATEST_RELEASE", JDK_VERSION)
-          }
-        }
-        stage('plugin-SQ[LATEST_RELEASE_7.9]') {
-          agent {
-            label 'linux'
-          }
-          steps {
-            runIts("plugin", "LATEST_RELEASE[7.9]", JDK_VERSION)
-          }
-        }
-        stage('ruling') {
-          agent {
-            label 'multicpu'
-          }
-          steps {
-            // install yarn
-            nodejs(configId: 'npm-artifactory', nodeJSInstallationName: 'NodeJS latest') {
-              sh "npm install -g yarn"
-              sh "git submodule update --init --recursive"
-              dir("sonarts-core") {
-                sh "yarn && yarn ruling"
-              }
-            }
-          }
-        }
-        stage('ci-win') {
-          agent {
-            label 'windows'
-          }
-          steps {
-            configureRuntimes(JDK_VERSION) {
-              sh "npm install -g yarn"
-              sh "SONARSOURCE_QA=false ./build.sh"
-            }
-          }
-        }
+      steps {
+        echo 'No QA for SonarTS'
       }
       post {
         always {
