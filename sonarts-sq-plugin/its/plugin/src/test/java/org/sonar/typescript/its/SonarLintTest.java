@@ -23,13 +23,12 @@ import com.google.common.collect.ImmutableMap;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.annotation.CheckForNull;
 import org.junit.Before;
@@ -81,8 +80,10 @@ public class SonarLintTest {
 
     final List<Issue> issues = new ArrayList<>();
 
-    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(), Collections.singletonList
-      (inputFile), ImmutableMap.of());
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(projectDir.toPath())
+      .addInputFile(inputFile)
+      .build();
     AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
@@ -106,8 +107,10 @@ public class SonarLintTest {
 
     final List<Issue> issues = new ArrayList<>();
 
-    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(),
-      Collections.singletonList(inputFile), ImmutableMap.of());
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(projectDir.toPath())
+      .addInputFile(inputFile)
+      .build();
     AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
     assertThat(results.failedAnalysisFiles()).containsExactly(inputFile);
   }
@@ -122,8 +125,10 @@ public class SonarLintTest {
 
     final List<Issue> issues = new ArrayList<>();
 
-    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(), Collections.singletonList
-      (inputFile), ImmutableMap.of());
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(projectDir.toPath())
+      .addInputFile(inputFile)
+      .build();
     AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
@@ -149,10 +154,13 @@ public class SonarLintTest {
       "{}");
     final List<Issue> issues = new ArrayList<>();
 
-    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = new StandaloneAnalysisConfiguration(projectDir.toPath(), temp.newFolder().toPath(), Arrays.asList
-      (inputFile, tsConfigFile), ImmutableMap.of(
-      "sonar.typescript.tsconfigPath", "tsconfig.custom.json"
-    ));
+    StandaloneAnalysisConfiguration standaloneAnalysisConfiguration = StandaloneAnalysisConfiguration.builder()
+      .setBaseDir(projectDir.toPath())
+      .addInputFile(inputFile)
+      .addInputFile(tsConfigFile)
+      .putExtraProperty("sonar.typescript.tsconfigPath", "tsconfig.custom.json")
+      .build();
+
     AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
@@ -200,6 +208,16 @@ public class SonarLintTest {
       @Override
       public String contents() throws IOException {
         return content;
+      }
+
+      @Override
+      public String relativePath() {
+        return filePath.toString();
+      }
+
+      @Override
+      public URI uri() {
+        return filePath.toUri();
       }
     };
   }

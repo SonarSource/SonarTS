@@ -110,5 +110,10 @@ public class TestActiveRules implements ActiveRules {
     public String templateRuleKey() {
       return null;
     }
+
+    @Override
+    public String qpKey() {
+      return null;
+    }
   }
 }

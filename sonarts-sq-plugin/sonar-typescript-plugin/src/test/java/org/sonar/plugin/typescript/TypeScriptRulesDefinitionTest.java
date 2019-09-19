@@ -20,16 +20,12 @@
 package org.sonar.plugin.typescript;
 
 import org.junit.Test;
-import org.sonar.api.SonarQubeSide;
-import org.sonar.api.SonarRuntime;
-import org.sonar.api.internal.SonarRuntimeImpl;
 import org.sonar.api.rules.RuleType;
 import org.sonar.api.server.debt.DebtRemediationFunction.Type;
 import org.sonar.api.server.rule.RulesDefinition;
 import org.sonar.api.server.rule.RulesDefinition.Param;
 import org.sonar.api.server.rule.RulesDefinition.Repository;
 import org.sonar.api.server.rule.RulesDefinition.Rule;
-import org.sonar.api.utils.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,8 +33,7 @@ public class TypeScriptRulesDefinitionTest {
 
   @Test
   public void test() {
-    SonarRuntime sq73Runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 3), SonarQubeSide.SERVER);
-    TypeScriptRulesDefinition rulesDefinition = new TypeScriptRulesDefinition(sq73Runtime);
+    TypeScriptRulesDefinition rulesDefinition = new TypeScriptRulesDefinition();
     RulesDefinition.Context context = new RulesDefinition.Context();
     rulesDefinition.define(context);
     RulesDefinition.Repository repository = context.repository("typescript");

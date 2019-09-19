@@ -263,9 +263,9 @@ public class JavaRulesIntegrationTest {
     List<String> allKeys = ruleClasses.stream().map(JavaRulesIntegrationTest::ruleKeyFromClass).collect(Collectors.toList());
     ActiveRulesBuilder rulesBuilder = new ActiveRulesBuilder();
     allKeys.forEach(key -> {
-      NewActiveRule newActiveRule = rulesBuilder.create(RuleKey.of(TypeScriptRulesDefinition.REPOSITORY_KEY, key));
       if (activeRule.equals(key)) {
-        newActiveRule.activate();
+        NewActiveRule newActiveRule = new NewActiveRule.Builder().setRuleKey(RuleKey.of(TypeScriptRulesDefinition.REPOSITORY_KEY, key)).build();
+        rulesBuilder.addRule(newActiveRule);
       }
     });
     ActiveRules activeRules = rulesBuilder.build();
