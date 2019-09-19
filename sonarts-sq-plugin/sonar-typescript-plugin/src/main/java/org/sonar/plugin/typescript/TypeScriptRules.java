@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import org.sonar.api.SonarRuntime;
 import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.rule.RuleKey;
@@ -181,8 +180,8 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
   private final Map<String, RuleKey> tsLintKeyToRuleKey;
   private final Map<String, TypeScriptRule> tsLintKeyToRuleObject;
 
-  public static void addToRepository(NewRepository repository, SonarRuntime runtime) {
-    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, DEFAULT_PROFILE_PATH, runtime);
+  public static void addToRepository(NewRepository repository) {
+    RuleMetadataLoader ruleMetadataLoader = new RuleMetadataLoader(RESOURCE_FOLDER, DEFAULT_PROFILE_PATH);
     ruleMetadataLoader.addRulesByAnnotatedClass(repository, new ArrayList<>(getRuleClasses()));
   }
 

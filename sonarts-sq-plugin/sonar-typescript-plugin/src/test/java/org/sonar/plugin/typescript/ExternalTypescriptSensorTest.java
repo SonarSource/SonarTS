@@ -33,6 +33,7 @@ import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
+import org.sonar.api.batch.sensor.cpd.internal.TokensLine;
 import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
@@ -44,7 +45,6 @@ import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.utils.log.LogTester;
 import org.sonar.api.utils.log.LoggerLevel;
-import org.sonar.duplications.internal.pmd.TokensLine;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -349,7 +349,7 @@ public class ExternalTypescriptSensorTest {
     DefaultInputFile testInputFile = createTestInputFile(sensorContext);
     TestBundleFactory testBundleFactory = TestBundleFactory.nodeScript("/mockDiagnostics.js", testInputFile.absolutePath());
     executeSensor(sensorContext, testBundleFactory);
-    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Compilation error at foo" + File.separator + "file.ts:1 \"Expression expected.\"");
+    assertThat(logTester.setLevel(LoggerLevel.ERROR).logs()).contains("Compilation error at foo/file.ts:1 \"Expression expected.\"");
     assertThat(sensorContext.allAnalysisErrors()).hasSize(1);
   }
 
