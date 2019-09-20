@@ -53,8 +53,7 @@ public class ProfileTest {
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
     assertThat(issuesList).extracting(Issue::getLine, Issue::getRule).containsExactlyInAnyOrder(
-      // TODO S3801 ported SonarJS
-//      tuple(1, "typescript:S3801"),
+      tuple(1, "typescript:S3801"),
       tuple(2, "typescript:S1764"));
   }
 }
