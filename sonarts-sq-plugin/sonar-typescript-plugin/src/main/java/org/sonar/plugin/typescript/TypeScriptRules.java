@@ -234,7 +234,8 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
     "S3626",
     "S4030",
     "S4157",
-    "S4158"
+    "S4158",
+    "S3801"
   );
 
   private final List<TypeScriptRule> allRules;
