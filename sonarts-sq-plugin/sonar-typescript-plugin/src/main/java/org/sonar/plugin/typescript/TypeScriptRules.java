@@ -177,6 +177,9 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
   private static final String RESOURCE_FOLDER = "org/sonar/l10n/typescript/rules/typescript";
   private static final String DEFAULT_PROFILE_PATH = RESOURCE_FOLDER + "/Sonar_way_profile.json";
 
+  /**
+   * This is a whitelist of rules which remain enabled while we migrate them to SonarJS
+   */
   private static final List<String> RULES_PROVIDED_BY_SONARTS = Arrays.asList(
     "S101",
     "S117",
@@ -222,6 +225,7 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
     "S4798",
     "S4822",
     "S1874",
+    "S2589",
 
     "S1226",
     "S1751",

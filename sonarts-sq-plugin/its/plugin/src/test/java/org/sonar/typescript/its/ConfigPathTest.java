@@ -62,7 +62,7 @@ public class ConfigPathTest {
   @Test
   public void withoutTSconfigPathTest() {
     BuildResult buildResult = orchestrator.executeBuild(
-      Tests.createScanner("projects/tsconfig-path-project", PROJECT_KEY));
+      Tests.createScanner("projects/tsconfig-path-project", PROJECT_KEY, "test-profile-s2201"));
 
     SearchRequest request = new SearchRequest();
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S1764"));

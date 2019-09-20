@@ -22,6 +22,7 @@ package org.sonar.typescript.its;
 import com.sonar.orchestrator.Orchestrator;
 import com.sonar.orchestrator.build.BuildResult;
 import com.sonar.orchestrator.build.SonarScanner;
+import com.sonar.orchestrator.container.Server;
 import com.sonar.orchestrator.locator.FileLocation;
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +53,10 @@ public class GlobalTypescriptModuleTest {
     }
     File nodeModules = new File(nodeProjectDir, "node_modules");
     Files.move(nodeModules.toPath(), nodeModulesGlobal.toPath());
+
+    Server server = orchestrator.getServer();
+    server.provisionProject(projectKey, projectKey);
+    server.associateProjectToQualityProfile(projectKey, "ts", "test-profile-s2201");
 
     return SonarScanner.create()
       .setSourceEncoding("UTF-8")
