@@ -21,6 +21,7 @@ package org.sonar.typescript.its;
 
 import com.google.common.collect.ImmutableList;
 import com.sonar.orchestrator.Orchestrator;
+import com.sonar.orchestrator.build.SonarScanner;
 import java.util.Collections;
 import java.util.List;
 import org.junit.BeforeClass;
@@ -43,7 +44,7 @@ public class TypescriptPluginTest {
   public static void prepare() {
     orchestrator.resetData();
 
-    orchestrator.executeBuild(Tests.createScanner("projects/plugin-test-project", PROJECT_KEY));
+    orchestrator.executeBuild(Tests.createScanner("projects/plugin-test-project", PROJECT_KEY, "test-profile-s2201"));
   }
 
   @Test

@@ -29,6 +29,7 @@ import org.sonarqube.ws.Issues.Issue;
 import org.sonarqube.ws.client.issues.SearchRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.sonar.typescript.its.Tests.newWsClient;
 
 public class TslintExternalReportTest {
@@ -42,21 +43,18 @@ public class TslintExternalReportTest {
   public void should_save_issues_from_external_report() {
     if (sqSupportsExternalIssues()) {
       orchestrator.resetData();
-      SonarScanner build = Tests.createScanner("projects/tslint-report-project", PROJECT_KEY);
+      SonarScanner build = Tests.createScanner("projects/tslint-report-project", PROJECT_KEY, "empty-profile");
       build.setProperty("sonar.typescript.tslint.reportPaths", "report.json");
       orchestrator.executeBuild(build);
 
       SearchRequest request = new SearchRequest();
       request.setComponentKeys(Collections.singletonList(PROJECT_KEY));
       List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
-      assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(2, 3, 3, 5, 5, 7);
-      assertThat(issuesList).extracting("rule").containsExactlyInAnyOrder(
-        "typescript:S1854",
-        "typescript:S878",
-        "typescript:S905",
-        "external_tslint:curly",
-        "external_tslint:prefer-const",
-        "external_tslint:semicolon");
+      assertThat(issuesList).extracting(Issue::getLine, Issue::getRule).containsExactlyInAnyOrder(
+        tuple(7, "external_tslint_repo:curly"),
+        tuple(5, "external_tslint_repo:prefer-const"),
+        tuple(5, "external_tslint_repo:semicolon"),
+        tuple(3, "external_tslint_repo:no-unused-expression"));
     }
   }
 

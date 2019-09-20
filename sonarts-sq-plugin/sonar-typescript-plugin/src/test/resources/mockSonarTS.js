@@ -22,7 +22,7 @@ var result = [
         startPosition: { line: 1, character: 5 },
         endPosition: { line: 1, character: 6 },
         name: testFile,
-        ruleName: "no-eval",
+        ruleName: "no-empty-array",
         secondaryLocations: []
       }
     ],

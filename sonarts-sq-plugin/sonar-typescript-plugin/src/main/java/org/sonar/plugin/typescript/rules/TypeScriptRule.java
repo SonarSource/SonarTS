@@ -45,7 +45,7 @@ public abstract class TypeScriptRule {
 
   public abstract String tsLintKey();
 
-  JsonArray ruleConfiguration(Object... params) {
+  protected JsonArray ruleConfiguration(Object... params) {
     JsonArray configuration = new JsonArray();
     for (Object param : params) {
       if (param instanceof Number) {

@@ -82,9 +82,9 @@ public class ConfigPathTest {
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY)).setRules(ImmutableList.of("typescript:S1764"));
     List<Issues.Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
 
-    assertThat(issuesList).hasSize(1);
-    assertThat(buildResult.getLogs()).contains("Check property specified in sonar.typescript.tsconfigPath");
-    assertThat(buildResult.getLogs()).contains("No tsconfig.json file found");
+    // TODO should we analyze if configured tsconfig doesn't exists
+    assertThat(issuesList).hasSize(0);
+    assertThat(buildResult.getLogs()).contains("Provided tsconfig.json path doesn't exist.");
   }
 
 }

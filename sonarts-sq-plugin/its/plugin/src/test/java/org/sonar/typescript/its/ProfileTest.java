@@ -29,6 +29,7 @@ import org.sonarqube.ws.Issues.Issue;
 import org.sonarqube.ws.client.issues.SearchRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.sonar.typescript.its.Tests.newWsClient;
 
 public class ProfileTest {
@@ -51,6 +52,9 @@ public class ProfileTest {
     SearchRequest request = new SearchRequest();
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
-    assertThat(issuesList).extracting("line").containsExactlyInAnyOrder(1, 2);
+    assertThat(issuesList).extracting(Issue::getLine, Issue::getRule).containsExactlyInAnyOrder(
+      // TODO S3801 ported SonarJS
+//      tuple(1, "typescript:S3801"),
+      tuple(2, "typescript:S1764"));
   }
 }

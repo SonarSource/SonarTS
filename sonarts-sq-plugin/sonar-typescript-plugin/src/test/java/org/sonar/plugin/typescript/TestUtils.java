@@ -31,7 +31,7 @@ public class TestUtils {
 
   static final File BASE_DIR = new File("src/test/resources").getAbsoluteFile();
 
-  static final CheckFactory CHECK_FACTORY = new CheckFactory(new TestActiveRules("S1751", "S113", "S1523"));
+  static final CheckFactory CHECK_FACTORY = new CheckFactory(new TestActiveRules("S1751", "S1451", "S4158"));
   static final TypeScriptRules TYPE_SCRIPT_RULES = new TypeScriptRules(CHECK_FACTORY);
 
   public static DefaultInputFile createInputFile(SensorContextTester sensorContext, String content, String relativePath) {

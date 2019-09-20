@@ -24,6 +24,7 @@ import com.sonar.orchestrator.OrchestratorBuilder;
 import com.sonar.orchestrator.build.SonarScanner;
 import com.sonar.orchestrator.container.Server;
 import com.sonar.orchestrator.locator.FileLocation;
+import com.sonar.orchestrator.locator.MavenLocation;
 import java.io.File;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -45,6 +46,7 @@ import static java.util.Collections.singletonList;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   ComplexProjectStructureTest.class,
+  ConfigPathTest.class,
   CoverageTest.class,
   CpdTest.class,
   FileWithBomTest.class,
@@ -52,6 +54,7 @@ import static java.util.Collections.singletonList;
   GlobalTypescriptModuleTest.class,
   IssuesTest.class,
   JavaRulesIntegrationTest.class,
+  MissingTSConfigTest.class,
   MultiConfigTest.class,
   ProfileTest.class,
   SonarLintTest.class,
@@ -60,12 +63,14 @@ import static java.util.Collections.singletonList;
   TslintRulesTest.class,
   TsxTest.class,
   TypescriptPluginTest.class,
-  MissingTSConfigTest.class
 })
 public class Tests {
 
   static final FileLocation PLUGIN_LOCATION = FileLocation.byWildcardMavenFilename(
     new File("../../sonar-typescript-plugin/target"), "sonar-typescript-plugin-*.jar");
+
+  static final MavenLocation JS_PLUGIN_LOCATION = MavenLocation.of("org.sonarsource.javascript",
+    "sonar-javascript-plugin", "DEV");
 
   @ClassRule
   public static final Orchestrator ORCHESTRATOR;
@@ -73,6 +78,7 @@ public class Tests {
   static {
     OrchestratorBuilder orchestratorBuilder = Orchestrator.builderEnv()
       .setSonarVersion(System.getProperty("sonar.runtimeVersion", "LATEST_RELEASE"))
+      .addPlugin(JS_PLUGIN_LOCATION)
       .addPlugin(PLUGIN_LOCATION);
 
     File profilesDir = new File("src/test/resources/profiles/");
