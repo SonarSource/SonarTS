@@ -300,6 +300,10 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
     return allRules.iterator();
   }
 
+  List<TypeScriptRule> enabledRules() {
+    return allRules.stream().filter(TypeScriptRule::isEnabled).collect(Collectors.toList());
+  }
+
   public static List<Class<? extends TypeScriptRule>> getRuleClasses() {
     return allRules().stream()
       .filter(c -> RULES_PROVIDED_BY_SONARTS.contains(c.getAnnotation(Rule.class).key()))

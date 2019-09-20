@@ -45,6 +45,7 @@ import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
 import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 import org.sonar.plugin.typescript.executable.SonarTSCommand;
+import org.sonar.plugin.typescript.rules.TypeScriptRule;
 
 import static org.sonar.plugin.typescript.SensorContextUtils.setNodePath;
 
@@ -76,6 +77,12 @@ public class ExternalTypescriptSensor implements Sensor {
 
   @Override
   public void execute(SensorContext sensorContext) {
+    TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
+    List<TypeScriptRule> enabledRules = typeScriptRules.enabledRules();
+    if (enabledRules.isEmpty()) {
+      LOG.debug("No rule is enabled, analysis will be skipped");
+      return;
+    }
     File deployDestination = sensorContext.fileSystem().workDir();
     File typescriptLocation = getTypescriptLocation(sensorContext.fileSystem().baseDir());
     if (typescriptLocation != null) {
@@ -90,7 +97,6 @@ public class ExternalTypescriptSensor implements Sensor {
 
     Iterable<InputFile> inputFiles = SensorContextUtils.getInputFiles(sensorContext);
 
-    TypeScriptRules typeScriptRules = new TypeScriptRules(checkFactory);
     analyze(inputFiles, sensorContext, typeScriptRules, executableBundle, typescriptLocation);
   }
 

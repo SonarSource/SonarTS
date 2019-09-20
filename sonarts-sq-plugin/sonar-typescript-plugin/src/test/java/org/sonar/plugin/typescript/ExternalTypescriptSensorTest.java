@@ -30,6 +30,9 @@ import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
+import org.sonar.api.batch.rule.ActiveRules;
+import org.sonar.api.batch.rule.CheckFactory;
+import org.sonar.api.batch.rule.internal.ActiveRulesBuilder;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
@@ -325,6 +328,18 @@ public class ExternalTypescriptSensorTest {
     assertThat(logTester.setLevel(LoggerLevel.INFO).logs()).contains("Analyzing 1 typescript file(s) with the following configuration file " + tsconfigPath.getAbsolutePath());
     assertThat(logTester.setLevel(LoggerLevel.INFO).logs()).contains("0 files analyzed out of 1. Current file: foo.ts");
     assertThat(sensorContext.allIssues()).hasSize(1);
+  }
+
+  @Test
+  public void should_return_early_when_no_rules() {
+    SensorContextTester context = createSensorContext();
+    ActiveRules activeRules = new ActiveRulesBuilder().build();
+    CheckFactory checkFactory = new CheckFactory(activeRules);
+    assertThat(new TypeScriptRules(checkFactory).enabledRules()).isEmpty();
+
+    ExternalTypescriptSensor sensor = new ExternalTypescriptSensor(new TestBundleFactory(), checkFactory, new LineTrimmingExternalProcessErrorConsumer());
+    sensor.execute(context);
+    assertThat(logTester.logs(LoggerLevel.DEBUG)).contains("No rule is enabled, analysis will be skipped");
   }
 
   private SensorContextTester createSensorContext() {
