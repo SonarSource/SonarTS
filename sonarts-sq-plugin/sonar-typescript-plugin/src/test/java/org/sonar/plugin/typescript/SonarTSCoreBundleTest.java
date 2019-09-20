@@ -99,6 +99,13 @@ public class SonarTSCoreBundleTest {
     SonarTSCommand command = bundle.getSonarTsRunnerCommand();
     String commandLine = command.commandLine();
     assertThat(commandLine).startsWith(customNode.getAbsolutePath());
+
+    settings = new MapSettings();
+    settings.setProperty("sonar.nodejs.executable", customNode.getAbsolutePath());
+    bundle = new SonarTSCoreBundleFactory(BUNDLE_RELATIVE_PATH).createAndDeploy(deployDestination, settings.asConfig());
+    command = bundle.getSonarTsRunnerCommand();
+    commandLine = command.commandLine();
+    assertThat(commandLine).startsWith(customNode.getAbsolutePath());
   }
 
   @Test

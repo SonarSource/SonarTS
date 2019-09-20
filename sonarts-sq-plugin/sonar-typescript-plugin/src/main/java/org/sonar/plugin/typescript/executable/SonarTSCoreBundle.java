@@ -40,6 +40,7 @@ public class SonarTSCoreBundle implements ExecutableBundle {
 
   // relative location inside sonarts-core bundle
   private static final String BIN = "node_modules/tslint-sonarts/bin/";
+  private static final String SONAR_NODEJS_EXECUTABLE = "sonar.nodejs.executable";
   private final Configuration configuration;
 
   private final File sonartsRunnerExecutable;
@@ -81,15 +82,19 @@ public class SonarTSCoreBundle implements ExecutableBundle {
    */
   @Override
   public String getNodeExecutable() {
-    Optional<String> nodeExecutableOptional = configuration.get(TypeScriptPlugin.NODE_EXECUTABLE);
+    Optional<String> nodeExecutableOptional = configuration.get(TypeScriptPlugin.NODE_EXECUTABLE)
+      .filter(SonarTSCoreBundle::verifyExecutable);
     if (nodeExecutableOptional.isPresent()) {
-      String nodeExecutable = nodeExecutableOptional.get();
-      File file = new File(nodeExecutable);
-      if (file.exists()) {
-        return nodeExecutable;
-      }
+      return nodeExecutableOptional.get();
     }
-    return TypeScriptPlugin.NODE_EXECUTABLE_DEFAULT;
+    return configuration.get(SONAR_NODEJS_EXECUTABLE)
+      .filter(SonarTSCoreBundle::verifyExecutable)
+      .orElse(TypeScriptPlugin.NODE_EXECUTABLE_DEFAULT);
+  }
+
+  private static boolean verifyExecutable(String nodeExecutable) {
+    File file = new File(nodeExecutable);
+    return file.exists();
   }
 
   @Override
