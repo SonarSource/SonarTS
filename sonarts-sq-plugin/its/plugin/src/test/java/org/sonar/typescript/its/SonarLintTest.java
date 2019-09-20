@@ -99,7 +99,7 @@ public class SonarLintTest {
     AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
-// TODO     tuple("typescript:S2589", 3, inputFile.getPath(), "MAJOR"),
+      tuple("typescript:S2589", 3, inputFile.getPath(), "MAJOR"),
       tuple("typescript:S1854", 3, inputFile.getPath(), "MAJOR"),
       tuple("typescript:S1854", 2, inputFile.getPath(), "MAJOR"),
       tuple("typescript:S108", 3, inputFile.getPath(), "MAJOR"));
@@ -178,7 +178,7 @@ public class SonarLintTest {
     AnalysisResults results = sonarlintEngine.analyze(standaloneAnalysisConfiguration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
-// TODO     tuple("typescript:S2589", 3, inputFile.getPath(), "MAJOR"),
+      tuple("typescript:S2589", 3, inputFile.getPath(), "MAJOR"),
       tuple("typescript:S1854", 3, inputFile.getPath(), "MAJOR"),
       tuple("typescript:S1854", 2, inputFile.getPath(), "MAJOR"),
       tuple("typescript:S108", 3, inputFile.getPath(), "MAJOR"));

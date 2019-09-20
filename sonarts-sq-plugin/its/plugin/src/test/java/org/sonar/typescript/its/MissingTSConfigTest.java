@@ -58,7 +58,7 @@ public class MissingTSConfigTest {
     SearchRequest request = new SearchRequest();
     request.setComponentKeys(Collections.singletonList(PROJECT_KEY_MIXED_TSCONFIG)).setRules(ImmutableList.of("typescript:S1764"));
     List<Issue> issuesList = newWsClient().issues().search(request).getIssuesList();
-    // TODO should analyze app.ts without tsconfig
+    // TODO should be 2, once we analyze app.ts without tsconfig
     assertThat(issuesList).hasSize(1);
   }
 
