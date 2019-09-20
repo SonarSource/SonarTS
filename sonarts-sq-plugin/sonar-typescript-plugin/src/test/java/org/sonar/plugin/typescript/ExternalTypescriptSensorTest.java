@@ -19,28 +19,22 @@
  */
 package org.sonar.plugin.typescript;
 
-import com.google.common.collect.Sets;
 import java.io.BufferedReader;
 import java.io.File;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.sonar.api.batch.fs.InputFile;
 import org.sonar.api.batch.fs.InputFile.Type;
-import org.sonar.api.batch.fs.TextRange;
 import org.sonar.api.batch.fs.internal.DefaultInputFile;
-import org.sonar.api.batch.sensor.cpd.internal.TokensLine;
-import org.sonar.api.batch.sensor.highlighting.TypeOfText;
 import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
 import org.sonar.api.batch.sensor.internal.SensorContextTester;
 import org.sonar.api.batch.sensor.issue.Issue;
 import org.sonar.api.config.internal.MapSettings;
 import org.sonar.api.issue.NoSonarFilter;
-import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.FileLinesContext;
 import org.sonar.api.measures.FileLinesContextFactory;
 import org.sonar.api.utils.log.LogTester;
@@ -50,10 +44,7 @@ import org.sonar.plugin.typescript.executable.ExecutableBundleFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.sonar.plugin.typescript.TestUtils.BASE_DIR;
 import static org.sonar.plugin.typescript.TestUtils.CHECK_FACTORY;
@@ -99,39 +90,12 @@ public class ExternalTypescriptSensorTest {
     assertThat(issue.flows()).hasSize(1);
     assertThat(issue.gap()).isEqualTo(42);
 
-    assertThat(sensorContext.highlightingTypeAt(testInputFile.key(), 2, 3)).containsExactly(TypeOfText.KEYWORD);
-
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(3);
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.COMMENT_LINES).value()).isEqualTo(2);
-
-    verify(fileLinesContext).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 55, 1);
-    verify(fileLinesContext).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 77, 1);
-    verify(fileLinesContext).setIntValue(CoreMetrics.NCLOC_DATA_KEY, 99, 1);
-    verify(fileLinesContext).setIntValue(CoreMetrics.EXECUTABLE_LINES_DATA_KEY, 5, 1);
-    verify(fileLinesContext).setIntValue(CoreMetrics.EXECUTABLE_LINES_DATA_KEY, 7, 1);
-    verify(fileLinesContext).save();
-    verifyNoMoreInteractions(fileLinesContext);
-
-    verify(noSonarFilter).noSonarInFile(eq(testInputFile), eq(Sets.newHashSet(24)));
-
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.STATEMENTS).value()).isEqualTo(100);
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(10);
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.CLASSES).value()).isEqualTo(1);
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.COMPLEXITY).value()).isEqualTo(42);
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.COGNITIVE_COMPLEXITY).value()).isEqualTo(22);
-
-    List<TokensLine> cpd = sensorContext.cpdTokens(testInputFile.key());
-    assertThat(cpd).hasSize(1);
-    assertThat(cpd.get(0).getStartLine()).isEqualTo(2);
-    assertThat(cpd.get(0).getValue()).isEqualTo("foobar");
-
-    Collection<TextRange> usages = sensorContext.referencesForSymbolAt(testInputFile.key(), 2, 0);
-    assertThat(usages).hasSize(1);
-    assertThat(usages.iterator().next().start().lineOffset()).isEqualTo(6);
 
     assertThat(logTester.logs()).contains(String.format("Setting 'NODE_PATH' to %s%sfoo%snode_modules", BASE_DIR.getAbsoluteFile(), File.separator, File.separator));
   }
 
+  // only rule using forced message was no-eval S1523 which is not provided by SonarTS anymore
+  @Ignore
   @Test
   public void should_replace_message_when_forced_message_provided() {
     SensorContextTester sensorContext = createSensorContext();
@@ -170,8 +134,6 @@ public class ExternalTypescriptSensorTest {
     executeSensor(sensorContext, bundleFactory);
 
     assertThat(sensorContext.allIssues()).hasSize(0);
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.NCLOC).value()).isEqualTo(0);
-    assertThat(sensorContext.measure(testInputFile.key(), CoreMetrics.FUNCTIONS).value()).isEqualTo(0);
   }
 
   @Test
@@ -390,7 +352,7 @@ public class ExternalTypescriptSensorTest {
     when(fileLinesContextFactory.createFor(any(InputFile.class))).thenReturn(fileLinesContext);
 
     noSonarFilter = mock(NoSonarFilter.class);
-    return new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, CHECK_FACTORY, errorConsumer);
+    return new ExternalTypescriptSensor(executableBundleFactory, CHECK_FACTORY, errorConsumer);
   }
 
   private static DefaultInputFile createTestInputFile(SensorContextTester sensorContext) {

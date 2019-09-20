@@ -179,7 +179,7 @@ public class JavaRulesIntegrationTest {
     createInputFile(testFixture, lintFile.toString().endsWith("tsx") ? ".tsx" : ".ts");
 
     CheckFactory checkFactory = getCheckFactory(ruleKey);
-    ExternalTypescriptSensor sensor = new ExternalTypescriptSensor(executableBundleFactory, noSonarFilter, fileLinesContextFactory, checkFactory, errorConsumer);
+    ExternalTypescriptSensor sensor = new ExternalTypescriptSensor(executableBundleFactory, checkFactory, errorConsumer);
     sensor.execute(sensorContext);
 
     List<Integer> expectedLines = expectedIssues(testFixture);

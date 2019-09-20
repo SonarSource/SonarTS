@@ -35,6 +35,7 @@ import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.rule.Checks;
 import org.sonar.api.rule.RuleKey;
 import org.sonar.api.server.rule.RulesDefinition.NewRepository;
+import org.sonar.check.Rule;
 import org.sonar.plugin.typescript.rules.ArgumentsOrder;
 import org.sonar.plugin.typescript.rules.BanCommaOperator;
 import org.sonar.plugin.typescript.rules.BoolParamDefault;
@@ -176,6 +177,61 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
   private static final String RESOURCE_FOLDER = "org/sonar/l10n/typescript/rules/typescript";
   private static final String DEFAULT_PROFILE_PATH = RESOURCE_FOLDER + "/Sonar_way_profile.json";
 
+  private static final List<String> RULES_PROVIDED_BY_SONARTS = Arrays.asList(
+    "S101",
+    "S117",
+    "S105",
+    "S1439",
+    "S881",
+    "S1110",
+    "S1451",
+    "S1821",
+    "S2757",
+    "S2870",
+    "S3616",
+    "S3972",
+    "S3984",
+    "S4622",
+    "S4624",
+    "S4782",
+
+    "S125",
+    "S1533",
+    "S1541",
+    "S1121",
+    "S2068",
+    "S2123",
+    "S2201",
+    "S2234",
+    "S2681",
+    "S2871",
+    "S3981",
+    "S4043",
+    "S4123",
+    "S4322",
+    "S4275",
+    "S4323",
+    "S4324",
+    "S4328",
+    "S4335",
+    "S4524",
+    "S4619",
+    "S4621",
+    "S4623",
+    "S4634",
+    "S4798",
+    "S4822",
+    "S1874",
+
+    "S1226",
+    "S1751",
+    "S1854",
+    "S3516",
+    "S3626",
+    "S4030",
+    "S4158"
+  );
+
   private final List<TypeScriptRule> allRules;
   private final Map<String, RuleKey> tsLintKeyToRuleKey;
   private final Map<String, TypeScriptRule> tsLintKeyToRuleObject;
@@ -245,6 +301,12 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
   }
 
   public static List<Class<? extends TypeScriptRule>> getRuleClasses() {
+    return allRules().stream()
+      .filter(c -> RULES_PROVIDED_BY_SONARTS.contains(c.getAnnotation(Rule.class).key()))
+      .collect(Collectors.toList());
+  }
+
+  static List<Class<? extends TypeScriptRule>> allRules() {
     return Collections.unmodifiableList(Arrays.asList(
       ArgumentsOrder.class,
       BanCommaOperator.class,

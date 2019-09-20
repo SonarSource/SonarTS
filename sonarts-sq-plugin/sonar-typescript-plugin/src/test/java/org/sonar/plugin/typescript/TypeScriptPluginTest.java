@@ -37,7 +37,7 @@ public class TypeScriptPluginTest {
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(15);
+    assertThat(context.getExtensions()).hasSize(5);
 
   }
 
@@ -47,7 +47,7 @@ public class TypeScriptPluginTest {
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(17);
+    assertThat(context.getExtensions()).hasSize(5);
   }
 
   @Test
@@ -56,7 +56,7 @@ public class TypeScriptPluginTest {
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(15);
+    assertThat(context.getExtensions()).hasSize(5);
   }
 
   @Test
@@ -65,7 +65,7 @@ public class TypeScriptPluginTest {
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(14);
+    assertThat(context.getExtensions()).hasSize(6);
   }
 
 }

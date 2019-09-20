@@ -50,9 +50,9 @@ public class TypeScriptRulesDefinitionTest {
   }
 
   private static void assertRuleProperties(Repository repository) {
-    Rule rule = repository.rule("S3923");
+    Rule rule = repository.rule("S4158");
     assertThat(rule).isNotNull();
-    assertThat(rule.name()).isEqualTo("All branches in a conditional structure should not have exactly the same implementation");
+    assertThat(rule.name()).isEqualTo("Empty collections should not be accessed or iterated");
     assertThat(rule.debtRemediationFunction().type()).isEqualTo(Type.CONSTANT_ISSUE);
     assertThat(rule.type()).isEqualTo(RuleType.BUG);
   }

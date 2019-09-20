@@ -12,3 +12,5 @@ function foo(x: number): boolean {
 
   return false;
 }
+
+// real comment

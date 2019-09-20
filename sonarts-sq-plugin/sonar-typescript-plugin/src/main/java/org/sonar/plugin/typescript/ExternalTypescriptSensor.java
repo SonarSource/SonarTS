@@ -25,16 +25,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.apache.commons.io.IOUtils;
 import org.sonar.api.batch.fs.FileSystem;
@@ -43,16 +40,6 @@ import org.sonar.api.batch.rule.CheckFactory;
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
-import org.sonar.api.batch.sensor.cpd.NewCpdTokens;
-import org.sonar.api.batch.sensor.highlighting.NewHighlighting;
-import org.sonar.api.batch.sensor.highlighting.TypeOfText;
-import org.sonar.api.batch.sensor.symbol.NewSymbol;
-import org.sonar.api.batch.sensor.symbol.NewSymbolTable;
-import org.sonar.api.issue.NoSonarFilter;
-import org.sonar.api.measures.CoreMetrics;
-import org.sonar.api.measures.FileLinesContext;
-import org.sonar.api.measures.FileLinesContextFactory;
-import org.sonar.api.measures.Metric;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 import org.sonar.plugin.typescript.executable.ExecutableBundle;
@@ -70,18 +57,14 @@ public class ExternalTypescriptSensor implements Sensor {
   private final CheckFactory checkFactory;
   private final ExternalProcessStreamConsumer errorConsumer;
   private final ExecutableBundleFactory executableBundleFactory;
-  private final NoSonarFilter noSonarFilter;
-  private final FileLinesContextFactory fileLinesContextFactory;
 
   /**
    * ExecutableBundleFactory is injected for testability purposes
    */
   public ExternalTypescriptSensor(
-    ExecutableBundleFactory executableBundleFactory, NoSonarFilter noSonarFilter, FileLinesContextFactory fileLinesContextFactory,
+    ExecutableBundleFactory executableBundleFactory,
     CheckFactory checkFactory, ExternalProcessStreamConsumer errorConsumer) {
     this.executableBundleFactory = executableBundleFactory;
-    this.noSonarFilter = noSonarFilter;
-    this.fileLinesContextFactory = fileLinesContextFactory;
     this.checkFactory = checkFactory;
     this.errorConsumer = errorConsumer;
   }
@@ -139,10 +122,6 @@ public class ExternalTypescriptSensor implements Sensor {
         if (response.hasDiagnostics()) {
           SensorContextUtils.reportAnalysisErrors(sensorContext, response, inputFile);
         } else {
-          saveHighlights(sensorContext, response.highlights, inputFile);
-          saveSymbols(sensorContext, response.symbols, inputFile);
-          saveMetrics(sensorContext, response, inputFile);
-          saveCpd(sensorContext, response.cpdTokens, inputFile);
           SensorContextUtils.saveIssues(sensorContext, response.issues, typeScriptRules);
         }
       }
@@ -256,62 +235,6 @@ public class ExternalTypescriptSensor implements Sensor {
       throw new IllegalStateException(String.format("Failed to run external process `%s`. Run with -X for more information", commandLine), e);
     }
 
-  }
-
-  private static void saveCpd(SensorContext sensorContext, SensorContextUtils.CpdToken[] cpdTokens, InputFile file) {
-    NewCpdTokens newCpdTokens = sensorContext.newCpdTokens().onFile(file);
-    for (SensorContextUtils.CpdToken cpdToken : cpdTokens) {
-      newCpdTokens.addToken(cpdToken.startLine, cpdToken.startCol, cpdToken.endLine, cpdToken.endCol, cpdToken.image);
-    }
-
-    newCpdTokens.save();
-  }
-
-  private void saveMetrics(SensorContext sensorContext, SensorContextUtils.AnalysisResponse analysisResponse, InputFile inputFile) {
-    saveMetric(sensorContext, inputFile, CoreMetrics.FUNCTIONS, analysisResponse.functions);
-    saveMetric(sensorContext, inputFile, CoreMetrics.CLASSES, analysisResponse.classes);
-    saveMetric(sensorContext, inputFile, CoreMetrics.STATEMENTS, analysisResponse.statements);
-    saveMetric(sensorContext, inputFile, CoreMetrics.NCLOC, analysisResponse.ncloc.length);
-    saveMetric(sensorContext, inputFile, CoreMetrics.COMMENT_LINES, analysisResponse.commentLines.length);
-    saveMetric(sensorContext, inputFile, CoreMetrics.COMPLEXITY, analysisResponse.complexity);
-    saveMetric(sensorContext, inputFile, CoreMetrics.COGNITIVE_COMPLEXITY, analysisResponse.cognitiveComplexity);
-
-    noSonarFilter.noSonarInFile(inputFile, Arrays.stream(analysisResponse.nosonarLines).collect(Collectors.toSet()));
-
-    FileLinesContext fileLinesContext = fileLinesContextFactory.createFor(inputFile);
-    for (int line : analysisResponse.ncloc) {
-      fileLinesContext.setIntValue(CoreMetrics.NCLOC_DATA_KEY, line, 1);
-    }
-
-    for (int line : analysisResponse.executableLines) {
-      fileLinesContext.setIntValue(CoreMetrics.EXECUTABLE_LINES_DATA_KEY, line, 1);
-    }
-
-    fileLinesContext.save();
-  }
-
-  private static void saveMetric(SensorContext sensorContext, InputFile inputFile, Metric<Integer> metric, int value) {
-    sensorContext.<Integer>newMeasure().forMetric(metric).on(inputFile).withValue(value).save();
-  }
-
-  private static void saveHighlights(SensorContext sensorContext, SensorContextUtils.Highlight[] highlights, InputFile inputFile) {
-    NewHighlighting highlighting = sensorContext.newHighlighting().onFile(inputFile);
-    for (SensorContextUtils.Highlight highlight : highlights) {
-      highlighting.highlight(highlight.startLine, highlight.startCol, highlight.endLine, highlight.endCol,
-        TypeOfText.valueOf(highlight.textType.toUpperCase(Locale.ENGLISH)));
-    }
-    highlighting.save();
-  }
-
-  private static void saveSymbols(SensorContext sensorContext, SensorContextUtils.Symbol[] symbols, InputFile inputFile) {
-    NewSymbolTable newSymbolTable = sensorContext.newSymbolTable().onFile(inputFile);
-    for (SensorContextUtils.Symbol symbol : symbols) {
-      NewSymbol newSymbol = newSymbolTable.newSymbol(symbol.startLine, symbol.startCol, symbol.endLine, symbol.endCol);
-      for (SensorContextUtils.SymbolReference reference : symbol.references) {
-        newSymbol.newReference(reference.startLine, reference.startCol, reference.endLine, reference.endCol);
-      }
-    }
-    newSymbolTable.save();
   }
 
   @Nullable
