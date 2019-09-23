@@ -84,7 +84,7 @@
     <guava.version>28.1-jre</guava.version>
     <jsr305.version>3.0.1</jsr305.version>
     <mockito.version>2.21.0</mockito.version>
-    <sonar-analyzer-commons.version>1.10.3.534</sonar-analyzer-commons.version>
+    <sonar-analyzer-commons.version>1.11.0.541</sonar-analyzer-commons.version>
 
     <artifactsToPublish>${project.groupId}:sonar-typescript-plugin:jar</artifactsToPublish>
 
