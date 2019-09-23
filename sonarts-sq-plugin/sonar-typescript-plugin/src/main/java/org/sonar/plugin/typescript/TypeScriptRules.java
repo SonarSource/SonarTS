@@ -19,6 +19,7 @@
  */
 package org.sonar.plugin.typescript;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -266,7 +267,9 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
   }
 
   private List<TypeScriptRule> instantiateDisabledRules(Collection<TypeScriptRule> enabledRules) {
-    Set<? extends Class<?>> activeRules = enabledRules.stream().map(Object::getClass).collect(Collectors.toSet());
+    Set<Class<? extends TypeScriptRule>> activeRules = enabledRules.stream()
+      .map(TypeScriptRule::getClass)
+      .collect(Collectors.toSet());
     return getRuleClasses().stream()
       .filter(c -> !activeRules.contains(c))
       .map(TypeScriptRules::instantiate)
@@ -275,8 +278,8 @@ public class TypeScriptRules implements Iterable<TypeScriptRule> {
 
   private static TypeScriptRule instantiate(Class<? extends TypeScriptRule> ruleClass) {
     try {
-      return ruleClass.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      return ruleClass.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       throw new IllegalStateException("Failed to instantiate check " + ruleClass.getSimpleName(), e);
     }
   }
