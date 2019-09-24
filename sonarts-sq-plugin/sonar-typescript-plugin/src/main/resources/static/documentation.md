@@ -9,8 +9,7 @@ key: typescript
 
 
 ## Prerequisites
-
-In order to analyze TypeScript code, you need to have Node.js >= 8 installed on the machine running the scan. Set property `sonar.typescript.node` to an absolute path to Node.js executable, if standard `node` is not available.
+In order to analyze JavaScript code, you need to have Node.js >= 8 installed on the machine running the scan. If standard `node` is not available, you have to set property `sonar.nodejs.executable` to an absolute path to Node.js executable.
 
 Also make sure to have [TypeScript](https://www.npmjs.com/package/typescript) as a project dependency or dev dependency. If it's not the case, add it:
 ```
@@ -24,7 +23,7 @@ If you can't have TypeScript as a project dependency you can set your `NODE_PATH
 Discover and update the TypeScript-specific properties in: **<!-- sonarcloud -->Project <!-- /sonarcloud -->[Administration > General Settings > TypeScript](/#sonarqube-admin#/admin/settings?category=typescript)**
 
 ## Supported Frameworks and Versions
-* TypeScript >= 2.2
+* TypeScript >=3.2.1 <3.6.0
 
 ## Rule Profiles
 
