@@ -9,7 +9,7 @@ key: typescript
 
 
 ## Prerequisites
-In order to analyze JavaScript code, you need to have Node.js >= 8 installed on the machine running the scan. If standard `node` is not available, you have to set property `sonar.nodejs.executable` to an absolute path to Node.js executable.
+In order to analyze TypeScript code, you need to have Node.js >= 8 installed on the machine running the scan. If standard `node` is not available, you have to set property `sonar.nodejs.executable` to an absolute path to Node.js executable.
 
 Also make sure to have [TypeScript](https://www.npmjs.com/package/typescript) as a project dependency or dev dependency. If it's not the case, add it:
 ```
