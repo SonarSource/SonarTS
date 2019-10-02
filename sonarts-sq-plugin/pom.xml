@@ -73,21 +73,10 @@
 
     <assertj.version>3.11.1</assertj.version>
     <junit.version>4.12</junit.version>
-    <logback.version>1.0.13</logback.version>
-    <slf4j.version>1.7.21</slf4j.version>
     <sonar.version>7.9</sonar.version>
     <sonar.min.version>7.9</sonar.min.version>
-    <sonar-orchestrator.version>3.26.0.2111</sonar-orchestrator.version>
-    <sonarlint.version>4.3.1.2486</sonarlint.version>
-    <gson.version>2.6.2</gson.version>
-    <commons-io.version>2.5</commons-io.version>
-    <guava.version>28.1-jre</guava.version>
-    <jsr305.version>3.0.1</jsr305.version>
-    <mockito.version>2.21.0</mockito.version>
-    <sonar-analyzer-commons.version>1.11.0.541</sonar-analyzer-commons.version>
 
     <artifactsToPublish>${project.groupId}:sonar-typescript-plugin:jar</artifactsToPublish>
-
     <maven.compiler.release>8</maven.compiler.release>
     <!-- FIXME fix javadoc warnings and remove this -->
     <doclint>none</doclint>
@@ -95,39 +84,11 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Default dependencies (compile) -->
       <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${logback.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>${gson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>${commons-io.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.findbugs</groupId>
-        <artifactId>jsr305</artifactId>
-        <version>${jsr305.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.sonarsource.analyzer-commons</groupId>
-        <artifactId>sonar-analyzer-commons</artifactId>
-        <version>${sonar-analyzer-commons.version}</version>
-      </dependency>
-
-      <!-- Test dependencies -->
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
-        <scope>test</scope>
+        <groupId>org.sonarsource.sonarqube</groupId>
+        <artifactId>sonar-plugin-api</artifactId>
+        <version>${sonar.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -141,60 +102,7 @@
         <version>${assertj.version}</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
-        <groupId>org.sonarsource.sonarqube</groupId>
-        <artifactId>sonar-testing-harness</artifactId>
-        <version>${sonar.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.sonarsource.orchestrator</groupId>
-        <artifactId>sonar-orchestrator</artifactId>
-        <version>${sonar-orchestrator.version}</version>
-        <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>${mockito.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.awaitility</groupId>
-        <artifactId>awaitility</artifactId>
-        <version>3.0.0</version>
-        <scope>test</scope>
-      </dependency>
-
-      <!-- Provided dependencies -->
-      <dependency>
-        <groupId>org.sonarsource.sonarqube</groupId>
-        <artifactId>sonar-plugin-api</artifactId>
-        <version>${sonar.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.sonarsource.javascript</groupId>
-        <artifactId>sonar-javascript-plugin</artifactId>
-        <type>sonar-plugin</type>
-        <version>${project.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
-
   
 </project>

@@ -25,24 +25,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.sonarsource.sonarqube</groupId>
             <artifactId>sonar-plugin-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonarsource.analyzer-commons</groupId>
-            <artifactId>sonar-analyzer-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonarsource.sonarqube</groupId>
-            <artifactId>sonar-testing-harness</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -51,26 +35,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
         </dependency>
     </dependencies>
 
@@ -88,32 +52,6 @@
                     <sonarQubeMinVersion>${sonar.min.version}</sonarQubeMinVersion>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <minimizeJar>true</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <filters>
-                                <filter>
-                                    <artifact>cglib:cglib-nodep</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
@@ -126,8 +64,8 @@
                         <configuration>
                             <rules>
                                 <requireFilesSize>
-                                    <minsize>1000</minsize>
-                                    <maxsize>2400000</maxsize>
+                                    <minsize>4000</minsize>
+                                    <maxsize>6000</maxsize>
                                     <files>
                                         <file>${project.build.directory}/${project.build.finalName}.jar</file>
                                     </files>
@@ -137,9 +75,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-
-
         </plugins>
     </build>
 
