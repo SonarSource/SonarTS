@@ -20,40 +20,11 @@
 package org.sonar.plugin.typescript;
 
 import org.sonar.api.Plugin;
-import org.sonar.api.SonarProduct;
-import org.sonar.plugin.typescript.executable.SonarTSCoreBundleFactory;
 
 public class TypeScriptPlugin implements Plugin {
-  /* absolute location inside jar */
-  private static final String SONARTS_BUNDLE_ZIP = "/sonarts-bundle.zip";
-
-  static final String FILE_SUFFIXES_KEY = "sonar.typescript.file.suffixes";
-  public static final String FILE_SUFFIXES_DEFVALUE = ".ts,.tsx";
-
-  public static final String TSCONFIG_PATH = "sonar.typescript.tsconfigPath";
-
-
-  public static final String NODE_EXECUTABLE = "sonar.typescript.node";
-  public static final String NODE_EXECUTABLE_DEFAULT = "node";
-
-  public static final String TS_EXCLUSIONS_KEY = "sonar.typescript.exclusions";
-  public static final String TS_EXCLUSIONS_DEFAULT_VALUE = "**/node_modules/**,**/bower_components/**";
 
   @Override
   public void define(Context context) {
-    context.addExtensions(
-      ExternalProcessStreamConsumer.class,
-      TypeScriptRulesDefinition.class,
-      TypeScriptExclusionsFileFilter.class,
-      new SonarTSCoreBundleFactory(SONARTS_BUNDLE_ZIP)
-    );
-
-    if (context.getRuntime().getProduct().equals(SonarProduct.SONARLINT)) {
-      context.addExtension(ContextualSensor.class);
-      context.addExtension(ContextualServer.class);
-    } else {
-      context.addExtension(ExternalTypescriptSensor.class);
-    }
-
+    // This plugin doesn't define any extension, TypeScript analysis is migrated to SonarJS
   }
 }

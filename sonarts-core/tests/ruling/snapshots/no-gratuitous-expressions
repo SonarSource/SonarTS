@@ -1,9 +1,0 @@
-src/angular/packages/benchpress/src/metric/perflog_metric.ts: 319
-src/postgraphql/src/postgres/inventory/paginator/PgCollectionPaginator.ts: 72,77
-src/rxjs/src/observable/TimerObservable.ts: 92
-src/rxjs/src/Subscription.ts: 96
-src/TypeScript/src/compiler/binder.ts: 393
-src/TypeScript/src/compiler/moduleNameResolver.ts: 884
-src/TypeScript/src/compiler/transformers/ts.ts: 1518
-src/vscode/src/vs/workbench/browser/parts/editor/titleControl.ts: 344
-src/vscode/src/vs/workbench/parts/debug/electron-browser/debugService.ts: 401

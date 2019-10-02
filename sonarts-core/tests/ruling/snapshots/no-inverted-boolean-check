@@ -1,7 +1,0 @@
-src/ag-grid/src/ts/filter/numberFilter.ts: 117,127
-src/ag-grid/src/ts/sortController.ts: 65
-src/angular/packages/common/src/localization.ts: 253,268,273,273,285,295,314,334,342,342,357,364,371,371,372,389,395,399,400,405,424
-src/angular/packages/router/src/create_url_tree.ts: 113,184
-src/console/src/views/models/DatabrowserView/Cell/ScalarListCell.tsx: 237
-src/rxjs/spec/helpers/testScheduler-ui.ts: 18
-src/vscode/extensions/git/src/commands.ts: 75

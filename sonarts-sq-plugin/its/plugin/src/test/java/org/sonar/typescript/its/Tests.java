@@ -53,7 +53,6 @@ import static java.util.Collections.singletonList;
   FutureSyntaxTest.class,
   GlobalTypescriptModuleTest.class,
   IssuesTest.class,
-  JavaRulesIntegrationTest.class,
   MissingTSConfigTest.class,
   MultiConfigTest.class,
   ProfileTest.class,

@@ -58,21 +58,6 @@ pipeline {
             runIts("plugin", "LATEST_RELEASE[7.9]", JDK_VERSION)
           }
         }
-        stage('ruling') {
-          agent {
-            label 'multicpu'
-          }
-          steps {
-            // install yarn
-            nodejs(configId: 'npm-artifactory', nodeJSInstallationName: 'NodeJS latest') {
-              sh "npm install -g yarn"
-              sh "git submodule update --init --recursive"
-              dir("sonarts-core") {
-                sh "yarn && yarn ruling"
-              }
-            }
-          }
-        }
         stage('ci-win') {
           agent {
             label 'windows'
