@@ -12,9 +12,6 @@ function configureTravis {
 configureTravis
 . ~/.local/bin/installMaven35
 
-cd sonar-typescript-plugin/sonarts-bundle
-npm install ../../../sonarts-core/tslint-sonarts-*.tgz
-cd ../../
 
 # save dependencies for future SQ analysis of Java code
 mvn dependency:copy-dependencies -DoutputDirectory=dependencies

@@ -1,6 +1,0 @@
-src/angular/packages/compiler/src/expression_parser/parser.ts: 324
-src/angular/packages/language-service/src/html_info.ts: 409
-src/TypeScript/src/harness/harness.ts: 612,1506
-src/vscode/extensions/typescript/test/colorize-fixtures/test-issue11.ts: 2,3,4,5,6,7
-src/vscode/src/vs/workbench/parts/search/browser/searchActions.ts: 398
-src/vscode/src/vs/workbench/services/files/node/watcher/common.ts: 72

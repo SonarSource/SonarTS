@@ -1,8 +1,0 @@
-src/prettier-vscode/src/requirePkg.ts: 23
-src/TypeScript/src/compiler/transformers/destructuring.ts: 363
-src/TypeScript/src/compiler/tsc.ts: 661
-src/TypeScript/src/harness/harness.ts: 1532
-src/vscode/src/vs/base/browser/ui/list/listWidget.ts: 482,509
-src/vscode/src/vs/base/common/strings.ts: 353
-src/vscode/src/vs/editor/contrib/find/common/replacePattern.ts: 260
-src/vscode/src/vs/editor/contrib/indentation/common/indentation.ts: 133

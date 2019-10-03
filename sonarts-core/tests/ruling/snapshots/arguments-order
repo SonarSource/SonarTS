@@ -1,5 +1,0 @@
-src/angular/packages/compiler/src/i18n/digest.ts: 196,199,202
-src/vscode/src/vs/base/browser/ui/contextview/contextview.ts: 75
-src/vscode/src/vs/base/test/common/objects.test.ts: 12,17
-src/vscode/src/vs/base/test/common/strings.test.ts: 60
-src/vscode/src/vs/platform/search/test/common/replace.test.ts: 84,88

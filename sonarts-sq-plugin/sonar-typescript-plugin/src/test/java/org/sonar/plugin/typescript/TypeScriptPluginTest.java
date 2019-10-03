@@ -32,40 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TypeScriptPluginTest {
 
   @Test
-  public void count_extensions_not_sonarlint() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(6, 7), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
+  public void count_extensions() {
+    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
     Plugin.Context context = new Plugin.Context(runtime);
     Plugin underTest = new TypeScriptPlugin();
     underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(5);
-
+    assertThat(context.getExtensions()).hasSize(0);
   }
-
-  @Test
-  public void extensions_sq_72_or_greater_have_tslint_report() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 2), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
-    Plugin.Context context = new Plugin.Context(runtime);
-    Plugin underTest = new TypeScriptPlugin();
-    underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(5);
-  }
-
-  @Test
-  public void extensions_sq_71_or_smaller_do_not_have_tslint_report() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 1), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
-    Plugin.Context context = new Plugin.Context(runtime);
-    Plugin underTest = new TypeScriptPlugin();
-    underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(5);
-  }
-
-  @Test
-  public void count_extensions_sonarlint() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarLint(Version.create(7, 2));
-    Plugin.Context context = new Plugin.Context(runtime);
-    Plugin underTest = new TypeScriptPlugin();
-    underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(6);
-  }
-
 }

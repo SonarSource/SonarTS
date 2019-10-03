@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    /* Basic Options */
-    "module": "es6",
-    "traceResolution": true
-  }
-}
