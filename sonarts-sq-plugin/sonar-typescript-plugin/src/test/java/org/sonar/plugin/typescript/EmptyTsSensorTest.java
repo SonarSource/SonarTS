@@ -19,24 +19,33 @@
  */
 package org.sonar.plugin.typescript;
 
+import java.io.File;
 import org.junit.Test;
-import org.sonar.api.Plugin;
-import org.sonar.api.SonarEdition;
-import org.sonar.api.SonarQubeSide;
-import org.sonar.api.SonarRuntime;
-import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.utils.Version;
+import org.sonar.api.batch.sensor.internal.DefaultSensorDescriptor;
+import org.sonar.api.batch.sensor.internal.SensorContextTester;
+import org.sonar.api.utils.log.LogTester;
+import org.sonar.api.utils.log.LoggerLevel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TypeScriptPluginTest {
+public class EmptyTsSensorTest {
+
+  @org.junit.Rule
+  public LogTester logTester = new LogTester();
 
   @Test
-  public void count_extensions() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
-    Plugin.Context context = new Plugin.Context(runtime);
-    Plugin underTest = new TypeScriptPlugin();
-    underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(1);
+  public void descriptor() {
+    DefaultSensorDescriptor sensorDescriptor = new DefaultSensorDescriptor();
+    new EmptyTsSensor().describe(sensorDescriptor);
+
+    assertThat(sensorDescriptor.languages()).containsExactly("ts");
+    assertThat(sensorDescriptor.name()).isEqualTo("SonarTS");
+  }
+
+  @Test
+  public void log_message() {
+    new EmptyTsSensor().execute(SensorContextTester.create(new File("")));
+    assertThat(logTester.logs(LoggerLevel.INFO))
+      .containsExactly("Since SonarTS v2.0, TypeScript analysis is performed by SonarJS analyzer v6.0 or later. No TypeScript analysis is performed by SonarTS.");
   }
 }

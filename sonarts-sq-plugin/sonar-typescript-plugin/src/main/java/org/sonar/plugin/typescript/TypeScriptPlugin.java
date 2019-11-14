@@ -26,5 +26,7 @@ public class TypeScriptPlugin implements Plugin {
   @Override
   public void define(Context context) {
     // This plugin doesn't define any extension, TypeScript analysis is migrated to SonarJS
+    // EmptyTsSensor is used to log message that this plugin does nothing
+    context.addExtension(EmptyTsSensor.class);
   }
 }

@@ -19,24 +19,25 @@
  */
 package org.sonar.plugin.typescript;
 
-import org.junit.Test;
-import org.sonar.api.Plugin;
-import org.sonar.api.SonarEdition;
-import org.sonar.api.SonarQubeSide;
-import org.sonar.api.SonarRuntime;
-import org.sonar.api.internal.SonarRuntimeImpl;
-import org.sonar.api.utils.Version;
+import org.sonar.api.batch.sensor.Sensor;
+import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public class EmptyTsSensor implements Sensor {
 
-public class TypeScriptPluginTest {
+  private static final Logger LOG = Loggers.get(EmptyTsSensor.class);
 
-  @Test
-  public void count_extensions() {
-    SonarRuntime runtime = SonarRuntimeImpl.forSonarQube(Version.create(7, 9), SonarQubeSide.SCANNER, SonarEdition.COMMUNITY);
-    Plugin.Context context = new Plugin.Context(runtime);
-    Plugin underTest = new TypeScriptPlugin();
-    underTest.define(context);
-    assertThat(context.getExtensions()).hasSize(1);
+  @Override
+  public void describe(SensorDescriptor sensorDescriptor) {
+    sensorDescriptor
+      .onlyOnLanguage("ts")
+      .name("SonarTS");
+  }
+
+  @Override
+  public void execute(SensorContext sensorContext) {
+    LOG.info("Since SonarTS v2.0, TypeScript analysis is performed by SonarJS analyzer v6.0 or later. No TypeScript analysis is performed by SonarTS.");
   }
 }
