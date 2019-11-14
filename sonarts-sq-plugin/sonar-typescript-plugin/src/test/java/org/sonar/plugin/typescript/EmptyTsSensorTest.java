@@ -46,6 +46,6 @@ public class EmptyTsSensorTest {
   public void log_message() {
     new EmptyTsSensor().execute(SensorContextTester.create(new File("")));
     assertThat(logTester.logs(LoggerLevel.INFO))
-      .containsExactly("Since SonarTS v2.0 TypeScript analysis is performed by SonarJS analyzer v6.0 or later. No TypeScript analysis is performed by SonarTS.");
+      .containsExactly("Since SonarTS v2.0, TypeScript analysis is performed by SonarJS analyzer v6.0 or later. No TypeScript analysis is performed by SonarTS.");
   }
 }

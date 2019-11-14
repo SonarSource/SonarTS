@@ -38,6 +38,6 @@ public class EmptyTsSensor implements Sensor {
 
   @Override
   public void execute(SensorContext sensorContext) {
-    LOG.info("Since SonarTS v2.0 TypeScript analysis is performed by SonarJS analyzer v6.0 or later. No TypeScript analysis is performed by SonarTS.");
+    LOG.info("Since SonarTS v2.0, TypeScript analysis is performed by SonarJS analyzer v6.0 or later. No TypeScript analysis is performed by SonarTS.");
   }
 }
