@@ -23,7 +23,7 @@ If you can't have TypeScript as a project dependency you can set your `NODE_PATH
 Discover and update the TypeScript-specific properties in: **<!-- sonarcloud -->Project <!-- /sonarcloud -->[Administration > General Settings > TypeScript](/#sonarqube-admin#/admin/settings?category=typescript)**
 
 ## Supported Frameworks and Versions
-* TypeScript >=3.2.1 <3.6.0
+* TypeScript >=3.2.1 <3.8.0. If it's not possible to upgrade version of TypeScript used by the project, consider installing supported TypeScript version just for the time of analysis.
 
 ## Rule Profiles
 
