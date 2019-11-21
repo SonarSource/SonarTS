@@ -52,8 +52,8 @@ if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; 
   export MAVEN_OPTS="-Xmx1536m -Xms128m"
 
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
-  mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
-      -Pcoverage-per-test,deploy-sonarsource,release \
+  mvn deploy \
+      -Pcoverage,deploy-sonarsource,release \
       -Dmaven.test.redirectTestOutputToFile=false \
       -B -e -V $*
   cd ..
@@ -64,7 +64,7 @@ if [ "${TRAVIS_BRANCH}" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; 
       -Dsonar.analysis.buildNumber=$TRAVIS_BUILD_NUMBER \
       -Dsonar.analysis.pipeline=$TRAVIS_BUILD_NUMBER \
       -Dsonar.analysis.sha1=$TRAVIS_COMMIT  \
-      -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG \
+      -Dsonar.analysis.repository=$TRAVIS_REPO_SLUG
 
 elif [[ "${TRAVIS_BRANCH}" == "branch-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   # analyze maintenance branches as long-living branches
@@ -83,8 +83,8 @@ elif [[ "${TRAVIS_BRANCH}" == "branch-"* ]] && [ "$TRAVIS_PULL_REQUEST" == "fals
   # Do not deploy a SNAPSHOT version but the release version related to this build
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
 
-  mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
-    -Pdeploy-sonarsource,release \
+  mvn deploy \
+    -Pcoverage,deploy-sonarsource,release \
     -B -e -V $*
   cd ..
 
@@ -115,8 +115,8 @@ elif [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   # Do not deploy a SNAPSHOT version but the release version related to this build and PR
   . set_maven_build_version $TRAVIS_BUILD_NUMBER
 
-  mvn org.jacoco:jacoco-maven-plugin:prepare-agent deploy \
-    -Pdeploy-sonarsource \
+  mvn deploy \
+    -Pcoverage,deploy-sonarsource \
     -Dmaven.test.redirectTestOutputToFile=false \
     -B -e -V $*
   cd ..
