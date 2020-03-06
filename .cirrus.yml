@@ -34,7 +34,7 @@ win_vm_definition: &WINDOWS_VM_DEFINITION
     disk: 128
     type: n1-standard-8
     use_ssd: true
-    
+
 only_sonarsource_qa: &ONLY_SONARSOURCE_QA
   only_if: $CIRRUS_USER_COLLABORATOR == 'true' && ($CIRRUS_PR != "" || $CIRRUS_BRANCH == "master" || $CIRRUS_BRANCH =~ "branch-.*" || $CIRRUS_BRANCH =~ "dogfood-on-.*")
 
